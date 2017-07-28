@@ -29,5 +29,6 @@ public class Base : MonoBehaviour
 		instance.GetComponent<Drone>().owner = owner;
 		instance.transform.SetParent(transform);
         instance.GetComponent<Drone>().SetRallyPoint(GetComponentInParent<PlayerController>().pRallyPoint);
+        //instance.transform.rotation = Random.Range()
     }
 }

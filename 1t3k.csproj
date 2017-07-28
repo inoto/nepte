@@ -223,6 +223,7 @@
     <Compile Include="Assets\Scripts\Battleground.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\Drone.cs" />
+    <Compile Include="Assets\Scripts\DroneExplosion.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\RallyPoint.cs" />

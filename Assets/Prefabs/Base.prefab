@@ -76,7 +76,7 @@ MonoBehaviour:
   owner: 0
   health: 100
   spawnTime: 2
-  drone: {fileID: 1631335818127534, guid: d92c20809c71b4adf9d4db033be39eaa, type: 2}
+  spawnUnit: {fileID: 1631335818127534, guid: d92c20809c71b4adf9d4db033be39eaa, type: 2}
 --- !u!212 &212509551662005286
 SpriteRenderer:
   m_ObjectHideFlags: 1
