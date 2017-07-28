@@ -1,11 +1,13 @@
 ﻿<Properties StartupConfiguration="{F11587F2-4F8D-CDD7-8205-E33922B8D82C}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlayerController.cs">
     <Files>
-      <File FileName="Assets/Scripts/GameController.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/GameController.cs" Line="11" Column="5" />
       <File FileName="Assets/Scripts/CameraController.cs" Line="28" Column="35" />
       <File FileName="Assets/Scripts/Battleground.cs" Line="7" Column="25" />
-      <File FileName="Assets/Scripts/Drone.cs" Line="28" Column="39" />
-      <File FileName="Assets/Scripts/Base.cs" Line="27" Column="6" />
+      <File FileName="Assets/Scripts/Drone.cs" Line="25" Column="56" />
+      <File FileName="Assets/Scripts/Base.cs" Line="10" Column="28" />
+      <File FileName="Assets/Scripts/RallyPoint.cs" Line="34" Column="56" />
+      <File FileName="Assets/Scripts/PlayerController.cs" Line="16" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.1t3k PreferredExecutionTarget="Unity.Editor" />

@@ -7,7 +7,9 @@ public class Base : MonoBehaviour
 	public int owner = 0;
 	public int health = 100;
     public float spawnTime = 2f;
-    public GameObject drone;
+    public GameObject spawnUnit;
+
+    //public GameObject rallyPoint;
 
 	// Use this for initialization
 	void Start ()
@@ -23,6 +25,9 @@ public class Base : MonoBehaviour
 
     void SpawnDrone()
     {
-        Instantiate(drone, transform.position, transform.rotation);
+        GameObject instance = Instantiate(spawnUnit, transform.position, transform.rotation);
+		instance.GetComponent<Drone>().owner = owner;
+		instance.transform.SetParent(transform);
+        instance.GetComponent<Drone>().SetRallyPoint(GetComponentInParent<PlayerController>().pRallyPoint);
     }
 }

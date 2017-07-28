@@ -1,31 +1,41 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    private Vector3 newPosition;
+    public int players = 3;
 
-    public GameObject basePlayer;
+    public GameObject playerController;
 
-    public GameObject rpoint;
+    public GameObject cameraController;
 
-    private Vector3 mousePosition;
+    public GameObject battleground;
+
+
 
     // Use this for initialization
     void Start ()
     {
-        rpoint = GameObject.Find("Rpoint");
+        CreatePlayers();
+
+        cameraController.transform.SetParent(transform);
+
+        battleground.transform.SetParent(transform);
     }
     
     // Update is called once per frame
     void Update ()
     {
-        if (Input.GetMouseButtonDown(0))
+        
+    }
+
+    void CreatePlayers()
+    {
+        for (int i = 0; i < players; i++)
         {
-            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePosition.z = 0;
-            rpoint.transform.position = mousePosition;
+            GameObject instance = Instantiate(playerController);
+            instance.GetComponent<PlayerController>().owner = i;
+            instance.transform.SetParent(transform);
         }
     }
+
 }
