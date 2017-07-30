@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4972574986736376}
   - component: {fileID: 114364192231648090}
   - component: {fileID: 212393122166835972}
-  - component: {fileID: 50328609215526686}
   - component: {fileID: 58747573845181342}
   m_Layer: 0
   m_Name: Drone
@@ -38,31 +37,11 @@ Transform:
   m_GameObject: {fileID: 1631335818127534}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &50328609215526686
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1631335818127534}
-  m_BodyType: 0
-  m_Simulated: 0
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!58 &58747573845181342
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -72,12 +51,12 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.18499999
+  m_Radius: 0.4
 --- !u!114 &114364192231648090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -89,10 +68,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  droneExplosion: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
+    type: 2}
   owner: 0
   health: 100
+  rallyPoint: {fileID: 0}
+  gotoPosition: {x: 0, y: 0, z: 0}
   speed: 0.2
+  angle: 0
+  rotationSpeed: 50
+  bodyRadius: 0
+  attackRadius: 0
+  detectRadius: 0
   enemyDrone: {fileID: 0}
+  weapon: {fileID: 1952882869089100, guid: 139bbd1adbc76eb4596176120823bee3, type: 2}
+  laserMissile: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
+    type: 2}
 --- !u!212 &212393122166835972
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -125,7 +116,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 5db2c4fe0d32747b6857ca304fefa220, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 40cb0e86c469c4387b909cf4a552a641, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

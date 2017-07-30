@@ -10,7 +10,7 @@ public class Drone : MonoBehaviour
 
     public int health = 100;
 
-    private GameObject rallyPoint;
+    public GameObject rallyPoint;
     public Vector3 gotoPosition;
 
     public float speed = 0.2f;
@@ -18,8 +18,16 @@ public class Drone : MonoBehaviour
     public float rotationSpeed = 50f;
 	private float step;
 
-    public Drone enemyDrone;
+    public float bodyRadius;
+    public float attackRadius;
+    public float detectRadius;
 
+    public Drone enemyDrone;
+    private GameObject weaponChild;
+
+    public GameObject weapon;
+
+    public GameObject laserMissile;
     private float attackRange = 2f;
     private float attackSpeed = 2f;
     private int damage = 100;
@@ -40,8 +48,10 @@ public class Drone : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        
-	}
+        weapon = Instantiate(weapon, transform.position, transform.rotation);
+        weapon.transform.SetParent(transform);
+        weapon.GetComponent<Weapon>().owner = owner;
+    }
 
     // Update is called once per frame
     void Update()
@@ -52,14 +62,9 @@ public class Drone : MonoBehaviour
 
         //    Destroy(gameObject);
         //}
+        
 
-
-
-        //if ((state != UnitState.CollideWithAlly) && (state != UnitState.CollideWithEnemy))
-        //{
-        //state = UnitState.Moving;
-
-        if (!isCollideWithAlly)
+        if ((!isCollideWithAlly) && (enemyDrone == null))
         {
             gotoPosition = rallyPoint.transform.position - transform.position;
 
@@ -72,11 +77,14 @@ public class Drone : MonoBehaviour
             step = speed * Time.deltaTime;
             transform.position = Vector2.MoveTowards(transform.position, rallyPoint.transform.position, step);
         }
-        //else if (state == UnitState.CollideWithEnemy)
-        //{
-            
-        //}
-	}
+        if (Input.GetMouseButtonDown(1))
+        {
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0;
+            Attack(mousePosition);
+        }
+
+    }
 
     public GameObject GetRallyPoint()
     {
@@ -88,9 +96,20 @@ public class Drone : MonoBehaviour
         rallyPoint = rally;
     }
 
-    void KillEnemy()
+    void Kill(GameObject obj)
     {
-        enemyDrone.health -= damage;
+        //enemyDrone.health -= damage;
+        obj.GetComponent<Drone>().isDead = true;
+        Instantiate(droneExplosion, transform.position, transform.rotation);
+        Destroy(obj);
+        Destroy(obj);
+    }
+
+    void Attack(Vector3 pos)
+    {
+        GameObject instance = Instantiate(laserMissile, transform.position, transform.rotation);
+        instance.GetComponent<LaserMissile>().gotoPosition = pos;
+        instance.GetComponent<LaserMissile>().owner = owner;
     }
 
     //void OnCollisionEnter2D(Collision2D other)
@@ -108,48 +127,59 @@ public class Drone : MonoBehaviour
             
     //}
 
-	void OnCollisionEnter2D (Collision2D other)
+	void OnTriggerEnter2D (Collider2D other)
 	{
-		//if (other.gameObject.tag == "dummy")
-			//return;
+        if (other.gameObject.tag == "missile")
+        {
+            if (other.gameObject.GetComponent<LaserMissile>().owner != owner)
+            {
+                Destroy(other.gameObject);
+                Kill(gameObject);
+                
+            }
+                
+        }
+
+        //other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+
+        //Vector3 vec = transform.Translate(other.Distance(other), transform.forward);
+
+        //Vector2 pos = hit.point - transform.position;
+        //pos = -pos.normalized;
+        //transform.position = Vector2.MoveTowards(transform.position, pos, step * 4);
         
-        if (owner == other.gameObject.GetComponent<Drone>().owner)
+
+        /*if (owner == other.gameObject.GetComponent<Drone>().owner)
         {
             isCollideWithAlly = true;
             //transform.position = Vector2.MoveTowards(transform.position, rallyPoint.transform.position, step);
             Vector2 pos = other.contacts[0].point - (Vector2)transform.position;
             pos = -pos.normalized;
-            //GetComponent<Rigidbody>().AddForce(pos * 3);
-            transform.position = Vector2.MoveTowards(transform.position, pos, step*3);
+            transform.position = Vector2.MoveTowards(transform.position, pos, step*4);
         }
         else
         {
+            
             isCollideWithAlly = false;
-			if (!isDead)
+			if (!other.gameObject.GetComponent<Drone>().isDead)
 			{
 				enemyDrone = other.gameObject.GetComponent<Drone>();
-				if (enemyDrone != null)
-				{
-					enemyDrone.isDead = true;
-                    Instantiate(droneExplosion, transform.transform.position, transform.rotation); 
-					Destroy(gameObject);
-				}
-			}
-        }
+                //Attack(other.transform.position);
+                //if (enemyDrone != null)
+				//{
+                //    bool randBool = (Random.Range(0,100) >= 50);
+                //    if (randBool)
+                //        Kill(gameObject); // else it's a miss
+				//}
+            }
+        }*/
 
-	}
+    }
 
-	void OnCollisionExit2D(Collision2D other)
+	/*void OnCollisionExit2D(Collision2D other)
 	{
         //state = UnitState.Moving;
         isCollideWithAlly = false;
-	}
-
-    IEnumerator WaitRandomForAttack()
-    {
-        float waitTime = Random.Range(0.3f, 0.9f);
-        yield return new WaitForSeconds(waitTime);
-        KillEnemy();
-    }
+	}*/
 
 }
