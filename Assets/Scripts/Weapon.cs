@@ -5,30 +5,36 @@ public class Weapon : MonoBehaviour
 {
     public int owner;
 
-    public float attackRadius = 2;
-    public float detectRadius = 3;
-
-    public GameObject laserMissilePrefab;
-
-    private GameObject gameObjectParent;
-    private CircleCollider2D weaponCollider;
-
-    private Drone enemyDrone;
-    private Drone targetDrone;
-
     private float waitTime;
+
+    [Header("Attack")]
+    public float attackRadius = 0.2f;
+    public float detectRadius = 0.3f;
+    public int damage = 20;
+
+    [Header("Cache")]
+	private Drone droneParent;
+	private CircleCollider2D weaponCollider;
+    private GameObject enemy;
+	private Drone droneTriggered;
+    private Base baseTriggered;
+    private GameObject laserMissile;
+
+    [Header("Prefabs")]
+    public GameObject laserMissilePrefab;
 
     enum Mode
     {
         Idle,
-        Attack
+        Combat,
+        Attacking
     }
     Mode mode;
 
     // Use this for initialization
     void Start ()
     {
-        gameObjectParent = gameObject.transform.parent.gameObject;
+        droneParent = gameObject.transform.parent.gameObject.GetComponent<Drone>();
         weaponCollider = gameObject.GetComponent<CircleCollider2D>();
         mode = Mode.Idle;
     }
@@ -36,64 +42,117 @@ public class Weapon : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        transform.position = gameObjectParent.transform.position;
-        transform.rotation = gameObjectParent.transform.rotation;
-        if (!enemyDrone && mode == Mode.Attack)
+        if (mode != Mode.Attacking)
         {
-            Debug.Log("enter idle mode");
+            transform.position = droneParent.transform.position;
+            transform.rotation = droneParent.transform.rotation;
+            droneParent.canMove = true;
+        }
+        else
+            droneParent.canMove = false;
+
+        if (!enemy && mode != Mode.Idle)
+        {
+            //StopCoroutine("Attack");
             EnterIdleMode();
-            GameObject rallyPoint = gameObjectParent.GetComponent<Drone>().rallyPoint;
-            gameObjectParent.GetComponent<Drone>().SetRallyPoint(enemyDrone.gameObject);
         }
     }
 
     void OnTriggerEnter2D (Collider2D other)
     {
-        if (mode == Mode.Idle)
+        if (other.gameObject.tag == "drone")
         {
-            targetDrone = other.gameObject.GetComponent<Drone>();
-            if (targetDrone && other.gameObject != gameObjectParent && targetDrone.owner != owner)
+            droneTriggered = other.gameObject.GetComponent<Drone>();
+            if (mode == Mode.Idle)
             {
-                enemyDrone = targetDrone;
-                EnterAttackMode();
+                if (droneTriggered
+				&& other.gameObject != droneParent.gameObject
+				&& droneTriggered.owner != owner)
+                {
+					EnterCombatMode(other.gameObject);
+				} 
+            }
+            else if (mode == Mode.Combat)
+            {
+                if (enemy == droneTriggered.gameObject)
+                {
+                    EnterAttackingMode();
+                }
             }
         }
-        else if (mode == Mode.Attack)
+        else if (other.gameObject.tag == "base")
         {
-            targetDrone = other.gameObject.GetComponent<Drone>();
-            if (enemyDrone == targetDrone)
-            {
-                
-                StartCoroutine(Attack());
-            }
-            gameObjectParent.GetComponent<Drone>().SetRallyPoint(enemyDrone.gameObject);
+			if (mode == Mode.Idle)
+			{
+				baseTriggered = other.gameObject.GetComponent<Base>();
+				if (baseTriggered
+					&& baseTriggered.owner != owner)
+				{
+					EnterCombatMode(other.gameObject);
+				}
+			}
+			else if (mode == Mode.Combat)
+			{
+				droneTriggered = other.gameObject.GetComponent<Drone>();
+                if (enemy == baseTriggered.gameObject)
+				{
+					EnterAttackingMode();
+				}
+			}
         }
     }
 
     void OnTriggetExit2D (Collider2D other)
     {
-        targetDrone = null;
+        droneTriggered = null;
+        if (other.gameObject == enemy)
+        {
+            mode = Mode.Combat;
+            StopCoroutine("Attack");
+        }
     }
 
-    void EnterAttackMode()
+    void EnterCombatMode(GameObject newEnemy)
     {
-        mode = Mode.Attack;
+        mode = Mode.Combat;
+        enemy = newEnemy;
+        droneParent.SetRallyPoint(newEnemy.gameObject);
         weaponCollider.radius = attackRadius;
     }
 
     void EnterIdleMode()
     {
         mode = Mode.Idle;
+        if (droneParent.playerRallyPoint)
+            droneParent.SetRallyPoint(droneParent.playerRallyPoint);
+        else
+            droneParent.SetRallyPoint(FindObjectOfType<Battleground>().gameObject);
         weaponCollider.radius = detectRadius;
+    }
+
+    void EnterAttackingMode()
+    {
+        mode = Mode.Attacking;
+        StartCoroutine(Attack());
     }
 
     IEnumerator Attack()
     {
-        waitTime = Random.Range(0.3f, 0.9f);
-        yield return new WaitForSeconds(waitTime);
-        GameObject instance = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
-        instance.GetComponent<LaserMissile>().gotoPosition = enemyDrone.gameObject.transform.position;
-        instance.GetComponent<LaserMissile>().owner = owner;
-
+        while (enemy)
+        {
+            waitTime = Random.Range(0.5f, 1.5f);
+            yield return new WaitForSeconds(waitTime);
+            if (enemy)
+            {
+                laserMissile = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
+                laserMissile.GetComponent<LaserMissile>().gotoPosition = enemy.transform.position;
+                laserMissile.GetComponent<LaserMissile>().owner = owner;
+                laserMissile.GetComponent<LaserMissile>().damage = damage;
+            }
+            else
+            {
+                yield break;
+            }
+        }
     }
 }

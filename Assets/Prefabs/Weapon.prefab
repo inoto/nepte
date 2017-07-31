@@ -90,6 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: 0
   attackRadius: 0.2
-  detectRadius: 0.3
+  detectRadius: 0.4
+  damage: 20
   laserMissilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}

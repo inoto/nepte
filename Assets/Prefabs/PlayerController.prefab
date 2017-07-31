@@ -52,6 +52,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: 0
-  playerBase: {fileID: 1771483991996188, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
-  playerRallyPoint: {fileID: 1423985708805676, guid: 7c1fa91a287c346ccb62bce83c08930a,
+  playerRallyPoint: {fileID: 0}
+  playerBase: {fileID: 0}
+  basePrefab: {fileID: 1771483991996188, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
+  rallyPointPrefab: {fileID: 1423985708805676, guid: 7c1fa91a287c346ccb62bce83c08930a,
     type: 2}

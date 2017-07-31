@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4879466063372570}
   - component: {fileID: 212179534131923994}
   - component: {fileID: 114022914769628784}
+  - component: {fileID: 114224947582449418}
   m_Layer: 0
   m_Name: RallyPoint
   m_TagString: Untagged
@@ -53,8 +54,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: 0
-  prevPosition: {x: 0, y: 0, z: 0}
-  drone: {fileID: 1631335818127534, guid: d92c20809c71b4adf9d4db033be39eaa, type: 2}
+--- !u!114 &114224947582449418
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1423985708805676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08ef97376063242b5aae0667b11e0c75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212179534131923994
 SpriteRenderer:
   m_ObjectHideFlags: 1

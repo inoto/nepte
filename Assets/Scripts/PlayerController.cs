@@ -4,63 +4,81 @@ public class PlayerController : MonoBehaviour
 {
     public int owner = 0;
 
-    [SerializeField]
-    private GameObject playerBase;
+    public bool isInitialized = false;
+    public bool isDefeated = false;
 
-	[SerializeField]
-    private GameObject playerRallyPoint;
-
-    public GameObject pRallyPoint;
-
+    [Header("Cache")]
+    public GameObject gameControllerParent;
+    public GameObject playerRallyPoint;
+    public GameObject playerBase;
     private GameObject startLocation;
+
+    [Header("Prefabs")]
+    [SerializeField]
+    private GameObject basePrefab;
+    [SerializeField]
+    private GameObject rallyPointPrefab;
 
 	// Use this for initialization
 	void Start ()
     {
+        gameControllerParent = gameObject.transform.parent.gameObject;
+
         AssignStartLocation();
 
         CreateBase();
 
         CreateRallyPoint();
 
+        isInitialized = true;
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    void Update()
     {
-		
-	}
+        if (isInitialized)
+        {
+            if (!playerBase && !isDefeated)
+            {
+                if (owner != 0)
+                    gameControllerParent.GetComponent<GameController>().winPoints += 1;
+                else
+                    gameControllerParent.GetComponent<GameController>().winPoints -= 1;
+                isDefeated = true;
+            }
+        }
+    }
 
     void AssignStartLocation()
     {
-        if (owner == 0)
+        switch (owner)
         {
-            startLocation = GameObject.Find("StartPlayer");
+            case 0:
+                startLocation = GameObject.Find("StartPlayer");
+                break;
+            case 1:
+                startLocation = GameObject.Find("StartAIFirst");
+                break;
+            case 2:
+                startLocation = GameObject.Find("StartAISecond");
+                break;
         }
-		else if (owner == 1)
-		{
-			startLocation = GameObject.Find("StartAIFirst");
-		}
-		else if (owner == 2)
-		{
-			startLocation = GameObject.Find("StartAISecond");
-		}
+
         if (startLocation)
             Destroy(startLocation);
     }
 
     void CreateBase()
     {
-        GameObject instance = Instantiate(playerBase, startLocation.transform.position, startLocation.transform.rotation);
-        instance.GetComponent<Base>().owner = owner;
-        instance.transform.SetParent(transform);
+        playerBase = Instantiate(basePrefab, startLocation.transform.position, startLocation.transform.rotation);
+        playerBase.GetComponent<Base>().owner = owner;
+        playerBase.transform.SetParent(transform);
     }
 
     void CreateRallyPoint()
     {
-		GameObject instance = Instantiate(playerRallyPoint, startLocation.transform.position, startLocation.transform.rotation);
-        instance.GetComponent<RallyPoint>().owner = owner;
-		instance.transform.SetParent(transform);
-        pRallyPoint = instance;
+		playerRallyPoint = Instantiate(rallyPointPrefab, startLocation.transform.position, startLocation.transform.rotation);
+        playerRallyPoint.GetComponent<RallyPoint>().owner = owner;
+		playerRallyPoint.transform.SetParent(transform);
+        playerBase.GetComponent<Base>().playerRallyPoint = playerRallyPoint;
     }
 }

@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 114364192231648090}
   - component: {fileID: 212393122166835972}
   - component: {fileID: 58747573845181342}
+  - component: {fileID: 50566014418952422}
   m_Layer: 0
   m_Name: Drone
-  m_TagString: Untagged
+  m_TagString: drone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -42,6 +43,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &50566014418952422
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1631335818127534}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!58 &58747573845181342
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -68,21 +89,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  droneExplosion: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
-    type: 2}
   owner: 0
   health: 100
-  rallyPoint: {fileID: 0}
+  isDead: 0
+  canMove: 1
+  currentRallyPoint: {fileID: 0}
+  playerRallyPoint: {fileID: 0}
   gotoPosition: {x: 0, y: 0, z: 0}
+  pos: {x: 0, y: 0, z: 0}
   speed: 0.2
   angle: 0
   rotationSpeed: 50
-  bodyRadius: 0
-  attackRadius: 0
-  detectRadius: 0
-  enemyDrone: {fileID: 0}
-  weapon: {fileID: 1952882869089100, guid: 139bbd1adbc76eb4596176120823bee3, type: 2}
-  laserMissile: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
+  laserMissileTriggered: {fileID: 0}
+  droneTriggered: {fileID: 0}
+  droneExplosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
+    type: 2}
+  weaponPrefab: {fileID: 1952882869089100, guid: 139bbd1adbc76eb4596176120823bee3,
+    type: 2}
+  markerPrefab: {fileID: 1619218828044392, guid: 6e88883a989494d2b8522568c1a93f46,
     type: 2}
 --- !u!212 &212393122166835972
 SpriteRenderer:

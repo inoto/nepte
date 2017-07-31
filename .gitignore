@@ -1,0 +1,355 @@
+# Unity generated #
+Temp/
+Builds/
+Library/
+
+# Visual Studio / MonoDevelop generated
+ExportedObj/
+obj/
+*.svd
+*.userprefs
+/*.csproj
+*.pidb
+*.suo
+/*.sln
+*.user
+*.unityproj
+*.booproj
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Compiled project
+*.apk
+*.exe
+*.dmg
+/Assets/UnityVS.meta
+/Assets/UnityVS/Editor.meta
+/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll
+/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll.meta
+/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Messaging.dll
+/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Messaging.dll.meta
+/Assets/UnityVS/Editor/UnityVS.VersionSpecific.dll
+/Assets/UnityVS/Editor/UnityVS.VersionSpecific.dll.meta
+/Assets/NGUI/Examples/Animations.meta
+/Assets/NGUI/Examples/Animations/Button.anim
+/Assets/NGUI/Examples/Animations/Button.anim.meta
+/Assets/NGUI/Examples/Animations/Checkmark.anim
+/Assets/NGUI/Examples/Animations/Checkmark.anim.meta
+/Assets/NGUI/Examples/Animations/Logo.anim
+/Assets/NGUI/Examples/Animations/Logo.anim.meta
+/Assets/NGUI/Examples/Animations/Window - Back.anim
+/Assets/NGUI/Examples/Animations/Window - Back.anim.meta
+/Assets/NGUI/Examples/Animations/Window - Forward.anim
+/Assets/NGUI/Examples/Animations/Window - Forward.anim.meta
+/Assets/NGUI/Examples/Atlases.meta
+/Assets/NGUI/Examples/Atlases/Fantasy.meta
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Atlas.mat
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Atlas.mat.meta
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Atlas.prefab
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Atlas.prefab.meta
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Atlas.psd
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Atlas.psd.meta
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Font - Normal.prefab
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Font - Normal.prefab.meta
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Font - Normal.txt
+/Assets/NGUI/Examples/Atlases/Fantasy/Fantasy Font - Normal.txt.meta
+/Assets/NGUI/Examples/Atlases/Refractive.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas - Bump.psd
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas - Bump.psd.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas - Masks.psd
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas - Masks.psd.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas.mat
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas.mat.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas.prefab
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas.prefab.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas.psd
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Atlas.psd.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Header.prefab
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Header.prefab.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Header.txt
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Header.txt.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Normal.prefab
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Normal.prefab.meta
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Normal.txt
+/Assets/NGUI/Examples/Atlases/Refractive/Refractive Font - Normal.txt.meta
+/Assets/NGUI/Examples/Atlases/SciFi.meta
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Atlas.mat
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Atlas.mat.meta
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Atlas.prefab
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Atlas.prefab.meta
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Atlas.psd
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Atlas.psd.meta
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Header.prefab
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Header.prefab.meta
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Header.txt
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Header.txt.meta
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Normal.prefab
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Normal.prefab.meta
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Normal.txt
+/Assets/NGUI/Examples/Atlases/SciFi/SciFi Font - Normal.txt.meta
+/Assets/NGUI/Examples/Atlases/Wooden.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo14.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo14.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo14.tga
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo14.tga.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo14.txt
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo14.txt.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo18.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo18.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo18.tga
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo18.tga.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo18.txt
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo18.txt.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo20.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo20.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo20.tga
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo20.tga.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo20.txt
+/Assets/NGUI/Examples/Atlases/Wooden/Arimo20.txt.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Coalition.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Coalition.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Background.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Background.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Button.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Button.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Checkbox.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Checkbox.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Horizontal Scroll Bar.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Horizontal Scroll Bar.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Popup List.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Popup List.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Progress Bar.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Progress Bar.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Slider.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Slider.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Vertical Scroll Bar.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Colored Vertical Scroll Bar.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Button.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Button.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Checkbox.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Checkbox.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Horizontal Scroll Bar.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Horizontal Scroll Bar.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Horizontal Slider.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Horizontal Slider.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Input Field.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Input Field.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Popup List.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Popup List.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Progress Bar.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Progress Bar.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Text Box.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Text Box.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Vertical Scroll Bar.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Vertical Scroll Bar.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Vertical Slider.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Control - Simple Vertical Slider.prefab.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Wooden Atlas.mat
+/Assets/NGUI/Examples/Atlases/Wooden/Wooden Atlas.mat.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Wooden Atlas.png
+/Assets/NGUI/Examples/Atlases/Wooden/Wooden Atlas.png.meta
+/Assets/NGUI/Examples/Atlases/Wooden/Wooden Atlas.prefab
+/Assets/NGUI/Examples/Atlases/Wooden/Wooden Atlas.prefab.meta
+/Assets/NGUI/Examples/Materials.meta
+/Assets/NGUI/Examples/Materials/Backdrop.mat
+/Assets/NGUI/Examples/Materials/Backdrop.mat.meta
+/Assets/NGUI/Examples/Materials/brick.mat
+/Assets/NGUI/Examples/Materials/brick.mat.meta
+/Assets/NGUI/Examples/Materials/burlap.mat
+/Assets/NGUI/Examples/Materials/burlap.mat.meta
+/Assets/NGUI/Examples/Materials/sand.mat
+/Assets/NGUI/Examples/Materials/sand.mat.meta
+/Assets/NGUI/Examples/Models.meta
+/Assets/NGUI/Examples/Models/Orc Armor.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Bracers.FBX
+/Assets/NGUI/Examples/Models/Orc Armor/Bracers.FBX.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor (Diffuse).psd
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor (Diffuse).psd.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor (Maps).png
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor (Maps).png.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor (Normal).png
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor (Normal).png.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor.mat
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor.mat.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor.shader
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Armor.shader.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Bracers.prefab
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Bracers.prefab.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Shoulders.prefab
+/Assets/NGUI/Examples/Models/Orc Armor/Orc Shoulders.prefab.meta
+/Assets/NGUI/Examples/Models/Orc Armor/Shoulders.FBX
+/Assets/NGUI/Examples/Models/Orc Armor/Shoulders.FBX.meta
+/Assets/NGUI/Examples/Models/Orc.meta
+/Assets/NGUI/Examples/Models/Orc/FBX.FBX
+/Assets/NGUI/Examples/Models/Orc/FBX.FBX.meta
+/Assets/NGUI/Examples/Models/Orc/FBX@idle.FBX
+/Assets/NGUI/Examples/Models/Orc/FBX@idle.FBX.meta
+/Assets/NGUI/Examples/Models/Orc/FBX@idleBreaks.FBX
+/Assets/NGUI/Examples/Models/Orc/FBX@idleBreaks.FBX.meta
+/Assets/NGUI/Examples/Models/Orc/Orc Skin (Diffuse).psd
+/Assets/NGUI/Examples/Models/Orc/Orc Skin (Diffuse).psd.meta
+/Assets/NGUI/Examples/Models/Orc/Orc Skin (Normal).png
+/Assets/NGUI/Examples/Models/Orc/Orc Skin (Normal).png.meta
+/Assets/NGUI/Examples/Models/Orc/Orc Skin.mat
+/Assets/NGUI/Examples/Models/Orc/Orc Skin.mat.meta
+/Assets/NGUI/Examples/Models/Orc/Orc Skin.shader
+/Assets/NGUI/Examples/Models/Orc/Orc Skin.shader.meta
+/Assets/NGUI/Examples/Models/Orc/Orc.prefab
+/Assets/NGUI/Examples/Models/Orc/Orc.prefab.meta
+/Assets/NGUI/Examples/Other.meta
+/Assets/NGUI/Examples/Other/Storage Icon Template.prefab
+/Assets/NGUI/Examples/Other/Storage Icon Template.prefab.meta
+/Assets/NGUI/Examples/Resources.meta
+/Assets/NGUI/Examples/Resources/Localization.txt
+/Assets/NGUI/Examples/Resources/Localization.txt.meta
+/Assets/NGUI/Examples/Scenes.meta
+/Assets/NGUI/Examples/Scenes/Example 0 - Control Widgets.unity
+/Assets/NGUI/Examples/Scenes/Example 0 - Control Widgets.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 1 - Anchors.unity
+/Assets/NGUI/Examples/Scenes/Example 1 - Anchors.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 10 - Localization.unity
+/Assets/NGUI/Examples/Scenes/Example 10 - Localization.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 11 - Drag & Drop.unity
+/Assets/NGUI/Examples/Scenes/Example 11 - Drag & Drop.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 12 - Chat Window.unity
+/Assets/NGUI/Examples/Scenes/Example 12 - Chat Window.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 13 - Tabs.unity
+/Assets/NGUI/Examples/Scenes/Example 13 - Tabs.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 14 - Endless Scroll Views.unity
+/Assets/NGUI/Examples/Scenes/Example 14 - Endless Scroll Views.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 2 - Interaction.unity
+/Assets/NGUI/Examples/Scenes/Example 2 - Interaction.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 3 - Menu.unity
+/Assets/NGUI/Examples/Scenes/Example 3 - Menu.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 4 - Controller Input.unity
+/Assets/NGUI/Examples/Scenes/Example 4 - Controller Input.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 5 - Lights and Refraction.unity
+/Assets/NGUI/Examples/Scenes/Example 5 - Lights and Refraction.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 6 - Draggable Window.unity
+/Assets/NGUI/Examples/Scenes/Example 6 - Draggable Window.unity.meta
+/Assets/NGUI/Examples/Scenes/Example 7 - Scroll View (Panel).unity
+/Assets/NGUI/Examples/Scenes/Example 7 - Scroll View (Panel).unity.meta
+/Assets/NGUI/Examples/Scenes/Example 8 - Scroll View (Camera).unity
+/Assets/NGUI/Examples/Scenes/Example 8 - Scroll View (Camera).unity.meta
+/Assets/NGUI/Examples/Scenes/Example 9 - Quest Log.unity
+/Assets/NGUI/Examples/Scenes/Example 9 - Quest Log.unity.meta
+/Assets/NGUI/Examples/Scenes/Example X - Character.unity
+/Assets/NGUI/Examples/Scenes/Example X - Character.unity.meta
+/Assets/NGUI/Examples/Scenes/Tutorial 1.unity
+/Assets/NGUI/Examples/Scenes/Tutorial 1.unity.meta
+/Assets/NGUI/Examples/Scenes/Tutorial 2.unity
+/Assets/NGUI/Examples/Scenes/Tutorial 2.unity.meta
+/Assets/NGUI/Examples/Scenes/Tutorial 3.unity
+/Assets/NGUI/Examples/Scenes/Tutorial 3.unity.meta
+/Assets/NGUI/Examples/Scenes/Tutorial 4.unity
+/Assets/NGUI/Examples/Scenes/Tutorial 4.unity.meta
+/Assets/NGUI/Examples/Scenes/Tutorial 5.unity
+/Assets/NGUI/Examples/Scenes/Tutorial 5.unity.meta
+/Assets/NGUI/Examples/Scenes/Tutorial 6.unity
+/Assets/NGUI/Examples/Scenes/Tutorial 6.unity.meta
+/Assets/NGUI/Examples/Scenes/Tutorial 7.unity
+/Assets/NGUI/Examples/Scenes/Tutorial 7.unity.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Editor.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Editor/InvDatabaseInspector.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Editor/InvDatabaseInspector.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Editor/InvFindItem.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Editor/InvFindItem.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/EquipItems.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/EquipItems.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/EquipRandomItem.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/EquipRandomItem.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UICursor.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UICursor.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIEquipmentSlot.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIEquipmentSlot.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIItemSlot.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIItemSlot.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIItemStorage.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIItemStorage.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIStorageSlot.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/Game/UIStorageSlot.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/System.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvAttachmentPoint.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvAttachmentPoint.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvBaseItem.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvBaseItem.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvDatabase.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvDatabase.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvEquipment.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvEquipment.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvGameItem.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvGameItem.cs.meta
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvStat.cs
+/Assets/NGUI/Examples/Scripts/InventorySystem/System/InvStat.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/ChatInput.cs
+/Assets/NGUI/Examples/Scripts/Other/ChatInput.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/DownloadTexture.cs
+/Assets/NGUI/Examples/Scripts/Other/DownloadTexture.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/ExampleDragDropItem.cs
+/Assets/NGUI/Examples/Scripts/Other/ExampleDragDropItem.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/ExampleDragDropSurface.cs
+/Assets/NGUI/Examples/Scripts/Other/ExampleDragDropSurface.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/LagRotation.cs
+/Assets/NGUI/Examples/Scripts/Other/LagRotation.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/LoadLevelOnClick.cs
+/Assets/NGUI/Examples/Scripts/Other/LoadLevelOnClick.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/LookAtTarget.cs
+/Assets/NGUI/Examples/Scripts/Other/LookAtTarget.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/OpenURLOnClick.cs
+/Assets/NGUI/Examples/Scripts/Other/OpenURLOnClick.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/PanWithMouse.cs
+/Assets/NGUI/Examples/Scripts/Other/PanWithMouse.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/PlayIdleAnimations.cs
+/Assets/NGUI/Examples/Scripts/Other/PlayIdleAnimations.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/SetColorPickerColor.cs
+/Assets/NGUI/Examples/Scripts/Other/SetColorPickerColor.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/Spin.cs
+/Assets/NGUI/Examples/Scripts/Other/Spin.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/SpinWithMouse.cs
+/Assets/NGUI/Examples/Scripts/Other/SpinWithMouse.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/Tutorial5.cs
+/Assets/NGUI/Examples/Scripts/Other/Tutorial5.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/UISliderColors.cs
+/Assets/NGUI/Examples/Scripts/Other/UISliderColors.cs.meta
+/Assets/NGUI/Examples/Scripts/Other/WindowAutoYaw.cs
+/Assets/NGUI/Examples/Scripts/Other/WindowAutoYaw.cs.meta
+/Assets/NGUI/Examples/Shaders.meta
+/Assets/NGUI/Examples/Shaders/Refractive.shader
+/Assets/NGUI/Examples/Shaders/Refractive.shader.meta
+/Assets/NGUI/Examples/Shaders/Unlit - Additive Colored.shader
+/Assets/NGUI/Examples/Shaders/Unlit - Additive Colored.shader.meta
+/Assets/NGUI/Examples/Shaders/Unlit - Depth Cutout.shader
+/Assets/NGUI/Examples/Shaders/Unlit - Depth Cutout.shader.meta
+/Assets/NGUI/Examples/Shaders/Unlit - Depth.shader
+/Assets/NGUI/Examples/Shaders/Unlit - Depth.shader.meta
+/Assets/NGUI/Examples/Shaders/Unlit - Masked Colored.shader
+/Assets/NGUI/Examples/Shaders/Unlit - Masked Colored.shader.meta
+/Assets/NGUI/Examples/Sounds.meta
+/Assets/NGUI/Examples/Sounds/Crumple.wav
+/Assets/NGUI/Examples/Sounds/Crumple.wav.meta
+/Assets/NGUI/Examples/Sounds/Rumble.wav
+/Assets/NGUI/Examples/Sounds/Rumble.wav.meta
+/Assets/NGUI/Examples/Sounds/Swipe.wav
+/Assets/NGUI/Examples/Sounds/Swipe.wav.meta
+/Assets/NGUI/Examples/Sounds/Tap.wav
+/Assets/NGUI/Examples/Sounds/Tap.wav.meta
+/Assets/NGUI/Examples/Textures.meta
+/Assets/NGUI/Examples/Textures/Backdrop.png
+/Assets/NGUI/Examples/Textures/Backdrop.png.meta
+/Assets/NGUI/Examples/Textures/brick.jpg
+/Assets/NGUI/Examples/Textures/brick.jpg.meta
+/Assets/NGUI/Examples/Textures/brickNM.png
+/Assets/NGUI/Examples/Textures/brickNM.png.meta
+/Assets/NGUI/Examples/Textures/burlap.jpg
+/Assets/NGUI/Examples/Textures/burlap.jpg.meta
+/Assets/NGUI/Examples/Textures/sand.png
+/Assets/NGUI/Examples/Textures/sand.png.meta

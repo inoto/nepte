@@ -4,150 +4,132 @@ using UnityEngine;
 
 public class Drone : MonoBehaviour
 {
-    public GameObject droneExplosion;
-
-    public int owner = 0;
+    public int owner;
 
     public int health = 100;
 
-    public GameObject rallyPoint;
-    public Vector3 gotoPosition;
+	public bool isDead = false;
+	public bool canMove = true;
 
+    [Header("Destination")]
+    public GameObject currentRallyPoint;
+    public GameObject playerRallyPoint;
+    public Vector3 gotoPosition;
+    public Vector3 pos;
+
+    [Header("Move")]
     public float speed = 0.2f;
     public float angle;
     public float rotationSpeed = 50f;
 	private float step;
 
-    public float bodyRadius;
-    public float attackRadius;
-    public float detectRadius;
-
-    public Drone enemyDrone;
+    [Header("Cache")]
+    public LaserMissile laserMissileTriggered;
+    public Drone droneTriggered;
     private GameObject weaponChild;
 
-    public GameObject weapon;
-
-    public GameObject laserMissile;
-    private float attackRange = 2f;
-    private float attackSpeed = 2f;
-    private int damage = 100;
-
-    private bool isDead = false;
-    private bool isCollideWithAlly = false;
-
-    enum UnitState
-    {
-        Idle,
-        CollideWithAlly,
-        CollideWithEnemy,
-        Moving,
-        Dead
-    }
-    UnitState state;
-
+    [Header("Prefabs")]
+    public GameObject droneExplosionPrefab;
+    public GameObject weaponPrefab;
+    public GameObject markerPrefab;
 	// Use this for initialization
 	void Start ()
     {
-        weapon = Instantiate(weapon, transform.position, transform.rotation);
-        weapon.transform.SetParent(transform);
-        weapon.GetComponent<Weapon>().owner = owner;
+        transform.Rotate(0.0f, 0.0f, Random.Range(0.0f, 360.0f));
+        weaponChild = Instantiate(weaponPrefab, transform.position, transform.rotation);
+        weaponChild.transform.SetParent(transform);
+        weaponChild.GetComponent<Weapon>().owner = owner;
+        if (playerRallyPoint)
+            currentRallyPoint = playerRallyPoint;
+        else
+            currentRallyPoint = FindObjectOfType<Battleground>().gameObject;
+        //markerPrefab = Instantiate(markerPrefab, transform.position, transform.rotation);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (health <= 0)
-        //{
-        //    enemyDrone.isDead = true;
-
-        //    Destroy(gameObject);
-        //}
-        
-
-        if ((!isCollideWithAlly) && (enemyDrone == null))
+        if (health <= 0)
         {
-            gotoPosition = rallyPoint.transform.position - transform.position;
-
-            // rotation if needed
-            angle = Mathf.Atan2(gotoPosition.y, gotoPosition.x) * Mathf.Rad2Deg;
-            Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, qt, Time.deltaTime * rotationSpeed);
-
-            // movement
-            step = speed * Time.deltaTime;
-            transform.position = Vector2.MoveTowards(transform.position, rallyPoint.transform.position, step);
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePosition.z = 0;
-            Attack(mousePosition);
+            Kill();
         }
 
+        if (currentRallyPoint)
+        {
+            if (currentRallyPoint.transform.position == transform.position)
+                canMove = false;
+
+            if (canMove)
+            {
+                gotoPosition = currentRallyPoint.transform.position - transform.position;
+
+                Rotate();
+
+                Move();
+            }
+        }
+        if (droneTriggered)
+        {
+            pos = droneTriggered.transform.position - transform.position;
+            pos = -pos.normalized;
+            transform.position = Vector2.MoveTowards(transform.position, pos, step);
+        }
+
+    }
+
+    void Rotate()
+    {
+		angle = Mathf.Atan2(gotoPosition.y, gotoPosition.x) * Mathf.Rad2Deg;
+		Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
+		transform.rotation = Quaternion.Slerp(transform.rotation, qt, Time.deltaTime * rotationSpeed);
+    }
+
+    void Move()
+    {
+		step = speed * Time.deltaTime;
+		transform.position = Vector2.MoveTowards(transform.position, currentRallyPoint.transform.position, step);
     }
 
     public GameObject GetRallyPoint()
     {
-        return rallyPoint;
+        return currentRallyPoint;
     }
 
-    public void SetRallyPoint(GameObject rally)
+    public void SetRallyPoint(GameObject newRallyPoint)
     {
-        rallyPoint = rally;
+        currentRallyPoint = newRallyPoint;
+        if (!canMove)
+            canMove = true;
     }
 
-    void Kill(GameObject obj)
+    void Kill()
     {
-        //enemyDrone.health -= damage;
-        obj.GetComponent<Drone>().isDead = true;
-        Instantiate(droneExplosion, transform.position, transform.rotation);
-        Destroy(obj);
-        Destroy(obj);
+        isDead = true;
+        Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
-
-    void Attack(Vector3 pos)
-    {
-        GameObject instance = Instantiate(laserMissile, transform.position, transform.rotation);
-        instance.GetComponent<LaserMissile>().gotoPosition = pos;
-        instance.GetComponent<LaserMissile>().owner = owner;
-    }
-
-    //void OnCollisionEnter2D(Collision2D other)
-    //{
-    //    if (other.gameObject.tag == "dummy")
-    //        return;
-
-    //    if (owner == other.gameObject.GetComponent<Drone>().owner)
-    //        state = UnitState.CollideWithAlly;
-    //    else
-    //    {
-    //        state = UnitState.CollideWithEnemy;
-    //        enemyDrone = other.gameObject.GetComponent<Drone>();
-    //    }
-            
-    //}
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
         if (other.gameObject.tag == "missile")
         {
-            if (other.gameObject.GetComponent<LaserMissile>().owner != owner)
+            laserMissileTriggered = other.gameObject.GetComponent<LaserMissile>();
+            if (laserMissileTriggered.owner != owner
+                && !laserMissileTriggered.wasExecuted
+                && !isDead)
             {
-                Destroy(other.gameObject);
-                Kill(gameObject);
-                
+                laserMissileTriggered.wasExecuted = true;
+                health -= laserMissileTriggered.damage;
             }
                 
         }
-
-        //other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
-
-        //Vector3 vec = transform.Translate(other.Distance(other), transform.forward);
-
-        //Vector2 pos = hit.point - transform.position;
-        //pos = -pos.normalized;
-        //transform.position = Vector2.MoveTowards(transform.position, pos, step * 4);
-        
+        else if (other.gameObject.tag == "drone")
+        {
+            //pos = other.transform.position - transform.position;
+			//pos = -pos.normalized;
+			//transform.position = Vector2.MoveTowards(transform.position, pos, step);
+            droneTriggered = other.gameObject.GetComponent<Drone>();
+		}
 
         /*if (owner == other.gameObject.GetComponent<Drone>().owner)
         {
@@ -155,31 +137,14 @@ public class Drone : MonoBehaviour
             //transform.position = Vector2.MoveTowards(transform.position, rallyPoint.transform.position, step);
             Vector2 pos = other.contacts[0].point - (Vector2)transform.position;
             pos = -pos.normalized;
-            transform.position = Vector2.MoveTowards(transform.position, pos, step*4);
-        }
-        else
-        {
-            
-            isCollideWithAlly = false;
-			if (!other.gameObject.GetComponent<Drone>().isDead)
-			{
-				enemyDrone = other.gameObject.GetComponent<Drone>();
-                //Attack(other.transform.position);
-                //if (enemyDrone != null)
-				//{
-                //    bool randBool = (Random.Range(0,100) >= 50);
-                //    if (randBool)
-                //        Kill(gameObject); // else it's a miss
-				//}
-            }
+            transform.position = Vector2.MoveTowards(transform.position, pos, step);
         }*/
 
     }
 
-	/*void OnCollisionExit2D(Collision2D other)
+    void OnTriggerExit2D(Collider2D other)
 	{
-        //state = UnitState.Moving;
-        isCollideWithAlly = false;
-	}*/
+        droneTriggered = null;
+	}
 
 }

@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 114017529968746086}
   - component: {fileID: 212509551662005286}
   - component: {fileID: 50016658975310032}
+  - component: {fileID: 58894949965580844}
   m_Layer: 0
   m_Name: Base
-  m_TagString: Untagged
+  m_TagString: base
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -36,8 +37,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771483991996188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: -1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.17355955, y: -0.38306376, z: 0}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -62,6 +63,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!58 &58894949965580844
+CircleCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1771483991996188}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.45
 --- !u!114 &114017529968746086
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -74,9 +90,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: 0
-  health: 100
-  spawnTime: 2
-  spawnUnit: {fileID: 1631335818127534, guid: d92c20809c71b4adf9d4db033be39eaa, type: 2}
+  health: 1000
+  playerRallyPoint: {fileID: 0}
+  droneSpawned: {fileID: 0}
+  laserMissileTriggered: {fileID: 0}
+  spawnTime: 3
+  dronePrefab: {fileID: 1631335818127534, guid: d92c20809c71b4adf9d4db033be39eaa,
+    type: 2}
+  explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
+    type: 2}
 --- !u!212 &212509551662005286
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -109,7 +131,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 8c794f6af61f34ff78fd7e1254473c8d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e35b214c82a4547ffb7b8351539f81e7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
