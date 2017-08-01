@@ -8,10 +8,10 @@ public class PlayerController : MonoBehaviour
     public bool isDefeated = false;
 
     [Header("Cache")]
-    public GameObject gameControllerParent;
-    public GameObject playerRallyPoint;
-    public GameObject playerBase;
-    private GameObject startLocation;
+    public GameController gameControllerObjectParent;
+    public RallyPoint rallyPoint;
+    public Base baseControl;
+    private GameObject startLocationObject;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        gameControllerParent = gameObject.transform.parent.gameObject;
+        gameControllerObjectParent = gameObject.transform.parent.gameObject.GetComponent<GameController>();
 
         AssignStartLocation();
 
@@ -37,12 +37,13 @@ public class PlayerController : MonoBehaviour
     {
         if (isInitialized)
         {
-            if (!playerBase && !isDefeated)
+            if (baseControl == null && !isDefeated)
             {
+                
                 if (owner != 0)
-                    gameControllerParent.GetComponent<GameController>().winPoints += 1;
+                    gameControllerObjectParent.winPoints += 1;
                 else
-                    gameControllerParent.GetComponent<GameController>().winPoints -= 1;
+                    gameControllerObjectParent.winPoints -= 1;
                 isDefeated = true;
             }
         }
@@ -53,32 +54,56 @@ public class PlayerController : MonoBehaviour
         switch (owner)
         {
             case 0:
-                startLocation = GameObject.Find("StartPlayer");
+                startLocationObject = GameObject.Find("StartPlayer");
                 break;
             case 1:
-                startLocation = GameObject.Find("StartAIFirst");
+                startLocationObject = GameObject.Find("StartAIFirst");
                 break;
             case 2:
-                startLocation = GameObject.Find("StartAISecond");
+                startLocationObject = GameObject.Find("StartAISecond");
                 break;
         }
 
-        if (startLocation)
-            Destroy(startLocation);
+        if (startLocationObject)
+        {
+            transform.position = startLocationObject.transform.position;
+            Destroy(startLocationObject);
+        }
     }
 
     void CreateBase()
     {
-        playerBase = Instantiate(basePrefab, startLocation.transform.position, startLocation.transform.rotation);
-        playerBase.GetComponent<Base>().owner = owner;
-        playerBase.transform.SetParent(transform);
+        GameObject baseObject = Instantiate(basePrefab, transform.position, transform.rotation);
+        baseControl = baseObject.GetComponent<Base>();
+        baseControl.owner = owner;
+        baseObject.transform.SetParent(transform);
+
+        baseControl.gameObject.GetComponent<SpriteRenderer>().sprite = gameControllerObjectParent.spriteSetBases[owner];
     }
 
     void CreateRallyPoint()
     {
-		playerRallyPoint = Instantiate(rallyPointPrefab, startLocation.transform.position, startLocation.transform.rotation);
-        playerRallyPoint.GetComponent<RallyPoint>().owner = owner;
-		playerRallyPoint.transform.SetParent(transform);
-        playerBase.GetComponent<Base>().playerRallyPoint = playerRallyPoint;
+		GameObject rallyPointObject = Instantiate(rallyPointPrefab, transform.position, transform.rotation);
+        rallyPoint = rallyPointObject.GetComponent<RallyPoint>();
+        rallyPoint.owner = owner;
+		rallyPointObject.transform.SetParent(transform);
+        baseControl.rallyPointObject = rallyPoint.gameObject;
+
+        rallyPoint.gameObject.GetComponent<SpriteRenderer>().sprite = gameControllerObjectParent.spriteSetRallyPoints[owner];
+    }
+
+	public int GetOwner()
+	{
+		return owner;
+	}
+
+	public void SetOwner(int newOwner)
+	{
+		owner = newOwner;
+	}
+
+    public GameObject GetGameObject()
+    {
+        return gameObject;
     }
 }

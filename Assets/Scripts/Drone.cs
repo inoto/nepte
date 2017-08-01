@@ -2,20 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drone : MonoBehaviour
+public class Drone : MonoBehaviour, IOwnable
 {
     public int owner;
 
     public int health = 100;
 
 	public bool isDead = false;
-	public bool canMove = true;
+
+	enum Mode
+	{
+		Idle,
+        Moving,
+		Combat,
+		Attacking
+	}
+	Mode mode;
 
     [Header("Destination")]
+    // TODO: change GameObject to Vector3 for rallypoints
     public GameObject currentRallyPoint;
     public GameObject playerRallyPoint;
-    public Vector3 gotoPosition;
-    public Vector3 pos;
+    public Vector3 directionVector;
 
     [Header("Move")]
     public float speed = 0.2f;
@@ -24,27 +32,38 @@ public class Drone : MonoBehaviour
 	private float step;
 
     [Header("Cache")]
-    public LaserMissile laserMissileTriggered;
-    public Drone droneTriggered;
-    private GameObject weaponChild;
+    // TODO: use cached Transform
+    //private Transform trans;
+    private Weapon weaponChild;
+    private Radar radarChild;
+    private Collider2D droneCollider;
+    public LaserMissile triggeredLaserMissile;
+    public IOwnable triggeredDrone;
+    public GameObject enemy;
 
     [Header("Prefabs")]
-    public GameObject droneExplosionPrefab;
-    public GameObject weaponPrefab;
-    public GameObject markerPrefab;
+    [SerializeField]
+    private GameObject droneExplosionPrefab;
+    [SerializeField]
+    private GameObject weaponPrefab;
+	[SerializeField]
+    private GameObject radarPrefab;
+    [SerializeField]
+    private GameObject markerPrefab;
 	// Use this for initialization
 	void Start ()
     {
+        droneCollider = GetComponent<Collider2D>();
+
         transform.Rotate(0.0f, 0.0f, Random.Range(0.0f, 360.0f));
-        weaponChild = Instantiate(weaponPrefab, transform.position, transform.rotation);
-        weaponChild.transform.SetParent(transform);
-        weaponChild.GetComponent<Weapon>().owner = owner;
-        if (playerRallyPoint)
-            currentRallyPoint = playerRallyPoint;
-        else
-            currentRallyPoint = FindObjectOfType<Battleground>().gameObject;
-        //markerPrefab = Instantiate(markerPrefab, transform.position, transform.rotation);
-    }
+
+        CreateWeapon();
+        CreateRadar();
+
+        EnterIdleMode();
+
+		//markerPrefab = Instantiate(markerPrefab, transform.position, transform.rotation);
+	}
 
     // Update is called once per frame
     void Update()
@@ -54,32 +73,30 @@ public class Drone : MonoBehaviour
             Kill();
         }
 
-        if (currentRallyPoint)
+        if (mode != Mode.Attacking)
         {
-            if (currentRallyPoint.transform.position == transform.position)
-                canMove = false;
+            directionVector = currentRallyPoint.transform.position - transform.position;
 
-            if (canMove)
-            {
-                gotoPosition = currentRallyPoint.transform.position - transform.position;
+            Rotate();
 
-                Rotate();
-
-                Move();
-            }
+            Move();
         }
-        if (droneTriggered)
+        if (enemy == null && mode != Mode.Idle)
+		{
+			EnterIdleMode();
+		}
+        if ((Object)triggeredDrone != null)
         {
-            pos = droneTriggered.transform.position - transform.position;
-            pos = -pos.normalized;
-            transform.position = Vector2.MoveTowards(transform.position, pos, step);
+            directionVector = triggeredDrone.GetGameObject().transform.position - this.transform.position;
+            directionVector = -directionVector;
+            transform.position = Vector2.MoveTowards(transform.position, directionVector, step);
         }
-
+        // TODO: move change of transform.position to the end after calculations
     }
 
     void Rotate()
     {
-		angle = Mathf.Atan2(gotoPosition.y, gotoPosition.x) * Mathf.Rad2Deg;
+		angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
 		Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
 		transform.rotation = Quaternion.Slerp(transform.rotation, qt, Time.deltaTime * rotationSpeed);
     }
@@ -90,16 +107,30 @@ public class Drone : MonoBehaviour
 		transform.position = Vector2.MoveTowards(transform.position, currentRallyPoint.transform.position, step);
     }
 
-    public GameObject GetRallyPoint()
+    void CreateWeapon()
     {
-        return currentRallyPoint;
+        GameObject weaponObject = Instantiate(weaponPrefab, transform.position, transform.rotation);
+		weaponObject.transform.SetParent(transform);
+        weaponChild = weaponObject.GetComponent<Weapon>();
+		weaponChild.owner = owner;
+        weaponChild.transform.localScale = new Vector3(1, 1, 1);
     }
 
-    public void SetRallyPoint(GameObject newRallyPoint)
+    void CreateRadar()
     {
-        currentRallyPoint = newRallyPoint;
-        if (!canMove)
-            canMove = true;
+		GameObject radarObject = Instantiate(radarPrefab, transform.position, transform.rotation);
+		radarObject.transform.SetParent(transform);
+        radarChild = radarObject.GetComponent<Radar>();
+		radarChild.owner = owner;
+        radarChild.transform.localScale = new Vector3(1, 1, 1);
+    }
+
+    public void ResetRallyPoint()
+    {
+		if (playerRallyPoint)
+			currentRallyPoint = playerRallyPoint;
+		else
+			currentRallyPoint = FindObjectOfType<Battleground>().gameObject;
     }
 
     void Kill()
@@ -109,42 +140,92 @@ public class Drone : MonoBehaviour
         Destroy(gameObject);
     }
 
+	public void EnterCombatMode(GameObject newEnemy)
+	{
+		mode = Mode.Combat;
+        if (newEnemy == enemy)
+            return;
+		enemy = newEnemy;
+        currentRallyPoint = enemy;
+        radarChild.gameObject.SetActive(false);
+        weaponChild.gameObject.SetActive(true);
+	}
+
+	public void EnterIdleMode()
+	{
+		mode = Mode.Idle;
+        ResetRallyPoint();
+		radarChild.gameObject.SetActive(true);
+		weaponChild.gameObject.SetActive(false);
+	}
+
+	public void EnterAttackingMode()
+	{
+		mode = Mode.Attacking;
+        StartCoroutine(Attack());
+	}
+
+	IEnumerator Attack()
+	{
+		while (enemy)
+		{
+            float waitTime = Random.Range(0.5f, 1.5f);
+			// TODO: remove random to use slow ratation and attack after ration is completed
+			yield return new WaitForSeconds(waitTime);
+			if (enemy)
+			{
+                //Rotate();
+                weaponChild.ReleaseLaserMissile(enemy.transform.position);
+			}
+			else
+			{
+				yield break;
+			}
+		}
+	}
+
 	void OnTriggerEnter2D (Collider2D other)
 	{
-        if (other.gameObject.tag == "missile")
+        if (other == droneCollider)
         {
-            laserMissileTriggered = other.gameObject.GetComponent<LaserMissile>();
-            if (laserMissileTriggered.owner != owner
-                && !laserMissileTriggered.wasExecuted
-                && !isDead)
+            if (other.gameObject.CompareTag("missile"))
             {
-                laserMissileTriggered.wasExecuted = true;
-                health -= laserMissileTriggered.damage;
+                triggeredLaserMissile = other.gameObject.GetComponent<LaserMissile>();
+                if (triggeredLaserMissile.owner != owner
+                    && !triggeredLaserMissile.wasExecuted
+                    && !isDead)
+                {
+                    triggeredLaserMissile.wasExecuted = true;
+                    health -= triggeredLaserMissile.damage;
+                }
+
             }
-                
+            else if (other.gameObject.CompareTag("unit"))
+            {
+                triggeredDrone = other.gameObject.GetComponent<IOwnable>();
+                Debug.Log(gameObject + " triggered with " + triggeredDrone.GetGameObject());
+            }
         }
-        else if (other.gameObject.tag == "drone")
-        {
-            //pos = other.transform.position - transform.position;
-			//pos = -pos.normalized;
-			//transform.position = Vector2.MoveTowards(transform.position, pos, step);
-            droneTriggered = other.gameObject.GetComponent<Drone>();
-		}
-
-        /*if (owner == other.gameObject.GetComponent<Drone>().owner)
-        {
-            isCollideWithAlly = true;
-            //transform.position = Vector2.MoveTowards(transform.position, rallyPoint.transform.position, step);
-            Vector2 pos = other.contacts[0].point - (Vector2)transform.position;
-            pos = -pos.normalized;
-            transform.position = Vector2.MoveTowards(transform.position, pos, step);
-        }*/
-
     }
 
     void OnTriggerExit2D(Collider2D other)
 	{
-        droneTriggered = null;
+        triggeredDrone = null;
+
 	}
 
+	public int GetOwner()
+	{
+		return owner;
+	}
+
+	public void SetOwner(int newOwner)
+	{
+		owner = newOwner;
+	}
+
+	public GameObject GetGameObject()
+	{
+		return gameObject;
+	}
 }

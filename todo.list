@@ -1,0 +1,13 @@
+todo.list
+
+- touch for scrolling (move on slide)
+- touch for set rallypoint
+- different color for each player (base, drone, missile, rallypoint)
+- improve drone collision
+- GUI for start screen (very simple, just press screen to start game)
+- GUI for pause menu, with options
+- few music themes
+- sounds
+- pool for gameobjects
+- list of AI player in GameController to store each AI player, remove AI player from list if AI base is destroyed
+- AI manager class, with different AI difficulties, AI decisions and other AI elements

@@ -8,151 +8,106 @@ public class Weapon : MonoBehaviour
     private float waitTime;
 
     [Header("Attack")]
-    public float attackRadius = 0.2f;
-    public float detectRadius = 0.3f;
     public int damage = 20;
 
     [Header("Cache")]
 	private Drone droneParent;
 	private CircleCollider2D weaponCollider;
-    private GameObject enemy;
-	private Drone droneTriggered;
-    private Base baseTriggered;
-    private GameObject laserMissile;
+	private IOwnable triggeredDrone;
 
     [Header("Prefabs")]
-    public GameObject laserMissilePrefab;
+    [SerializeField]
+    private GameObject laserMissilePrefab;
 
-    enum Mode
-    {
-        Idle,
-        Combat,
-        Attacking
-    }
-    Mode mode;
+    // TODO: move states and other big logic to drone
 
     // Use this for initialization
     void Start ()
     {
         droneParent = gameObject.transform.parent.gameObject.GetComponent<Drone>();
         weaponCollider = gameObject.GetComponent<CircleCollider2D>();
-        mode = Mode.Idle;
     }
 	
 	// Update is called once per frame
-	void Update ()
-    {
-        if (mode != Mode.Attacking)
-        {
-            transform.position = droneParent.transform.position;
-            transform.rotation = droneParent.transform.rotation;
-            droneParent.canMove = true;
-        }
-        else
-            droneParent.canMove = false;
+	//void Update ()
+    //{
+    //    if (mode != Mode.Attacking)
+    //    {
+    //        droneParent.canMove = true;
+    //    }
+    //    else
+    //        droneParent.canMove = false;
 
-        if (!enemy && mode != Mode.Idle)
-        {
-            //StopCoroutine("Attack");
-            EnterIdleMode();
-        }
+    //    if (!enemy && mode != Mode.Idle)
+    //    {
+    //        //StopCoroutine("Attack");
+    //        droneParent.EnterIdleMode();
+    //    }
+    //}
+
+    public void ReleaseLaserMissile(Vector3 newDestinationVector)
+    {
+		GameObject laserMissileObject = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
+        LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
+		laserMissile.destinationVector = newDestinationVector;
+		laserMissile.owner = owner;
+		laserMissile.damage = damage;
     }
 
-    void OnTriggerEnter2D (Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "drone")
+        if (other.gameObject.CompareTag("unit"))
         {
-            droneTriggered = other.gameObject.GetComponent<Drone>();
-            if (mode == Mode.Idle)
+            triggeredDrone = other.gameObject.GetComponent<IOwnable>();
+            if (droneParent.enemy == triggeredDrone.GetGameObject())
             {
-                if (droneTriggered
-				&& other.gameObject != droneParent.gameObject
-				&& droneTriggered.owner != owner)
-                {
-					EnterCombatMode(other.gameObject);
-				} 
+                droneParent.EnterAttackingMode();
             }
-            else if (mode == Mode.Combat)
-            {
-                if (enemy == droneTriggered.gameObject)
-                {
-                    EnterAttackingMode();
-                }
-            }
-        }
-        else if (other.gameObject.tag == "base")
-        {
-			if (mode == Mode.Idle)
-			{
-				baseTriggered = other.gameObject.GetComponent<Base>();
-				if (baseTriggered
-					&& baseTriggered.owner != owner)
-				{
-					EnterCombatMode(other.gameObject);
-				}
-			}
-			else if (mode == Mode.Combat)
-			{
-				droneTriggered = other.gameObject.GetComponent<Drone>();
-                if (enemy == baseTriggered.gameObject)
-				{
-					EnterAttackingMode();
-				}
-			}
         }
     }
 
     void OnTriggetExit2D (Collider2D other)
     {
-        droneTriggered = null;
-        if (other.gameObject == enemy)
+        triggeredDrone = null;
+        if (other.gameObject == droneParent.enemy)
         {
-            mode = Mode.Combat;
-            StopCoroutine("Attack");
+            droneParent.EnterCombatMode(other.gameObject);
+            //StopCoroutine("Attack");
         }
     }
 
-    void EnterCombatMode(GameObject newEnemy)
-    {
-        mode = Mode.Combat;
-        enemy = newEnemy;
-        droneParent.SetRallyPoint(newEnemy.gameObject);
-        weaponCollider.radius = attackRadius;
-    }
 
-    void EnterIdleMode()
-    {
-        mode = Mode.Idle;
-        if (droneParent.playerRallyPoint)
-            droneParent.SetRallyPoint(droneParent.playerRallyPoint);
-        else
-            droneParent.SetRallyPoint(FindObjectOfType<Battleground>().gameObject);
-        weaponCollider.radius = detectRadius;
-    }
 
-    void EnterAttackingMode()
-    {
-        mode = Mode.Attacking;
-        StartCoroutine(Attack());
-    }
+    //IEnumerator Attack()
+    //{
+    //    while (enemy)
+    //    {
+    //        waitTime = Random.Range(0.5f, 1.5f);
+    //        yield return new WaitForSeconds(waitTime);
+    //        if (enemy)
+    //        {
+    //            ReleaseLaserMissile();
+    //        }
+    //        else
+    //        {
+    //            yield break;
+    //        }
+    //        // TODO: remove random to use slow ratation and attack after ration is completed
+    //    }
+    //}
 
-    IEnumerator Attack()
+	public int GetOwner()
+	{
+		return owner;
+	}
+
+	public void SetOwner(int newOwner)
+	{
+		owner = newOwner;
+	}
+
+    public GameObject GetGameObject()
     {
-        while (enemy)
-        {
-            waitTime = Random.Range(0.5f, 1.5f);
-            yield return new WaitForSeconds(waitTime);
-            if (enemy)
-            {
-                laserMissile = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
-                laserMissile.GetComponent<LaserMissile>().gotoPosition = enemy.transform.position;
-                laserMissile.GetComponent<LaserMissile>().owner = owner;
-                laserMissile.GetComponent<LaserMissile>().damage = damage;
-            }
-            else
-            {
-                yield break;
-            }
-        }
+        return gameObject;
     }
 }

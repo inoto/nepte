@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 58894949965580844}
   m_Layer: 0
   m_Name: Base
-  m_TagString: base
+  m_TagString: unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -91,9 +91,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: 0
   health: 1000
-  playerRallyPoint: {fileID: 0}
-  droneSpawned: {fileID: 0}
-  laserMissileTriggered: {fileID: 0}
+  rallyPointObject: {fileID: 0}
+  triggeredLaserMissile: {fileID: 0}
   spawnTime: 3
   dronePrefab: {fileID: 1631335818127534, guid: d92c20809c71b4adf9d4db033be39eaa,
     type: 2}

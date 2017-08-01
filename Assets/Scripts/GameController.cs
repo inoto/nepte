@@ -4,22 +4,31 @@ public class GameController : MonoBehaviour
 {
     public int players = 3;
 
-    public GameObject playerController;
-
-    public GameObject cameraController;
-
-    public GameObject battleground;
-
     public int winPoints = 0;
+
+    [Header("From scene")]
+    public GameObject cameraControllerObject;
+    public GameObject battlegroundObject;
+    public GameObject[] playerControllerObject;
+
+    [Header("Prefabs")]
+    [SerializeField]
+    private GameObject playerControllerPrefab;
+
+	[Header("Textures")]
+	public Sprite[] spriteSetBases;
+    public Sprite[] spriteSetDrones;
+    public Sprite[] spriteSetRallyPoints;
+    public Sprite[] spriteSetLaserMissiles;
 
     // Use this for initialization
     void Start ()
     {
         CreatePlayers();
 
-        cameraController.transform.SetParent(transform);
+        cameraControllerObject.transform.SetParent(transform);
 
-        battleground.transform.SetParent(transform);
+        battlegroundObject.transform.SetParent(transform);
     }
     
     // Update is called once per frame
@@ -43,9 +52,10 @@ public class GameController : MonoBehaviour
     {
         for (int i = 0; i < players; i++)
         {
-            GameObject instance = Instantiate(playerController);
-            instance.GetComponent<PlayerController>().owner = i;
-            instance.transform.SetParent(transform);
+            playerControllerObject[i] = Instantiate(playerControllerPrefab);
+            playerControllerObject[i].transform.SetParent(transform);
+            PlayerController playerController = playerControllerObject[i].GetComponent<PlayerController>();
+            playerController.owner = i;
         }
     }
 

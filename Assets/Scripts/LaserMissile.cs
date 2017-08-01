@@ -7,8 +7,8 @@ public class LaserMissile : MonoBehaviour
     public bool wasExecuted = false;
 
     [Header("Destination")]
-    public Vector3 gotoPosition;
-    public Vector3 newPosition;
+    public Vector3 destinationVector;
+    public Vector3 directionVector;
 
     [Header("Move")]
     public float speed = 0.2f;
@@ -21,7 +21,7 @@ public class LaserMissile : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        newPosition = gotoPosition - transform.position;
+        directionVector = destinationVector - transform.position;
 
         Rotate();
     }
@@ -29,9 +29,9 @@ public class LaserMissile : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        newPosition = gotoPosition - transform.position;
+        directionVector = destinationVector - transform.position;
 
-        if (transform.position == gotoPosition)
+        if (transform.position == destinationVector)
             Destroy(gameObject);
         if (wasExecuted)
             Destroy(gameObject);
@@ -41,13 +41,28 @@ public class LaserMissile : MonoBehaviour
 
     void Rotate()
     {
-		angle = Mathf.Atan2(newPosition.y, newPosition.x) * Mathf.Rad2Deg;
+		angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
 		transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
     void Move()
     {
 		step = speed * Time.deltaTime;
-		transform.position = Vector2.MoveTowards(transform.position, gotoPosition, step);
+		transform.position = Vector2.MoveTowards(transform.position, destinationVector, step);
+    }
+
+	public int GetOwner()
+	{
+		return owner;
+	}
+
+	public void SetOwner(int newOwner)
+	{
+		owner = newOwner;
+	}
+
+    public GameObject GetGameObject()
+    {
+        return gameObject;
     }
 }

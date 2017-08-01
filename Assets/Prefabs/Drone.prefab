@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 50566014418952422}
   m_Layer: 0
   m_Name: Drone
-  m_TagString: drone
+  m_TagString: unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -38,7 +38,7 @@ Transform:
   m_GameObject: {fileID: 1631335818127534}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -92,19 +92,19 @@ MonoBehaviour:
   owner: 0
   health: 100
   isDead: 0
-  canMove: 1
   currentRallyPoint: {fileID: 0}
   playerRallyPoint: {fileID: 0}
-  gotoPosition: {x: 0, y: 0, z: 0}
-  pos: {x: 0, y: 0, z: 0}
+  directionVector: {x: 0, y: 0, z: 0}
   speed: 0.2
   angle: 0
-  rotationSpeed: 50
-  laserMissileTriggered: {fileID: 0}
-  droneTriggered: {fileID: 0}
+  rotationSpeed: 30
+  triggeredLaserMissile: {fileID: 0}
+  enemy: {fileID: 0}
   droneExplosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
     type: 2}
   weaponPrefab: {fileID: 1952882869089100, guid: 139bbd1adbc76eb4596176120823bee3,
+    type: 2}
+  radarPrefab: {fileID: 1750392514668332, guid: d80b38ea7c0ff46978ffe15834bdf7e4,
     type: 2}
   markerPrefab: {fileID: 1619218828044392, guid: 6e88883a989494d2b8522568c1a93f46,
     type: 2}

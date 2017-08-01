@@ -1,6 +1,4 @@
-﻿﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Battleground : MonoBehaviour
 {
@@ -12,12 +10,6 @@ public class Battleground : MonoBehaviour
 	void Start ()
     {
         size = GetComponent<SpriteRenderer>().bounds.size;
-	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
 	}
 
 }

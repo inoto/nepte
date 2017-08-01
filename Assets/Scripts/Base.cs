@@ -2,67 +2,95 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Base : MonoBehaviour
+public class Base : MonoBehaviour, IOwnable
 {
-	public int owner = 0;
+    public int owner = 0;
 
-	public int health = 1000;
+    public int health = 1000;
 
     [Header("Cache")]
-    public GameObject playerRallyPoint;
-    public GameObject droneSpawned;
-    public LaserMissile laserMissileTriggered;
+    private GameObject playerControllerParent;
+    public GameObject rallyPointObject;
+    public LaserMissile triggeredLaserMissile;
 
     [Header("Spawn")]
     public float spawnTime = 3f;
     public GameObject dronePrefab;
 
     [Header("Prefabs")]
-    public GameObject explosionPrefab;
+    [SerializeField]
+    private GameObject explosionPrefab;
 
     //public GameObject rallyPoint;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
-		InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
-	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		if (health <= 0)
-		{
-			Kill();
-		}
-	}
+        playerControllerParent = transform.parent.gameObject;
 
-	void Kill()
-	{
-		Instantiate(explosionPrefab, transform.position, transform.rotation);
-		Destroy(gameObject);
-	}
+        InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (health <= 0)
+        {
+            Kill();
+        }
+    }
+
+    void Kill()
+    {
+        Instantiate(explosionPrefab, transform.position, transform.rotation);
+        Destroy(gameObject);
+    }
 
     void SpawnDrone()
     {
-        droneSpawned = Instantiate(dronePrefab, transform.position, transform.rotation);
-		droneSpawned.GetComponent<Drone>().owner = owner;
-		droneSpawned.transform.SetParent(transform);
-        droneSpawned.GetComponent<Drone>().playerRallyPoint = playerRallyPoint;
+        GameObject droneObject = Instantiate(dronePrefab, transform.position, transform.rotation);
+        Drone droneSpawned = droneObject.GetComponent<Drone>();
+        droneSpawned.owner = owner;
+        //PlayerController playerController = transform.parent.GetComponent<PlayerController>();
+        droneSpawned.transform.SetParent(transform.parent);
+        droneSpawned.playerRallyPoint = rallyPointObject;
+
+        GameController gameController = playerControllerParent.transform.parent.gameObject.GetComponent<GameController>();
+        droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = gameController.spriteSetDrones[owner];
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "missile")
+        if (other.gameObject.CompareTag("missile"))
         {
-            laserMissileTriggered = other.gameObject.GetComponent<LaserMissile>();
-            if (laserMissileTriggered.owner != owner
-                && !laserMissileTriggered.wasExecuted)
+            triggeredLaserMissile = other.gameObject.GetComponent<LaserMissile>();
+            if (triggeredLaserMissile.owner != owner
+                && !triggeredLaserMissile.wasExecuted)
             {
-                laserMissileTriggered.wasExecuted = true;
-                health -= laserMissileTriggered.damage;
+                triggeredLaserMissile.wasExecuted = true;
+                health -= triggeredLaserMissile.damage;
             }
 
         }
     }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        triggeredLaserMissile = null;
+    }
+
+	public int GetOwner()
+	{
+		return owner;
+	}
+
+	public void SetOwner(int newOwner)
+	{
+		owner = newOwner;
+	}
+
+	public GameObject GetGameObject()
+	{
+		return gameObject;
+	}
 }
