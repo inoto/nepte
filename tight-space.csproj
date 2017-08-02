@@ -110,6 +110,37 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipItems.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipRandomItem.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UICursor.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UIEquipmentSlot.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UIItemSlot.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UIItemStorage.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UIStorageSlot.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvAttachmentPoint.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvBaseItem.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvDatabase.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvEquipment.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvGameItem.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvStat.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\ChatInput.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\DownloadTexture.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\ExampleDragDropItem.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\ExampleDragDropSurface.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\LagPosition.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\LagRotation.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\LoadLevelOnClick.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\LookAtTarget.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\OpenURLOnClick.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\PanWithMouse.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\PlayIdleAnimations.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\SetColorPickerColor.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\Spin.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\SpinWithMouse.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\Tutorial5.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\UISliderColors.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\WindowAutoYaw.cs" />
+    <Compile Include="Assets\NGUI\Examples\Scripts\Other\WindowDragTilt.cs" />
     <Compile Include="Assets\NGUI\Scripts\Interaction\EnvelopContent.cs" />
     <Compile Include="Assets\NGUI\Scripts\Interaction\LanguageSelection.cs" />
     <Compile Include="Assets\NGUI\Scripts\Interaction\TypewriterEffect.cs" />
@@ -222,19 +253,37 @@
     <Compile Include="Assets\Scripts\AI\AIRallyPointController.cs" />
     <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\Battleground.cs" />
+    <Compile Include="Assets\Scripts\Camera controllers\PCInputController.cs" />
+    <Compile Include="Assets\Scripts\Camera controllers\TouchController.cs" />
     <Compile Include="Assets\Scripts\Drone.cs" />
     <Compile Include="Assets\Scripts\DroneExplosion.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Scripts\GameTimer.cs" />
     <Compile Include="Assets\Scripts\IOwnable.cs" />
     <Compile Include="Assets\Scripts\LaserMissile.cs" />
-    <Compile Include="Assets\Scripts\PCInputController.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Radar.cs" />
     <Compile Include="Assets\Scripts\RallyPoint.cs" />
-    <Compile Include="Assets\Scripts\TouchController.cs" />
+    <Compile Include="Assets\Scripts\UIChanger.cs" />
     <Compile Include="Assets\Scripts\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
+    <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Header.txt" />
+    <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Normal.txt" />
+    <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Header.txt" />
+    <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Normal.txt" />
+    <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo14.txt" />
+    <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo18.txt" />
+    <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
+    <None Include="Assets\NGUI\Examples\Models\Orc Armor\Orc Armor.shader" />
+    <None Include="Assets\NGUI\Examples\Models\Orc\Orc Skin.shader" />
+    <None Include="Assets\NGUI\Examples\Resources\Localization.txt" />
+    <None Include="Assets\NGUI\Examples\Shaders\Refractive.shader" />
+    <None Include="Assets\NGUI\Examples\Shaders\Unlit - Additive Colored.shader" />
+    <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
+    <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth.shader" />
+    <None Include="Assets\NGUI\Examples\Shaders\Unlit - Masked Colored.shader" />
     <None Include="Assets\NGUI\ReadMe - 3.11.4.txt" />
     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored (TextureClip).shader" />
     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 1.shader" />

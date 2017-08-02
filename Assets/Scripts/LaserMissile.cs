@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class LaserMissile : MonoBehaviour
+public class LaserMissile : MonoBehaviour, IOwnable
 {
     public int owner;
 

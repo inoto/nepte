@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IOwnable
 {
     public int owner = 0;
 
@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        gameControllerObjectParent = gameObject.transform.parent.gameObject.GetComponent<GameController>();
+        gameControllerObjectParent = transform.parent.gameObject.GetComponent<GameController>();
 
         AssignStartLocation();
 

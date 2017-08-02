@@ -68,12 +68,7 @@ public class Drone : MonoBehaviour, IOwnable
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0)
-        {
-            Kill();
-        }
-
-        if (mode != Mode.Attacking)
+        if (currentRallyPoint != null && mode != Mode.Attacking)
         {
             directionVector = currentRallyPoint.transform.position - transform.position;
 
@@ -81,10 +76,12 @@ public class Drone : MonoBehaviour, IOwnable
 
             Move();
         }
+
         if (enemy == null && mode != Mode.Idle)
 		{
-			EnterIdleMode();
+			    EnterIdleMode();
 		}
+
         if ((Object)triggeredDrone != null)
         {
             directionVector = triggeredDrone.GetGameObject().transform.position - this.transform.position;
@@ -128,9 +125,9 @@ public class Drone : MonoBehaviour, IOwnable
     public void ResetRallyPoint()
     {
 		if (playerRallyPoint)
-			currentRallyPoint = playerRallyPoint;
+            currentRallyPoint = playerRallyPoint;
 		else
-			currentRallyPoint = FindObjectOfType<Battleground>().gameObject;
+            currentRallyPoint = FindObjectOfType<Battleground>().gameObject;
     }
 
     void Kill()
@@ -186,25 +183,26 @@ public class Drone : MonoBehaviour, IOwnable
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
-        if (other == droneCollider)
+        if (other.gameObject.CompareTag("missile"))
         {
-            if (other.gameObject.CompareTag("missile"))
+            triggeredLaserMissile = other.gameObject.GetComponent<LaserMissile>();
+            if (triggeredLaserMissile.owner != owner
+                && !triggeredLaserMissile.wasExecuted
+                && !isDead)
             {
-                triggeredLaserMissile = other.gameObject.GetComponent<LaserMissile>();
-                if (triggeredLaserMissile.owner != owner
-                    && !triggeredLaserMissile.wasExecuted
-                    && !isDead)
-                {
-                    triggeredLaserMissile.wasExecuted = true;
-                    health -= triggeredLaserMissile.damage;
-                }
+                triggeredLaserMissile.wasExecuted = true;
+                health -= triggeredLaserMissile.damage;
+				if (health <= 0)
+				{
+					Kill();
+				}
+            }
 
-            }
-            else if (other.gameObject.CompareTag("unit"))
-            {
-                triggeredDrone = other.gameObject.GetComponent<IOwnable>();
-                Debug.Log(gameObject + " triggered with " + triggeredDrone.GetGameObject());
-            }
+        }
+        else if (other.gameObject.CompareTag("unit"))
+        {
+            triggeredDrone = other.gameObject.GetComponent<IOwnable>();
+            //Debug.Log(gameObject + " triggered with " + triggeredDrone.GetGameObject());
         }
     }
 

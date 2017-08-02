@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
 
 public class GameController : MonoBehaviour
 {
@@ -6,9 +10,29 @@ public class GameController : MonoBehaviour
 
     public int winPoints = 0;
 
-    [Header("From scene")]
+	public enum States
+	{
+		BeforeGame,
+		Game,
+		PauseMenu,
+		OptionsMenu,
+		Win,
+		Lose
+	}
+    public static States state;
+
+    [Header("UI Panels")]
+	public GameObject ingamePanel;
+	public GameObject pausePanel;
+	public GameObject optionsPanel;
+
+    [Header("Options")]
+    public float optionsValueMusic;
+    public float optionsValueSounds;
+
+    [Header("Children")]
     public GameObject cameraControllerObject;
-    public GameObject battlegroundObject;
+    public Battleground battlegroundChild;
     public GameObject[] playerControllerObject;
 
     [Header("Prefabs")]
@@ -24,11 +48,15 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+
         CreatePlayers();
 
         cameraControllerObject.transform.SetParent(transform);
 
-        battlegroundObject.transform.SetParent(transform);
+        battlegroundChild = GameObject.Find("Battleground").GetComponent<Battleground>();
+        battlegroundChild.transform.SetParent(transform);
+
+        StartGame();
     }
     
     // Update is called once per frame
@@ -59,4 +87,114 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void SetOptionValueMusic(float newValue)
+    {
+        if (newValue != optionsValueMusic)
+            optionsValueMusic = newValue;
+    }
+
+	public void SetOptionValueSounds(float newValue)
+	{
+		if (newValue != optionsValueSounds)
+			optionsValueSounds = newValue;
+	}
+
+    public static void ChangeState(States newState)
+    {
+        if (newState == state)
+            return;
+        state = newState;
+    }
+
+	public static bool IsState(States stateTo)
+	{
+		if (state == stateTo)
+			return true;
+		return false;
+	}
+
+	public static bool IsGame
+	{
+		get
+		{
+			return IsState(States.Game);
+		}
+	}
+
+	public static bool IsPaused
+	{
+		get
+		{
+			switch (state)
+			{
+				case States.BeforeGame:
+					return true;
+                case States.PauseMenu:
+					return true;
+                case States.OptionsMenu:
+					return true;
+			}
+			return false;
+		}
+	}
+
+    public void PauseGame()
+    {
+        state = States.PauseMenu;
+        Time.timeScale = 0.0f;
+        ingamePanel.SetActive(false);
+        pausePanel.SetActive(true);
+    }
+
+	public void UnPauseGame()
+	{
+		state = States.Game;
+		Time.timeScale = 1.0f;
+		ingamePanel.SetActive(true);
+		pausePanel.SetActive(false);
+        optionsPanel.SetActive(false);
+	}
+
+    public void StartGame()
+    {
+		state = States.Game;
+		ingamePanel.SetActive(true);
+    }
+
+    public void RestartGame()
+    {
+        RemoveAllChild();
+		pausePanel.SetActive(false);
+		optionsPanel.SetActive(false);
+        winPoints = 0;
+        CreatePlayers();
+        StartGame();
+    }
+
+    public void RemoveAllChild()
+    {
+		foreach (Transform child in transform)
+		{
+			Destroy(child.gameObject);
+		}
+    }
+
+    public void OptionsMenu()
+    {
+        state = States.OptionsMenu;
+		pausePanel.SetActive(false);
+        optionsPanel.SetActive(true);
+    }
+
+    public void GoBackFromOptions()
+    {
+        state = States.PauseMenu;
+		optionsPanel.SetActive(false);
+        pausePanel.SetActive(true);
+    }
+
+    public void CloseGame()
+    {
+        Application.Quit();
+    }
 }

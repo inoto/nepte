@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Radar : MonoBehaviour
+public class Radar : MonoBehaviour, IOwnable
 {
     public int owner;
 
@@ -37,18 +37,18 @@ public class Radar : MonoBehaviour
         triggeredDrone = null;
     }
 
-	//public int GetOwner()
-	//{
-	//	return owner;
-	//}
+	public int GetOwner()
+	{
+		return owner;
+	}
 
-	//public void SetOwner(int newOwner)
-	//{
-	//	owner = newOwner;
-	//}
+	public void SetOwner(int newOwner)
+	{
+		owner = newOwner;
+	}
 
-	//public GameObject GetGameObject()
-	//{
-	//	return gameObject;
-	//}
+	public GameObject GetGameObject()
+	{
+		return gameObject;
+	}
 }
