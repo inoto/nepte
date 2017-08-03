@@ -8,7 +8,7 @@ V- different color for each player (base, drone, missile, rallypoint)
 - move sprite sets to its owner
 - improve drone collision
 - GUI for start screen (very simple, just press screen to start game)
-- GUI for pause menu, with options
+V- GUI for pause menu, with options
 - few music themes
 - sounds
 - pool for gameobjects
@@ -17,6 +17,7 @@ V- different color for each player (base, drone, missile, rallypoint)
 - attack priority is drone
 - make atlas from all used sprites
 - collision manager handle all objects in scene
+- dynamic missile size
 
 #bugs
 V- how to handle missing object

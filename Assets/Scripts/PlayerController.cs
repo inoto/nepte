@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour, IOwnable
     {
         gameControllerObjectParent = transform.parent.gameObject.GetComponent<GameController>();
 
-        AssignStartLocation();
+        //AssignStartLocation();
 
         CreateBase();
 
@@ -41,34 +41,36 @@ public class PlayerController : MonoBehaviour, IOwnable
             {
                 
                 if (owner != 0)
-                    gameControllerObjectParent.winPoints += 1;
+                    GameController.winPoints += 1;
                 else
-                    gameControllerObjectParent.winPoints -= 1;
+                    GameController.winPoints -= 1;
                 isDefeated = true;
             }
         }
     }
 
-    void AssignStartLocation()
+    void AssignStartLocation(Vector3 newPosition)
     {
-        switch (owner)
-        {
-            case 0:
-                startLocationObject = GameObject.Find("StartPlayer");
-                break;
-            case 1:
-                startLocationObject = GameObject.Find("StartAIFirst");
-                break;
-            case 2:
-                startLocationObject = GameObject.Find("StartAISecond");
-                break;
-        }
+        //switch (owner)
+        //{
+        //    case 0:
+        //        startLocationObject = GameObject.Find("StartPlayer");
+        //        break;
+        //    case 1:
+        //        startLocationObject = GameObject.Find("StartAIFirst");
+        //        break;
+        //    case 2:
+        //        startLocationObject = GameObject.Find("StartAISecond");
+        //        break;
+        //}
 
-        if (startLocationObject)
-        {
-            transform.position = startLocationObject.transform.position;
-            Destroy(startLocationObject);
-        }
+        //if (startLocationObject)
+        //{
+        //    transform.position = startLocationObject.transform.position;
+        //    Destroy(startLocationObject);
+        //}
+
+
     }
 
     void CreateBase()

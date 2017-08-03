@@ -50,12 +50,15 @@ public class Drone : MonoBehaviour, IOwnable
     private GameObject radarPrefab;
     [SerializeField]
     private GameObject markerPrefab;
+
+    public static Sprite[] spriteSet;
+
 	// Use this for initialization
 	void Start ()
     {
         droneCollider = GetComponent<Collider2D>();
 
-        transform.Rotate(0.0f, 0.0f, Random.Range(0.0f, 360.0f));
+        //transform.Rotate(0.0f, 0.0f, Random.Range(0.0f, 360.0f));
 
         CreateWeapon();
         CreateRadar();
@@ -133,7 +136,8 @@ public class Drone : MonoBehaviour, IOwnable
     void Kill()
     {
         isDead = true;
-        Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
+        GameObject tmpObject = Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
+        tmpObject.transform.SetParent(GameController.Instance.transform);
         Destroy(gameObject);
     }
 

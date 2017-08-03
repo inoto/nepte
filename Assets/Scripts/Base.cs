@@ -9,7 +9,9 @@ public class Base : MonoBehaviour, IOwnable
     public int health = 1000;
 
     [Header("Cache")]
+    private Transform trans;
     private GameObject playerControllerParent;
+    public UISprite assignedHPbar;
     public GameObject rallyPointObject;
     public LaserMissile triggeredLaserMissile;
 
@@ -20,6 +22,7 @@ public class Base : MonoBehaviour, IOwnable
     [Header("Prefabs")]
     [SerializeField]
     private GameObject explosionPrefab;
+    public GameObject HPbarPrefab;
 
     //public GameObject rallyPoint;
 
@@ -27,6 +30,15 @@ public class Base : MonoBehaviour, IOwnable
     void Start()
     {
         playerControllerParent = transform.parent.gameObject;
+
+        trans = transform;
+
+        GameObject assignedHPbarObject = Instantiate(HPbarPrefab, transform.position, transform.rotation);
+        assignedHPbarObject.transform.SetParent(GameObject.Find("HPBars").transform);
+
+        assignedHPbar = assignedHPbarObject.GetComponent<UISprite>();
+        assignedHPbar.SetAnchor(gameObject);
+		assignedHPbar.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
         InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
     }
@@ -38,12 +50,16 @@ public class Base : MonoBehaviour, IOwnable
         {
             Kill();
         }
+
+        trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
 
     void Kill()
     {
-        Instantiate(explosionPrefab, transform.position, transform.rotation);
+        GameObject tmpObject = Instantiate(explosionPrefab, transform.position, transform.rotation);
+        tmpObject.transform.SetParent(GameController.Instance.transform);
         Destroy(gameObject);
+        Destroy(assignedHPbar.gameObject);
     }
 
     void SpawnDrone()
@@ -68,6 +84,11 @@ public class Base : MonoBehaviour, IOwnable
                 && !triggeredLaserMissile.wasExecuted)
             {
                 triggeredLaserMissile.wasExecuted = true;
+                if (assignedHPbar != null)
+                {
+                    UISlider HPslider = assignedHPbar.GetComponent<UISlider>();
+                    HPslider.Set((float)health / 1000);
+                }
                 health -= triggeredLaserMissile.damage;
             }
 

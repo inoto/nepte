@@ -261,6 +261,7 @@
     <Compile Include="Assets\Scripts\GameTimer.cs" />
     <Compile Include="Assets\Scripts\IOwnable.cs" />
     <Compile Include="Assets\Scripts\LaserMissile.cs" />
+    <Compile Include="Assets\Scripts\LoseWinBlinking.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Radar.cs" />
     <Compile Include="Assets\Scripts\RallyPoint.cs" />
