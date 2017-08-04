@@ -47,13 +47,16 @@ public class GameController : MonoBehaviour
 	public GameObject losePanel;
 	public GameObject winPanel;
 
-    [Header("Options")]
-    public float optionsValueMusic;
-    public float optionsValueSounds;
+    [Header("Start scene")]
+    public GameObject startScene;
+
+    [Header("Audio")]
+
 
     [Header("Children")]
-    public GameObject cameraControllerObject;
+    public GameObject cameraChild;
     public Battleground battlegroundChild;
+    public MixerContoller audioMixer;
     public GameObject[] playerControllerObject;
 
     [Header("Cache")]
@@ -63,20 +66,16 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private GameObject playerControllerPrefab;
 
-	[Header("Textures")]
-	public Sprite[] spriteSetBases;
-    public Sprite[] spriteSetDrones;
-    public Sprite[] spriteSetRallyPoints;
-    public Sprite[] spriteSetLaserMissiles;
-
     // Use this for initialization
     void Start ()
     {
+        cameraChild = GetComponentInChildren<Camera>().gameObject;
 
-        cameraControllerObject.transform.SetParent(transform);
+        battlegroundChild = GetComponentInChildren<Battleground>();
 
-        battlegroundChild = GameObject.Find("Battleground").GetComponent<Battleground>();
-        battlegroundChild.transform.SetParent(transform);
+        audioMixer = GameObject.Find("AudioMixerControl").GetComponent<MixerContoller>();
+        audioMixer.SetMusicVolume(0.75f);
+        audioMixer.SetSoundsVolume(0.75f);
 
         BeforeGameMenu();
     }
@@ -97,18 +96,6 @@ public class GameController : MonoBehaviour
             winPoints = 0;
         }
     }
-
-    public void SetOptionValueMusic(float newValue)
-    {
-        if (newValue != optionsValueMusic)
-            optionsValueMusic = newValue;
-    }
-
-	public void SetOptionValueSounds(float newValue)
-	{
-		if (newValue != optionsValueSounds)
-			optionsValueSounds = newValue;
-	}
 
     public static void ChangeState(States newState)
     {
@@ -171,7 +158,7 @@ public class GameController : MonoBehaviour
     {
         if (!IsGame)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.5f);
             Time.timeScale = 0.0f;
         }
     }
@@ -179,6 +166,7 @@ public class GameController : MonoBehaviour
     public void BeforeGameMenu()
     {
         ChangeState(States.BeforeGame);
+        startScene.SetActive(true);
 		beforegamePanel.SetActive(true);
     }
 
@@ -208,7 +196,6 @@ public class GameController : MonoBehaviour
         winPanel.SetActive(false);
         winPoints = 0;
         gameTimer = 0;
-        cameraControllerObject.transform.position = this.transform.position;
         Time.timeScale = 1.0f;
         StartGame();
     }
@@ -220,7 +207,12 @@ public class GameController : MonoBehaviour
             AssignStartPositions();
             beforegamePanel.SetActive(false);
             RemoveStartScene();
+            audioMixer.StopMainTheme();
         }
+        cameraChild.GetComponent<Camera>().orthographicSize = 1;
+        GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 1;
+        cameraChild.transform.position = playerStartPosition[0];
+
         CreatePlayers();
 		state = States.Game;
 		ingamePanel.SetActive(true);
@@ -228,17 +220,20 @@ public class GameController : MonoBehaviour
 
     public void RemoveStartScene()
     {
-        Destroy(GameObject.Find("StartScene"));
-        RemoveAllHPBars();
+        Destroy(startScene);
+        //RemoveAllHPBars();
     }
 
     public void RemoveAllPlayerUnits()
     {
+        //GameObject audioMixer = GameObject.Find("AudioMixerControl");
 		foreach (Transform child in transform)
 		{
             if (child.gameObject == battlegroundChild.gameObject)
                 continue;
-			if (child.gameObject == cameraControllerObject)
+            if (child.gameObject == cameraChild)
+				continue;
+            if (child.gameObject == audioMixer.gameObject)
 				continue;
 			Destroy(child.gameObject);
 		}
@@ -288,8 +283,13 @@ public class GameController : MonoBehaviour
 					tmpObject = GameObject.Find("StartAISecond");
 					playerStartPosition[i] = tmpObject.transform.position;
 					Destroy(tmpObject);
+
 					continue;
+                default:
+                    playerStartPosition[i] = cameraChild.transform.position;
+                    continue;
 			}
+
 		}
 	}
 

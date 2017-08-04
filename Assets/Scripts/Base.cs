@@ -24,6 +24,9 @@ public class Base : MonoBehaviour, IOwnable
     private GameObject explosionPrefab;
     public GameObject HPbarPrefab;
 
+	[Header("Sprite sets")]
+    public Sprite[] spriteSetDrones;
+
     //public GameObject rallyPoint;
 
     // Use this for initialization
@@ -46,18 +49,19 @@ public class Base : MonoBehaviour, IOwnable
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0)
-        {
-            Kill();
-        }
+		if (health <= 0)
+		{
+			Die();
+		}
 
         trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
 
-    void Kill()
+    void Die()
     {
         GameObject tmpObject = Instantiate(explosionPrefab, transform.position, transform.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
+        tmpObject.transform.localScale = trans.localScale;
         Destroy(gameObject);
         Destroy(assignedHPbar.gameObject);
     }
@@ -72,7 +76,7 @@ public class Base : MonoBehaviour, IOwnable
         droneSpawned.playerRallyPoint = rallyPointObject;
 
         GameController gameController = playerControllerParent.transform.parent.gameObject.GetComponent<GameController>();
-        droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = gameController.spriteSetDrones[owner];
+        droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetDrones[owner];
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -90,6 +94,7 @@ public class Base : MonoBehaviour, IOwnable
                     HPslider.Set((float)health / 1000);
                 }
                 health -= triggeredLaserMissile.damage;
+				
             }
 
         }

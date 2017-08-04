@@ -12,12 +12,22 @@ public class PCInputController : MonoBehaviour
 	[Header("Cache")]
     private GameController gameController;
     private Battleground battleground;
+    private Camera cameraUIBars;
 	private float deltaX, deltaY;
 
 	void Start()
 	{
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+		//touchController = GetComponent<TouchController>();
+		//pcIputController = GetComponent<PCInputController>();
+
+		//#if UNITY_IPHONE || UNITY_ANDROID
+		//Destroy(this);
+#if !UNITY_EDITOR
+		Destroy(this);
+#endif
+		gameController = GameObject.Find("GameController").GetComponent<GameController>();
         battleground = GameObject.Find("Battleground").GetComponent<Battleground>();
+        cameraUIBars = GameObject.Find("CameraUIBars").GetComponent<Camera>();
 	}
 
 	// Update is called once per frame
@@ -29,19 +39,22 @@ public class PCInputController : MonoBehaviour
             deltaY = Input.GetAxis("Vertical");
             if (deltaX != 0f || deltaY != 0f)
             {
-                AdjustPosition(deltaX, deltaY);
+                Move(deltaX, deltaY);
             }
 
             if (Input.GetMouseButtonDown(0))
             {
-                mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePosition.z = 0;
-                // TODO: use raycast instead
-
-                GameObject[] players = gameController.playerControllerObject;
-                foreach (GameObject player in players)
+                if (!GameController.IsPaused)
                 {
-                    player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
+                    mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    mousePosition.z = 0;
+                    // TODO: use raycast instead
+
+                    GameObject[] players = gameController.playerControllerObject;
+                    foreach (GameObject player in players)
+                    {
+                        player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
+                    }
                 }
             }
             else if (Input.GetMouseButtonDown(1))
@@ -54,10 +67,13 @@ public class PCInputController : MonoBehaviour
                     player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
                 }
             }
+
+            if (Input.GetAxis("Mouse ScrollWheel") != 0)
+                Zoom(Input.GetAxis("Mouse ScrollWheel"));
         }
 	}
 
-	private void AdjustPosition(float tDeltaX, float tDeltaY)
+	private void Move(float tDeltaX, float tDeltaY)
 	{
 		Vector3 direction = new Vector3(tDeltaX, tDeltaY, 0f).normalized;
 		float distance = moveSpeed * Time.deltaTime;
@@ -68,4 +84,20 @@ public class PCInputController : MonoBehaviour
 		newPosition.y = Mathf.Clamp(newPosition.y, -(battleground.size.y / 3), battleground.size.y / 3);
         transform.localPosition = newPosition;
 	}
+
+    void Zoom(float axis)
+    {
+		if (axis < 0) // forward
+        {
+            Camera.main.orthographicSize += 0.25f;
+            cameraUIBars.orthographicSize += 0.25f;
+		}
+		if (axis > 0) // back
+        {
+            Camera.main.orthographicSize -= 0.25f;
+            cameraUIBars.orthographicSize -= 0.25f;
+		}
+		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 1.0f, 2.5f);
+        cameraUIBars.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 1.0f, 2.5f);
+    }
 }

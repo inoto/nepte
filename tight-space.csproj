@@ -265,6 +265,8 @@
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Radar.cs" />
     <Compile Include="Assets\Scripts\RallyPoint.cs" />
+    <Compile Include="Assets\Scripts\SoundControllers\MixerContoller.cs" />
+    <Compile Include="Assets\Scripts\SoundControllers\MusicMainTheme.cs" />
     <Compile Include="Assets\Scripts\UIChanger.cs" />
     <Compile Include="Assets\Scripts\Weapon.cs" />
   </ItemGroup>

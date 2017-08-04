@@ -1,25 +1,14 @@
 todo.list
 
 #features
-V- touch for scrolling (move on slide)
-V- touch for zoom
-V- touch for set rallypoint
-V- different color for each player (base, drone, missile, rallypoint)
 - move sprite sets to its owner
 - improve drone collision
-- GUI for start screen (very simple, just press screen to start game)
-V- GUI for pause menu, with options
-- few music themes
-- sounds
 - pool for gameobjects
 - list of AI player in GameController to store each AI player, remove AI player from list if AI base is destroyed
 - AI manager class, with different AI difficulties, AI decisions and other AI elements
 - attack priority is drone
 - make atlas from all used sprites
 - collision manager handle all objects in scene
-- dynamic missile size
-
-#bugs
-V- how to handle missing object
-- drone collisions are bad
-
+- GUI and screen rotation in runtime 
+- moving background
+- add few background layers

@@ -49,6 +49,7 @@ public class Weapon : MonoBehaviour, IOwnable
     {
 		GameObject laserMissileObject = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
         laserMissileObject.transform.SetParent(GameController.Instance.transform);
+        laserMissileObject.transform.localScale = droneParent.transform.localScale;
         LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;
 		laserMissile.owner = owner;

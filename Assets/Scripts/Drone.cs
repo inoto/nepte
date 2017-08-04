@@ -133,7 +133,7 @@ public class Drone : MonoBehaviour, IOwnable
             currentRallyPoint = FindObjectOfType<Battleground>().gameObject;
     }
 
-    void Kill()
+    void Die()
     {
         isDead = true;
         GameObject tmpObject = Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
@@ -198,7 +198,7 @@ public class Drone : MonoBehaviour, IOwnable
                 health -= triggeredLaserMissile.damage;
 				if (health <= 0)
 				{
-					Kill();
+					Die();
 				}
             }
 

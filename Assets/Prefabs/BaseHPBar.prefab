@@ -35,7 +35,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4201593787239446}
   - component: {fileID: 114682596614656408}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Foreground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,7 +52,7 @@ GameObject:
   - component: {fileID: 4648758055130300}
   - component: {fileID: 114141205885134740}
   - component: {fileID: 114816288714231286}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: BaseHPBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +68,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4542390325783664}
   - component: {fileID: 114786257958004438}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}

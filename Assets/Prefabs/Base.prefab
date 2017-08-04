@@ -101,6 +101,10 @@ MonoBehaviour:
     type: 2}
   HPbarPrefab: {fileID: 1715169125782130, guid: a67e5c7027d85448aa83ab0928ac2ba9,
     type: 2}
+  spriteSetDrones:
+  - {fileID: 21300000, guid: 40cb0e86c469c4387b909cf4a552a641, type: 3}
+  - {fileID: 21300000, guid: fd2483da58b89413883c57862f8e3aef, type: 3}
+  - {fileID: 21300000, guid: 485e8b0596f5a4db0a51956e9be5b338, type: 3}
 --- !u!212 &212509551662005286
 SpriteRenderer:
   m_ObjectHideFlags: 1

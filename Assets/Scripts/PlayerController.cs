@@ -19,6 +19,10 @@ public class PlayerController : MonoBehaviour, IOwnable
     [SerializeField]
     private GameObject rallyPointPrefab;
 
+    [Header("Sprite sets")]
+	public Sprite[] spriteSetBases;
+	public Sprite[] spriteSetRallyPoints;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -49,30 +53,6 @@ public class PlayerController : MonoBehaviour, IOwnable
         }
     }
 
-    void AssignStartLocation(Vector3 newPosition)
-    {
-        //switch (owner)
-        //{
-        //    case 0:
-        //        startLocationObject = GameObject.Find("StartPlayer");
-        //        break;
-        //    case 1:
-        //        startLocationObject = GameObject.Find("StartAIFirst");
-        //        break;
-        //    case 2:
-        //        startLocationObject = GameObject.Find("StartAISecond");
-        //        break;
-        //}
-
-        //if (startLocationObject)
-        //{
-        //    transform.position = startLocationObject.transform.position;
-        //    Destroy(startLocationObject);
-        //}
-
-
-    }
-
     void CreateBase()
     {
         GameObject baseObject = Instantiate(basePrefab, transform.position, transform.rotation);
@@ -80,7 +60,7 @@ public class PlayerController : MonoBehaviour, IOwnable
         baseControl.owner = owner;
         baseObject.transform.SetParent(transform);
 
-        baseControl.gameObject.GetComponent<SpriteRenderer>().sprite = gameControllerObjectParent.spriteSetBases[owner];
+        baseControl.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetBases[owner];
     }
 
     void CreateRallyPoint()
@@ -91,7 +71,7 @@ public class PlayerController : MonoBehaviour, IOwnable
 		rallyPointObject.transform.SetParent(transform);
         baseControl.rallyPointObject = rallyPoint.gameObject;
 
-        rallyPoint.gameObject.GetComponent<SpriteRenderer>().sprite = gameControllerObjectParent.spriteSetRallyPoints[owner];
+        rallyPoint.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetRallyPoints[owner];
     }
 
 	public int GetOwner()

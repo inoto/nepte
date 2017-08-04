@@ -2,24 +2,36 @@
 
 public class TouchController : MonoBehaviour
 {
-	public float moveSpeed = 0.1f;
-	public float zoomSpeed = 0.2f;
+    public float moveSpeed = 0.1f;
+    public float zoomSpeed = 0.2f;
 
-	[Header("Cache")]
-    private GameController gameController;
+    [Header("Cache")]
     private Battleground battleground;
-	private Camera theCamera;
-	private Touch pinchFinger1, pinchFinger2;
+    private Camera theCamera;
+    private Camera cameraUIBars;
+    private Touch pinchFinger1, pinchFinger2;
 
-	void Start()
-	{
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+    void Start()
+    {
+        //#if UNITY_EDITOR
+        //        Destroy(this);
+        //#endif
+
 		battleground = GameObject.Find("Battleground").GetComponent<Battleground>();
+        theCamera = gameObject.GetComponent<Camera>();
+        cameraUIBars = GameObject.Find("CameraUIBars").GetComponent<Camera>();
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        if (transform.position.z != -3)
+        {
+            Vector3 tmpVector = transform.position;
+            tmpVector.z = -3;
+            transform.position = tmpVector;
+        }
+
         if (GameController.IsGame)
         {
             if (Input.touchCount > 0)
@@ -36,13 +48,31 @@ public class TouchController : MonoBehaviour
                     }
                     else
                     {
-
+                        Click();
                     }
                 }
 
             }
         }
+
+
 	}
+
+    void Click()
+    {
+        if (!GameController.IsPaused )
+        {
+            Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            clickPosition.z = 0;
+            // TODO: use raycast instead
+
+            GameObject[] players = GameController.Instance.playerControllerObject;
+            foreach (GameObject player in players)
+            {
+                player.GetComponent<PlayerController>().rallyPoint.SetNew(clickPosition);
+            }
+        }
+    }
 
     void Zoom()
     {
@@ -62,9 +92,11 @@ public class TouchController : MonoBehaviour
 
 		// ... change the orthographic size based on the change in distance between the touches.
         theCamera.orthographicSize += deltaMagnitudeDiff * zoomSpeed * Time.deltaTime;
+		cameraUIBars.orthographicSize += deltaMagnitudeDiff * zoomSpeed * Time.deltaTime;
 
 		// Make sure the orthographic size never drops below zero.
 		theCamera.orthographicSize = Mathf.Clamp(theCamera.orthographicSize, 1.0f, 2.5f);
+		cameraUIBars.orthographicSize = Mathf.Clamp(theCamera.orthographicSize, 1.0f, 2.5f);
     }
 
     void Move()
@@ -76,7 +108,13 @@ public class TouchController : MonoBehaviour
         position += (-touchDeltaPosition) * distance;
 		position.x = Mathf.Clamp(position.x, -(battleground.size.x / 4), battleground.size.x / 4);
 		position.y = Mathf.Clamp(position.y, -(battleground.size.y / 3), battleground.size.y / 3);
-		position.z = -3;
+		//position.z = -3;
 		transform.position = position;
     }
+
+	public void ResetCamerasSize()
+	{
+		theCamera.orthographicSize = 1;
+		cameraUIBars.orthographicSize = 1;
+	}
 }
