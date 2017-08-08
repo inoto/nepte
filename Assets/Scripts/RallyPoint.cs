@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class RallyPoint : MonoBehaviour, IOwnable
+public class RallyPoint : MonoBehaviour
 {
     public int owner = 0;
 

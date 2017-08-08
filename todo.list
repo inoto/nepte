@@ -4,11 +4,12 @@ todo.list
 - move sprite sets to its owner
 - improve drone collision
 - pool for gameobjects
-- list of AI player in GameController to store each AI player, remove AI player from list if AI base is destroyed
-- AI manager class, with different AI difficulties, AI decisions and other AI elements
 - attack priority is drone
 - make atlas from all used sprites
 - collision manager handle all objects in scene
 - GUI and screen rotation in runtime 
-- moving background
+- static background
 - add few background layers
+- remove random to use slow ratation and attack after ration is completed
+
+

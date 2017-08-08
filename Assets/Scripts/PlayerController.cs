@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IOwnable
+public class PlayerController : MonoBehaviour
 {
     public int owner = 0;
 
@@ -8,9 +8,9 @@ public class PlayerController : MonoBehaviour, IOwnable
     public bool isDefeated = false;
 
     [Header("Cache")]
-    public GameController gameControllerObjectParent;
     public RallyPoint rallyPoint;
-    public Base baseControl;
+    public GameObject baseControl;
+    public AIPlayer aiPlayer;
     private GameObject startLocationObject;
 
     [Header("Prefabs")]
@@ -26,13 +26,12 @@ public class PlayerController : MonoBehaviour, IOwnable
 	// Use this for initialization
 	void Start ()
     {
-        gameControllerObjectParent = transform.parent.gameObject.GetComponent<GameController>();
-
-        //AssignStartLocation();
-
         CreateBase();
 
         CreateRallyPoint();
+
+        if (owner != 0)
+            aiPlayer = gameObject.AddComponent<AIPlayer>();
 
         isInitialized = true;
     }
@@ -41,24 +40,29 @@ public class PlayerController : MonoBehaviour, IOwnable
     {
         if (isInitialized)
         {
-            if (baseControl == null && !isDefeated)
+            if (baseControl == null)
             {
-                
+
                 if (owner != 0)
-                    GameController.winPoints += 1;
+                {
+                    GameController.Instance.playerControllerObject.Remove(gameObject);
+                    if (GameController.Instance.playerControllerObject.Count <= 1)
+                        GameController.Instance.winPoints += 1;
+                    // define enemies
+
+                    Destroy(gameObject);
+                }
                 else
-                    GameController.winPoints -= 1;
-                isDefeated = true;
+                    GameController.Instance.winPoints -= 1;
             }
         }
     }
 
     void CreateBase()
     {
-        GameObject baseObject = Instantiate(basePrefab, transform.position, transform.rotation);
-        baseControl = baseObject.GetComponent<Base>();
-        baseControl.owner = owner;
-        baseObject.transform.SetParent(transform);
+        baseControl = Instantiate(basePrefab, transform.position, transform.rotation);
+        baseControl.GetComponent<Base>().owner = owner;
+        baseControl.transform.SetParent(transform);
 
         baseControl.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetBases[owner];
     }
@@ -69,7 +73,7 @@ public class PlayerController : MonoBehaviour, IOwnable
         rallyPoint = rallyPointObject.GetComponent<RallyPoint>();
         rallyPoint.owner = owner;
 		rallyPointObject.transform.SetParent(transform);
-        baseControl.rallyPointObject = rallyPoint.gameObject;
+        baseControl.GetComponent<Base>().rallyPointObject = rallyPoint.gameObject;
 
         rallyPoint.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetRallyPoints[owner];
     }

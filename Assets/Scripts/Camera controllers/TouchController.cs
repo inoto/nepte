@@ -32,7 +32,7 @@ public class TouchController : MonoBehaviour
             transform.position = tmpVector;
         }
 
-        if (GameController.IsGame)
+        if (GameController.Instance.IsGame)
         {
             if (Input.touchCount > 0)
             {
@@ -60,17 +60,18 @@ public class TouchController : MonoBehaviour
 
     void Click()
     {
-        if (!GameController.IsPaused )
+        if (!GameController.Instance.IsPaused )
         {
             Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             clickPosition.z = 0;
             // TODO: use raycast instead
 
-            GameObject[] players = GameController.Instance.playerControllerObject;
-            foreach (GameObject player in players)
-            {
-                player.GetComponent<PlayerController>().rallyPoint.SetNew(clickPosition);
-            }
+            //GameObject[] players = GameController.Instance.playerControllerObject;
+            //foreach (GameObject player in players)
+            //{
+            //    player.GetComponent<PlayerController>().rallyPoint.SetNew(clickPosition);
+            //}
+            GameController.Instance.playerControllerObject[0].GetComponent<PlayerController>().rallyPoint.SetNew(clickPosition);
         }
     }
 

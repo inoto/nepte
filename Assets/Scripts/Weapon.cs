@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour, IOwnable
+public class Weapon : MonoBehaviour
 {
-    public int owner;
-
     private float waitTime;
 
     [Header("Attack")]
@@ -27,41 +25,28 @@ public class Weapon : MonoBehaviour, IOwnable
         droneParent = gameObject.transform.parent.gameObject.GetComponent<Drone>();
         weaponCollider = gameObject.GetComponent<CircleCollider2D>();
     }
-	
-	// Update is called once per frame
-	//void Update ()
-    //{
-    //    if (mode != Mode.Attacking)
-    //    {
-    //        droneParent.canMove = true;
-    //    }
-    //    else
-    //        droneParent.canMove = false;
-
-    //    if (!enemy && mode != Mode.Idle)
-    //    {
-    //        //StopCoroutine("Attack");
-    //        droneParent.EnterIdleMode();
-    //    }
-    //}
 
     public void ReleaseLaserMissile(Vector3 newDestinationVector)
     {
-		GameObject laserMissileObject = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
-        laserMissileObject.transform.SetParent(GameController.Instance.transform);
-        laserMissileObject.transform.localScale = droneParent.transform.localScale;
+		//GameObject laserMissileObject = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
+        //laserMissileObject.transform.SetParent(GameController.Instance.transform);
+        //laserMissileObject.transform.localScale = droneParent.transform.localScale;
+
+        GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, droneParent.transform, gameObject.transform.position, gameObject.transform.rotation);
+        //laserMissileObject.transform.position = transform.position;
         LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;
-		laserMissile.owner = owner;
+		laserMissile.owner = droneParent.owner;
 		laserMissile.damage = damage;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("unit"))
+        if (other.gameObject.CompareTag("drone") || other.gameObject.CompareTag("base"))
         {
             triggeredDrone = other.gameObject.GetComponent<IOwnable>();
-            if (droneParent.enemy == triggeredDrone.GetGameObject())
+            if (droneParent.enemy == triggeredDrone.GetGameObject()
+                && triggeredDrone.IsActive())
             {
                 droneParent.EnterAttackingMode();
             }
@@ -74,42 +59,6 @@ public class Weapon : MonoBehaviour, IOwnable
         if (other.gameObject == droneParent.enemy)
         {
             droneParent.EnterCombatMode(other.gameObject);
-            //StopCoroutine("Attack");
         }
-    }
-
-
-
-    //IEnumerator Attack()
-    //{
-    //    while (enemy)
-    //    {
-    //        waitTime = Random.Range(0.5f, 1.5f);
-    //        yield return new WaitForSeconds(waitTime);
-    //        if (enemy)
-    //        {
-    //            ReleaseLaserMissile();
-    //        }
-    //        else
-    //        {
-    //            yield break;
-    //        }
-    //        // TODO: remove random to use slow ratation and attack after ration is completed
-    //    }
-    //}
-
-	public int GetOwner()
-	{
-		return owner;
-	}
-
-	public void SetOwner(int newOwner)
-	{
-		owner = newOwner;
-	}
-
-    public GameObject GetGameObject()
-    {
-        return gameObject;
     }
 }

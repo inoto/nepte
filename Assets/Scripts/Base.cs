@@ -8,12 +8,15 @@ public class Base : MonoBehaviour, IOwnable
 
     public int health = 1000;
 
+    public bool isDead = false;
+
     [Header("Cache")]
     private Transform trans;
     private GameObject playerControllerParent;
     public UISprite assignedHPbar;
     public GameObject rallyPointObject;
     public LaserMissile triggeredLaserMissile;
+	public List<GameObject> attackers = new List<GameObject>();
 
     [Header("Spawn")]
     public float spawnTime = 3f;
@@ -59,6 +62,7 @@ public class Base : MonoBehaviour, IOwnable
 
     void Die()
     {
+        isDead = true;
         GameObject tmpObject = Instantiate(explosionPrefab, transform.position, transform.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         tmpObject.transform.localScale = trans.localScale;
@@ -68,14 +72,14 @@ public class Base : MonoBehaviour, IOwnable
 
     void SpawnDrone()
     {
-        GameObject droneObject = Instantiate(dronePrefab, transform.position, transform.rotation);
-        Drone droneSpawned = droneObject.GetComponent<Drone>();
+        //GameObject droneObject = Instantiate(dronePrefab, transform.position, transform.rotation);
+        GameObject droneObject = ObjectPool.Spawn(dronePrefab, transform.parent, GameController.Instance.playerStartPosition[owner], transform.rotation);
+        //droneObject.transform.position = trans.position;
+		Drone droneSpawned = droneObject.GetComponent<Drone>();
         droneSpawned.owner = owner;
         //PlayerController playerController = transform.parent.GetComponent<PlayerController>();
-        droneSpawned.transform.SetParent(transform.parent);
         droneSpawned.playerRallyPoint = rallyPointObject;
 
-        GameController gameController = playerControllerParent.transform.parent.gameObject.GetComponent<GameController>();
         droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetDrones[owner];
     }
 
@@ -94,7 +98,6 @@ public class Base : MonoBehaviour, IOwnable
                     HPslider.Set((float)health / 1000);
                 }
                 health -= triggeredLaserMissile.damage;
-				
             }
 
         }
@@ -104,6 +107,16 @@ public class Base : MonoBehaviour, IOwnable
     {
         triggeredLaserMissile = null;
     }
+
+	public void AddAttacker(GameObject newObj)
+	{
+		attackers.Add(newObj);
+	}
+
+	public bool IsActive()
+	{
+        return gameObject.activeSelf;
+	}
 
 	public int GetOwner()
 	{

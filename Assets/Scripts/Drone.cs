@@ -10,14 +10,14 @@ public class Drone : MonoBehaviour, IOwnable
 
 	public bool isDead = false;
 
-	enum Mode
+	public enum Mode
 	{
 		Idle,
         Moving,
 		Combat,
 		Attacking
 	}
-	Mode mode;
+	public Mode mode;
 
     [Header("Destination")]
     // TODO: change GameObject to Vector3 for rallypoints
@@ -40,16 +40,11 @@ public class Drone : MonoBehaviour, IOwnable
     public LaserMissile triggeredLaserMissile;
     public IOwnable triggeredDrone;
     public GameObject enemy;
+    public List<GameObject> attackers = new List<GameObject>();
 
     [Header("Prefabs")]
     [SerializeField]
     private GameObject droneExplosionPrefab;
-    [SerializeField]
-    private GameObject weaponPrefab;
-	[SerializeField]
-    private GameObject radarPrefab;
-    [SerializeField]
-    private GameObject markerPrefab;
 
     public static Sprite[] spriteSet;
 
@@ -60,8 +55,8 @@ public class Drone : MonoBehaviour, IOwnable
 
         //transform.Rotate(0.0f, 0.0f, Random.Range(0.0f, 360.0f));
 
-        CreateWeapon();
-        CreateRadar();
+        weaponChild = transform.GetChild(0).GetComponent<Weapon>();
+        radarChild = transform.GetChild(1).GetComponent<Radar>();
 
         EnterIdleMode();
 
@@ -94,6 +89,19 @@ public class Drone : MonoBehaviour, IOwnable
         // TODO: move change of transform.position to the end after calculations
     }
 
+    private void OnDisable()
+    {
+        
+    }
+
+    private void OnEnable()
+	{
+        isDead = false;
+		weaponChild = transform.GetChild(0).GetComponent<Weapon>();
+		radarChild = transform.GetChild(1).GetComponent<Radar>();
+        EnterIdleMode();
+	}
+
     void Rotate()
     {
 		angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
@@ -107,23 +115,23 @@ public class Drone : MonoBehaviour, IOwnable
 		transform.position = Vector2.MoveTowards(transform.position, currentRallyPoint.transform.position, step);
     }
 
-    void CreateWeapon()
-    {
-        GameObject weaponObject = Instantiate(weaponPrefab, transform.position, transform.rotation);
-		weaponObject.transform.SetParent(transform);
-        weaponChild = weaponObject.GetComponent<Weapon>();
-		weaponChild.owner = owner;
-        weaponChild.transform.localScale = new Vector3(1, 1, 1);
-    }
+  //  void CreateWeapon()
+  //  {
+  //      GameObject weaponObject = Instantiate(weaponPrefab, transform.position, transform.rotation);
+		//weaponObject.transform.SetParent(transform);
+  //      weaponChild = weaponObject.GetComponent<Weapon>();
+		//weaponChild.owner = owner;
+  //      weaponChild.transform.localScale = new Vector3(1, 1, 1);
+  //  }
 
-    void CreateRadar()
-    {
-		GameObject radarObject = Instantiate(radarPrefab, transform.position, transform.rotation);
-		radarObject.transform.SetParent(transform);
-        radarChild = radarObject.GetComponent<Radar>();
-		radarChild.owner = owner;
-        radarChild.transform.localScale = new Vector3(1, 1, 1);
-    }
+  //  void CreateRadar()
+  //  {
+		//GameObject radarObject = Instantiate(radarPrefab, transform.position, transform.rotation);
+		//radarObject.transform.SetParent(transform);
+  //      radarChild = radarObject.GetComponent<Radar>();
+		//radarChild.owner = owner;
+    //    radarChild.transform.localScale = new Vector3(1, 1, 1);
+    //}
 
     public void ResetRallyPoint()
     {
@@ -136,10 +144,42 @@ public class Drone : MonoBehaviour, IOwnable
     void Die()
     {
         isDead = true;
+        ObjectPool.Recycle(gameObject);
         GameObject tmpObject = Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
-        Destroy(gameObject);
+        UnbindAttackers();
     }
+
+    void UnbindAttackers()
+    {
+        foreach (GameObject attacker in attackers)
+        {
+            attacker.GetComponent<Drone>().enemy = null;
+        }
+        attackers.Clear();
+    }
+
+	public bool IsIdle
+	{
+		get
+		{
+            if (mode == Mode.Idle)
+                return true;
+            else
+                return false;
+		}
+	}
+
+	public bool HasNoEnemy
+	{
+		get
+		{
+            if (enemy == null)
+				return true;
+			else
+				return false;
+		}
+	}
 
 	public void EnterCombatMode(GameObject newEnemy)
 	{
@@ -148,7 +188,7 @@ public class Drone : MonoBehaviour, IOwnable
             return;
 		enemy = newEnemy;
         currentRallyPoint = enemy;
-        radarChild.gameObject.SetActive(false);
+        //radarChild.gameObject.SetActive(false);
         weaponChild.gameObject.SetActive(true);
 	}
 
@@ -156,7 +196,7 @@ public class Drone : MonoBehaviour, IOwnable
 	{
 		mode = Mode.Idle;
         ResetRallyPoint();
-		radarChild.gameObject.SetActive(true);
+		//radarChild.gameObject.SetActive(true);
 		weaponChild.gameObject.SetActive(false);
 	}
 
@@ -168,12 +208,14 @@ public class Drone : MonoBehaviour, IOwnable
 
 	IEnumerator Attack()
 	{
-		while (enemy)
+        while (enemy != null)
 		{
             float waitTime = Random.Range(0.5f, 1.5f);
+			directionVector = currentRallyPoint.transform.position - transform.position;
+			Rotate();
 			// TODO: remove random to use slow ratation and attack after ration is completed
 			yield return new WaitForSeconds(waitTime);
-			if (enemy)
+			if (enemy != null)
 			{
                 //Rotate();
                 weaponChild.ReleaseLaserMissile(enemy.transform.position);
@@ -203,8 +245,9 @@ public class Drone : MonoBehaviour, IOwnable
             }
 
         }
-        else if (other.gameObject.CompareTag("unit"))
+        else if (other.gameObject.CompareTag("drone") || other.gameObject.CompareTag("base"))
         {
+
             triggeredDrone = other.gameObject.GetComponent<IOwnable>();
             //Debug.Log(gameObject + " triggered with " + triggeredDrone.GetGameObject());
         }
@@ -214,6 +257,16 @@ public class Drone : MonoBehaviour, IOwnable
 	{
         triggeredDrone = null;
 
+	}
+
+    public void AddAttacker(GameObject newObj)
+    {
+        attackers.Add(newObj);
+    }
+
+	public bool IsActive()
+	{
+        return gameObject.activeSelf;
 	}
 
 	public int GetOwner()

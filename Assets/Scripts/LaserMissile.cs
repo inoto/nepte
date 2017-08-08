@@ -32,23 +32,47 @@ public class LaserMissile : MonoBehaviour, IOwnable
         directionVector = destinationVector - transform.position;
 
         if (transform.position == destinationVector)
-            Destroy(gameObject);
+            ObjectPool.Recycle(gameObject);
         if (wasExecuted)
-            Destroy(gameObject);
-        
-        Move();
+            ObjectPool.Recycle(gameObject);
+
+        //if (angle == Vector3.Angle(transform.forward, directionVector))
+            Move();
+        //else
+        //{
+        //    directionVector = destinationVector - transform.position;
+        //    Rotate();
+        //}
     }
+
+	private void OnEnable()
+	{
+        wasExecuted = false;
+        directionVector = destinationVector - transform.position;
+        Rotate();
+	}
 
     void Rotate()
     {
-		angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
-		transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        //angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
+        //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.LookRotation(Vector3., directionVector);
     }
 
     void Move()
     {
 		step = speed * Time.deltaTime;
 		transform.position = Vector2.MoveTowards(transform.position, destinationVector, step);
+    }
+
+    public void AddAttacker(GameObject newObj)
+    {
+        return;
+    }
+
+    public bool IsActive()
+    {
+        return gameObject.activeSelf;
     }
 
 	public int GetOwner()

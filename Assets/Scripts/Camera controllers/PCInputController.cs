@@ -25,7 +25,6 @@ public class PCInputController : MonoBehaviour
 #if !UNITY_EDITOR
 		Destroy(this);
 #endif
-		gameController = GameObject.Find("GameController").GetComponent<GameController>();
         battleground = GameObject.Find("Battleground").GetComponent<Battleground>();
         cameraUIBars = GameObject.Find("CameraUIBars").GetComponent<Camera>();
 	}
@@ -33,7 +32,7 @@ public class PCInputController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (GameController.IsGame)
+        if (GameController.Instance.IsGame)
         {
             deltaX = Input.GetAxis("Horizontal");
             deltaY = Input.GetAxis("Vertical");
@@ -44,23 +43,21 @@ public class PCInputController : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (!GameController.IsPaused)
-                {
-                    mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    mousePosition.z = 0;
-                    // TODO: use raycast instead
+                mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mousePosition.z = 0;
+                //// TODO: use raycast instead
 
-                    GameObject[] players = gameController.playerControllerObject;
-                    foreach (GameObject player in players)
-                    {
-                        player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
-                    }
-                }
+                //GameObject[] players = gameController.playerControllerObject;
+                //foreach (GameObject player in players)
+                //{
+                //    player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
+                //}
+                GameController.Instance.playerControllerObject[0].GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                GameObject[] players = gameController.playerControllerObject;
-                foreach (GameObject player in players)
+                //GameObject[] players = gameController.playerControllerObject;
+                foreach (GameObject player in GameController.Instance.playerControllerObject)
                 {
                     mousePosition = player.GetComponent<PlayerController>().baseControl.transform.position;
                     mousePosition.z = 0;

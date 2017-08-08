@@ -22,9 +22,9 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-    public static int players = 3;
+    public int players = 3;
 
-    public static int winPoints = 0;
+    public int winPoints = 0;
 
 	public enum States
 	{
@@ -35,9 +35,9 @@ public class GameController : MonoBehaviour
 		Win,
 		Lose
 	}
-    public static States state;
+    public States state;
 
-    public static float gameTimer;
+    public float gameTimer;
 
     [Header("UI Panels")]
     public GameObject beforegamePanel;
@@ -57,10 +57,12 @@ public class GameController : MonoBehaviour
     public GameObject cameraChild;
     public Battleground battlegroundChild;
     public MixerContoller audioMixer;
-    public GameObject[] playerControllerObject;
+    //public GameObject[] playerControllerObject;
+    public List<GameObject> playerControllerObject;
 
     [Header("Cache")]
-    public Vector3[] playerStartPosition;
+    //public Vector3[] playerStartPosition;
+    public List<Vector3> playerStartPosition;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -85,7 +87,7 @@ public class GameController : MonoBehaviour
     {
         gameTimer += Time.deltaTime;
 
-        if (winPoints >= 2)
+        if (winPoints > 0)
         {
             Win();
             winPoints = 0;
@@ -97,21 +99,21 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public static void ChangeState(States newState)
+    public void ChangeState(States newState)
     {
         if (newState == state)
             return;
         state = newState;
     }
 
-	public static bool IsState(States stateTo)
+	public bool IsState(States stateTo)
 	{
 		if (state == stateTo)
 			return true;
 		return false;
 	}
 
-	public static bool IsGame
+	public bool IsGame
 	{
 		get
 		{
@@ -119,7 +121,7 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	public static bool IsPaused
+	public bool IsPaused
 	{
 		get
 		{
@@ -231,9 +233,11 @@ public class GameController : MonoBehaviour
 		{
             if (child.gameObject == battlegroundChild.gameObject)
                 continue;
-            if (child.gameObject == cameraChild)
+            if (child.gameObject == cameraChild.gameObject)
 				continue;
             if (child.gameObject == audioMixer.gameObject)
+				continue;
+            if (child.gameObject == GameObject.Find("ObjectPool").gameObject)
 				continue;
 			Destroy(child.gameObject);
 		}
@@ -250,19 +254,24 @@ public class GameController : MonoBehaviour
 
 	void CreatePlayers()
 	{
+        playerControllerObject = new List<GameObject>();
+
+        GameObject tmpObject;
 		for (int i = 0; i < players; i++)
 		{
-			playerControllerObject[i] = Instantiate(playerControllerPrefab);
-			playerControllerObject[i].transform.SetParent(transform);
-			PlayerController playerController = playerControllerObject[i].GetComponent<PlayerController>();
+			tmpObject = Instantiate(playerControllerPrefab);
+            tmpObject.transform.SetParent(transform);
+			PlayerController playerController = tmpObject.GetComponent<PlayerController>();
 			playerController.owner = i;
 			playerController.transform.position = playerStartPosition[i];
+
+            playerControllerObject.Add(tmpObject);
 		}
 	}
 
 	void AssignStartPositions()
 	{
-		playerStartPosition = new Vector3[players];
+        playerStartPosition = new List<Vector3>();
 
 		GameObject tmpObject;
 		for (int i = 0; i < players; i++)
@@ -271,23 +280,19 @@ public class GameController : MonoBehaviour
 			{
 				case 0:
 					tmpObject = GameObject.Find("StartPlayer");
-					playerStartPosition[i] = tmpObject.transform.position;
+                    playerStartPosition.Add(tmpObject.transform.position);
 					Destroy(tmpObject);
 					continue;
 				case 1:
 					tmpObject = GameObject.Find("StartAIFirst");
-					playerStartPosition[i] = tmpObject.transform.position;
+					playerStartPosition.Add(tmpObject.transform.position);
 					Destroy(tmpObject);
 					continue;
 				case 2:
 					tmpObject = GameObject.Find("StartAISecond");
-					playerStartPosition[i] = tmpObject.transform.position;
+					playerStartPosition.Add(tmpObject.transform.position);
 					Destroy(tmpObject);
-
 					continue;
-                default:
-                    playerStartPosition[i] = cameraChild.transform.position;
-                    continue;
 			}
 
 		}

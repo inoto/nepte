@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 
-public class Radar : MonoBehaviour, IOwnable
+public class Radar : MonoBehaviour
 {
-    public int owner;
 
 	[Header("Cache")]
 	private Drone droneParent;
@@ -17,18 +16,41 @@ public class Radar : MonoBehaviour, IOwnable
         radarCollider = gameObject.GetComponent<CircleCollider2D>();
 	}
 
+    private void OnEnable()
+    {
+        droneParent = transform.parent.GetComponent<Drone>();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("unit"))
+        if (droneParent.HasNoEnemy)
         {
-            triggeredDrone = other.gameObject.GetComponent<IOwnable>();
-
-            if (triggeredDrone.GetGameObject() != null
-                && other.gameObject != droneParent.gameObject
-                && triggeredDrone.GetOwner() != owner)
+            if (other.gameObject.CompareTag("drone") || other.gameObject.CompareTag("base"))
             {
-                droneParent.EnterCombatMode(other.gameObject);
+                triggeredDrone = other.gameObject.GetComponent<IOwnable>();
+
+                if (other.gameObject != droneParent.gameObject
+                    && triggeredDrone.GetOwner() != droneParent.owner)
+                {
+                    droneParent.EnterCombatMode(other.gameObject);
+                    triggeredDrone.AddAttacker(droneParent.gameObject);
+                }
             }
+        }
+        else
+        {
+            if (droneParent.enemy.gameObject.CompareTag("base") && other.gameObject.CompareTag("drone"))
+			{
+				triggeredDrone = other.gameObject.GetComponent<IOwnable>();
+
+				if (other.gameObject != droneParent.gameObject
+					&& triggeredDrone.GetOwner() != droneParent.owner)
+				{
+					droneParent.EnterCombatMode(other.gameObject);
+                    droneParent.attackers.Add(triggeredDrone.GetGameObject());
+                    triggeredDrone.AddAttacker(droneParent.gameObject);
+				}
+			}
         }
     }
 
@@ -37,18 +59,4 @@ public class Radar : MonoBehaviour, IOwnable
         triggeredDrone = null;
     }
 
-	public int GetOwner()
-	{
-		return owner;
-	}
-
-	public void SetOwner(int newOwner)
-	{
-		owner = newOwner;
-	}
-
-	public GameObject GetGameObject()
-	{
-		return gameObject;
-	}
 }

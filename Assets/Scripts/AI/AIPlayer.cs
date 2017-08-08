@@ -1,0 +1,105 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AIPlayer : MonoBehaviour
+{
+    public int difficulty;
+
+    // cache
+    public PlayerController playerController;
+
+    enum Decisions
+    {
+        AttackBase,
+        AttackCluster,
+        AttackCenter
+    }
+    Decisions decision;
+
+    List<GameObject> enemies;
+
+	// Use this for initialization
+	void Start ()
+    {
+        enemies = new List<GameObject>();
+
+        playerController = gameObject.GetComponent<PlayerController>();
+
+        StartCoroutine(TakeDecision());
+	}
+	
+	// Update is called once per frame
+	void Update ()
+    {
+		
+	}
+
+    public void DefineEnemies()
+    {
+        int activePlayers = GameController.Instance.playerControllerObject.Count;
+        if (activePlayers - 1 == enemies.Count)
+            return;
+
+        enemies.Clear();
+        for (int i = 0; i < activePlayers; i++)
+        {
+            if (playerController.owner == i)
+                continue;
+            enemies.Add(GameController.Instance.playerControllerObject[i]);
+        }
+    }
+
+    IEnumerator TakeDecision()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(5.0f);
+            int randDes = Random.Range(0, 3);
+            switch (randDes)
+            {
+                case 0:
+                    DecisionAttackBase();
+                    break;
+                case 1:
+                    DecisionAttackCluster();
+                    break;
+                case 2:
+                    DecisionAttackCenter();
+                    //Debug.Log("player's " + playerController.owner + " decision is center");
+                    break;
+            }
+        }
+    }
+
+    void DecisionAttackBase()
+    {
+        decision = Decisions.AttackBase;
+
+        DefineEnemies();
+
+        int randInt = Random.Range(0, enemies.Count);
+        //Debug.Log("player " + playerController.owner + " want to attack base of player " + randInt);
+        playerController.rallyPoint.gameObject.transform.position = enemies[randInt].gameObject.transform.position;
+    }
+
+	void DecisionAttackCluster()
+	{
+		decision = Decisions.AttackCluster;
+
+        DecisionAttackBase();
+	}
+
+	void DecisionAttackCenter()
+	{
+        decision = Decisions.AttackCenter;
+
+        playerController.rallyPoint.gameObject.transform.position = new Vector3(0,0,3);
+	}
+
+	//public void DecisionDefend()
+    //{
+    //    decision = Decisions.Defend;
+    //    playerController.rallyPoint.gameObject.transform.position = playerController.transform.position;
+    //}
+}
