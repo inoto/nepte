@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Base : MonoBehaviour, IOwnable
 {
-    public int owner = 0;
+    public int owner;
 
     public int health = 1000;
 
@@ -74,13 +74,13 @@ public class Base : MonoBehaviour, IOwnable
     {
         //GameObject droneObject = Instantiate(dronePrefab, transform.position, transform.rotation);
         GameObject droneObject = ObjectPool.Spawn(dronePrefab, transform.parent, GameController.Instance.playerStartPosition[owner], transform.rotation);
+
         //droneObject.transform.position = trans.position;
 		Drone droneSpawned = droneObject.GetComponent<Drone>();
         droneSpawned.owner = owner;
         //PlayerController playerController = transform.parent.GetComponent<PlayerController>();
-        droneSpawned.playerRallyPoint = rallyPointObject;
 
-        droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetDrones[owner];
+		droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetDrones[owner];
     }
 
     void OnTriggerEnter2D(Collider2D other)

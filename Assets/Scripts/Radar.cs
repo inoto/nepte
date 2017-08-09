@@ -4,51 +4,48 @@ public class Radar : MonoBehaviour
 {
 
 	[Header("Cache")]
-	private Drone droneParent;
-    private CircleCollider2D radarCollider;
+	private Drone droneComponent;
     private IOwnable triggeredDrone;
-
 
 	// Use this for initialization
 	void Start ()
     {
-        droneParent = transform.parent.GetComponent<Drone>();
-        radarCollider = gameObject.GetComponent<CircleCollider2D>();
+        droneComponent = GetComponent<Drone>();
 	}
 
     private void OnEnable()
     {
-        droneParent = transform.parent.GetComponent<Drone>();
+        droneComponent = GetComponent<Drone>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (droneParent.HasNoEnemy)
+        if (droneComponent.HasNoEnemy)
         {
             if (other.gameObject.CompareTag("drone") || other.gameObject.CompareTag("base"))
             {
                 triggeredDrone = other.gameObject.GetComponent<IOwnable>();
 
-                if (other.gameObject != droneParent.gameObject
-                    && triggeredDrone.GetOwner() != droneParent.owner)
+                if (other.gameObject != droneComponent.gameObject
+                    && triggeredDrone.GetOwner() != droneComponent.owner)
                 {
-                    droneParent.EnterCombatMode(other.gameObject);
-                    triggeredDrone.AddAttacker(droneParent.gameObject);
+                    droneComponent.EnterCombatMode(other.gameObject);
+                    triggeredDrone.AddAttacker(droneComponent.gameObject);
                 }
             }
         }
         else
         {
-            if (droneParent.enemy.gameObject.CompareTag("base") && other.gameObject.CompareTag("drone"))
+            if (droneComponent.enemy.gameObject.CompareTag("base") && other.gameObject.CompareTag("drone"))
 			{
 				triggeredDrone = other.gameObject.GetComponent<IOwnable>();
 
-				if (other.gameObject != droneParent.gameObject
-					&& triggeredDrone.GetOwner() != droneParent.owner)
+				if (other.gameObject != droneComponent.gameObject
+					&& triggeredDrone.GetOwner() != droneComponent.owner)
 				{
-					droneParent.EnterCombatMode(other.gameObject);
-                    droneParent.attackers.Add(triggeredDrone.GetGameObject());
-                    triggeredDrone.AddAttacker(droneParent.gameObject);
+					droneComponent.EnterCombatMode(other.gameObject);
+                    droneComponent.attackers.Add(triggeredDrone.GetGameObject());
+                    triggeredDrone.AddAttacker(droneComponent.gameObject);
 				}
 			}
         }

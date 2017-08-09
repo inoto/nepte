@@ -2,7 +2,7 @@
 
 public class RallyPoint : MonoBehaviour
 {
-    public int owner = 0;
+    public int owner;
 
     private Vector3 mousePosition;
 

@@ -10,7 +10,6 @@ public class Weapon : MonoBehaviour
 
     [Header("Cache")]
 	private Drone droneParent;
-	private CircleCollider2D weaponCollider;
 	private IOwnable triggeredDrone;
 
     [Header("Prefabs")]
@@ -22,8 +21,7 @@ public class Weapon : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        droneParent = gameObject.transform.parent.gameObject.GetComponent<Drone>();
-        weaponCollider = gameObject.GetComponent<CircleCollider2D>();
+        droneParent = GetComponent<Drone>();
     }
 
     public void ReleaseLaserMissile(Vector3 newDestinationVector)
@@ -32,7 +30,7 @@ public class Weapon : MonoBehaviour
         //laserMissileObject.transform.SetParent(GameController.Instance.transform);
         //laserMissileObject.transform.localScale = droneParent.transform.localScale;
 
-        GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, droneParent.transform, gameObject.transform.position, gameObject.transform.rotation);
+        GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, gameObject.transform.position, gameObject.transform.rotation);
         //laserMissileObject.transform.position = transform.position;
         LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;

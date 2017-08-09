@@ -411,7 +411,7 @@ Transform:
   m_GameObject: {fileID: 103451744}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -5.26, z: 0}
-  m_LocalScale: {x: 0.0044345898, y: 0.0044345898, z: 0.0044345898}
+  m_LocalScale: {x: 0.004750594, y: 0.004750594, z: 0.004750594}
   m_Children:
   - {fileID: 1815981353}
   - {fileID: 1393607019}
@@ -1623,7 +1623,7 @@ Transform:
   m_GameObject: {fileID: 313740308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0044345898, y: 0.0044345898, z: 0.0044345898}
+  m_LocalScale: {x: 0.004750594, y: 0.004750594, z: 0.004750594}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -3099,6 +3099,78 @@ MonoBehaviour:
   mFixedAspect: 0
   mPixelSize: 1
   nextSprite: {fileID: 0}
+--- !u!1 &648739326
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 648739327}
+  - component: {fileID: 648739328}
+  - component: {fileID: 648739330}
+  - component: {fileID: 648739329}
+  m_Layer: 0
+  m_Name: Grid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &648739327
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 648739326}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 279833350}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &648739328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 648739326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c9ed1be0cdc4b5787d3c294390575b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayGridGizmos: 0
+  unwalkableMask:
+    serializedVersion: 2
+    m_Bits: 0
+  nodeRadius: 0.05
+  gridSize: {x: 0, y: 0}
+  walkableRegions: []
+  obstacleProximityPenalty: 10
+--- !u!114 &648739329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 648739326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09e7d1d8ff3f84c78a0a62fc5bc72b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &648739330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 648739326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8722cc1f2f25497698459dc6f117662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &685577705 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1771483991996188, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449,

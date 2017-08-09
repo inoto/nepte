@@ -2,7 +2,7 @@
 
 public class PlayerController : MonoBehaviour
 {
-    public int owner = 0;
+    public int owner;
 
     public bool isInitialized = false;
     public bool isDefeated = false;
