@@ -83,8 +83,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1933073171656232}
-  m_LocalRotation: {x: -0, y: -0, z: 0.25784153, w: 0.96618724}
-  m_LocalPosition: {x: -1.7377522, y: -0.9992081, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 4096574011046342}
@@ -208,14 +208,9 @@ MonoBehaviour:
     width: 0
     height: 0
   mode: 0
-  currentDestination: {fileID: 0}
+  destinationTransform: {fileID: 0}
   playerRallyPoint: {fileID: 0}
   directionVector: {x: 1.7432439, y: 1.0023657, z: 0}
-  speed: 1
-  angle: 29.898914
-  rotationSpeed: 10
-  turnDistance: 5
-  stoppingDistance: 10
   triggeredLaserMissile: {fileID: 0}
   enemy: {fileID: 0}
   attackers: []

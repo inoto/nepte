@@ -60,38 +60,24 @@ public class Drone : MonoBehaviour, IOwnable
     private void OnEnable()
     {
         Initialize();
-        playerRallyPoint = null;
+        ResetRallyPoint();
+        CollisionManager.Instance.AddUnitTransform(transform);
     }
 
     void Initialize()
     {
-        playerRallyPoint = GameController.Instance.playerControllerObject[owner].GetComponent<PlayerController>().rallyPoint.gameObject;
         isDead = false;
         health = 100;
         enemy = null;
         triggeredLaserMissile = null;
         triggeredDrone = null;
-        destinationTransform = null;
+        playerRallyPoint = null;
         EnterIdleMode();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (destinationTransform != null && mode != Mode.Attacking)
-        {
-            //directionVector = currentRallyPoint.transform.position - transform.position;
-
-            //Rotate();
-
-            //Move();
-        }
-
-        if (enemy == null && mode != Mode.Idle)
-        {
-                EnterIdleMode();
-        }
-
         //if ((Object)triggeredDrone != null)
         //{
         //    directionVector = triggeredDrone.GetGameObject().transform.position - this.transform.position;
@@ -101,25 +87,12 @@ public class Drone : MonoBehaviour, IOwnable
         // TODO: move change of transform.position to the end after calculations
     }
 
-    //void Rotate()
-    //{
-    //    angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
-    //    Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
-    //    transform.rotation = Quaternion.Slerp(transform.rotation, qt, Time.deltaTime * rotationSpeed);
-    //}
-
-    //void Move()
-    //{
-    //    step = speed * Time.deltaTime;
-    //    transform.position = Vector2.MoveTowards(transform.position, destinationTransform.position, step);
-    //}
-
     public void ResetRallyPoint()
     {
         if (playerRallyPoint)
             destinationTransform = playerRallyPoint.transform;
         else
-            destinationTransform = FindObjectOfType<Battleground>().transform;
+            destinationTransform = GameController.Instance.playerControllerObject[owner].GetComponent<PlayerController>().rallyPoint.gameObject.transform;
     }
 
     void Die()
@@ -129,6 +102,7 @@ public class Drone : MonoBehaviour, IOwnable
         GameObject tmpObject = Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         UnbindAttackers();
+        CollisionManager.Instance.RemoveUnitTransform(transform);
     }
 
     void UnbindAttackers()

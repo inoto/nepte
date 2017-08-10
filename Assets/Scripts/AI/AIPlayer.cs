@@ -28,12 +28,6 @@ public class AIPlayer : MonoBehaviour
 
         StartCoroutine(TakeDecision());
 	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
 
     public void DefineEnemies()
     {
@@ -79,8 +73,9 @@ public class AIPlayer : MonoBehaviour
         DefineEnemies();
 
         int randInt = Random.Range(0, enemies.Count);
-        //Debug.Log("player " + playerController.owner + " want to attack base of player " + randInt);
-        playerController.rallyPoint.gameObject.transform.position = enemies[randInt].gameObject.transform.position;
+		//Debug.Log("player " + playerController.owner + " want to attack base of player " + randInt);
+		Node node = Grid.Instance.NodeFromWorldPoint(enemies[randInt].gameObject.transform.position);
+        playerController.rallyPoint.gameObject.transform.position = node.worldPosition;
     }
 
 	void DecisionAttackCluster()
@@ -94,7 +89,8 @@ public class AIPlayer : MonoBehaviour
 	{
         decision = Decisions.AttackCenter;
 
-        playerController.rallyPoint.gameObject.transform.position = new Vector3(0,0,3);
+        Node node = Grid.Instance.NodeFromWorldPoint(new Vector3(0, 0, 3));
+        playerController.rallyPoint.gameObject.transform.position = node.worldPosition;
 	}
 
 	//public void DecisionDefend()

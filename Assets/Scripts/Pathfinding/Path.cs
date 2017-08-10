@@ -4,32 +4,21 @@ using UnityEngine;
 
 public class Path {
 
-	public readonly Vector3[] lookPoints;
-	public readonly Line[] turnBoundaries;
-	public readonly int finishLineIndex;
-	public readonly int slowDownIndex;
+	public readonly Vector2[] points;
+	public int currentIndex;
 
-	public Path(Vector3[] waypoints, Vector3 startPos, float turnDst, float stoppingDst) {
-		lookPoints = waypoints;
-		turnBoundaries = new Line[lookPoints.Length];
-		finishLineIndex = turnBoundaries.Length - 1;
+	public Path(Vector2[] waypoints, Vector3 startPos, float turnDst, float stoppingDst) {
+		points = waypoints;
 
 		Vector2 previousPoint = V3ToV2 (startPos);
-		for (int i = 0; i < lookPoints.Length; i++) {
-			Vector2 currentPoint = V3ToV2 (lookPoints [i]);
+		for (int i = 0; i < points.Length; i++) {
+			Vector2 currentPoint = V3ToV2 (points [i]);
 			Vector2 dirToCurrentPoint = (currentPoint - previousPoint).normalized;
-			Vector2 turnBoundaryPoint = (i == finishLineIndex)?currentPoint : currentPoint - dirToCurrentPoint * turnDst;
-			turnBoundaries [i] = new Line (turnBoundaryPoint, previousPoint - dirToCurrentPoint * turnDst);
-			previousPoint = turnBoundaryPoint;
 		}
 
 		float dstFromEndPoint = 0;
-		for (int i = lookPoints.Length - 1; i > 0; i--) {
-			dstFromEndPoint += Vector3.Distance (lookPoints [i], lookPoints [i - 1]);
-			if (dstFromEndPoint > stoppingDst) {
-				slowDownIndex = i;
-				break;
-			}
+		for (int i = points.Length - 1; i > 0; i--) {
+			dstFromEndPoint += Vector3.Distance (points [i], points [i - 1]);
 		}
 	}
 
@@ -39,14 +28,20 @@ public class Path {
 
 	public void DrawWithGizmos() {
 
-		Gizmos.color = Color.green;
-		foreach (Vector3 v in lookPoints) {
-            Gizmos.DrawCube (v, Vector3.one * Grid.nodeDiameter);
-		}
-
-		Gizmos.color = Color.white;
-		foreach (Line l in turnBoundaries) {
-			l.DrawWithGizmos (10);
+        Color newColor = Color.green;
+        newColor.a = 0.5f;
+        Gizmos.color = newColor;
+		for (int i = 0; i < points.Length; i++)
+		{
+			if (i == points.Length)
+			{
+                Gizmos.DrawLine(points[i], points[points.Length]);
+			}
+			else
+			{
+				Gizmos.DrawLine(points[i], points[i+1]);
+                Gizmos.DrawCube(points[i], Vector3.one * (Grid.nodeDiameter - 0.01f));
+			}
 		}
 
 	}

@@ -47,11 +47,9 @@ public class PCInputController : MonoBehaviour
                 mousePosition.z = 0;
                 //// TODO: use raycast instead
 
-                //GameObject[] players = gameController.playerControllerObject;
-                //foreach (GameObject player in players)
-                //{
-                //    player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
-                //}
+                Node node = Grid.Instance.NodeFromWorldPoint(mousePosition);
+                mousePosition = node.worldPosition;
+
                 GameController.Instance.playerControllerObject[0].GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
             }
             else if (Input.GetMouseButtonDown(1))

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Unit : MonoBehaviour {
 
-	const float minPathUpdateTime = .2f;
+	const float minPathUpdateTime = .5f;
 	const float pathUpdateMoveThreshold = .5f;
 
     Vector2 directionVector;
@@ -14,94 +14,117 @@ public class Unit : MonoBehaviour {
 	public float turnDst = 5;
 	public float stoppingDst = 10;
 
-	Path path;
+	Vector2[] path;
+    int pathIndex;
+
+    public Node node;
 
     private Drone droneComponent;
 
-	void Start() {
+	void Start()
+    {
         droneComponent = GetComponent<Drone>();
 
-		StartCoroutine (UpdatePath ());
+        StartCoroutine(UpdatePath());
 	}
 
-	public void OnPathFound(Vector3[] waypoints, bool pathSuccessful) {
+	public void OnPathFound(Vector2[] waypoints, bool pathSuccessful)
+    {
 		if (pathSuccessful) {
-			path = new Path(waypoints, transform.position, turnDst, stoppingDst);
-
+            path = waypoints;
+            pathIndex = 0;
+            droneComponent.ResetRallyPoint();
 			StopCoroutine("FollowPath");
 			StartCoroutine("FollowPath");
 		}
+        //else
+        //{
+        //    droneComponent.mode = Drone.Mode.Attacking;
+        //}
 	}
 
-	IEnumerator UpdatePath() {
+    IEnumerator UpdatePath()
+    {
+        Vector2 targetPosOld = droneComponent.destinationTransform.position;
 
-		if (Time.timeSinceLevelLoad < .3f) {
-			yield return new WaitForSeconds (.3f);
-		}
-        PathRequestManager.RequestPath (new PathRequest(transform.position, droneComponent.destinationTransform.position, OnPathFound));
-
-		float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
-		Vector3 targetPosOld = droneComponent.destinationTransform.position;
-
-		while (true) {
+		while (true)
+        {
 			yield return new WaitForSeconds (minPathUpdateTime);
-			//print (((target.position - targetPosOld).sqrMagnitude) + "    " + sqrMoveThreshold);
-			if ((droneComponent.destinationTransform.position - targetPosOld).sqrMagnitude > sqrMoveThreshold) {
+            Vector2 destination = new Vector2(droneComponent.destinationTransform.position.x, droneComponent.destinationTransform.position.y);
+            if ((destination != targetPosOld) || (droneComponent.mode == Drone.Mode.Idle))
+            {
 				PathRequestManager.RequestPath (new PathRequest(transform.position, droneComponent.destinationTransform.position, OnPathFound));
 				targetPosOld = droneComponent.destinationTransform.position;
 			}
 		}
 	}
 
-	IEnumerator FollowPath() {
+	IEnumerator FollowPath()
+    {
+        droneComponent.mode = Drone.Mode.Moving;
+        speedPercent = 1;
 
-		bool followingPath = true;
-		int pathIndex = 0;
-        Rotate();
+        while (true)
+        {
+            Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
 
-		speedPercent = 1;
+            if ((pathIndex == (path.Length - 1)) && stoppingDst > 0)
+            {
+                speedPercent = 0.75f;
+            }
 
-		while (followingPath) {
-			Vector2 pos2D = new Vector2 (transform.position.x, transform.position.y);
-			while (path.turnBoundaries [pathIndex].HasCrossedLine (pos2D)) {
-				if (pathIndex == path.finishLineIndex) {
-					followingPath = false;
-					break;
-				} else {
-					pathIndex++;
+			if (path[pathIndex] == pos2D)
+			{
+				pathIndex++;
+				if (pathIndex >= path.Length)
+				{
+					droneComponent.mode = Drone.Mode.Idle;
+					yield break;
 				}
 			}
 
-			if (followingPath) {
-                directionVector = droneComponent.destinationTransform.position - transform.position;
-				if (pathIndex >= path.slowDownIndex && stoppingDst > 0) {
-					//speedPercent = Mathf.Clamp01 (path.turnBoundaries [path.finishLineIndex].DistanceFromPoint (pos2D) / stoppingDst);
-					if (speedPercent < 0.01f) {
-						followingPath = false;
-					}
-				}
+            Rotate();
 
-                Rotate();
+            Move();
 
-                float step = Time.deltaTime * speed * speedPercent;
-                transform.position = Vector2.MoveTowards(transform.position, droneComponent.destinationTransform.position, step);
-			}
-
-			yield return null;
-
-		}
+            yield return null;
+        }
 	}
 
     void Rotate()
     {
-		float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
-		Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
-		transform.rotation = Quaternion.Lerp(transform.rotation, qt, Time.deltaTime * turnSpeed);
+        directionVector = path[pathIndex] - new Vector2(transform.position.x, transform.position.y);
+        float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
+        Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.Lerp(transform.rotation, qt, Time.deltaTime * turnSpeed);
+    }
+
+    void Move()
+    {
+		float step = Time.deltaTime * speed * speedPercent;
+		transform.position = Vector2.MoveTowards(transform.position, path[pathIndex], step);
     }
 
 	public void OnDrawGizmos() {
-		if (path != null) {
-			path.DrawWithGizmos ();
+        if (path != null)
+        {
+            Color newColor = Color.green;
+            newColor.a = 0.5f;
+            Gizmos.color = newColor;
+            for (int i = pathIndex; i < path.Length; i++)
+            {
+                if (i == pathIndex)
+                {
+                    Gizmos.DrawLine(transform.position, path[i]);
+                }
+                else
+                {
+                    Gizmos.DrawLine(path[i - 1], path[i]);
+
+                }
+            }
+            Gizmos.color = newColor;
+            Gizmos.DrawCube(path[path.Length-1], Vector3.one * (Grid.nodeDiameter - 0.01f));
 		}
 	}
 }

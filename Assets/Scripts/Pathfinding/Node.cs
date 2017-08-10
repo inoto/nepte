@@ -7,6 +7,9 @@ public class Node : IHeapItem<Node> {
 	public Vector3 worldPosition;
 	public int gridX;
 	public int gridY;
+    public Rect rect;
+    public float size;
+    public GameObject prisoner;
 	public int movementPenalty;
 
 	public int gCost;
@@ -20,6 +23,8 @@ public class Node : IHeapItem<Node> {
 		gridX = _gridX;
 		gridY = _gridY;
 		movementPenalty = _penalty;
+        size = Grid.Instance.nodeRadius * 2;
+        rect = new Rect(worldPosition.x, worldPosition.y, size, size);
 	}
 
 	public int fCost {
@@ -44,4 +49,5 @@ public class Node : IHeapItem<Node> {
 		}
 		return -compare;
 	}
+
 }

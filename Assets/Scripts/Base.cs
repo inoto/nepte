@@ -46,6 +46,8 @@ public class Base : MonoBehaviour, IOwnable
         assignedHPbar.SetAnchor(gameObject);
 		assignedHPbar.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
+        CollisionManager.Instance.AddBaseTransform(transform);
+
         InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
     }
 
@@ -66,19 +68,18 @@ public class Base : MonoBehaviour, IOwnable
         GameObject tmpObject = Instantiate(explosionPrefab, transform.position, transform.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         tmpObject.transform.localScale = trans.localScale;
+        CollisionManager.Instance.RemoveBaseTransform(transform);
         Destroy(gameObject);
         Destroy(assignedHPbar.gameObject);
     }
 
     void SpawnDrone()
     {
-        //GameObject droneObject = Instantiate(dronePrefab, transform.position, transform.rotation);
         GameObject droneObject = ObjectPool.Spawn(dronePrefab, transform.parent, GameController.Instance.playerStartPosition[owner], transform.rotation);
 
-        //droneObject.transform.position = trans.position;
 		Drone droneSpawned = droneObject.GetComponent<Drone>();
         droneSpawned.owner = owner;
-        //PlayerController playerController = transform.parent.GetComponent<PlayerController>();
+        //droneSpawned.ResetRallyPoint();
 
 		droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetDrones[owner];
     }

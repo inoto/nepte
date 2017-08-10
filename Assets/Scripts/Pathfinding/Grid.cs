@@ -4,6 +4,22 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour {
 
+	private static Grid _instance;
+
+	public static Grid Instance { get { return _instance; } }
+
+	private void Awake()
+	{
+		if (_instance != null && _instance != this)
+		{
+			Destroy(this.gameObject);
+		}
+		else
+		{
+			_instance = this;
+		}
+	}
+
 	public bool displayGridGizmos = true;
 	public LayerMask unwalkableMask;
 	public float nodeRadius;
@@ -26,7 +42,7 @@ public class Grid : MonoBehaviour {
 	int penaltyMin = int.MaxValue;
 	int penaltyMax = int.MinValue;
 
-	void Awake() {
+	void Start() {
 		battlegroundParent = transform.parent.gameObject.GetComponent<Battleground>();
 		battlegroundRenderer = battlegroundParent.gameObject.GetComponent<SpriteRenderer>();
         gridSize = battlegroundRenderer.bounds.size;
@@ -45,6 +61,7 @@ public class Grid : MonoBehaviour {
 		}
 
 		CreateGrid();
+        CollisionManager.Instance.AddAllNodes(GetAllNodesAsList());
 	}
 
 	public int MaxSize {
@@ -52,6 +69,19 @@ public class Grid : MonoBehaviour {
 			return gridSizeX * gridSizeY;
 		}
 	}
+
+    public List<Node> GetAllNodesAsList()
+    {
+        List<Node> list = new List<Node>();
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                list.Add(grid[x,y]);
+            }
+        }
+        return list;
+    }
 
 	void CreateGrid() {
 		grid = new Node[gridSizeX,gridSizeY];
@@ -83,7 +113,75 @@ public class Grid : MonoBehaviour {
 		}
 
 		BlurPenaltyMap (3);
+	}
 
+	public Node ClosestWalkableNode(Node node)
+	{
+		int maxRadius = Mathf.Max(gridSizeX, gridSizeY) / 2;
+		for (int i = 1; i < maxRadius; i++)
+		{
+			Node n = FindWalkableInRadius(node.gridX, node.gridY, i);
+			if (n != null)
+			{
+				return n;
+
+			}
+		}
+		return null;
+	}
+
+	Node FindWalkableInRadius(int centreX, int centreY, int radius)
+	{
+
+		for (int i = -radius; i <= radius; i++)
+		{
+			int verticalSearchX = i + centreX;
+			int horizontalSearchY = i + centreY;
+
+			// top
+			if (InBounds(verticalSearchX, centreY + radius))
+			{
+				if (grid[verticalSearchX, centreY + radius].walkable)
+				{
+					return grid[verticalSearchX, centreY + radius];
+				}
+			}
+
+			// bottom
+			if (InBounds(verticalSearchX, centreY - radius))
+			{
+				if (grid[verticalSearchX, centreY - radius].walkable)
+				{
+					return grid[verticalSearchX, centreY - radius];
+				}
+			}
+			// right
+			if (InBounds(centreY + radius, horizontalSearchY))
+			{
+				if (grid[centreX + radius, horizontalSearchY].walkable)
+				{
+					return grid[centreX + radius, horizontalSearchY];
+				}
+			}
+
+			// left
+			if (InBounds(centreY - radius, horizontalSearchY))
+			{
+				if (grid[centreX - radius, horizontalSearchY].walkable)
+				{
+					return grid[centreX - radius, horizontalSearchY];
+				}
+			}
+
+		}
+
+		return null;
+
+	}
+
+	bool InBounds(int x, int y)
+	{
+		return x >= 0 && x < gridSizeX && y >= 0 && y < gridSizeY;
 	}
 
 	void BlurPenaltyMap(int blurSize) {
@@ -156,9 +254,9 @@ public class Grid : MonoBehaviour {
 	}
 
 
-	public Node NodeFromWorldPoint(Vector3 worldPosition) {
+	public Node NodeFromWorldPoint(Vector2 worldPosition) {
 		float percentX = (worldPosition.x + gridSize.x/2) / gridSize.x;
-		float percentY = (worldPosition.z + gridSize.y/2) / gridSize.y;
+		float percentY = (worldPosition.y + gridSize.y/2) / gridSize.y;
 		percentX = Mathf.Clamp01(percentX);
 		percentY = Mathf.Clamp01(percentY);
 
@@ -174,7 +272,10 @@ public class Grid : MonoBehaviour {
 
 				Gizmos.color = Color.Lerp (Color.white, Color.black, Mathf.InverseLerp (penaltyMin, penaltyMax, n.movementPenalty));
 				Gizmos.color = (n.walkable)?Gizmos.color:Color.red;
-				Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter));
+                Color newColor = Gizmos.color;
+                newColor.a = 0.5f;
+                Gizmos.color = newColor;
+				Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.01f));
 			}
 		}
 	}
