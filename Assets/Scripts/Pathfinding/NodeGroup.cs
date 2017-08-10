@@ -6,74 +6,50 @@ public class NodeGroup
 {
 	public Rect rect;
 
-    Node[,] nodes;
-	List<GameObject> units;
+    public List<Node> nodes = new List<Node>();
+    public List<GameObject> units = new List<GameObject>();
+    public List<GameObject> movedUnits = new List<GameObject>();
 
     public int groupSizeX, groupSizeY;
     public int groupSize;
 
-    Vector3 penVector;
+    public float nodeRadius;
+    public float nodeDiameter;
+   
 
-	public NodeGroup(Rect newRect, CollisionGrid newParent)
+    public NodeGroup(Rect newRect)
 	{
 		rect = newRect;
-		//parent = newParent;
-        groupSizeX = Mathf.RoundToInt(rect.width / 0.1f);
-		groupSizeY = Mathf.RoundToInt(rect.height / 0.1f);
+        nodeRadius = 0.05f;
+        groupSizeX = 10;
+        groupSizeY = 10;
         groupSize = groupSizeX * groupSizeY;
-	}
+        nodeDiameter = nodeRadius * 2;
+        FillWithNodes();
+        CollisionManager.Instance.AddGroup(this);
+    }
 
-	public List<Node> GetNodesAsList()
-	{
-		List<Node> list = new List<Node>();
-		for (int x = 0; x < groupSizeX; x++)
-		{
-			for (int y = 0; y < groupSizeY; y++)
-			{
-				list.Add(nodes[x, y]);
-			}
-		}
-		return list;
-	}
-
-    void CreateGroup()
+    public void FillWithNodes()
     {
-		nodes = new Node[groupSizeX, groupSizeY];
+        Vector2 point = rect.min;
+        point.x += 0.05f;
+        point.y += 0.05f;
 
-		for (int x = 0; x < groupSizeX; x++)
-		{
-			for (int y = 0; y < groupSizeY; y++)
-			{
-				bool walkable = !(Physics.CheckSphere(penVector, nodeRadius, unwalkableMask));
-
-				int movementPenalty = 0;
-
-
-				Ray ray = new Ray(penVector + Vector3.up * 50, Vector3.down);
-				RaycastHit hit;
-				if (Physics.Raycast(ray, out hit, 100, walkableMask))
-				{
-					walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
-				}
-
-				if (!walkable)
-				{
-					movementPenalty += obstacleProximityPenalty;
-				}
-
-
-				nodes[x, y] = new Node(walkable, penVector, x, y, movementPenalty);
-
-				penVector.y += nodeDiameter;
-			}
-			penVector.y = battlegroundRenderer.bounds.min.y + 0.05f;
-			penVector.x += nodeDiameter;
-		}
+        for (int x = 0; x < groupSizeX; x++)
+        {
+            for (int y = 0; y < groupSizeY; y++)
+            {
+                nodes.Add(Grid.Instance.NodeFromWorldPoint(point));
+                point.y += 0.1f;
+            }
+            point.y -= Vector2.one.x;
+            point.x += 0.1f;
+        }
     }
 
 	void AddAllNodes(List<Node> list)
 	{
-		nodes = new List<Node>(list);
+		//nodes = new List<Node>(list);
 	}
 
 	void AddUnit(GameObject unit)
@@ -85,32 +61,45 @@ public class NodeGroup
 	{
 		foreach (Node node in nodes)
 		{
+            movedUnits.Clear();
 			foreach (GameObject unit in units)
 			{
-				if (node.rect.Contains(unit.transform.position))
-				{
-					if (!node.walkable && (node.prisoner != unit))
-					{
-						if (node.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
-						{
-							unit.GetComponent<Unit>().hasCollided = true;
-						}
-						if (unit.GetComponent<Drone>().mode == Drone.Mode.Idle)
-						{
-							unit.GetComponent<Unit>().hasCollided = true;
-						}
-					}
-					else
-					{
-						//bool result = ;
-						if (unit.GetComponent<Unit>().hasNode)
-						{
-							unit.GetComponent<Unit>().node.ReleaseObject();
-						}
-						node.ImprisonObject(unit);
-					}
-				}
+                if (!rect.Contains(unit.transform.position))
+                {
+                    CollisionManager.Instance.AddUnit(unit);
+                    movedUnits.Remove(unit);
+                }
+                else
+                {
+                    if (node.rect.Contains(unit.transform.position))
+                    {
+                        if (!node.walkable && (node.prisoner != unit))
+                        {
+                            if (node.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
+                            {
+                                unit.GetComponent<Unit>().hasCollided = true;
+                            }
+                            if (unit.GetComponent<Drone>().mode == Drone.Mode.Idle)
+                            {
+                                unit.GetComponent<Unit>().hasCollided = true;
+                            }
+                        }
+                        else
+                        {
+                            //bool result = ;
+                            if (unit.GetComponent<Unit>().hasNode)
+                            {
+                                unit.GetComponent<Unit>().node.ReleaseObject();
+                            }
+                            node.ImprisonObject(unit);
+                        }
+                    }
+                }
 			}
+            foreach (GameObject unit in movedUnits)
+            {
+                units.Remove(unit);
+            }
 		}
 	}
 }

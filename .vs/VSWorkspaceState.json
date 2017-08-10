@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\Assets",
-    "\\Assets\\Scripts"
+    "\\Assets\\Scripts",
+    "\\Assets\\Scripts\\Pathfinding"
   ],
-  "SelectedNode": "\\Assets\\Scripts\\Drone.cs",
+  "SelectedNode": "\\Assets\\Scripts\\Pathfinding\\NodeGroup.cs",
   "PreviewInSolutionExplorer": false
 }

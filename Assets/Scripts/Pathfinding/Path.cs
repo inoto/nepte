@@ -40,7 +40,7 @@ public class Path {
 			else
 			{
 				Gizmos.DrawLine(points[i], points[i+1]);
-                Gizmos.DrawCube(points[i], Vector3.one * (Grid.nodeDiameter - 0.01f));
+                Gizmos.DrawCube(points[i], Vector3.one * (1.0f - 0.01f));
 			}
 		}
 

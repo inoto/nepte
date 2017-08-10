@@ -48,12 +48,12 @@ public class Unit : MonoBehaviour {
         //}
 	}
 
-    public void Collide(Node nodeCollide)
+    /*public void Collide(Node nodeCollide)
     {
 		Node newNode = Grid.Instance.ClosestToDestinationWalkableNode(nodeCollide, droneComponent.destinationTransform.position);
 		Vector2[] waypoint = new Vector2[] { newNode.worldPosition };
 		OnPathFound(waypoint, true);
-    }
+    }*/
 
     IEnumerator UpdatePath()
     {

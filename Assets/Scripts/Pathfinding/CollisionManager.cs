@@ -25,28 +25,32 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
-    List<Node> nodeList;
-    List<GameObject> unitObjects = new List<GameObject>();
+    public int queueCount = 0;
 
-    public void AddAllNodes(List<Node> list)
+    List<NodeGroup> groups = new List<NodeGroup>();
+    List<GameObject> objects = new List<GameObject>();
+    List<GameObject> movedObjects = new List<GameObject>();
+
+    public void AddGroup(NodeGroup ng)
     {
-        nodeList = new List<Node>(list);
+        groups.Add(ng);
     }
 
     public void AddUnit(GameObject unit)
     {
-        unitObjects.Add(unit);
+        objects.Add(unit);
+        queueCount++;
     }
 
     public void RemoveUnit(GameObject unit)
     {
-        unitObjects.Remove(unit);
+        //objects.
     }
 
 	public void Update()
 	{
-        //CheckNodesAndUnitPoints();
-        CheckCollisionGrid();
+        CheckUnitsInQueue();
+        //CheckCollisionGrid();
 	}
 
     void CheckCollisionGrid()
@@ -54,44 +58,28 @@ public class CollisionManager : MonoBehaviour
         
     }
 
-    void CheckNodesAndUnitPoints()
+    void CheckUnitsInQueue()
     {
-        foreach (Node node in nodeList)
+        foreach (NodeGroup ng in groups)
         {
-            foreach (GameObject unit in unitObjects)
+            if (objects != null)
             {
-                if (node.rect.Contains(unit.transform.position))
+                movedObjects.Clear();
+                foreach (GameObject unit in objects)
                 {
-                    if (!node.walkable && (node.prisoner != unit))
+                    if (ng.rect.Contains(unit.transform.position))
                     {
-                        if (node.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
-                        {
-                            unit.GetComponent<Unit>().hasCollided = true;
-                        }
-                        if (unit.GetComponent<Drone>().mode == Drone.Mode.Idle)
-                        {
-                            unit.GetComponent<Unit>().hasCollided = true;
-                        }
-                    }
-                    else
-                    {
-                        //bool result = ;
-                        if (unit.GetComponent<Unit>().hasNode)
-                        {
-                            unit.GetComponent<Unit>().node.ReleaseObject();
-                        }
-                        node.ImprisonObject(unit);
+                        ng.units.Add(unit);
+                        movedObjects.Add(unit);
+                        queueCount--;
                     }
                 }
-    //            else
-				//{
-    //                if (node.prisoner == unit)
-    //                {
-    //                    node.walkable = true;
-    //                    node.ReleaseObject();
-    //                }
-				//} 
+                foreach (GameObject unit in movedObjects)
+                {
+                    objects.Remove(unit);
+                }
             }
+            ng.CheckCollisions();
         }
     }
 }

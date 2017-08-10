@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollisionGrid : MonoBehaviour
+/*public class CollisionGrid : MonoBehaviour
 {
 	private static CollisionGrid _instance;
 
@@ -24,7 +24,7 @@ public class CollisionGrid : MonoBehaviour
 
     public Rect rect;
 
-    public int gridSizeX, gridSizeY;
+    public int gridCountX, gridCountY;
     public int gridSize;
 
     public CollisionNode[,] nodes;
@@ -37,29 +37,29 @@ public class CollisionGrid : MonoBehaviour
         rect.max = bgRenderer.bounds.max;
         Vector2 boundsSize = bgRenderer.bounds.size;
 
-		gridSizeX = Mathf.RoundToInt(boundsSize.x / 1.0f);
-		gridSizeY = Mathf.RoundToInt(boundsSize.y / 1.0f);
-        gridSize = gridSizeX * gridSizeY;
+		gridCountX = Mathf.RoundToInt(boundsSize.x / 1.0f);
+		gridCountY = Mathf.RoundToInt(boundsSize.y / 1.0f);
+        gridSize = gridCountX * gridCountY;
 
         CreateGrid();
 	}
 
     void CreateGrid()
     {
-        nodes = new CollisionNode[gridSizeX, gridSizeY];
+        nodes = new CollisionNode[gridCountX, gridCountY];
 
         int nodeCounter = 0;
         Rect projRect = new Rect(rect.min, Vector2.one);
-        for (int x = 0; x < gridSizeY; x++)
+        for (int x = 0; x < gridCountY; x++)
         {
-            for (int y = 0; y < gridSizeX; y++)
+            for (int y = 0; y < gridCountX; y++)
             {
                 nodes[x, y] = new CollisionNode(projRect, this);
                 projRect.xMax += Vector2.one.x;
 				projRect.xMin += Vector2.one.x;
             }
-			projRect.xMax -= Vector2.one.x * gridSizeX;
-			projRect.xMin -= Vector2.one.x * gridSizeX;
+			projRect.xMax -= Vector2.one.x * gridCountX;
+			projRect.xMin -= Vector2.one.x * gridCountX;
 			projRect.yMax += Vector2.one.y;
 			projRect.yMax += Vector2.one.y;
         }
@@ -70,9 +70,9 @@ public class CollisionGrid : MonoBehaviour
 
     void CheckCollisionGrid()
     {
-        for (int x = 0; x < gridSizeY; x++)
+        for (int x = 0; x < gridCountY; x++)
         {
-            for (int y = 0; y < gridSizeX; y++)
+            for (int y = 0; y < gridCountX; y++)
             {
                 nodes[x,y].CheckCollisions();
             }
@@ -81,13 +81,13 @@ public class CollisionGrid : MonoBehaviour
 
 	public CollisionNode NodeFromWorldPoint(Vector2 worldPosition)
 	{
-		float percentX = (worldPosition.x + gridSizeX / 2) / gridSizeX;
-		float percentY = (worldPosition.y + gridSizeY / 2) / gridSizeY;
+		float percentX = (worldPosition.x + gridCountX / 2) / gridCountX;
+		float percentY = (worldPosition.y + gridCountY / 2) / gridCountY;
 		percentX = Mathf.Clamp01(percentX);
 		percentY = Mathf.Clamp01(percentY);
 
-		int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-		int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+		int x = Mathf.RoundToInt((gridCountX - 1) * percentX);
+		int y = Mathf.RoundToInt((gridCountY - 1) * percentY);
 		return nodes[x, y];
 	}
 
@@ -107,3 +107,6 @@ public class CollisionGrid : MonoBehaviour
 }
 
 
+
+
+    */

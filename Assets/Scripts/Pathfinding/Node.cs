@@ -17,13 +17,14 @@ public class Node : IHeapItem<Node> {
 	public Node parent;
 	int heapIndex;
 	
-	public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY, int _penalty) {
-		walkable = _walkable;
-		worldPosition = _worldPos;
+	public Node(Rect newRect, float newSize, int _gridX, int _gridY)
+    {
+        walkable = true;
+        rect = newRect;
+		worldPosition = rect.center;
 		gridX = _gridX;
 		gridY = _gridY;
-		movementPenalty = _penalty;
-        size = Grid.Instance.nodeRadius * 2;
+        size = newSize;
         rect = new Rect(worldPosition.x-size/2, worldPosition.y-size/2, size, size);
 	}
 
