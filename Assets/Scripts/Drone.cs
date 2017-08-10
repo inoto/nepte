@@ -9,7 +9,6 @@ public class Drone : MonoBehaviour, IOwnable
     public int health = 100;
 
     public bool isDead = false;
-    public GameObject cell;
 
     public Rect bounds;
 
@@ -61,7 +60,7 @@ public class Drone : MonoBehaviour, IOwnable
     {
         Initialize();
         ResetRallyPoint();
-        CollisionManager.Instance.AddUnitTransform(transform);
+        CollisionManager.Instance.AddUnit(gameObject);
     }
 
     void Initialize()
@@ -102,7 +101,7 @@ public class Drone : MonoBehaviour, IOwnable
         GameObject tmpObject = Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         UnbindAttackers();
-        CollisionManager.Instance.RemoveUnitTransform(transform);
+        CollisionManager.Instance.RemoveUnit(gameObject);
     }
 
     void UnbindAttackers()
@@ -237,5 +236,14 @@ public class Drone : MonoBehaviour, IOwnable
     public GameObject GetGameObject()
     {
         return gameObject;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Bounds b = gameObject.GetComponent<SpriteRenderer>().bounds;
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(b.center, 0.02f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(transform.position, 0.02f);
     }
 }

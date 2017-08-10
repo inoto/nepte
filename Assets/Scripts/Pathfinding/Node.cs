@@ -24,8 +24,24 @@ public class Node : IHeapItem<Node> {
 		gridY = _gridY;
 		movementPenalty = _penalty;
         size = Grid.Instance.nodeRadius * 2;
-        rect = new Rect(worldPosition.x, worldPosition.y, size, size);
+        rect = new Rect(worldPosition.x-size/2, worldPosition.y-size/2, size, size);
 	}
+
+    public void ImprisonObject(GameObject obj)
+    {
+        walkable = false;
+        prisoner = obj;
+        obj.GetComponent<Unit>().node = this;
+        obj.GetComponent<Unit>().hasNode = true;
+    }
+
+    public void ReleaseObject()
+    {
+        walkable = true;
+        prisoner.GetComponent<Unit>().node = null;
+        prisoner.GetComponent<Unit>().hasNode = false;
+        prisoner = null;
+    }
 
 	public int fCost {
 		get {

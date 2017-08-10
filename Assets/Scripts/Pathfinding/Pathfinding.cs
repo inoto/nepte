@@ -48,6 +48,11 @@ public class Pathfinding : MonoBehaviour
 				Node currentNode = openSet.RemoveFirst();
 				closedSet.Add(currentNode);
 
+				if (!currentNode.walkable)
+				{
+					currentNode = grid.ClosestWalkableNode(currentNode);
+				}
+
 				if (currentNode == targetNode)
 				{
 					sw.Stop();
@@ -107,16 +112,16 @@ public class Pathfinding : MonoBehaviour
 	Vector2[] SimplifyPath(List<Node> path)
 	{
 		List<Vector2> waypoints = new List<Vector2>();
-		//Vector2 directionOld = Vector2.zero;
+		Vector2 directionOld = Vector2.zero;
 
 		for (int i = 1; i < path.Count; i++)
 		{
-			//Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
-			//if (directionNew != directionOld)
-			//{
+			Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
+			if (directionNew != directionOld)
+			{
 				waypoints.Add(path[i].worldPosition);
-			//}
-			//directionOld = directionNew;
+			}
+			directionOld = directionNew;
 		}
 		return waypoints.ToArray();
 	}

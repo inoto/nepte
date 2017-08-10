@@ -8,14 +8,17 @@ public class Unit : MonoBehaviour {
 
     Vector2 directionVector;
 
-	public float speed = 20;
+    public float speed = 0.2f;
     public float speedPercent = 1;
 	public float turnSpeed = 3;
 	public float turnDst = 5;
 	public float stoppingDst = 10;
 
 	Vector2[] path;
+    Vector2 pathCurrent;
     int pathIndex;
+    public bool hasCollided = false;
+    public bool hasNode = false;
 
     public Node node;
 
@@ -28,13 +31,15 @@ public class Unit : MonoBehaviour {
         StartCoroutine(UpdatePath());
 	}
 
-	public void OnPathFound(Vector2[] waypoints, bool pathSuccessful)
+    public void OnPathFound(Vector2[] waypoints, bool pathSuccessful)
     {
 		if (pathSuccessful) {
             path = waypoints;
             pathIndex = 0;
+            pathCurrent = path[pathIndex];
+            hasCollided = false;
             droneComponent.ResetRallyPoint();
-			StopCoroutine("FollowPath");
+            StopCoroutine("FollowPath");
 			StartCoroutine("FollowPath");
 		}
         //else
@@ -43,19 +48,29 @@ public class Unit : MonoBehaviour {
         //}
 	}
 
+    public void Collide(Node nodeCollide)
+    {
+		Node newNode = Grid.Instance.ClosestToDestinationWalkableNode(nodeCollide, droneComponent.destinationTransform.position);
+		Vector2[] waypoint = new Vector2[] { newNode.worldPosition };
+		OnPathFound(waypoint, true);
+    }
+
     IEnumerator UpdatePath()
     {
+        PathRequestManager.RequestPath(new PathRequest(transform.position, droneComponent.destinationTransform.position, OnPathFound));
+
         Vector2 targetPosOld = droneComponent.destinationTransform.position;
 
-		while (true)
+        while (true)
         {
-			yield return new WaitForSeconds (minPathUpdateTime);
+            yield return new WaitForSeconds(minPathUpdateTime);
             Vector2 destination = new Vector2(droneComponent.destinationTransform.position.x, droneComponent.destinationTransform.position.y);
-            if ((destination != targetPosOld) || (droneComponent.mode == Drone.Mode.Idle))
+            if (destination != targetPosOld || hasCollided)
             {
 				PathRequestManager.RequestPath (new PathRequest(transform.position, droneComponent.destinationTransform.position, OnPathFound));
 				targetPosOld = droneComponent.destinationTransform.position;
 			}
+
 		}
 	}
 
@@ -70,17 +85,18 @@ public class Unit : MonoBehaviour {
 
             if ((pathIndex == (path.Length - 1)) && stoppingDst > 0)
             {
-                speedPercent = 0.75f;
+                speedPercent = .75f;
             }
 
-			if (path[pathIndex] == pos2D)
+			if (pathCurrent == pos2D)
 			{
 				pathIndex++;
 				if (pathIndex >= path.Length)
 				{
-					droneComponent.mode = Drone.Mode.Idle;
+					droneComponent.EnterIdleMode();
 					yield break;
 				}
+				pathCurrent = path[pathIndex];
 			}
 
             Rotate();
@@ -93,7 +109,7 @@ public class Unit : MonoBehaviour {
 
     void Rotate()
     {
-        directionVector = path[pathIndex] - new Vector2(transform.position.x, transform.position.y);
+        directionVector = pathCurrent - new Vector2(transform.position.x, transform.position.y);
         float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
         Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
         transform.rotation = Quaternion.Lerp(transform.rotation, qt, Time.deltaTime * turnSpeed);
@@ -101,30 +117,31 @@ public class Unit : MonoBehaviour {
 
     void Move()
     {
+        speed = 0.2f;
 		float step = Time.deltaTime * speed * speedPercent;
-		transform.position = Vector2.MoveTowards(transform.position, path[pathIndex], step);
+		transform.position = Vector2.MoveTowards(transform.position, pathCurrent, step);
     }
 
-	public void OnDrawGizmos() {
-        if (path != null)
-        {
-            Color newColor = Color.green;
-            newColor.a = 0.5f;
-            Gizmos.color = newColor;
-            for (int i = pathIndex; i < path.Length; i++)
-            {
-                if (i == pathIndex)
-                {
-                    Gizmos.DrawLine(transform.position, path[i]);
-                }
-                else
-                {
-                    Gizmos.DrawLine(path[i - 1], path[i]);
+	//public void OnDrawGizmos() {
+ //       if (path != null)
+ //       {
+ //           Color newColor = Color.green;
+ //           newColor.a = 0.5f;
+ //           Gizmos.color = newColor;
+ //           for (int i = pathIndex; i < path.Length; i++)
+ //           {
+ //               if (i == pathIndex)
+ //               {
+ //                   Gizmos.DrawLine(transform.position, path[i]);
+ //               }
+ //               else
+ //               {
+ //                   Gizmos.DrawLine(path[i - 1], path[i]);
 
-                }
-            }
-            Gizmos.color = newColor;
-            Gizmos.DrawCube(path[path.Length-1], Vector3.one * (Grid.nodeDiameter - 0.01f));
-		}
-	}
+ //               }
+ //           }
+ //           Gizmos.color = newColor;
+ //           Gizmos.DrawCube(path[path.Length-1], Vector3.one * (Grid.nodeDiameter - 0.01f));
+	//	}
+	//}
 }

@@ -46,8 +46,6 @@ public class Base : MonoBehaviour, IOwnable
         assignedHPbar.SetAnchor(gameObject);
 		assignedHPbar.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        CollisionManager.Instance.AddBaseTransform(transform);
-
         InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
     }
 
@@ -68,7 +66,6 @@ public class Base : MonoBehaviour, IOwnable
         GameObject tmpObject = Instantiate(explosionPrefab, transform.position, transform.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         tmpObject.transform.localScale = trans.localScale;
-        CollisionManager.Instance.RemoveBaseTransform(transform);
         Destroy(gameObject);
         Destroy(assignedHPbar.gameObject);
     }

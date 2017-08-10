@@ -1,15 +1,14 @@
 todo.list
 
 #features
-- move sprite sets to its owner
-- improve drone collision
-- pool for gameobjects
-- attack priority is drone
+- move sprite sets to its owner somehow
 - make atlas from all used sprites
-- collision manager handle all objects in scene
 - GUI and screen rotation in runtime 
 - static background
 - add few background layers
 - remove random to use slow ratation and attack after ration is completed
-
+- initialization queue to remove most actions from start
+- collision manager
+- octotree for objects
+- 
 

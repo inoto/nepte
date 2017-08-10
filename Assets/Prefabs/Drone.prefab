@@ -57,9 +57,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0.2
   speedPercent: 1
-  turnSpeed: 10
+  turnSpeed: 3
   turnDst: 5
   stoppingDst: 10
+  hasCollided: 0
+  hasNode: 0
 --- !u!114 &114449573046543404
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -99,7 +101,6 @@ MonoBehaviour:
   owner: 0
   health: 100
   isDead: 0
-  cell: {fileID: 0}
   bounds:
     serializedVersion: 2
     x: 0

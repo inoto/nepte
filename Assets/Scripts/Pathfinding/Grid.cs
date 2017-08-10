@@ -34,10 +34,11 @@ public class Grid : MonoBehaviour {
     private Renderer battlegroundRenderer;
     Vector3 penVector;
 
-	Node[,] grid;
+	
+    public NodeGroup[,] groups;
 
 	public static float nodeDiameter;
-	int gridSizeX, gridSizeY;
+	public int gridSizeX, gridSizeY;
 
 	int penaltyMin = int.MaxValue;
 	int penaltyMax = int.MinValue;
@@ -61,7 +62,6 @@ public class Grid : MonoBehaviour {
 		}
 
 		CreateGrid();
-        CollisionManager.Instance.AddAllNodes(GetAllNodesAsList());
 	}
 
 	public int MaxSize {
@@ -70,49 +70,41 @@ public class Grid : MonoBehaviour {
 		}
 	}
 
-    public List<Node> GetAllNodesAsList()
-    {
-        List<Node> list = new List<Node>();
-        for (int x = 0; x < gridSizeX; x++)
-        {
-            for (int y = 0; y < gridSizeY; y++)
-            {
-                list.Add(grid[x,y]);
-            }
-        }
-        return list;
-    }
-
-	void CreateGrid() {
-		grid = new Node[gridSizeX,gridSizeY];
-
-		for (int x = 0; x < gridSizeX; x ++) {
-			for (int y = 0; y < gridSizeY; y ++) {
-				bool walkable = !(Physics.CheckSphere(penVector,nodeRadius,unwalkableMask));
-
-				int movementPenalty = 0;
-
-
-				Ray ray = new Ray(penVector + Vector3.up * 50, Vector3.down);
-				RaycastHit hit;
-				if (Physics.Raycast(ray,out hit, 100, walkableMask)) {
-					walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
-				}
-
-				if (!walkable) {
-					movementPenalty += obstacleProximityPenalty;
-				}
-
-
-                grid[x,y] = new Node(walkable,penVector, x,y, movementPenalty);
-
-                penVector.y += nodeDiameter;
+    public List<NodeGroup> GetGroupsAsList()
+	{
+		List<NodeGroup> list = new List<NodeGroup>();
+		for (int x = 0; x < gridSizeX; x++)
+		{
+			for (int y = 0; y < gridSizeY; y++)
+			{
+				list.Add(groups[x, y]);
 			}
-			penVector.y = battlegroundRenderer.bounds.min.y + 0.05f;
-			penVector.x += nodeDiameter;
+		}
+		return list;
+	}
+
+	void CreateGrid()
+    {
+
+        groups = new NodeGroup[gridSizeX, gridSizeY];
+
+		int nodeCounter = 0;
+		Rect projRect = new Rect(rect.min, Vector2.one);
+		for (int x = 0; x < gridSizeY; x++)
+		{
+			for (int y = 0; y < gridSizeX; y++)
+			{
+				nodes[x, y] = new CollisionNode(projRect, this);
+				projRect.xMax += Vector2.one.x;
+				projRect.xMin += Vector2.one.x;
+			}
+			projRect.xMax -= Vector2.one.x * gridSizeX;
+			projRect.xMin -= Vector2.one.x * gridSizeX;
+			projRect.yMax += Vector2.one.y;
+			projRect.yMax += Vector2.one.y;
 		}
 
-		BlurPenaltyMap (3);
+		
 	}
 
 	public Node ClosestWalkableNode(Node node)
@@ -128,6 +120,93 @@ public class Grid : MonoBehaviour {
 			}
 		}
 		return null;
+	}
+
+    public Node ClosestToDestinationWalkableNode(Node node, Vector2 destination)
+	{
+		int maxRadius = Mathf.Max(gridSizeX, gridSizeY) / 2;
+		for (int i = 1; i < maxRadius; i++)
+		{
+            Node n = FindWalkableToDestination(node, i, destination);
+            if (n != null)
+			{
+				return n;
+			}
+		}
+		return null;
+	}
+
+    Node FindWalkableToDestination(Node start, int radius, Vector2 destination)
+	{
+        Node closest = start;
+        Node tmp = null;
+
+        int centreX = start.gridX;
+        int centreY = start.gridY;
+
+		for (int i = -radius; i <= radius; i++)
+		{
+			int verticalSearchX = i + centreX;
+			int horizontalSearchY = i + centreY;
+
+			// top
+			if (InBounds(verticalSearchX, centreY + radius))
+			{
+				if (grid[verticalSearchX, centreY + radius].walkable)
+				{
+                    tmp = grid[verticalSearchX, centreY + radius];
+                    if (Vector2.Distance(closest.worldPosition, destination) < Vector2.Distance(tmp.worldPosition, destination))
+                    {
+                        Debug.Log("has closest");
+                        closest = tmp;
+                    }
+				}
+			}
+
+			// bottom
+			if (InBounds(verticalSearchX, centreY - radius))
+			{
+				if (grid[verticalSearchX, centreY - radius].walkable)
+				{
+                    tmp = grid[verticalSearchX, centreY - radius];
+					if (Vector2.Distance(closest.worldPosition, destination) < Vector2.Distance(tmp.worldPosition, destination))
+					{
+                        Debug.Log("has closest");
+						closest = tmp;
+					}
+				}
+			}
+			// right
+			if (InBounds(centreY + radius, horizontalSearchY))
+			{
+				if (grid[centreX + radius, horizontalSearchY].walkable)
+				{
+					tmp = grid[centreX + radius, horizontalSearchY];
+					if (Vector2.Distance(closest.worldPosition, destination) < Vector2.Distance(tmp.worldPosition, destination))
+					{
+                        Debug.Log("has closest");
+						closest = tmp;
+					}
+				}
+			}
+
+			// left
+			if (InBounds(centreY - radius, horizontalSearchY))
+			{
+				if (grid[centreX - radius, horizontalSearchY].walkable)
+				{
+					tmp = grid[centreX - radius, horizontalSearchY];
+					if (Vector2.Distance(closest.worldPosition, destination) < Vector2.Distance(tmp.worldPosition, destination))
+					{
+                        Debug.Log("has closest");
+						closest = tmp;
+					}
+				}
+			}
+
+		}
+
+        return closest;
 	}
 
 	Node FindWalkableInRadius(int centreX, int centreY, int radius)
@@ -184,55 +263,6 @@ public class Grid : MonoBehaviour {
 		return x >= 0 && x < gridSizeX && y >= 0 && y < gridSizeY;
 	}
 
-	void BlurPenaltyMap(int blurSize) {
-		int kernelSize = blurSize * 2 + 1;
-		int kernelExtents = (kernelSize - 1) / 2;
-
-		int[,] penaltiesHorizontalPass = new int[gridSizeX,gridSizeY];
-		int[,] penaltiesVerticalPass = new int[gridSizeX,gridSizeY];
-
-		for (int y = 0; y < gridSizeY; y++) {
-			for (int x = -kernelExtents; x <= kernelExtents; x++) {
-				int sampleX = Mathf.Clamp (x, 0, kernelExtents);
-				penaltiesHorizontalPass [0, y] += grid [sampleX, y].movementPenalty;
-			}
-
-			for (int x = 1; x < gridSizeX; x++) {
-				int removeIndex = Mathf.Clamp(x - kernelExtents - 1, 0, gridSizeX);
-				int addIndex = Mathf.Clamp(x + kernelExtents, 0, gridSizeX-1);
-
-				penaltiesHorizontalPass [x, y] = penaltiesHorizontalPass [x - 1, y] - grid [removeIndex, y].movementPenalty + grid [addIndex, y].movementPenalty;
-			}
-		}
-			
-		for (int x = 0; x < gridSizeX; x++) {
-			for (int y = -kernelExtents; y <= kernelExtents; y++) {
-				int sampleY = Mathf.Clamp (y, 0, kernelExtents);
-				penaltiesVerticalPass [x, 0] += penaltiesHorizontalPass [x, sampleY];
-			}
-
-			int blurredPenalty = Mathf.RoundToInt((float)penaltiesVerticalPass [x, 0] / (kernelSize * kernelSize));
-			grid [x, 0].movementPenalty = blurredPenalty;
-
-			for (int y = 1; y < gridSizeY; y++) {
-				int removeIndex = Mathf.Clamp(y - kernelExtents - 1, 0, gridSizeY);
-				int addIndex = Mathf.Clamp(y + kernelExtents, 0, gridSizeY-1);
-
-				penaltiesVerticalPass [x, y] = penaltiesVerticalPass [x, y-1] - penaltiesHorizontalPass [x,removeIndex] + penaltiesHorizontalPass [x, addIndex];
-				blurredPenalty = Mathf.RoundToInt((float)penaltiesVerticalPass [x, y] / (kernelSize * kernelSize));
-				grid [x, y].movementPenalty = blurredPenalty;
-
-				if (blurredPenalty > penaltyMax) {
-					penaltyMax = blurredPenalty;
-				}
-				if (blurredPenalty < penaltyMin) {
-					penaltyMin = blurredPenalty;
-				}
-			}
-		}
-
-	}
-
 	public List<Node> GetNeighbours(Node node) {
 		List<Node> neighbours = new List<Node>();
 
@@ -266,7 +296,7 @@ public class Grid : MonoBehaviour {
 	}
 
 	void OnDrawGizmos() {
-		Gizmos.DrawWireCube(transform.position,new Vector3(gridSize.x,gridSize.y,1));
+		//Gizmos.DrawWireCube(transform.position,new Vector3(gridSize.x,gridSize.y,1));
 		if (grid != null && displayGridGizmos) {
 			foreach (Node n in grid) {
 
@@ -285,6 +315,4 @@ public class Grid : MonoBehaviour {
 		public LayerMask terrainMask;
 		public int terrainPenalty;
 	}
-
-
 }

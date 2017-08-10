@@ -25,89 +25,73 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
-    private List<Node> nodeList;
-    private List<Transform> unitTransforms = new List<Transform>();
-    private List<Transform> baseTransforms = new List<Transform>();
+    List<Node> nodeList;
+    List<GameObject> unitObjects = new List<GameObject>();
 
     public void AddAllNodes(List<Node> list)
     {
         nodeList = new List<Node>(list);
     }
 
-    public void AddUnitTransform(Transform unitTransform)
+    public void AddUnit(GameObject unit)
     {
-        unitTransforms.Add(unitTransform);
+        unitObjects.Add(unit);
     }
 
-    public void RemoveUnitTransform(Transform unitTransform)
+    public void RemoveUnit(GameObject unit)
     {
-        unitTransforms.Remove(unitTransform);
+        unitObjects.Remove(unit);
     }
-
-	public void AddBaseTransform(Transform baseTransform)
-	{
-		baseTransforms.Add(baseTransform);
-	}
-
-	public void RemoveBaseTransform(Transform baseTransform)
-	{
-		baseTransforms.Remove(baseTransform);
-	}
 
 	public void Update()
 	{
-        CheckNodesAndUnitPoints();
+        //CheckNodesAndUnitPoints();
+        CheckCollisionGrid();
 	}
+
+    void CheckCollisionGrid()
+    {
+        
+    }
 
     void CheckNodesAndUnitPoints()
     {
         foreach (Node node in nodeList)
         {
-            foreach (Transform trans in unitTransforms)
+            foreach (GameObject unit in unitObjects)
             {
-                
-                if (node.rect.Contains(trans.position))
+                if (node.rect.Contains(unit.transform.position))
                 {
-                    node.walkable = false;
-                    node.prisoner = trans.gameObject;
-                }
-                else
-				{
-                    if (node.prisoner == trans.gameObject)
+                    if (!node.walkable && (node.prisoner != unit))
                     {
-                        node.walkable = true;
-                        node.prisoner = null;
+                        if (node.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
+                        {
+                            unit.GetComponent<Unit>().hasCollided = true;
+                        }
+                        if (unit.GetComponent<Drone>().mode == Drone.Mode.Idle)
+                        {
+                            unit.GetComponent<Unit>().hasCollided = true;
+                        }
                     }
                     else
                     {
-                        
+                        //bool result = ;
+                        if (unit.GetComponent<Unit>().hasNode)
+                        {
+                            unit.GetComponent<Unit>().node.ReleaseObject();
+                        }
+                        node.ImprisonObject(unit);
                     }
-				} 
+                }
+    //            else
+				//{
+    //                if (node.prisoner == unit)
+    //                {
+    //                    node.walkable = true;
+    //                    node.ReleaseObject();
+    //                }
+				//} 
             }
         }
-    }
-
-    void CheckNodesAndBases()
-    {
-		foreach (Node node in nodeList)
-		{
-			foreach (Transform trans in baseTransforms)
-			{
-
-				if (node.rect.Contains(trans.position))
-				{
-					node.walkable = false;
-					node.prisoner = trans.gameObject;
-				}
-				else
-				{
-					if (node.prisoner != trans.gameObject)
-					{
-						node.walkable = true;
-						node.prisoner = null;
-					}
-				}
-			}
-		}
     }
 }
