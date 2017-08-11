@@ -50,7 +50,7 @@ public class PCInputController : MonoBehaviour
                 Node node = Grid.Instance.NodeFromWorldPoint(mousePosition);
                 mousePosition = node.worldPosition;
 
-                GameController.Instance.playerControllerObject[0].GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
+                //GameController.Instance.playerControllerObject[0].GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
             }
             else if (Input.GetMouseButtonDown(1))
             {
@@ -59,7 +59,7 @@ public class PCInputController : MonoBehaviour
                 {
                     mousePosition = player.GetComponent<PlayerController>().baseControl.transform.position;
                     mousePosition.z = 0;
-                    player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
+                    //player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
                 }
             }
 

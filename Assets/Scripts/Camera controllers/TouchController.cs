@@ -71,7 +71,7 @@ public class TouchController : MonoBehaviour
             //{
             //    player.GetComponent<PlayerController>().rallyPoint.SetNew(clickPosition);
             //}
-            GameController.Instance.playerControllerObject[0].GetComponent<PlayerController>().rallyPoint.SetNew(clickPosition);
+            //GameController.Instance.playerControllerObject[0].GetComponent<PlayerController>().rallyPoint.SetNew(clickPosition);
         }
     }
 

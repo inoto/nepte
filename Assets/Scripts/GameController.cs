@@ -213,11 +213,14 @@ public class GameController : MonoBehaviour
         }
         cameraChild.GetComponent<Camera>().orthographicSize = 1;
         GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 1;
-        cameraChild.transform.position = playerStartPosition[0];
+		Vector3 newZ = playerStartPosition[0];
+		newZ.z -= 3;
+		cameraChild.transform.position = newZ;
 
         CreatePlayers();
 		state = States.Game;
 		ingamePanel.SetActive(true);
+		
 	}
 
     public void RemoveStartScene()

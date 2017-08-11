@@ -49,7 +49,7 @@ public class CollisionManager : MonoBehaviour
 
 	public void Update()
 	{
-        CheckUnitsInQueue();
+        //CheckUnitsInQueue();
         //CheckCollisionGrid();
 	}
 

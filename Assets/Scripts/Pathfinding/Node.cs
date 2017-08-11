@@ -21,11 +21,11 @@ public class Node : IHeapItem<Node> {
     {
         walkable = true;
         rect = newRect;
-		worldPosition = rect.center;
+        worldPosition = new Vector2(rect.center.x, rect.center.y);
 		gridX = _gridX;
 		gridY = _gridY;
         size = newSize;
-        rect = new Rect(worldPosition.x-size/2, worldPosition.y-size/2, size, size);
+        //rect = new Rect(worldPosition.x-size/2, worldPosition.y-size/2, size, size);
 	}
 
     public void ImprisonObject(GameObject obj)

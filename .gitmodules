@@ -1,0 +1,3 @@
+[submodule "Assets/Modules/Controllable Camera"]
+	path = Assets/Modules/Controllable Camera
+	url = https://dtabakov@bitbucket.org/sonakay/controllable-camera.git

@@ -34,7 +34,6 @@ public class Drone : MonoBehaviour, IOwnable
     private Weapon weaponComponent;
     private Radar radarComponent;
 
-    private Collider2D droneCollider;
     public LaserMissile triggeredLaserMissile;
     public IOwnable triggeredDrone;
     public GameObject enemy;
@@ -44,7 +43,7 @@ public class Drone : MonoBehaviour, IOwnable
     [SerializeField]
     private GameObject droneExplosionPrefab;
 
-    public static Sprite[] spriteSet;
+    public Material[] materials;
 
     // Use this for initialization
     void Start ()
@@ -83,7 +82,7 @@ public class Drone : MonoBehaviour, IOwnable
         //    directionVector = -directionVector;
         //    transform.position = Vector2.MoveTowards(transform.position, directionVector, step);
         //}
-        // TODO: move change of transform.position to the end after calculations
+        // TODO: move change of transform.position to the end after calculation
     }
 
     public void ResetRallyPoint()
@@ -236,14 +235,5 @@ public class Drone : MonoBehaviour, IOwnable
     public GameObject GetGameObject()
     {
         return gameObject;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Bounds b = gameObject.GetComponent<SpriteRenderer>().bounds;
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(b.center, 0.02f);
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(transform.position, 0.02f);
     }
 }

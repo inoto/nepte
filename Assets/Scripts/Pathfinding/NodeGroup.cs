@@ -59,47 +59,50 @@ public class NodeGroup
 
 	public void CheckCollisions()
 	{
-		foreach (Node node in nodes)
+        if (movedUnits.Count > 0)
+            Debug.Log("moved units: " + movedUnits.Count);
+        movedUnits.Clear();
+		foreach (GameObject unit in units)
 		{
-            movedUnits.Clear();
-			foreach (GameObject unit in units)
+			if (!rect.Contains(unit.transform.position))
 			{
-                if (!rect.Contains(unit.transform.position))
-                {
-                    CollisionManager.Instance.AddUnit(unit);
-                    movedUnits.Remove(unit);
-                }
-                else
-                {
-                    if (node.rect.Contains(unit.transform.position))
-                    {
-                        if (!node.walkable && (node.prisoner != unit))
-                        {
-                            if (node.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
-                            {
-                                unit.GetComponent<Unit>().hasCollided = true;
-                            }
-                            if (unit.GetComponent<Drone>().mode == Drone.Mode.Idle)
-                            {
-                                unit.GetComponent<Unit>().hasCollided = true;
-                            }
-                        }
-                        else
-                        {
-                            //bool result = ;
-                            if (unit.GetComponent<Unit>().hasNode)
-                            {
-                                unit.GetComponent<Unit>().node.ReleaseObject();
-                            }
-                            node.ImprisonObject(unit);
-                        }
-                    }
-                }
+				CollisionManager.Instance.AddUnit(unit);
+                movedUnits.Add(unit);
 			}
-            foreach (GameObject unit in movedUnits)
+            else
             {
-                units.Remove(unit);
+				foreach (Node node in nodes)
+				{
+					if (node.rect.Contains(unit.transform.position))
+					{
+						if (!node.walkable && (node.prisoner != unit))
+						{
+							if (node.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
+							{
+								unit.GetComponent<Unit>().hasCollided = true;
+							}
+							if (unit.GetComponent<Drone>().mode == Drone.Mode.Idle)
+							{
+								unit.GetComponent<Unit>().hasCollided = true;
+							}
+						}
+						else
+						{
+							//bool result = ;
+							if (unit.GetComponent<Unit>().hasNode)
+							{
+								unit.GetComponent<Unit>().node.ReleaseObject();
+							}
+							node.ImprisonObject(unit);
+						}
+					}
+				}
             }
+
+		}
+		foreach (GameObject unit in movedUnits)
+		{
+			units.Remove(unit);
 		}
 	}
 }

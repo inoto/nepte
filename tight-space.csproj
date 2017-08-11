@@ -110,6 +110,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Modules\Controllable Camera\AbstractCameraControl.cs" />
+    <Compile Include="Assets\Modules\Controllable Camera\AbstractCameraControlMouse.cs" />
+    <Compile Include="Assets\Modules\Controllable Camera\AbstractCameraControlTouch.cs" />
+    <Compile Include="Assets\Modules\Controllable Camera\CameraControlMouse.cs" />
+    <Compile Include="Assets\Modules\Controllable Camera\CameraControlMouseNGUI.cs" />
+    <Compile Include="Assets\Modules\Controllable Camera\CameraControlTouch.cs" />
+    <Compile Include="Assets\Modules\Controllable Camera\CameraControlTouchNGUI.cs" />
+    <Compile Include="Assets\Modules\Controllable Camera\ControllableCamera.cs" />
     <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipItems.cs" />
     <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipRandomItem.cs" />
     <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UICursor.cs" />
@@ -256,6 +264,7 @@
     <Compile Include="Assets\Scripts\Camera controllers\PCInputController.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\TouchController.cs" />
     <Compile Include="Assets\Scripts\Drone.cs" />
+    <Compile Include="Assets\Scripts\Drone\Quad.cs" />
     <Compile Include="Assets\Scripts\DroneExplosion.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\GameTimer.cs" />
@@ -324,6 +333,7 @@
     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 2.shader" />
     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 3.shader" />
     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed.shader" />
+    <None Include="Assets\Shaders\TilingShader.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

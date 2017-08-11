@@ -52,7 +52,7 @@ public class Grid : MonoBehaviour {
 	void Start()
     {
 		battlegroundParent = transform.parent.gameObject.GetComponent<Battleground>();
-		battlegroundRenderer = battlegroundParent.gameObject.GetComponent<SpriteRenderer>();
+		battlegroundRenderer = battlegroundParent.gameObject.GetComponent<MeshRenderer>();
 
         nodeRadius = 0.05f;
         nodeDiameter = nodeRadius * 2;
@@ -96,12 +96,12 @@ public class Grid : MonoBehaviour {
             for (int y = 0; y < gridCountY; y++)
             {
                 nodes[x, y] = new Node(projRect, diameter.x, x, y);
-                projRect.yMax += diameter.x;
                 projRect.yMin += diameter.x;
+                projRect.yMax += diameter.x;
             }
-            projRect.yMax -= diameter.y * gridCountY;
             projRect.yMin -= diameter.y * gridCountY;
-            projRect.xMax += diameter.x;
+            projRect.yMax -= diameter.y * gridCountY;
+            projRect.xMin += diameter.x;
             projRect.xMax += diameter.x;
         }
     }
@@ -220,7 +220,7 @@ public class Grid : MonoBehaviour {
 
 	public Node NodeFromWorldPoint(Vector2 worldPosition)
     {
-		float percentX = (worldPosition.x + rect.size.x/2) / rect.size.x;
+        float percentX = (worldPosition.x + rect.size.x / 2) / rect.size.x;
 		float percentY = (worldPosition.y + rect.size.y / 2) / rect.size.y;
 		percentX = Mathf.Clamp01(percentX);
 		percentY = Mathf.Clamp01(percentY);
@@ -254,7 +254,7 @@ public class Grid : MonoBehaviour {
                     newColor = Color.blue;
                     newColor.a = 0.5f;
                     Gizmos.color = newColor;
-                    Gizmos.DrawWireCube(ng.rect.center, Vector3.one);
+                    Gizmos.DrawWireCube(new Vector2(ng.rect.center.x, ng.rect.center.y), Vector3.one);
                 }
             }
         }

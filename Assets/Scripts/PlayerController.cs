@@ -72,6 +72,11 @@ public class PlayerController : MonoBehaviour
 		GameObject rallyPointObject = Instantiate(rallyPointPrefab, transform.position, transform.rotation);
         rallyPoint = rallyPointObject.GetComponent<RallyPoint>();
         rallyPoint.owner = owner;
+        if (owner == 0)
+        {
+            rallyPoint.cameraMouse = GameController.Instance.cameraChild.GetComponent<CameraControlMouse>();
+            rallyPoint.cameraTouch = GameController.Instance.cameraChild.GetComponent<CameraControlTouch>();
+        }
 		rallyPointObject.transform.SetParent(transform);
         baseControl.GetComponent<Base>().rallyPointObject = rallyPoint.gameObject;
 
