@@ -78,26 +78,7 @@ public class NodeGroup
 				{
 					if (node.rect.Contains(unit.transform.position))
 					{
-						if (!node.walkable && (node.prisoner != unit))
-						{
-							if (node.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
-							{
-								unit.GetComponent<Unit>().hasCollided = true;
-							}
-							if (unit.GetComponent<Drone>().mode == Drone.Mode.Idle)
-							{
-								unit.GetComponent<Unit>().hasCollided = true;
-							}
-						}
-						else
-						{
-							//bool result = ;
-							if (unit.GetComponent<Unit>().hasNode)
-							{
-								unit.GetComponent<Unit>().node.ReleaseObject();
-							}
-							node.ImprisonObject(unit);
-						}
+						
 					}
 				}
             }

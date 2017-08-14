@@ -4,63 +4,78 @@ using System.Collections.Generic;
 
 public class Unit : MonoBehaviour
 {
+    IEnumerator coroutineFollowPath;
 
     const float minPathUpdateTime = .5f;
     const float pathUpdateMoveThreshold = .5f;
 
-	public Transform destinationTransform;
+    private PlayerController playerController;
+
+    [Header("Destination")]
 	public RallyPoint playerRallyPoint;
 	public Vector2 directionVector;
 	public Vector3 destinationPoint;
 
-    public float speed = 2f;
+    [Header("Move")]
+    public float speed = 2;
     public float speedPercent = 1;
     public float turnSpeed = 3;
     public float turnDst = 5;
     public float stoppingDst = 10;
 
-    List<Vector2> path;
-
-    Vector2 pathCurrent;
-    int pathIndex;
-    public bool hasCollided = false;
-    public bool hasNode = false;
-
+    [Header("Nodes")]
     public Node node;
     public List<Node> nextNodes;
 	public Node nextNode;
 	public Node tmpNode;
-	public Node destinationNode;
+    public Node destinationNode;
 
     private Drone droneComponent;
 
     void Start()
     {
-		
-  //      droneComponent = GetComponent<Drone>();
-
-		//ResetRallyPoint();
-
-		//node = Grid.Instance.NodeFromWorldPoint(transform.position);
-		//StartCoroutine(FollowPath());
+        Activate();
     }
 
 	void OnEnable()
 	{
+        Activate();
+	}
+
+    void Activate()
+    {
+        coroutineFollowPath = FollowPath();
+
+        // player specific assigns
+        playerController = transform.parent.gameObject.GetComponent<PlayerController>();
 		droneComponent = GetComponent<Drone>();
 		playerRallyPoint = GameController.Instance.playerControllerObject[droneComponent.owner].GetComponent<PlayerController>().rallyPoint;
 		playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
 
-		node = Grid.Instance.NodeFromWorldPoint(transform.position);
+        node = Grid.Instance.NodeFromWorldPoint(droneComponent.trans.position);
 		ResetRallyPoint();
 
-		StartCoroutine(FollowPath());
+        QuadTree.Instance.qtree.Insert(gameObject);
+        playerController.unitCount += 1;
+    }
+
+    private void OnDestroy()
+    {
+        Deactivate();
+    }
+
+    private void OnDisable()
+	{
+        Deactivate();
 	}
 
-	private void OnDisable()
-	{
-		playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
-	}
+    void Deactivate()
+    {
+        playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
+
+        QuadTree.Instance.qtree.Remove(gameObject);
+        playerController.unitCount -= 1;
+    }
 
 	IEnumerator FollowPath()
     {
@@ -69,58 +84,78 @@ public class Unit : MonoBehaviour
 
         while (true)
         {
-            Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
-			tmpNode = Grid.Instance.NodeFromWorldPoint(transform.position);
-			//if (nextNode == node)
-			//	continue;
-			//else
-			//	node = nextNode;
+			tmpNode = Grid.Instance.NodeFromWorldPoint(droneComponent.trans.position);
 			if (tmpNode != node)
 			{
 				node = tmpNode;
 				DefineNextNode(node);
 			}
-            //    else
-            //    {
-            //        droneComponent.EnterIdleMode();
-            //        yield break;
-            //    }
+			if (node.worldPosition == destinationPoint)
+			{
+				droneComponent.EnterIdleMode();
+				yield break;
+			}
+            if (nextNode != node && nextNode != null)
+            {
+                Rotate();
+                Move();
+            }
+            else
+            {
+                droneComponent.EnterIdleMode();
+                yield break;
+            }
 
-            Rotate();
-
-            Move();
 
             yield return null;
         }
     }
 
-	void DefineNextNode(Node destinationNode)
+	void DefineNextNode(Node destNode)
 	{
-		nextNodes = Grid.Instance.GetNeighbours(destinationNode);
+        //List<Node> closestToDestination = new List<Node>();
+
+		nextNodes = Grid.Instance.GetNeighbours(destNode);
 		if (nextNodes.Count > 0)
 		{
+            bool closestFound = false;
+            int closestNodeIndex = 0;
 			foreach (Node n in nextNodes)
 			{
-				if (n.distance[droneComponent.owner] >= node.distance[droneComponent.owner])
-					continue;
-				if (!n.suitable[droneComponent.owner])
-					continue;
-				nextNode = n;
+                if (n.distance[droneComponent.owner] < nextNodes[closestNodeIndex].distance[droneComponent.owner])
+                {
+                    closestNodeIndex = nextNodes.IndexOf(n);
+                    closestFound = true;
+                }
+				//if (n.distance[droneComponent.owner] >= node.distance[droneComponent.owner])
+					//continue;
+				//if (!n.suitable[droneComponent.owner])
+					//continue;
+				//nextNode = n;
+                //closestToDestination.Add(n);
 			}
+            if (closestFound)
+                nextNode = nextNodes[closestNodeIndex];
 		}
-	}
-
-	void FindSuitableNodeAround()
-	{
-
 	}
 
 	void ResetRallyPoint()
 	{
 		destinationPoint = playerRallyPoint.gameObject.transform.position;
-		if (droneComponent.owner == 0)
-			Debug.Log("rally point changed");
-		DefineNextNode(Grid.Instance.NodeFromWorldPoint(destinationPoint));
+        destinationNode = Grid.Instance.NodeFromWorldPoint(destinationPoint);
+		if (node == destinationNode)
+		{
+			droneComponent.EnterIdleMode();
+			return;
+		}
+		DefineNextNode(destinationNode);
+        if (node == nextNode)
+        {
+            droneComponent.EnterIdleMode();
+            return;
+        }
+        StopCoroutine("FollowPath");
+        StartCoroutine("FollowPath");
 	}
 
     void Rotate()
@@ -128,7 +163,7 @@ public class Unit : MonoBehaviour
         directionVector = nextNode.worldPosition - transform.position;
         float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
         Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
-        transform.rotation = Quaternion.Lerp(transform.rotation, qt, Time.deltaTime * turnSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, qt, Time.deltaTime * turnSpeed);
     }
 
     void Move()
@@ -138,25 +173,15 @@ public class Unit : MonoBehaviour
     }
 
 	public void OnDrawGizmos() {
-        if (path != null)
+        if (nextNode != null)
         {
             Color newColor = Color.green;
-            newColor.a = 0.2f;
-            Gizmos.color = newColor;
-            for (int i = pathIndex; i < path.Count; i++)
-            {
-                if (i == pathIndex)
-                {
-                    Gizmos.DrawLine(transform.position, path[i]);
-                }
-                else
-                {
-                    Gizmos.DrawLine(path[i - 1], path[i]);
+            newColor.a = 0.3f;
+			Gizmos.color = newColor;
+			Gizmos.DrawLine(transform.position, nextNode.worldPosition);
 
-                }
-            }
-            Gizmos.color = newColor;
-            Gizmos.DrawCube(path[path.Count -1], Vector3.one * (Grid.Instance.nodeDiameter - 0.01f));
+			Gizmos.color = newColor;
+            Gizmos.DrawCube(nextNode.worldPosition, nextNode.rect.size * (nextNode.rect.size.x - 0.05f));
 		}
 	}
 }

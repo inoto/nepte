@@ -47,17 +47,15 @@ public class Drone : MonoBehaviour, IOwnable
 	// Use this for initialization
 	void Start ()
     {
-		Initialize();
+		Activate();
     }
 
     private void OnEnable()
     {
-		Initialize();
-        //ResetRallyPoint();
-        //CollisionManager.Instance.AddUnit(gameObject);
+		Activate();
     }
 
-    void Initialize()
+    void Activate()
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
@@ -71,32 +69,28 @@ public class Drone : MonoBehaviour, IOwnable
         triggeredLaserMissile = null;
         triggeredDrone = null;
         EnterIdleMode();
+        AssignMaterial();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        //if ((Object)triggeredDrone != null)
-        //{
-        //    directionVector = triggeredDrone.GetGameObject().transform.position - this.transform.position;
-        //    directionVector = -directionVector;
-        //    transform.position = Vector2.MoveTowards(transform.position, directionVector, step);
-        //}
-        // TODO: move change of transform.position to the end after calculation
+        Deactivate();
+    }
+
+    private void OnDisable()
+    {
+        Deactivate();
+    }
+
+    void Deactivate()
+    {
+        
     }
 
 	void AssignMaterial()
 	{
 		mesh.material = materials[owner];
 	}
-
-    //public void ResetRallyPoint()
-    //{
-    //    if (playerRallyPoint)
-    //        destinationTransform = playerRallyPoint.transform;
-    //    else
-    //        destinationTransform = GameController.Instance.playerControllerObject[owner].GetComponent<PlayerController>().rallyPoint.gameObject.transform;
-    //}
 
     void Die()
     {

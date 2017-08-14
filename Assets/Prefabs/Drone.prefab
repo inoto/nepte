@@ -102,11 +102,9 @@ MonoBehaviour:
   destinationPoint: {x: 0, y: 0, z: 0}
   speed: 2
   speedPercent: 1
-  turnSpeed: 3
+  turnSpeed: 10
   turnDst: 5
   stoppingDst: 10
-  hasCollided: 0
-  hasNode: 0
 --- !u!114 &114449573046543404
 MonoBehaviour:
   m_ObjectHideFlags: 1

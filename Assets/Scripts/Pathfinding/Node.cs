@@ -14,7 +14,7 @@ public class Node : IHeapItem<Node>
 	public Node[] neigbours = new Node[8];
 
 	public int[] distance = new int[GameController.Instance.players];
-	public bool[] suitable;
+	public bool[] suitable = new bool[GameController.Instance.players];
 
 	public int gCost;
 	public int hCost;
@@ -43,14 +43,12 @@ public class Node : IHeapItem<Node>
         walkable = false;
         prisoner = obj;
         obj.GetComponent<Base>().node.Add(this);
-        //obj.GetComponent<Base>().hasNode = true;
     }
 
     public void ReleaseObject()
     {
         walkable = true;
         prisoner.GetComponent<Base>().node.Remove(this);
-        //prisoner.GetComponent<Base>().hasNode = false;
         prisoner = null;
     }
 

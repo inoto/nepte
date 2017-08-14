@@ -39,6 +39,7 @@ public class Pathfinding : MonoBehaviour
 		HashSet<Node> visitedSet = new HashSet<Node>();
 
 		List<Node> neigbours = new List<Node>();
+        List<Node> closestToStart = new List<Node>();
 
 		Node currentNode;
 
@@ -50,21 +51,23 @@ public class Pathfinding : MonoBehaviour
 			currentNode = open.Dequeue();
 
 			neigbours = Grid.Instance.GetNeighbours(currentNode);
-			int suitableNode = 0;
 			foreach (Node nextNode in neigbours)
 			{
 				if (nextNode == null || visitedSet.Contains(nextNode))
 					continue;
 				visitedSet.Add(nextNode);
 				open.Enqueue(nextNode);
-				nextNode.distance[player] = 1 + currentNode.distance[player];
+				//nextNode.distance[player] = 1 + currentNode.distance[player];
 
 				float dist = (nextNode.worldPosition - startNodePoint).sqrMagnitude;
-				float distSuitable = (neigbours[suitableNode].worldPosition - startNodePoint).sqrMagnitude;
-				if (dist < distSuitable)
-					suitableNode = neigbours.IndexOf(nextNode);
-			}
-			neigbours[suitableNode].suitable[player] = true;
+                //float distClosest = (neigbours[suitableNode].worldPosition - startNodePoint).sqrMagnitude;
+                //if (dist < distClosest)
+                //    nextNode.distance[player] = 2 + currentNode.distance[player];
+                ////suitableNode = neigbours.IndexOf(nextNode);
+                //else
+                nextNode.distance[player] = Mathf.RoundToInt(dist);//+ currentNode.distance[player];
+            }
+			//neigbours[suitableNode].suitable[player] = true;
 		}
 	}
 

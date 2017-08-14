@@ -9,6 +9,5 @@ todo.list
 - remove random to use slow ratation and attack after ration is completed
 - initialization queue to remove most actions from start
 - collision manager
-- octotree for objects
+- quadtree for objects
 - 
-

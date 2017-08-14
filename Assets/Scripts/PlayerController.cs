@@ -4,6 +4,7 @@ public class PlayerController : MonoBehaviour
 {
     public int owner;
 
+    public int unitCount = 0;
     public bool isInitialized = false;
     public bool isDefeated = false;
 
@@ -76,7 +77,9 @@ public class PlayerController : MonoBehaviour
         rallyPoint.owner = owner;
         if (owner == 0)
         {
-            rallyPoint.cameraMouse = Camera.main.GetComponent<CameraControlMouse>();
+#if UNITY_EDITOR
+			rallyPoint.cameraMouse = Camera.main.GetComponent<CameraControlMouse>();
+#endif
             rallyPoint.cameraTouch = Camera.main.GetComponent<CameraControlTouch>();
         }
 		rallyPointObject.transform.SetParent(transform);

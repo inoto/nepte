@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 
@@ -281,7 +283,9 @@ public class Grid : MonoBehaviour {
                     newColor.a = 0.5f;
                     Gizmos.color = newColor;
                     Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
-					Handles.Label(n.worldPosition, n.distance[0].ToString());
+#if UNITY_EDITOR
+                    Handles.Label(n.worldPosition, n.distance[0].ToString() + (n.suitable[0] ? "s" : ""));
+#endif
                 }
             }
         }
