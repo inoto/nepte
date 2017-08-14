@@ -20,7 +20,7 @@ public class NodeGroup
     public NodeGroup(Rect newRect)
 	{
 		rect = newRect;
-        nodeRadius = 0.05f;
+        nodeRadius = Grid.Instance.nodeRadius;
         groupSizeX = 10;
         groupSizeY = 10;
         groupSize = groupSizeX * groupSizeY;
@@ -31,19 +31,22 @@ public class NodeGroup
 
     public void FillWithNodes()
     {
+		float nodeRadius = Grid.Instance.nodeRadius;
+		float nodeDiameter = Grid.Instance.nodeDiameter;
+
         Vector2 point = rect.min;
-        point.x += 0.05f;
-        point.y += 0.05f;
+        point.x += nodeRadius;
+        point.y += nodeRadius;
 
         for (int x = 0; x < groupSizeX; x++)
         {
             for (int y = 0; y < groupSizeY; y++)
             {
                 nodes.Add(Grid.Instance.NodeFromWorldPoint(point));
-                point.y += 0.1f;
+                point.y += nodeDiameter;
             }
-            point.y -= Vector2.one.x;
-            point.x += 0.1f;
+            point.y -= Vector2.one.x*10;
+            point.x += nodeDiameter;
         }
     }
 

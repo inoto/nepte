@@ -8,9 +8,12 @@ public class Unit : MonoBehaviour
     const float minPathUpdateTime = .5f;
     const float pathUpdateMoveThreshold = .5f;
 
-    Vector2 directionVector;
+	public Transform destinationTransform;
+	public RallyPoint playerRallyPoint;
+	public Vector2 directionVector;
+	public Vector3 destinationPoint;
 
-    public float speed = 0.2f;
+    public float speed = 2f;
     public float speedPercent = 1;
     public float turnSpeed = 3;
     public float turnDst = 5;
@@ -24,63 +27,42 @@ public class Unit : MonoBehaviour
     public bool hasNode = false;
 
     public Node node;
-    public Node newNode;
-    public Node destinationNode;
+    public List<Node> nextNodes;
+	public Node nextNode;
+	public Node tmpNode;
+	public Node destinationNode;
 
     private Drone droneComponent;
 
     void Start()
     {
-        droneComponent = GetComponent<Drone>();
+		
+  //      droneComponent = GetComponent<Drone>();
 
-        StartCoroutine(UpdateNextNode());
+		//ResetRallyPoint();
+
+		//node = Grid.Instance.NodeFromWorldPoint(transform.position);
+		//StartCoroutine(FollowPath());
     }
 
-    public void NextNodeFound(Vector2[] waypoints, bool pathSuccessful)
-    {
-        if (pathSuccessful)
-        {
-            path = new List<Vector2>(waypoints);
-            pathIndex = 0;
-            pathCurrent = path[pathIndex];
-            hasCollided = false;
-            droneComponent.ResetRallyPoint();
-            StopCoroutine("FollowPath");
-            StartCoroutine("FollowPath");
-        }
-        //else
-        //{
-        //    droneComponent.mode = Drone.Mode.Attacking;
-        //}
-    }
+	void OnEnable()
+	{
+		droneComponent = GetComponent<Drone>();
+		playerRallyPoint = GameController.Instance.playerControllerObject[droneComponent.owner].GetComponent<PlayerController>().rallyPoint;
+		playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
 
-    /*public void Collide(Node nodeCollide)
-    {
-		Node newNode = Grid.Instance.ClosestToDestinationWalkableNode(nodeCollide, droneComponent.destinationTransform.position);
-		Vector2[] waypoint = new Vector2[] { newNode.worldPosition };
-		OnPathFound(waypoint, true);
-    }*/
+		node = Grid.Instance.NodeFromWorldPoint(transform.position);
+		ResetRallyPoint();
 
-    IEnumerator UpdateNextNode()
-    {
-        //PathRequestManager.RequestPath(new PathRequest(transform.position, droneComponent.destinationTransform.position, OnPathFound));
+		StartCoroutine(FollowPath());
+	}
 
-        Vector2 targetPosOld = droneComponent.destinationTransform.position;
+	private void OnDisable()
+	{
+		playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
+	}
 
-        while (true)
-        {
-            yield return new WaitForSeconds(minPathUpdateTime);
-            Vector2 destination = new Vector2(droneComponent.destinationTransform.position.x, droneComponent.destinationTransform.position.y);
-            if (destination != targetPosOld || hasCollided)
-            {
-                //PathRequestManager.RequestPath(new PathRequest(transform.position, droneComponent.destinationTransform.position, OnPathFound));
-                targetPosOld = droneComponent.destinationTransform.position;
-            }
-
-        }
-    }
-
-    IEnumerator FollowPath()
+	IEnumerator FollowPath()
     {
         droneComponent.mode = Drone.Mode.Moving;
         speedPercent = 1;
@@ -88,76 +70,21 @@ public class Unit : MonoBehaviour
         while (true)
         {
             Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
-            newNode = Grid.Instance.NodeFromWorldPoint(transform.position);
-            if (newNode != null)
-            {
-                if (newNode != node)
-                {
-                    //              if (!newNode.walkable)
-                    //              {
-                    //                  if (newNode.prisoner.GetComponent<Drone>().mode != Drone.Mode.Moving)
-                    //{
-                    //	hasCollided = true;
-                    //}
-                    //if (droneComponent.mode == Drone.Mode.Idle)
-                    //{
-                    //	hasCollided = true;
-                    //}
-                    //}
-                    if (newNode.walkable)
-                    {
-                        if (hasNode)
-                        {
-                            node.ReleaseObject();
-                        }
-                        newNode.ImprisonObject(gameObject);
-                    }
-                    //else
-                    //{
-                    //    bool result = GetWalkableInNeigbours();
-                    //}
-                }
-                newNode = null;
-            }
-
-            if ((pathIndex == (path.Count - 1)) && stoppingDst > 0)
-            {
-                speedPercent = .75f;
-            }
-
-            if (pathCurrent == pos2D)
-            {
-                if (pathIndex <= path.Count)
-                {
-                    if (pathIndex < path.Count)
-                    {
-                        // find next node from path
-                        Node nextNode = Grid.Instance.NodeFromWorldPoint(path[pathIndex + 1]);
-                        // if not walkable
-                        if (!nextNode.walkable)
-                        {
-                            // if all neigbours not walkable
-                            if (!GetWalkableInNeigbours())
-                            {
-                                droneComponent.EnterIdleMode();
-                                yield break;
-                            }
-                        }
-                    }
-                    pathIndex++;
-                }
-                else
-                {
-                    droneComponent.EnterIdleMode();
-                    yield break;
-                }
-
-                //if (pathIndex >= path.Length)
-                //{
-
-                //}
-                pathCurrent = path[pathIndex];
-            }
+			tmpNode = Grid.Instance.NodeFromWorldPoint(transform.position);
+			//if (nextNode == node)
+			//	continue;
+			//else
+			//	node = nextNode;
+			if (tmpNode != node)
+			{
+				node = tmpNode;
+				DefineNextNode(node);
+			}
+            //    else
+            //    {
+            //        droneComponent.EnterIdleMode();
+            //        yield break;
+            //    }
 
             Rotate();
 
@@ -167,25 +94,38 @@ public class Unit : MonoBehaviour
         }
     }
 
-    bool GetWalkableInNeigbours()
-    {
-        List<Node> neig = Grid.Instance.GetNeighbours(node);
-		foreach (Node n in neig)
+	void DefineNextNode(Node destinationNode)
+	{
+		nextNodes = Grid.Instance.GetNeighbours(destinationNode);
+		if (nextNodes.Count > 0)
 		{
-			// check each for walkable node
-			if (n.walkable)
+			foreach (Node n in nextNodes)
 			{
-				// insert it into path
-                path[pathIndex] = node.worldPosition;
-                return true;
+				if (n.distance[droneComponent.owner] >= node.distance[droneComponent.owner])
+					continue;
+				if (!n.suitable[droneComponent.owner])
+					continue;
+				nextNode = n;
 			}
 		}
-        return false;
-    }
+	}
+
+	void FindSuitableNodeAround()
+	{
+
+	}
+
+	void ResetRallyPoint()
+	{
+		destinationPoint = playerRallyPoint.gameObject.transform.position;
+		if (droneComponent.owner == 0)
+			Debug.Log("rally point changed");
+		DefineNextNode(Grid.Instance.NodeFromWorldPoint(destinationPoint));
+	}
 
     void Rotate()
     {
-        directionVector = pathCurrent - new Vector2(transform.position.x, transform.position.y);
+        directionVector = nextNode.worldPosition - transform.position;
         float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
         Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
         transform.rotation = Quaternion.Lerp(transform.rotation, qt, Time.deltaTime * turnSpeed);
@@ -193,9 +133,8 @@ public class Unit : MonoBehaviour
 
     void Move()
     {
-        speed = 0.2f;
 		float step = Time.deltaTime * speed * speedPercent;
-		transform.position = Vector2.MoveTowards(transform.position, pathCurrent, step);
+		transform.position = Vector2.MoveTowards(transform.position, nextNode.worldPosition, step);
     }
 
 	public void OnDrawGizmos() {

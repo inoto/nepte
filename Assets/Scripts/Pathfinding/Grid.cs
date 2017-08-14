@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -54,21 +55,20 @@ public class Grid : MonoBehaviour {
 		battlegroundParent = transform.parent.gameObject.GetComponent<Battleground>();
 		battlegroundRenderer = battlegroundParent.gameObject.GetComponent<MeshRenderer>();
 
-        nodeRadius = 0.05f;
         nodeDiameter = nodeRadius * 2;
 
         rect.min = battlegroundRenderer.bounds.min;
 		rect.max = battlegroundRenderer.bounds.max;
 
-        gridCountX = Mathf.RoundToInt(rect.width / Vector2.one.x * 10);
-		gridCountY = Mathf.RoundToInt(rect.height / Vector2.one.y * 10);
+        gridCountX = Mathf.RoundToInt(rect.width / nodeDiameter);
+		gridCountY = Mathf.RoundToInt(rect.height / nodeDiameter);
         gridSize = gridCountX * gridCountY;
         CreateNodes();
 
-        groupCountX = Mathf.RoundToInt(rect.width / Vector2.one.x);
-        groupCountY = Mathf.RoundToInt(rect.height / Vector2.one.y);
-        groupSize = groupCountX * groupCountY;
-        CreateGroups();
+        //groupCountX = Mathf.RoundToInt(rect.width / Vector2.one.x*10);
+        //groupCountY = Mathf.RoundToInt(rect.height / Vector2.one.y*10);
+        //groupSize = groupCountX * groupCountY;
+        //CreateGroups();
     }
 
     public List<NodeGroup> GetGroupsAsList()
@@ -110,19 +110,19 @@ public class Grid : MonoBehaviour {
     {
         groups = new NodeGroup[groupCountX, groupCountY];
 
-		Rect projRect = new Rect(rect.min, Vector2.one);
+		Rect projRect = new Rect(rect.min, Vector2.one*10);
 		for (int x = 0; x < groupCountX; x++)
 		{
 			for (int y = 0; y < groupCountY; y++)
 			{
 				groups[x, y] = new NodeGroup(projRect);
-				projRect.yMax += Vector2.one.y;
-				projRect.yMin += Vector2.one.y;
+				projRect.yMax += Vector2.one.y*10;
+				projRect.yMin += Vector2.one.y*10;
 			}
-			projRect.yMax -= Vector2.one.y * groupCountY;
-			projRect.yMin -= Vector2.one.y * groupCountY;
-			projRect.xMax += Vector2.one.x;
-			projRect.xMax += Vector2.one.x;
+			projRect.yMax -= Vector2.one.y*10 * groupCountY;
+			projRect.yMin -= Vector2.one.y*10 * groupCountY;
+			projRect.xMax += Vector2.one.x*10;
+			projRect.xMax += Vector2.one.x*10;
 		}
 
 		
@@ -192,6 +192,38 @@ public class Grid : MonoBehaviour {
 
 	}
 
+	public List<Node> FindNodesInRadius(Vector2 point, float radius)
+	{
+		List<Node> list = new List<Node>();
+		Node node = NodeFromWorldPoint(point);
+
+		int nodeCountInRadiusLine;
+		if (radius % 1 != 0)
+			nodeCountInRadiusLine = Mathf.FloorToInt(radius);
+		else
+			nodeCountInRadiusLine = Mathf.RoundToInt(radius)-1;
+
+		for (int x = -nodeCountInRadiusLine; x <= nodeCountInRadiusLine; x++)
+		{
+			for (int y = -nodeCountInRadiusLine; y <= nodeCountInRadiusLine; y++)
+			{
+				if ((x == -nodeCountInRadiusLine && y == -nodeCountInRadiusLine)
+					|| (x == -nodeCountInRadiusLine && y == nodeCountInRadiusLine)
+					|| (x == nodeCountInRadiusLine && y == -nodeCountInRadiusLine)
+					|| (x == nodeCountInRadiusLine && y == nodeCountInRadiusLine))
+					continue;
+				int checkX = node.gridX + x;
+				int checkY = node.gridY + y;
+
+				if (checkX >= 0 && checkX < gridCountX && checkY >= 0 && checkY < gridCountY)
+				{
+					list.Add(nodes[checkX, checkY]);
+				}
+			}
+		}
+		return list;
+	}
+
 	bool InBounds(int x, int y)
 	{
 		return x >= 0 && x < gridCountX && y >= 0 && y < gridCountY;
@@ -214,7 +246,7 @@ public class Grid : MonoBehaviour {
 				}
 			}
 		}
-
+		//Debug.Log(neighbours.Count);
 		return neighbours;
 	}
 
@@ -222,11 +254,15 @@ public class Grid : MonoBehaviour {
     {
         float percentX = (worldPosition.x + rect.size.x / 2) / rect.size.x;
 		float percentY = (worldPosition.y + rect.size.y / 2) / rect.size.y;
+		//Debug.Log(percentX + " " + percentY);
 		percentX = Mathf.Clamp01(percentX);
 		percentY = Mathf.Clamp01(percentY);
 
-		int x = Mathf.RoundToInt((gridCountX-1) * percentX);
-		int y = Mathf.RoundToInt((gridCountY-1) * percentY);
+		int x, y;
+
+		//if (worldPosition.x < 0)
+		x = Mathf.RoundToInt((gridCountX - 1) * percentX);
+		y = Mathf.RoundToInt((gridCountY - 1) * percentY);
 		return nodes[x,y];
 	}
 
@@ -244,17 +280,8 @@ public class Grid : MonoBehaviour {
                     newColor = Gizmos.color;
                     newColor.a = 0.5f;
                     Gizmos.color = newColor;
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (0.1f - 0.01f));
-                }
-            }
-            if (groups != null)
-            {
-                foreach (NodeGroup ng in groups)
-                {
-                    newColor = Color.blue;
-                    newColor.a = 0.5f;
-                    Gizmos.color = newColor;
-                    Gizmos.DrawWireCube(new Vector2(ng.rect.center.x, ng.rect.center.y), Vector3.one);
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
+					Handles.Label(n.worldPosition, n.distance[0].ToString());
                 }
             }
         }

@@ -38,7 +38,7 @@ Transform:
   m_GameObject: {fileID: 1771483991996188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -96,6 +96,7 @@ MonoBehaviour:
   owner: 0
   health: 1000
   isDead: 0
+  trans: {fileID: 0}
   assignedHPbar: {fileID: 0}
   rallyPointObject: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
@@ -107,10 +108,10 @@ MonoBehaviour:
     type: 2}
   HPbarPrefab: {fileID: 1715169125782130, guid: a67e5c7027d85448aa83ab0928ac2ba9,
     type: 2}
-  spriteSetDrones:
-  - {fileID: 21300000, guid: 40cb0e86c469c4387b909cf4a552a641, type: 3}
-  - {fileID: 21300000, guid: fd2483da58b89413883c57862f8e3aef, type: 3}
-  - {fileID: 21300000, guid: 485e8b0596f5a4db0a51956e9be5b338, type: 3}
+  materials:
+  - {fileID: 2100000, guid: 7eaf52c9e38d34b41af62514b874c3ed, type: 2}
+  - {fileID: 2100000, guid: 7326301bab270a949945db0a00c87a99, type: 2}
+  - {fileID: 2100000, guid: 62deb8efdff8f80408b03b2c60864186, type: 2}
 --- !u!114 &114969710160545916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -122,4 +123,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 0.6
+  size: 3

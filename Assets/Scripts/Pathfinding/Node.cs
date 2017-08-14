@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Node : IHeapItem<Node> {
-	
+public class Node : IHeapItem<Node>
+{
 	public bool walkable;
 	public Vector3 worldPosition;
 	public int gridX;
@@ -11,6 +11,10 @@ public class Node : IHeapItem<Node> {
     public float size;
     public GameObject prisoner;
 	public int movementPenalty;
+	public Node[] neigbours = new Node[8];
+
+	public int[] distance = new int[GameController.Instance.players];
+	public bool[] suitable;
 
 	public int gCost;
 	public int hCost;
@@ -25,6 +29,12 @@ public class Node : IHeapItem<Node> {
 		gridX = _gridX;
 		gridY = _gridY;
         size = newSize;
+		for (int i = 0; i < distance.Length; i++)
+		{
+			distance[i] = 0;
+			suitable[i] = false;
+		}
+		neigbours = Grid.Instance.GetNeighbours(this).ToArray();
         //rect = new Rect(worldPosition.x-size/2, worldPosition.y-size/2, size, size);
 	}
 
@@ -32,15 +42,15 @@ public class Node : IHeapItem<Node> {
     {
         walkable = false;
         prisoner = obj;
-        obj.GetComponent<Unit>().node = this;
-        obj.GetComponent<Unit>().hasNode = true;
+        obj.GetComponent<Base>().node.Add(this);
+        //obj.GetComponent<Base>().hasNode = true;
     }
 
     public void ReleaseObject()
     {
         walkable = true;
-        prisoner.GetComponent<Unit>().node = null;
-        prisoner.GetComponent<Unit>().hasNode = false;
+        prisoner.GetComponent<Base>().node.Remove(this);
+        //prisoner.GetComponent<Base>().hasNode = false;
         prisoner = null;
     }
 

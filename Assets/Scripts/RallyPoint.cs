@@ -13,19 +13,22 @@ public class RallyPoint : MonoBehaviour
 
     private Vector3 mousePosition;
 
-    public void SetNew(Vector2 position)
-    {
-        Vector3 tmp = position;
-        if (transform.position != tmp)
-        {
-            Node node = Grid.Instance.NodeFromWorldPoint(tmp);
-            rect = node.rect;
-            transform.position = node.rect.center;
-        }
-    }
+	public delegate void ResetRallyPoint();
+	public event ResetRallyPoint OnRallyPointChanged = delegate { };
+
+	[Header("Cache")]
+	public Transform trans;
+	private MeshRenderer mesh;
+
+	[Header("Colors")]
+	[SerializeField]
+	private Material[] materials;
 
     private void Start()
     {
+		trans = GetComponent<Transform>();
+		mesh = GetComponent<MeshRenderer>();
+
         if (owner == 0)
         {
 #if UNITY_EDITOR
@@ -35,8 +38,31 @@ public class RallyPoint : MonoBehaviour
             cameraTouch.Attach();
             cameraTouch.onClickTap += SetNew;
         }
-    }
 
+		AssignMeterial();
+
+		Pathfinding.Instance.FillDistances(trans.position, owner);
+	}
+
+	public void SetNew(Vector2 position)
+	{
+
+		Vector3 tmp = position;
+		if (trans.position != tmp)
+		{
+			Node node = Grid.Instance.NodeFromWorldPoint(tmp);
+			rect = node.rect;
+			trans.position = node.rect.center;
+		}
+
+		Pathfinding.Instance.FillDistances(trans.position, owner);
+		OnRallyPointChanged();
+	}
+
+	void AssignMeterial()
+	{
+		mesh.material = materials[owner];
+	}
 
 	public int GetOwner()
 	{

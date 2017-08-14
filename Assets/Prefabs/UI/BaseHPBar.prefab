@@ -144,19 +144,19 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 0
-    absolute: -53
+    absolute: -530
   rightAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 1
-    absolute: 53
+    absolute: 530
   bottomAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 0
-    absolute: 67
+    absolute: 300
   topAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 1
-    absolute: 89
+    absolute: 500
   updateAnchors: 2
   mColor: {r: 0.83823526, g: 0.83823526, b: 0.83823526, a: 0.822}
   mPivot: 4
@@ -182,7 +182,7 @@ MonoBehaviour:
   bottomType: 1
   topType: 1
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
-  mSpriteName: Button
+  mSpriteName: Highlight - Shadowed
   mFillCenter: 1
 --- !u!114 &114682596614656408
 MonoBehaviour:
@@ -236,7 +236,7 @@ MonoBehaviour:
   bottomType: 1
   topType: 1
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
-  mSpriteName: Button
+  mSpriteName: Window
   mFillCenter: 1
 --- !u!114 &114786257958004438
 MonoBehaviour:
@@ -278,9 +278,9 @@ MonoBehaviour:
   aspectRatio: 3.764706
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
-  mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
+  mFont: {fileID: 11400000, guid: 93e68f7902ba67545ba1e60502873fb5, type: 2}
   mText: 100%
-  mFontSize: 20
+  mFontSize: 150
   mFontStyle: 0
   mAlignment: 0
   mEncoding: 1

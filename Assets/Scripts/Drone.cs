@@ -23,13 +23,10 @@ public class Drone : MonoBehaviour, IOwnable
 
     [Header("Destination")]
     // TODO: change GameObject to Vector3 for rallypoints
-    public Transform destinationTransform;
-    public GameObject playerRallyPoint;
-    public Vector3 directionVector;
 
     [Header("Components")]
-    // TODO: use cached Transform
-    //private Transform trans;
+    public Transform trans;
+	private MeshRenderer mesh;
     private Unit unitComponent;
     private Weapon weaponComponent;
     private Radar radarComponent;
@@ -39,37 +36,40 @@ public class Drone : MonoBehaviour, IOwnable
     public GameObject enemy;
     public List<GameObject> attackers = new List<GameObject>();
 
-    [Header("Prefabs")]
+    [Header("Explosion")]
     [SerializeField]
     private GameObject droneExplosionPrefab;
 
-    public Material[] materials;
+	[Header("Colors")]
+	[SerializeField]
+	private Material[] materials;
 
-    // Use this for initialization
-    void Start ()
+	// Use this for initialization
+	void Start ()
     {
-        weaponComponent = GetComponent<Weapon>();
-        radarComponent = GetComponent<Radar>();
-        unitComponent = GetComponent<Unit>();
-
-        Initialize();
+		Initialize();
     }
 
     private void OnEnable()
     {
-        Initialize();
-        ResetRallyPoint();
-        CollisionManager.Instance.AddUnit(gameObject);
+		Initialize();
+        //ResetRallyPoint();
+        //CollisionManager.Instance.AddUnit(gameObject);
     }
 
     void Initialize()
     {
-        isDead = false;
+		trans = GetComponent<Transform>();
+		mesh = GetComponent<MeshRenderer>();
+		weaponComponent = GetComponent<Weapon>();
+		radarComponent = GetComponent<Radar>();
+		unitComponent = GetComponent<Unit>();
+		
+		isDead = false;
         health = 100;
         enemy = null;
         triggeredLaserMissile = null;
         triggeredDrone = null;
-        playerRallyPoint = null;
         EnterIdleMode();
     }
 
@@ -85,19 +85,24 @@ public class Drone : MonoBehaviour, IOwnable
         // TODO: move change of transform.position to the end after calculation
     }
 
-    public void ResetRallyPoint()
-    {
-        if (playerRallyPoint)
-            destinationTransform = playerRallyPoint.transform;
-        else
-            destinationTransform = GameController.Instance.playerControllerObject[owner].GetComponent<PlayerController>().rallyPoint.gameObject.transform;
-    }
+	void AssignMaterial()
+	{
+		mesh.material = materials[owner];
+	}
+
+    //public void ResetRallyPoint()
+    //{
+    //    if (playerRallyPoint)
+    //        destinationTransform = playerRallyPoint.transform;
+    //    else
+    //        destinationTransform = GameController.Instance.playerControllerObject[owner].GetComponent<PlayerController>().rallyPoint.gameObject.transform;
+    //}
 
     void Die()
     {
         isDead = true;
         ObjectPool.Recycle(gameObject);
-        GameObject tmpObject = Instantiate(droneExplosionPrefab, transform.position, transform.rotation);
+        GameObject tmpObject = Instantiate(droneExplosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         UnbindAttackers();
         CollisionManager.Instance.RemoveUnit(gameObject);
@@ -140,7 +145,7 @@ public class Drone : MonoBehaviour, IOwnable
         if (newEnemy == enemy)
             return;
         enemy = newEnemy;
-        destinationTransform = enemy.transform;
+        //destinationTransform = enemy.transform;
         //radarChild.gameObject.SetActive(false);
         //weaponChild.gameObject.SetActive(true);
     }
@@ -148,7 +153,7 @@ public class Drone : MonoBehaviour, IOwnable
     public void EnterIdleMode()
     {
         mode = Mode.Idle;
-        ResetRallyPoint();
+        //ResetRallyPoint();
         //radarChild.gameObject.SetActive(true);
         //weaponChild.gameObject.SetActive(false);
     }
@@ -164,7 +169,7 @@ public class Drone : MonoBehaviour, IOwnable
         while (enemy != null)
         {
             float waitTime = Random.Range(0.5f, 1.5f);
-            directionVector = destinationTransform.position - transform.position;
+            //directionVector = destinationTransform.position - trans.position;
             //Rotate();
             // TODO: remove random to use slow ratation and attack after ration is completed
             yield return new WaitForSeconds(waitTime);

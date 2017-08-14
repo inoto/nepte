@@ -51,6 +51,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Modules\Controllable Camera\AbstractCameraControl.cs" />
+     <Compile Include="Assets\Modules\Controllable Camera\AbstractCameraControlMouse.cs" />
+     <Compile Include="Assets\Modules\Controllable Camera\AbstractCameraControlTouch.cs" />
+     <Compile Include="Assets\Modules\Controllable Camera\CameraControlMouse.cs" />
+     <Compile Include="Assets\Modules\Controllable Camera\CameraControlMouseNGUI.cs" />
+     <Compile Include="Assets\Modules\Controllable Camera\CameraControlTouch.cs" />
+     <Compile Include="Assets\Modules\Controllable Camera\CameraControlTouchNGUI.cs" />
+     <Compile Include="Assets\Modules\Controllable Camera\ControllableCamera.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\LagPosition.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\WindowDragTilt.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\EnvelopContent.cs" />
@@ -168,12 +176,11 @@
      <Compile Include="Assets\Scripts\Camera controllers\PCInputController.cs" />
      <Compile Include="Assets\Scripts\Camera controllers\TouchController.cs" />
      <Compile Include="Assets\Scripts\Drone.cs" />
+     <Compile Include="Assets\Scripts\Drone\Quad.cs" />
      <Compile Include="Assets\Scripts\DroneExplosion.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
-     <Compile Include="Assets\Scripts\GameTimer.cs" />
      <Compile Include="Assets\Scripts\IOwnable.cs" />
      <Compile Include="Assets\Scripts\LaserMissile.cs" />
-     <Compile Include="Assets\Scripts\LoseWinBlinking.cs" />
      <Compile Include="Assets\Scripts\ObjectPool.cs" />
      <Compile Include="Assets\Scripts\Pathfinding\CollisionGrid.cs" />
      <Compile Include="Assets\Scripts\Pathfinding\CollisionManager.cs" />
@@ -191,7 +198,8 @@
      <Compile Include="Assets\Scripts\RallyPoint.cs" />
      <Compile Include="Assets\Scripts\SoundControllers\MixerContoller.cs" />
      <Compile Include="Assets\Scripts\SoundControllers\MusicMainTheme.cs" />
-     <Compile Include="Assets\Scripts\UIChanger.cs" />
+     <Compile Include="Assets\Scripts\UI\GameTimer.cs" />
+     <Compile Include="Assets\Scripts\UI\LoseWinBlinking.cs" />
      <Compile Include="Assets\Scripts\Weapon.cs" />
      <None Include="Assets\NGUI\ReadMe - 3.11.4.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />
@@ -215,6 +223,7 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed.shader" />
+     <None Include="Assets\Shaders\TilingShader.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 3.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text (TextureClip).shader" />

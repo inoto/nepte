@@ -7,11 +7,11 @@ public class PlayerController : MonoBehaviour
     public bool isInitialized = false;
     public bool isDefeated = false;
 
-    [Header("Cache")]
+	[Header("Cache")]
+	public Transform trans;
     public RallyPoint rallyPoint;
-    public GameObject baseControl;
+    public Base baseControl;
     public AIPlayer aiPlayer;
-    private GameObject startLocationObject;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
+		trans = GetComponent<Transform>();
+
         CreateBase();
 
         CreateRallyPoint();
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+		// TODO: rework to use events or something like this
         if (isInitialized)
         {
             if (baseControl == null)
@@ -60,11 +63,10 @@ public class PlayerController : MonoBehaviour
 
     void CreateBase()
     {
-        baseControl = Instantiate(basePrefab, transform.position, transform.rotation);
-        baseControl.GetComponent<Base>().owner = owner;
+		GameObject baseObject = Instantiate(basePrefab, transform.position, transform.rotation);
+		baseControl = baseObject.GetComponent<Base>();
+        baseControl.owner = owner;
         baseControl.transform.SetParent(transform);
-
-        baseControl.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetBases[owner];
     }
 
     void CreateRallyPoint()
@@ -74,13 +76,11 @@ public class PlayerController : MonoBehaviour
         rallyPoint.owner = owner;
         if (owner == 0)
         {
-            rallyPoint.cameraMouse = GameController.Instance.cameraChild.GetComponent<CameraControlMouse>();
-            rallyPoint.cameraTouch = GameController.Instance.cameraChild.GetComponent<CameraControlTouch>();
+            rallyPoint.cameraMouse = Camera.main.GetComponent<CameraControlMouse>();
+            rallyPoint.cameraTouch = Camera.main.GetComponent<CameraControlTouch>();
         }
 		rallyPointObject.transform.SetParent(transform);
         baseControl.GetComponent<Base>().rallyPointObject = rallyPoint.gameObject;
-
-        rallyPoint.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetRallyPoints[owner];
     }
 
 	public int GetOwner()

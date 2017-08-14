@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class GameController : MonoBehaviour
 {
 	private static GameController _instance;
@@ -22,7 +20,7 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-    public int players = 3;
+    public int players;
 
     public int winPoints = 0;
 
@@ -50,18 +48,13 @@ public class GameController : MonoBehaviour
     [Header("Start scene")]
     public GameObject startScene;
 
-    [Header("Audio")]
-
-
     [Header("Children")]
-    public GameObject cameraChild;
     public Battleground battlegroundChild;
-    public MixerContoller audioMixer;
-    //public GameObject[] playerControllerObject;
-    public List<GameObject> playerControllerObject;
+    public MixerContoller audioMixerChild;
+	public ObjectPool objectPoolChild;
 
     [Header("Cache")]
-    //public Vector3[] playerStartPosition;
+    public List<GameObject> playerControllerObject;
     public List<Vector3> playerStartPosition;
 
     [Header("Prefabs")]
@@ -71,13 +64,12 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        cameraChild = GetComponentInChildren<Camera>().gameObject;
-
         battlegroundChild = GetComponentInChildren<Battleground>();
-
-        audioMixer = GameObject.Find("AudioMixerControl").GetComponent<MixerContoller>();
-        audioMixer.SetMusicVolume(0.75f);
-        audioMixer.SetSoundsVolume(0.75f);
+        audioMixerChild = GetComponentInChildren<MixerContoller>();
+		audioMixerChild = GetComponentInChildren<MixerContoller>();
+		audioMixerChild.SetMusicVolume(0.75f);
+        audioMixerChild.SetSoundsVolume(0.75f);
+		objectPoolChild = GetComponentInChildren<ObjectPool>();
 
         BeforeGameMenu();
     }
@@ -87,6 +79,7 @@ public class GameController : MonoBehaviour
     {
         gameTimer += Time.deltaTime;
 
+		// TODO: rework to events or something like this
         if (winPoints > 0)
         {
             Win();
@@ -209,15 +202,16 @@ public class GameController : MonoBehaviour
             AssignStartPositions();
             beforegamePanel.SetActive(false);
             RemoveStartScene();
-            audioMixer.StopMainTheme();
+            audioMixerChild.StopMainTheme();
         }
-        cameraChild.GetComponent<Camera>().orthographicSize = 1;
-        GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 1;
-		Vector3 newZ = playerStartPosition[0];
-		newZ.z -= 3;
-		cameraChild.transform.position = newZ;
+		Camera.main.orthographicSize = 10;
+        GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
+		Vector3 vec = playerStartPosition[0];
+		vec.z = -10;
+		Camera.main.transform.position = vec;
 
-        CreatePlayers();
+
+		CreatePlayers();
 		state = States.Game;
 		ingamePanel.SetActive(true);
 		
@@ -231,16 +225,14 @@ public class GameController : MonoBehaviour
 
     public void RemoveAllPlayerUnits()
     {
-        //GameObject audioMixer = GameObject.Find("AudioMixerControl");
+        //GameObject audioMixerChild = GameObject.Find("AudioMixerControl");
 		foreach (Transform child in transform)
 		{
             if (child.gameObject == battlegroundChild.gameObject)
                 continue;
-            if (child.gameObject == cameraChild.gameObject)
+            if (child.gameObject == audioMixerChild.gameObject)
 				continue;
-            if (child.gameObject == audioMixer.gameObject)
-				continue;
-            if (child.gameObject == GameObject.Find("ObjectPool").gameObject)
+            if (child.gameObject == objectPoolChild.gameObject)
 				continue;
 			Destroy(child.gameObject);
 		}
@@ -259,16 +251,16 @@ public class GameController : MonoBehaviour
 	{
         playerControllerObject = new List<GameObject>();
 
-        GameObject tmpObject;
+        GameObject playerObject;
 		for (int i = 0; i < players; i++)
 		{
-			tmpObject = Instantiate(playerControllerPrefab);
-            tmpObject.transform.SetParent(transform);
-			PlayerController playerController = tmpObject.GetComponent<PlayerController>();
+			playerObject = Instantiate(playerControllerPrefab);
+			playerObject.transform.SetParent(transform);
+			PlayerController playerController = playerObject.GetComponent<PlayerController>();
 			playerController.owner = i;
 			playerController.transform.position = playerStartPosition[i];
 
-            playerControllerObject.Add(tmpObject);
+            playerControllerObject.Add(playerObject);
 		}
 	}
 

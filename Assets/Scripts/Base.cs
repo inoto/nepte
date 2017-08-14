@@ -10,8 +10,12 @@ public class Base : MonoBehaviour, IOwnable
 
     public bool isDead = false;
 
+	public List<Node> node = new List<Node>();
+
     [Header("Cache")]
-    private Transform trans;
+    public Transform trans;
+	private MeshRenderer mesh;
+	private MeshFilter mf;
     private GameObject playerControllerParent;
     public UISprite assignedHPbar;
     public GameObject rallyPointObject;
@@ -27,17 +31,20 @@ public class Base : MonoBehaviour, IOwnable
     private GameObject explosionPrefab;
     public GameObject HPbarPrefab;
 
-	[Header("Sprite sets")]
-    public Sprite[] spriteSetDrones;
+	[Header("Colors")]
+	[SerializeField]
+	private Material[] materials;
 
     //public GameObject rallyPoint;
 
     // Use this for initialization
     void Start()
     {
-        playerControllerParent = transform.parent.gameObject;
+		trans = GetComponent<Transform>();
+		mesh = GetComponent<MeshRenderer>();
+		mf = GetComponent<MeshFilter>();
 
-        trans = transform;
+		playerControllerParent = transform.parent.gameObject;
 
         GameObject assignedHPbarObject = Instantiate(HPbarPrefab, transform.position, transform.rotation);
         assignedHPbarObject.transform.SetParent(GameObject.Find("HPBars").transform);
@@ -47,7 +54,11 @@ public class Base : MonoBehaviour, IOwnable
 		assignedHPbar.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
         InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
-    }
+
+		AssignMaterial();
+		TakeNodes();
+
+	}
 
     // Update is called once per frame
     void Update()
@@ -60,10 +71,25 @@ public class Base : MonoBehaviour, IOwnable
         trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
 
+	void TakeNodes()
+	{
+		Vector2 tmp = new Vector2(trans.position.x, trans.position.y);
+		List<Node> list = Grid.Instance.FindNodesInRadius(tmp, GetComponent<Quad>().size);
+		foreach (Node n in list)
+		{
+			n.ImprisonObject(gameObject);
+		}
+	}
+
+	void AssignMaterial()
+	{
+		mesh.material = materials[owner];
+	}
+
     void Die()
     {
         isDead = true;
-        GameObject tmpObject = Instantiate(explosionPrefab, transform.position, transform.rotation);
+        GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         tmpObject.transform.localScale = trans.localScale;
         Destroy(gameObject);
@@ -72,13 +98,11 @@ public class Base : MonoBehaviour, IOwnable
 
     void SpawnDrone()
     {
-        GameObject droneObject = ObjectPool.Spawn(dronePrefab, transform.parent, GameController.Instance.playerStartPosition[owner], transform.rotation);
+        GameObject droneObject = ObjectPool.Spawn(dronePrefab, trans.parent, GameController.Instance.playerStartPosition[owner], trans.rotation);
 
 		Drone droneSpawned = droneObject.GetComponent<Drone>();
         droneSpawned.owner = owner;
         //droneSpawned.ResetRallyPoint();
-
-		droneSpawned.gameObject.GetComponent<SpriteRenderer>().sprite = spriteSetDrones[owner];
     }
 
     void OnTriggerEnter2D(Collider2D other)

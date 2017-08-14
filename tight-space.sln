@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio for Mac
+# Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tight-space", "tight-space.csproj", "{61C26825-5648-5EE4-984F-59B873DE76F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tight-space.Editor", "tight-space.Editor.csproj", "{38219C07-15ED-D8E1-0C69-7F5E1558DCD0}"

@@ -96,7 +96,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96bd4dbb59d8548f489873e666c5e657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.2
+  destinationTransform: {fileID: 0}
+  playerRallyPoint: {fileID: 0}
+  directionVector: {x: 0, y: 0}
+  destinationPoint: {x: 0, y: 0, z: 0}
+  speed: 2
   speedPercent: 1
   turnSpeed: 3
   turnDst: 5
@@ -128,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 0.05
+  size: 0.5
 --- !u!114 &114681786549479558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -161,12 +165,13 @@ MonoBehaviour:
     width: 0
     height: 0
   mode: 0
-  destinationTransform: {fileID: 0}
-  playerRallyPoint: {fileID: 0}
-  directionVector: {x: 1.7432439, y: 1.0023657, z: 0}
+  trans: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
   enemy: {fileID: 0}
   attackers: []
   droneExplosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
     type: 2}
-  materials: []
+  materials:
+  - {fileID: 2100000, guid: dd1135459b9084bd18b6ad32a1af18ef, type: 2}
+  - {fileID: 2100000, guid: c6e88d3c5145b4a079954b5a773aa640, type: 2}
+  - {fileID: 2100000, guid: 48e89b4ffcef743e4adf04855a700f2b, type: 2}

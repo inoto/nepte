@@ -6,12 +6,66 @@ using System;
 
 public class Pathfinding : MonoBehaviour
 {
+	private static Pathfinding _instance;
+
+	public static Pathfinding Instance { get { return _instance; } }
+
+	private void Awake()
+	{
+		if (_instance != null && _instance != this)
+		{
+			Destroy(this.gameObject);
+		}
+		else
+		{
+			_instance = this;
+		}
+	}
 
 	Grid grid;
 
-	void Awake()
+	void Start()
 	{
 		grid = GetComponent<Grid>();
+	}
+
+	public void FillDistances(Vector2 startPoint, int player)
+	{
+		Node startNode = grid.NodeFromWorldPoint(startPoint);
+		Vector3 startNodePoint = startNode.worldPosition;
+		startNode.distance[player] = 0;
+
+		Queue<Node> open = new Queue<Node>();
+		HashSet<Node> visitedSet = new HashSet<Node>();
+
+		List<Node> neigbours = new List<Node>();
+
+		Node currentNode;
+
+		open.Enqueue(startNode);
+		visitedSet.Add(startNode);
+
+		while (open.Count > 0)
+		{
+			currentNode = open.Dequeue();
+
+			neigbours = Grid.Instance.GetNeighbours(currentNode);
+			int suitableNode = 0;
+			foreach (Node nextNode in neigbours)
+			{
+				if (nextNode == null || visitedSet.Contains(nextNode))
+					continue;
+				visitedSet.Add(nextNode);
+				open.Enqueue(nextNode);
+				nextNode.distance[player] = 1 + currentNode.distance[player];
+
+				float dist = (nextNode.worldPosition - startNodePoint).sqrMagnitude;
+				float distSuitable = (neigbours[suitableNode].worldPosition - startNodePoint).sqrMagnitude;
+				if (dist < distSuitable)
+					suitableNode = neigbours.IndexOf(nextNode);
+			}
+			neigbours[suitableNode].suitable[player] = true;
+		}
 	}
 
 
