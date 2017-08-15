@@ -14,7 +14,7 @@ public class RallyPoint : MonoBehaviour
     private Vector3 mousePosition;
 
 	public delegate void ResetRallyPoint();
-	public event ResetRallyPoint OnRallyPointChanged = delegate { };
+    public event ResetRallyPoint OnRallyPointChanged = delegate { };
 
 	[Header("Cache")]
 	public Transform trans;
@@ -56,6 +56,7 @@ public class RallyPoint : MonoBehaviour
 		}
 
 		Pathfinding.Instance.FillDistances(trans.position, owner);
+
 		OnRallyPointChanged();
 	}
 

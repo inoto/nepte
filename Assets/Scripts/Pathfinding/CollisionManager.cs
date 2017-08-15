@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-interface ICollidable
+public interface ICollidableUnit
 {
-    Node GetNode();
+	Drone.Mode GetMode();
+	Vector2 GetPoint();
+	float GetRadius();
+	GameObject GetGameobject();
 }
 
 public class CollisionManager : MonoBehaviour
@@ -25,61 +28,50 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
-    public int queueCount = 0;
+	public bool showGizmos;
+	public int objectsInTree = 0;
 
-    List<NodeGroup> groups = new List<NodeGroup>();
-    List<GameObject> objects = new List<GameObject>();
-    List<GameObject> movedObjects = new List<GameObject>();
+	public QuadTreeNode qtree;
 
-    public void AddGroup(NodeGroup ng)
-    {
-        groups.Add(ng);
-    }
-
-    public void AddUnit(GameObject unit)
-    {
-        objects.Add(unit);
-        queueCount++;
-    }
-
-    public void RemoveUnit(GameObject unit)
-    {
-        //objects.
-    }
-
-	public void Update()
+	private void Start()
 	{
-        //CheckUnitsInQueue();
-        //CheckCollisionGrid();
+        Rect rect = new Rect();
+		rect.min = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.min;
+		rect.max = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.max;
+
+		qtree = new QuadTreeNode(rect);
+
 	}
 
-    void CheckCollisionGrid()
-    {
-        
-    }
+	private void Update()
+	{
+		if (qtree != null)
+		{
+			qtree.Update();
+		}
 
-    void CheckUnitsInQueue()
-    {
-        foreach (NodeGroup ng in groups)
-        {
-            if (objects != null)
-            {
-                movedObjects.Clear();
-                foreach (GameObject unit in objects)
-                {
-                    if (ng.rect.Contains(unit.transform.position))
-                    {
-                        ng.units.Add(unit);
-                        movedObjects.Add(unit);
-                        queueCount--;
-                    }
-                }
-                foreach (GameObject unit in movedObjects)
-                {
-                    objects.Remove(unit);
-                }
-            }
-            ng.CheckCollisions();
-        }
-    }
+	}
+
+	public bool RectIntersectsWithCircle(Rect rect, float halfW, float halfH, Vector2 point, float radius)
+	{
+		// Find the closest point to the circle within the rectangle
+        float closestX = Mathf.Clamp(point.x, rect.x, rect.width);
+        float closestY = Mathf.Clamp(point.y, rect.height, rect.y);
+
+		// Calculate the distance between the circle's center and this closest point
+		float distanceX = point.x - closestX;
+		float distanceY = point.y - closestY;
+
+		// If the distance is less than the circle's radius, an intersection occurs
+		float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+		return distanceSquared < (radius * radius);
+	}
+
+	//Debug view for QuadTreeNode
+	void OnDrawGizmos()
+	{
+		if (showGizmos)
+			if (qtree != null)
+				qtree.DrawDebug();
+	}
 }

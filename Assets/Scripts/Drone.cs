@@ -26,7 +26,7 @@ public class Drone : MonoBehaviour, IOwnable
 
     [Header("Components")]
     public Transform trans;
-	private MeshRenderer mesh;
+	public MeshRenderer mesh;
     private Unit unitComponent;
     private Weapon weaponComponent;
     private Radar radarComponent;
@@ -99,7 +99,7 @@ public class Drone : MonoBehaviour, IOwnable
         GameObject tmpObject = Instantiate(droneExplosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         UnbindAttackers();
-        CollisionManager.Instance.RemoveUnit(gameObject);
+        //CollisionManager.Instance.RemoveUnit(gameObject);
     }
 
     void UnbindAttackers()

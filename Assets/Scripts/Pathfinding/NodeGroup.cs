@@ -26,7 +26,7 @@ public class NodeGroup
         groupSize = groupSizeX * groupSizeY;
         nodeDiameter = nodeRadius * 2;
         FillWithNodes();
-        CollisionManager.Instance.AddGroup(this);
+        //CollisionManager.Instance.AddGroup(this);
     }
 
     public void FillWithNodes()
@@ -60,33 +60,33 @@ public class NodeGroup
 		units.Add(unit);
 	}
 
-	public void CheckCollisions()
-	{
-        if (movedUnits.Count > 0)
-            Debug.Log("moved units: " + movedUnits.Count);
-        movedUnits.Clear();
-		foreach (GameObject unit in units)
-		{
-			if (!rect.Contains(unit.transform.position))
-			{
-				CollisionManager.Instance.AddUnit(unit);
-                movedUnits.Add(unit);
-			}
-            else
-            {
-				foreach (Node node in nodes)
-				{
-					if (node.rect.Contains(unit.transform.position))
-					{
+	//public void CheckCollisions()
+	//{
+ //       if (movedUnits.Count > 0)
+ //           Debug.Log("moved units: " + movedUnits.Count);
+ //       movedUnits.Clear();
+	//	foreach (GameObject unit in units)
+	//	{
+	//		if (!rect.Contains(unit.transform.position))
+	//		{
+	//			CollisionManager.Instance.AddUnit(unit);
+ //               movedUnits.Add(unit);
+	//		}
+ //           else
+ //           {
+	//			foreach (Node node in nodes)
+	//			{
+	//				if (node.rect.Contains(unit.transform.position))
+	//				{
 						
-					}
-				}
-            }
+	//				}
+	//			}
+ //           }
 
-		}
-		foreach (GameObject unit in movedUnits)
-		{
-			units.Remove(unit);
-		}
-	}
+	//	}
+	//	foreach (GameObject unit in movedUnits)
+	//	{
+	//		units.Remove(unit);
+	//	}
+	//}
 }

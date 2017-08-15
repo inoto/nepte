@@ -357,7 +357,18 @@ Prefab:
       propertyPath: displayGridGizmos
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114922635947365960, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114981774281826034, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: showGizmos
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114981774281826034, guid: 2f63b9c6570a8415292a283e03945592, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 2f63b9c6570a8415292a283e03945592, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &103451744
@@ -818,7 +829,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 254261176}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.16, y: -19.15, z: 0}
+  m_LocalPosition: {x: -15.08, y: -14.98, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1678,7 +1689,7 @@ GameObject:
   - component: {fileID: 366515417}
   - component: {fileID: 366515418}
   m_Layer: 0
-  m_Name: QuadTree
+  m_Name: CollisionManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1705,11 +1716,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 366515416}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a969f1df82da42be9e665494f6d60ab, type: 3}
+  m_Script: {fileID: 11500000, guid: 68fc4ef1985d54d2681097b6f0e9acfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showGizmos: 1
-  treeCount: 0
+  objectsInTree: 0
 --- !u!1 &464489233
 GameObject:
   m_ObjectHideFlags: 0
@@ -3022,7 +3033,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cffb7250549c0450cb79d558fc3641ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolSize: 60
+  dronePoolSize: 300
+  laserMissilePoolSize: 0
   dronePrefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab,
     type: 2}
   laserMissilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
@@ -5754,7 +5766,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1709847400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.13, y: -2.13, z: 0}
+  m_LocalPosition: {x: 5.34, y: 5.34, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -6761,7 +6773,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1977051850}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.42, y: -9.38, z: 0}
+  m_LocalPosition: {x: 14.06, y: -15.01, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

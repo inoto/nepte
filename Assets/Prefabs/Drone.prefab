@@ -96,15 +96,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96bd4dbb59d8548f489873e666c5e657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destinationTransform: {fileID: 0}
+  drawGizmos: 0
   playerRallyPoint: {fileID: 0}
   directionVector: {x: 0, y: 0}
   destinationPoint: {x: 0, y: 0, z: 0}
-  speed: 2
+  speed: 4
   speedPercent: 1
   turnSpeed: 10
   turnDst: 5
   stoppingDst: 10
+  unitRadius: 0.5
 --- !u!114 &114449573046543404
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -164,6 +165,7 @@ MonoBehaviour:
     height: 0
   mode: 0
   trans: {fileID: 0}
+  mesh: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
   enemy: {fileID: 0}
   attackers: []

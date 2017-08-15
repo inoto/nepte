@@ -1,25 +1,27 @@
 ﻿<Properties StartupConfiguration="{61C26825-5648-5EE4-984F-59B873DE76F4}|">
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/QuadTree.cs">
     <Files>
-      <File FileName="Assets/Scripts/GameController.cs" Line="218" Column="3" />
-      <File FileName="Assets/Scripts/PlayerController.cs" Line="85" Column="83" />
-      <File FileName="Assets/Scripts/Base.cs" Line="50" Column="6" />
-      <File FileName="Assets/Scripts/RallyPoint.cs" Line="39" Column="46" />
-      <File FileName="Assets/Scripts/Drone.cs" Line="46" Column="1" />
-      <File FileName="Assets/Scripts/Pathfinding/Unit.cs" Line="117" Column="56" />
+      <File FileName="Assets/Scripts/GameController.cs" Line="216" Column="31" />
+      <File FileName="Assets/Scripts/PlayerController.cs" Line="7" Column="31" />
+      <File FileName="Assets/Scripts/Base.cs" Line="38" Column="36" />
+      <File FileName="Assets/Scripts/RallyPoint.cs" Line="59" Column="9" />
+      <File FileName="Assets/Scripts/Drone.cs" Line="64" Column="40" />
+      <File FileName="Assets/Scripts/Pathfinding/Unit.cs" Line="52" Column="59" />
       <File FileName="Assets/Scripts/Radar.cs" Line="33" Column="75" />
       <File FileName="Assets/Scripts/Weapon.cs" Line="24" Column="45" />
-      <File FileName="Assets/Scripts/Pathfinding/CollisionManager.cs" Line="52" Column="31" />
-      <File FileName="Assets/Scripts/Pathfinding/Grid.cs" Line="287" Column="1" />
-      <File FileName="Assets/Scripts/Pathfinding/NodeGroup.cs" Line="29" Column="50" />
+      <File FileName="Assets/Scripts/Pathfinding/Grid.cs" Line="287" Column="21" />
+      <File FileName="Assets/Scripts/Pathfinding/NodeGroup.cs" Line="29" Column="52" />
       <File FileName="Assets/Scripts/Pathfinding/Node.cs" Line="16" Column="67" />
-      <File FileName="Assets/Scripts/Pathfinding/Pathfinding.cs" Line="56" Column="59" />
-      <File FileName="Assets/Scripts/QuadTree.cs" Line="5" Column="39" />
+      <File FileName="Assets/Scripts/Pathfinding/Pathfinding.cs" Line="42" Column="54" />
+      <File FileName="Assets/Scripts/Pathfinding/CollisionManager.cs" Line="66" Column="77" />
+      <File FileName="Assets/Scripts/QuadTree.cs" Line="170" Column="63" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/dimka/tight-space/Assets/Scripts/QuadTree.cs" relfile="Assets/Scripts/QuadTree.cs" line="77" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />

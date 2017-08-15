@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-	public int poolSize;
+	public int dronePoolSize;
+    public int laserMissilePoolSize;
 
     private static ObjectPool _instance;
 
@@ -37,9 +38,9 @@ public class ObjectPool : MonoBehaviour
 
     void CreateStartupPools()
     {
-        CreatePool(dronePrefab, poolSize);
-        CreatePool(laserMissilePrefab, poolSize*4);
-        CreatePool(droneExplosionPrefab, poolSize);
+        CreatePool(dronePrefab, dronePoolSize);
+        CreatePool(laserMissilePrefab, laserMissilePoolSize);
+        //CreatePool(droneExplosionPrefab, dronePoolSize);
     }
 
     void CreatePool(GameObject prefab, int newSize)

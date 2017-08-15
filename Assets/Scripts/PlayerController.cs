@@ -4,7 +4,8 @@ public class PlayerController : MonoBehaviour
 {
     public int owner;
 
-    public int unitCount = 0;
+    public int playerUnitCount = 0;
+    public static int unitCount = 0;
     public bool isInitialized = false;
     public bool isDefeated = false;
 

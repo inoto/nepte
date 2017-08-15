@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Unit : MonoBehaviour
+public class Unit : MonoBehaviour, ICollidableUnit
 {
+    public bool drawGizmos = false;
+
     IEnumerator coroutineFollowPath;
 
     const float minPathUpdateTime = .5f;
@@ -22,6 +24,7 @@ public class Unit : MonoBehaviour
     public float turnSpeed = 3;
     public float turnDst = 5;
     public float stoppingDst = 10;
+    public float unitRadius = 0.5f;
 
     [Header("Nodes")]
     public Node node;
@@ -40,11 +43,13 @@ public class Unit : MonoBehaviour
 	void OnEnable()
 	{
         Activate();
+        CollisionManager.Instance.qtree.Insert(this);
 	}
 
     void Activate()
     {
         coroutineFollowPath = FollowPath();
+        unitRadius = gameObject.GetComponent<Quad>().size;
 
         // player specific assigns
         playerController = transform.parent.gameObject.GetComponent<PlayerController>();
@@ -55,8 +60,8 @@ public class Unit : MonoBehaviour
         node = Grid.Instance.NodeFromWorldPoint(droneComponent.trans.position);
 		ResetRallyPoint();
 
-        QuadTree.Instance.qtree.Insert(gameObject);
-        playerController.unitCount += 1;
+        playerController.playerUnitCount += 1;
+        PlayerController.unitCount += 1;
     }
 
     private void OnDestroy()
@@ -73,8 +78,9 @@ public class Unit : MonoBehaviour
     {
         playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
 
-        QuadTree.Instance.qtree.Remove(gameObject);
-        playerController.unitCount -= 1;
+        //QuadTree.Instance.qtree.Remove(gameObject);
+        playerController.playerUnitCount -= 1;
+        PlayerController.unitCount -= 1;
     }
 
 	IEnumerator FollowPath()
@@ -173,15 +179,36 @@ public class Unit : MonoBehaviour
     }
 
 	public void OnDrawGizmos() {
-        if (nextNode != null)
+        if (drawGizmos)
         {
-            Color newColor = Color.green;
-            newColor.a = 0.3f;
-			Gizmos.color = newColor;
-			Gizmos.DrawLine(transform.position, nextNode.worldPosition);
+            if (nextNode != null)
+            {
+                Color newColor = Color.green;
+                newColor.a = 0.3f;
+                Gizmos.color = newColor;
+                Gizmos.DrawLine(transform.position, nextNode.worldPosition);
 
-			Gizmos.color = newColor;
-            Gizmos.DrawCube(nextNode.worldPosition, nextNode.rect.size * (nextNode.rect.size.x - 0.05f));
-		}
+                Gizmos.color = newColor;
+                Gizmos.DrawCube(nextNode.worldPosition, nextNode.rect.size * (nextNode.rect.size.x - 0.05f));
+            }
+        }
 	}
+
+    public Drone.Mode GetMode()
+    {
+        return droneComponent.mode;
+    }
+
+	public Vector2 GetPoint()
+    {
+        return transform.position;
+    }
+	public float GetRadius()
+    {
+        return unitRadius;
+    }
+	public GameObject GetGameobject()
+    {
+        return gameObject;
+    }
 }

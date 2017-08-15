@@ -1,240 +1,208 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class QuadTree : MonoBehaviour
-{
-	private static QuadTree _instance;
-
-	public static QuadTree Instance { get { return _instance; } }
-
-	private void Awake()
-	{
-		if (_instance != null && _instance != this)
-		{
-			Destroy(this.gameObject);
-		}
-		else
-		{
-			_instance = this;
-		}
-	}
-
-    public bool showGizmos;
-    public int objectsInTree = 0;
-    public int levels = 0;
-
-    Rect rect = new Rect();
-
-    public QuadTreeNode qtree;
-
-	private void Start()
-	{
-        rect.min = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.min;
-        rect.max = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.max;
-
-        qtree = new QuadTreeNode(rect, 1);
-	}
-
-    private void Update()
-    {
-        levels = QuadTreeNode.levels;
-        foreach (GameObject unit in qtree.FindObjectsInRect(rect))
-        {
-            
-        }
-    }
-
-    //Debug view for QuadTreeNode
-    void OnDrawGizmos()
-	{
-		if (showGizmos)
-            if (qtree != null)
-                qtree.DrawDebug();
-	}
-}
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class QuadTreeNode
 {
-    public static int levels = 0;
-    const int MIN_SIZE = 1;
+	public int level = 0;
 
-    public Rect rect;
-    int maxObjects;
+	public Rect rect;
+	public float halfWidth, halfHeight;
 
-    List<GameObject> objects;
+	public static Queue<ICollidableUnit> pendingInsertion = new Queue<ICollidableUnit>();
+	public List<ICollidableUnit> objects;
 
-    public QuadTreeNode[] childs;
+	int maxLifespan = 8;
+	int curLife = -1;
 
-    public QuadTreeNode(Rect newRect, int newMaxObjects)
-    {
-        rect = newRect;
-        maxObjects = newMaxObjects;
-        objects = new List<GameObject>(maxObjects);
-        childs = new QuadTreeNode[4];
-    }
+	public QuadTreeNode parent = null;
+	public QuadTreeNode[] childs = new QuadTreeNode[4];
+	bool hasChilds = false;
+	byte activeNodes = 0;
 
-    public void Insert(GameObject obj)
-    {
-        if (childs[0] != null)
-        {
-            int childIndex = GetChildToInsertObject(obj.transform.position);
+	public bool built = false;
 
-            if (childIndex > -1)
-                childs[childIndex].Insert(obj);
-
-            return;
-        }
-
-        objects.Add(obj);
-
-        if (objects.Count > maxObjects)
-        {
-            levels += 1;
-            if (childs[0] == null)
-            {
-                float subWidth = rect.width / 2;
-                float subHeight = rect.height / 2;
-                float x = rect.x;
-                float y = rect.y;
-
-                childs[0] = new QuadTreeNode(new Rect(x + subWidth, y, subWidth, subHeight), maxObjects);
-                childs[1] = new QuadTreeNode(new Rect(x, y, subWidth, subHeight), maxObjects);
-                childs[2] = new QuadTreeNode(new Rect(x, y + subHeight, subWidth, subHeight), maxObjects);
-                childs[3] = new QuadTreeNode(new Rect(x + subWidth, y + subHeight, subWidth, subHeight), maxObjects);
-            }
-            //Reallocate this quads objects into its children
-            int i = objects.Count - 1;
-            while (i >= 0)
-            {
-                GameObject storedObj = objects[i];
-                int childIndex = GetChildToInsertObject(storedObj.transform.position);
-
-                if (childIndex > -1)
-                    childs[childIndex].Insert(storedObj);
-
-                objects.RemoveAt(i);
-                i -= 1;
-            }
-        }
-    }
-
-	//Removes the cell from the QuadTreeNode
-	public void Remove(GameObject obj)
-    {
-        if (ContainsLocation(obj.transform.position))
-        {
-            objects.Remove(obj);
-
-            if (childs[0] != null)
-            {
-                for (int i = 0; i < 4; i++)
-                    childs[i].Remove(obj);
-            }
-        }
-    }
-
-    void CheckCollisions()
-    {
-        
-    }
-
-	//Finds all objects in cell
-    public List<GameObject> FindObjectsInRect(Rect inRect)
-    {
-        if (RectOverLap(rect, inRect))
-        {
-            List<GameObject> returnedObjects = new List<GameObject>();
-
-            for (int i = 0; i < objects.Count; i++)
-            {
-                if (inRect.Contains(objects[i].transform.position))
-                    returnedObjects.Add(objects[i]);
-            }
-
-            if (childs[0] != null)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    List<GameObject> childObjects = childs[i].FindObjectsInRect(inRect);
-
-                    if (childObjects != null)
-                        returnedObjects.AddRange(childObjects);
-                }
-            }
-
-            return returnedObjects;
-        }
-
-        return null;
-    }
-
-	//Clear QuadTreeNode
-	public void Clear()
+	public QuadTreeNode(Rect newRect)
 	{
-		objects.Clear();
+		rect = newRect;
+		halfWidth = rect.width / 2;
+		halfHeight = rect.height / 2;
+		objects = new List<ICollidableUnit>();
+		parent = null;
+		childs = new QuadTreeNode[4];
+        for (int i = 0; i < 4; i++)
+        {
+            childs[i] = null;
+        }
+        //BuildTree();
+	}
 
-		for (int i = 0; i < childs.Length; i++)
+	public QuadTreeNode(Rect newRect, List<ICollidableUnit> units)
+	{
+		rect = newRect;
+		halfWidth = rect.width / 2;
+		halfHeight = rect.height / 2;
+		objects = units;
+		//childs = new QuadTreeNode[4];
+	}
+
+	public void Update()
+	{
+
+		if (objects.Count == 0)
 		{
-			if (childs[i] != null)
-			{
-				childs[i].Clear();
-				childs[i] = null;
+		    //if (parent == null)
+		        //return;
+		    if (!hasChilds)
+		    {
+		        if (curLife == -1)
+		            curLife = maxLifespan;
+		        else if (curLife > 0)
+		            curLife -= 1;
+		    }
+		}
+		else
+		{
+		    if (curLife != -1)
+		    {
+		        if (maxLifespan <= 64)
+		            maxLifespan *= 2;
+		        curLife = -1;
+		    }
+		}
+
+		List<ICollidableUnit> movedUnits = new List<ICollidableUnit>(objects.Count);
+
+		foreach (ICollidableUnit unit in objects)
+		{
+			// Moving = 1
+			//if (unit.GetMode() == Drone.Mode.Moving)
+			    movedUnits.Add(unit);
+		}
+
+		//int objectsCount = objects.Count;
+		//for (int i = 0; i < objectsCount; i++)
+		//{
+		//	// TODO: add check is unit dead or not to optimize adding/removing to/from list
+		//	if (movedUnits.Contains(objects[i]))
+		//		movedUnits.Remove(objects[i]);
+		//	objects.RemoveAt(i--);
+		//	objectsCount -= 1;
+		//}
+
+		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
+			if ((flags & 1) == 1) childs[index].Update();
+        //for (int i = 0; i < 4; i++)
+        //{
+        //    if (childs[i] != null)
+        //        childs[i].Update();
+        //}
+
+
+        // go up
+		foreach (ICollidableUnit unit in movedUnits)
+		{
+			QuadTreeNode currentNode = this;
+
+			//while (CollisionManager.Instance.RectIntersectsWithCircle(currentNode.rect, currentNode.halfWidth, currentNode.halfHeight, unit.GetPoint(), unit.GetRadius()))
+            while(!rect.Contains(unit.GetPoint()))
+            {
+				if (currentNode.parent != null) currentNode = currentNode.parent;
+				else break;
 			}
+
+			objects.Remove(unit);
+			currentNode.Insert(unit);
 		}
+
+		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
+			if ((flags & 1) == 1 && childs[index].curLife == 0)
+			{
+                childs[index] = null;
+				activeNodes ^= (byte)(1 << index);       //удаляем узел из списка флагов активных узлов
+			}
+
+		// check collisions here
+		//if (parent == null)
+		//{
+
+		//}
 	}
 
-	bool ValueInRange(float value, float min, float max)
+	public void Insert(ICollidableUnit obj)
 	{
-		return (value >= min) && (value <= max);
-	}
+        if (objects.Count < 2 && activeNodes == 0)
+        {
+			objects.Add(obj);
+			return;
+		}
 
-	//Checks to see if two childs overlap at any point
-	bool RectOverLap(Rect A, Rect B)
-	{
-		//Checks to see if either cell has a X coord in common
-		bool xOverLap = ValueInRange(A.x, B.x, B.x + B.width) || ValueInRange(B.x, A.x, A.x + A.width);
-
-		//Checks to see if either cell has a Y coord in common
-		bool yOverLap = ValueInRange(A.y, B.y, B.y = B.height) || ValueInRange(B.y, A.y, A.y + A.height);
-
-		//If the childs have both a X & Y coord in common they overlap
-		return xOverLap && yOverLap;
-	}
-
-	//Checks to see if overlap between new cell and already existing cell
-	public bool ContainsLocation(Vector2 point)
-	{
-		return (rect.Contains(point));
-	}
-
-	//Takes location and determines which cell to insert it into
-	int GetChildToInsertObject(Vector2 point)
-	{
-		for (int i = 0; i < 4; i++)
+		if (rect.size.x < Vector2.one.x && rect.size.y < Vector2.one.y)
 		{
-			if (childs[i].ContainsLocation(point))
-				return i;
+		    objects.Add(obj);
+		    return;
 		}
 
-		return -1;
+		Rect[] quadrant = new Rect[4];
+		quadrant[0] = (childs[0] != null) ? childs[0].rect : new Rect(rect.x + halfWidth, rect.y, halfWidth, halfHeight);
+		quadrant[1] = (childs[1] != null) ? childs[1].rect : new Rect(rect.x, rect.y, halfWidth, halfHeight);
+		quadrant[2] = (childs[2] != null) ? childs[2].rect : new Rect(rect.x, rect.y + halfHeight, halfWidth, halfHeight);
+		quadrant[3] = (childs[3] != null) ? childs[3].rect : new Rect(rect.x + halfWidth, rect.y + halfHeight, halfWidth, halfHeight);
+		float halfWidthQuadrant = quadrant[0].width / 2;
+		float halfHeightQuadrant = quadrant[0].height / 2;
+
+        for (int i = 0; i < 4; i++)
+        {
+            //if (CollisionManager.Instance.RectIntersectsWithCircle(quadrant[i], halfWidthQuadrant, halfHeightQuadrant, obj.GetPoint(), obj.GetRadius()))
+            if (quadrant[i].Contains(obj.GetPoint()))
+            {
+                // using existing child
+                if (childs[i] != null)
+                {
+                    childs[i].Insert(obj);
+                }
+                // create new child
+                else
+                {
+                    childs[i] = new QuadTreeNode(quadrant[i]);
+                    childs[i].parent = this;
+                    childs[i].level = level + 1;
+                    childs[i].Insert(obj);
+                    hasChilds = true;
+                    activeNodes |= (byte)(1 << i);
+                }
+                //Reallocate units here into its child
+				for (int k = 0; k < objects.Count-1; k++)
+				{
+                    childs[i].Insert(objects[k]);
+					objects.RemoveAt(k);
+				}
+                return;
+            }
+        }
+		objects.Add(obj);
 	}
 
-    public void DrawDebug()
-    {
+	public void DrawDebug()
+	{
+		Gizmos.color = Color.cyan;
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y), new Vector3(rect.x, rect.y + rect.height));
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y), new Vector3(rect.x + rect.width, rect.y));
 		Gizmos.DrawLine(new Vector3(rect.x + rect.width, rect.y), new Vector3(rect.x + rect.width, rect.y + rect.height));
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y + rect.height), new Vector3(rect.x + rect.width, rect.y + rect.height));
-
-		if (childs[0] != null)
+		foreach (ICollidableUnit unit in objects)
 		{
-			for (int i = 0; i < childs.Length; i++)
-			{
-				if (childs[i] != null)
-                    childs[i].DrawDebug();
-			}
+			Handles.Label(unit.GetGameobject().transform.position, level.ToString());
 		}
-    }
+
+		for (int i = 0; i < childs.Length; i++)
+		{
+			if (childs[i] != null)
+				childs[i].DrawDebug();
+		}
+	}
 
 }
