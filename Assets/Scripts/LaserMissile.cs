@@ -17,6 +17,7 @@ public class LaserMissile : MonoBehaviour, IOwnable
 
     [Header("Attack")]
     public int damage;
+    public IOwnable enemy;
 
     // Use this for initialization
     void Start ()

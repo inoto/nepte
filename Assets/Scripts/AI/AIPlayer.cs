@@ -75,7 +75,7 @@ public class AIPlayer : MonoBehaviour
         int randInt = Random.Range(0, enemies.Count);
 		//Debug.Log("player " + playerController.owner + " want to attack base of player " + randInt);
 		Node node = Grid.Instance.NodeFromWorldPoint(enemies[randInt].gameObject.transform.position);
-        playerController.rallyPoint.gameObject.transform.position = node.worldPosition;
+        playerController.rallyPoint.SetNew(node.worldPosition);
     }
 
 	void DecisionAttackCluster()
@@ -89,8 +89,8 @@ public class AIPlayer : MonoBehaviour
 	{
         decision = Decisions.AttackCenter;
 
-        Node node = Grid.Instance.NodeFromWorldPoint(new Vector3(0, 0, 3));
-        playerController.rallyPoint.gameObject.transform.position = node.worldPosition;
+        Node node = Grid.Instance.NodeFromWorldPoint(new Vector2(0, 0));
+        playerController.rallyPoint.SetNew(node.worldPosition);
 	}
 
 	//public void DecisionDefend()

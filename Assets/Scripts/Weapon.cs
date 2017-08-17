@@ -7,22 +7,31 @@ public class Weapon : MonoBehaviour
 
     [Header("Attack")]
     public int damage = 20;
+    public float radiusAttack = 3;
 
     [Header("Cache")]
-	private Drone droneParent;
+	private Unit unitComponent;
 	private IOwnable triggeredDrone;
 
     [Header("Prefabs")]
     [SerializeField]
     private GameObject laserMissilePrefab;
 
+    public CollisionCircle collisionCircle;
+
     // TODO: move states and other big logic to drone
 
     // Use this for initialization
-    void Start ()
+    void Awake ()
     {
-        droneParent = GetComponent<Drone>();
+        unitComponent = GetComponent<Unit>();
     }
+
+	private void Start()
+	{
+        collisionCircle = new CollisionCircle(transform.position, radiusAttack, this);
+		//CollisionManager.Instance.AddWeapon(collisionCircle);
+	}
 
     public void ReleaseLaserMissile(Vector3 newDestinationVector)
     {
@@ -34,29 +43,7 @@ public class Weapon : MonoBehaviour
         //laserMissileObject.transform.position = transform.position;
         LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;
-		laserMissile.owner = droneParent.owner;
+        laserMissile.owner = unitComponent.droneComponent.owner;
 		laserMissile.damage = damage;
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("drone") || other.gameObject.CompareTag("base"))
-        {
-            triggeredDrone = other.gameObject.GetComponent<IOwnable>();
-            if (droneParent.enemy == triggeredDrone.GetGameObject()
-                && triggeredDrone.IsActive())
-            {
-                droneParent.EnterAttackingMode();
-            }
-        }
-    }
-
-    void OnTriggetExit2D (Collider2D other)
-    {
-        triggeredDrone = null;
-        if (other.gameObject == droneParent.enemy)
-        {
-            droneParent.EnterCombatMode(other.gameObject);
-        }
     }
 }

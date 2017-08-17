@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 using System.Collections.Generic;
 
 public class Unit : MonoBehaviour, ICollidableUnit
@@ -12,11 +13,12 @@ public class Unit : MonoBehaviour, ICollidableUnit
     const float pathUpdateMoveThreshold = .5f;
 
     private PlayerController playerController;
+    public Transform trans;
 
     [Header("Destination")]
 	public RallyPoint playerRallyPoint;
 	public Vector2 directionVector;
-	public Vector3 destinationPoint;
+	public Vector2 destinationPoint;
 
     [Header("Move")]
     public float speed = 2;
@@ -24,44 +26,57 @@ public class Unit : MonoBehaviour, ICollidableUnit
     public float turnSpeed = 3;
     public float turnDst = 5;
     public float stoppingDst = 10;
-    public float unitRadius = 0.5f;
+    public float radiusSoft = 0.5f;
+    public float radiusHard = 0.5f;
 
     [Header("Nodes")]
     public Node node;
-    public List<Node> nextNodes;
+    public Node[] nextNodes = new Node[8];
 	public Node nextNode;
 	public Node tmpNode;
     public Node destinationNode;
 
-    private Drone droneComponent;
+    public Drone droneComponent;
+    public Radar radarComponent;
+	public Weapon weaponComponent;
 
-    void Start()
+
+    public CollisionCircle collisionCircle;
+
+    private void Awake()
     {
-        Activate();
+        trans = GetComponent<Transform>();
+        droneComponent = GetComponent<Drone>();
+        radarComponent = GetComponent<Radar>();
+		weaponComponent = GetComponent<Weapon>();
+
+        radiusSoft = gameObject.GetComponent<Quad>().size;
+        radiusHard = radiusSoft/2+radiusSoft/5;
+
+        collisionCircle = new CollisionCircle(trans.position, gameObject.GetComponent<Quad>().size, this);
     }
 
-	void OnEnable()
+    void OnEnable()
 	{
         Activate();
-        CollisionManager.Instance.qtree.Insert(this);
+        CollisionManager.Instance.AddUnit(collisionCircle);
 	}
 
     void Activate()
     {
-        coroutineFollowPath = FollowPath();
-        unitRadius = gameObject.GetComponent<Quad>().size;
-
-        // player specific assigns
-        playerController = transform.parent.gameObject.GetComponent<PlayerController>();
-		droneComponent = GetComponent<Drone>();
-		playerRallyPoint = GameController.Instance.playerControllerObject[droneComponent.owner].GetComponent<PlayerController>().rallyPoint;
-		playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
-
-        node = Grid.Instance.NodeFromWorldPoint(droneComponent.trans.position);
-		ResetRallyPoint();
-
-        playerController.playerUnitCount += 1;
+        node = Grid.Instance.NodeFromWorldPoint(trans.position);
+	
         PlayerController.unitCount += 1;
+    }
+
+    public void ActivateWithOwner()
+    {
+        playerController = transform.parent.gameObject.GetComponent<PlayerController>();
+        playerController.playerUnitCount += 1;
+        playerRallyPoint = GameController.Instance.playerControllerObject[droneComponent.owner].GetComponent<PlayerController>().rallyPoint;
+        ResetRallyPoint();
+        if (droneComponent.owner == 0)
+            playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
     }
 
     private void OnDestroy()
@@ -72,11 +87,18 @@ public class Unit : MonoBehaviour, ICollidableUnit
     private void OnDisable()
 	{
         Deactivate();
+        //CollisionManager.Instance.RemoveUnit(collisionCircle);
 	}
+
+    private void Update()
+    {
+        collisionCircle.point = trans.position;
+    }
 
     void Deactivate()
     {
-        playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
+        if (droneComponent.owner == 0)
+            playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
 
         //QuadTree.Instance.qtree.Remove(gameObject);
         playerController.playerUnitCount -= 1;
@@ -90,7 +112,7 @@ public class Unit : MonoBehaviour, ICollidableUnit
 
         while (true)
         {
-			tmpNode = Grid.Instance.NodeFromWorldPoint(droneComponent.trans.position);
+            tmpNode = Grid.Instance.NodeFromWorldPoint(trans.position);
 			if (tmpNode != node)
 			{
 				node = tmpNode;
@@ -120,29 +142,31 @@ public class Unit : MonoBehaviour, ICollidableUnit
 	void DefineNextNode(Node destNode)
 	{
         //List<Node> closestToDestination = new List<Node>();
+        //nextNodes = destNode.neigbours; //.Instance.GetNeighbours(destNode);
 
-		nextNodes = Grid.Instance.GetNeighbours(destNode);
-		if (nextNodes.Count > 0)
-		{
-            bool closestFound = false;
-            int closestNodeIndex = 0;
-			foreach (Node n in nextNodes)
-			{
-                if (n.distance[droneComponent.owner] < nextNodes[closestNodeIndex].distance[droneComponent.owner])
+        bool closestFound = false;
+        int closestNodeIndex = 0;
+        for (int i = 0; i < destNode.neigbours.Length - 1; i++)
+        //foreach (Node n in nextNodes)
+        {
+            if (destNode.neigbours[i] != null)
+            {
+                if (destNode.neigbours[i].distance[droneComponent.owner] < destNode.neigbours[closestNodeIndex].distance[droneComponent.owner])
                 {
-                    closestNodeIndex = nextNodes.IndexOf(n);
+                    //Debug.Log("node " + nextNodes[i].gridX + "," + nextNodes[i].gridY + " < node " + nextNodes[closestNodeIndex].gridX + "," + nextNodes[closestNodeIndex].gridY);
+                    closestNodeIndex = i;//nextNodes.IndexOf(n);//Array.IndexOf(nextNodes, n); 
                     closestFound = true;
                 }
-				//if (n.distance[droneComponent.owner] >= node.distance[droneComponent.owner])
-					//continue;
-				//if (!n.suitable[droneComponent.owner])
-					//continue;
-				//nextNode = n;
-                //closestToDestination.Add(n);
-			}
-            if (closestFound)
-                nextNode = nextNodes[closestNodeIndex];
-		}
+            }
+            //if (n.distance[droneComponent.owner] >= node.distance[droneComponent.owner])
+            //continue;
+            //if (!n.suitable[droneComponent.owner])
+            //continue;
+            //nextNode = n;
+            //closestToDestination.Add(n);
+        }
+        if (closestFound)
+            nextNode = destNode.neigbours[closestNodeIndex];
 	}
 
 	void ResetRallyPoint()
@@ -154,7 +178,7 @@ public class Unit : MonoBehaviour, ICollidableUnit
 			droneComponent.EnterIdleMode();
 			return;
 		}
-		DefineNextNode(destinationNode);
+		DefineNextNode(node);
         if (node == nextNode)
         {
             droneComponent.EnterIdleMode();
@@ -166,16 +190,16 @@ public class Unit : MonoBehaviour, ICollidableUnit
 
     void Rotate()
     {
-        directionVector = nextNode.worldPosition - transform.position;
+        directionVector = nextNode.worldPosition - (Vector2)trans.position;
         float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
         Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
-        transform.rotation = Quaternion.Slerp(transform.rotation, qt, Time.deltaTime * turnSpeed);
+        trans.rotation = Quaternion.Slerp(trans.rotation, qt, Time.deltaTime * turnSpeed);
     }
 
     void Move()
     {
 		float step = Time.deltaTime * speed * speedPercent;
-		transform.position = Vector2.MoveTowards(transform.position, nextNode.worldPosition, step);
+		trans.position = Vector2.MoveTowards(trans.position, nextNode.worldPosition, step);
     }
 
 	public void OnDrawGizmos() {
@@ -186,13 +210,18 @@ public class Unit : MonoBehaviour, ICollidableUnit
                 Color newColor = Color.green;
                 newColor.a = 0.3f;
                 Gizmos.color = newColor;
-                Gizmos.DrawLine(transform.position, nextNode.worldPosition);
+                Gizmos.DrawLine(trans.position, nextNode.worldPosition);
 
                 Gizmos.color = newColor;
                 Gizmos.DrawCube(nextNode.worldPosition, nextNode.rect.size * (nextNode.rect.size.x - 0.05f));
             }
         }
 	}
+
+    public Drone GetDrone()
+    {
+        return droneComponent;
+    }
 
     public Drone.Mode GetMode()
     {
@@ -201,12 +230,16 @@ public class Unit : MonoBehaviour, ICollidableUnit
 
 	public Vector2 GetPoint()
     {
-        return transform.position;
+        return trans.position;
     }
-	public float GetRadius()
+	public float GetRadiusSoft()
     {
-        return unitRadius;
+        return radiusSoft;
     }
+	public float GetRadiusHard()
+	{
+		return radiusHard;
+	}
 	public GameObject GetGameobject()
     {
         return gameObject;

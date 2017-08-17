@@ -35,30 +35,33 @@ public class Base : MonoBehaviour, IOwnable
 	[SerializeField]
 	private Material[] materials;
 
-    //public GameObject rallyPoint;
-
-    // Use this for initialization
-    void Start()
+    private void Awake()
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
 		mf = GetComponent<MeshFilter>();
+    }
 
+    private void Start()
+    {
 		playerControllerParent = transform.parent.gameObject;
 
-        GameObject assignedHPbarObject = Instantiate(HPbarPrefab, transform.position, transform.rotation);
-        assignedHPbarObject.transform.SetParent(GameObject.Find("HPBars").transform);
+		GameObject assignedHPbarObject = Instantiate(HPbarPrefab, trans.position, trans.rotation);
+		assignedHPbarObject.transform.SetParent(GameObject.Find("HPBars").transform);
 
-        assignedHPbar = assignedHPbarObject.GetComponent<UISprite>();
-        assignedHPbar.SetAnchor(gameObject);
+		assignedHPbar = assignedHPbarObject.GetComponent<UISprite>();
+		assignedHPbar.SetAnchor(gameObject);
 		assignedHPbar.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
+		InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
 
-		AssignMaterial();
 		TakeNodes();
+    }
 
-	}
+    public void StartWithOwner()
+    {
+        AssignMaterial();
+    }
 
     // Update is called once per frame
     void Update()
@@ -68,7 +71,7 @@ public class Base : MonoBehaviour, IOwnable
 			Die();
 		}
 
-        trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
+        //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
 
 	void TakeNodes()
@@ -98,10 +101,11 @@ public class Base : MonoBehaviour, IOwnable
 
     void SpawnDrone()
     {
+		
         GameObject droneObject = ObjectPool.Spawn(dronePrefab, trans.parent, GameController.Instance.playerStartPosition[owner], trans.rotation);
-
 		Drone droneSpawned = droneObject.GetComponent<Drone>();
         droneSpawned.owner = owner;
+        droneObject.GetComponent<Unit>().ActivateWithOwner();
         //droneSpawned.ResetRallyPoint();
     }
 

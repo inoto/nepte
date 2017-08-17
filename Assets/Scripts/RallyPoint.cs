@@ -11,38 +11,45 @@ public class RallyPoint : MonoBehaviour
 #endif
 	public CameraControlTouch cameraTouch;
 
-    private Vector3 mousePosition;
-
 	public delegate void ResetRallyPoint();
     public event ResetRallyPoint OnRallyPointChanged = delegate { };
 
 	[Header("Cache")]
 	public Transform trans;
-	private MeshRenderer mesh;
+	public MeshRenderer mesh;
 
 	[Header("Colors")]
-	[SerializeField]
-	private Material[] materials;
+	public Material[] materials;
 
-    private void Start()
+    private void Awake()
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
+    }
 
-        if (owner == 0)
-        {
+    public void StartWithOwner()
+    {
+		if (owner == 0)
+		{
 #if UNITY_EDITOR
-            cameraMouse.Attach();
-            cameraMouse.onClickTap += SetNew;
+			cameraMouse = Camera.main.GetComponent<CameraControlMouse>();
 #endif
-            cameraTouch.Attach();
-            cameraTouch.onClickTap += SetNew;
-        }
+			cameraTouch = Camera.main.GetComponent<CameraControlTouch>();
+		}
+		if (owner == 0)
+		{
+#if UNITY_EDITOR
+			cameraMouse.Attach();
+			cameraMouse.onClickTap += SetNew;
+#endif
+			cameraTouch.Attach();
+			cameraTouch.onClickTap += SetNew;
+		}
 
 		AssignMeterial();
 
-		Pathfinding.Instance.FillDistances(trans.position, owner);
-	}
+        Pathfinding.Instance.FillDistances(trans.position, owner);
+    }
 
 	public void SetNew(Vector2 position)
 	{
@@ -50,18 +57,26 @@ public class RallyPoint : MonoBehaviour
 		Vector3 tmp = position;
 		if (trans.position != tmp)
 		{
-			Node node = Grid.Instance.NodeFromWorldPoint(tmp);
+            Debug.Log("new pos: " + position);
+            Node node = Grid.Instance.NodeFromWorldPoint(position);
+            Debug.Log("node pos: " + node.worldPosition);
+            Debug.Log("node center: " + node.rect.center);
 			rect = node.rect;
-			trans.position = node.rect.center;
+            trans.position = node.rect.center;
 		}
 
 		Pathfinding.Instance.FillDistances(trans.position, owner);
 
-		OnRallyPointChanged();
+        if (owner == 0)
+        {
+            OnRallyPointChanged();
+        }
 	}
 
 	void AssignMeterial()
 	{
+        //if (mesh == null)
+        //    mesh = GetComponent<MeshRenderer>();
 		mesh.material = materials[owner];
 	}
 
@@ -79,12 +94,4 @@ public class RallyPoint : MonoBehaviour
 	{
 		return gameObject;
 	}
-
-    void OnDrawGizmos()
-    {
-        Color newColor = Color.black;
-        newColor.a = 0.5f;
-        Gizmos.color = newColor;
-        Gizmos.DrawCube(rect.center, rect.size);
-    }
 }

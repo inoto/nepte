@@ -21,22 +21,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameObject rallyPointPrefab;
 
-    [Header("Sprite sets")]
-	public Sprite[] spriteSetBases;
-	public Sprite[] spriteSetRallyPoints;
-
-	// Use this for initialization
-	void Start ()
+    private void Awake()
     {
-		trans = GetComponent<Transform>();
+        trans = GetComponent<Transform>();
+    }
 
-        CreateBase();
+    private void Start()
+    {
+		CreateBase();
 
-        CreateRallyPoint();
+		CreateRallyPoint();
+    }
 
-        if (owner != 0)
-            aiPlayer = gameObject.AddComponent<AIPlayer>();
-
+    public void ActionsWithOwner()
+    {
+		if (owner != 0)
+			aiPlayer = gameObject.AddComponent<AIPlayer>();
         isInitialized = true;
     }
 
@@ -63,27 +63,32 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        unitCount = 0;
+    }
+
     void CreateBase()
     {
-		GameObject baseObject = Instantiate(basePrefab, transform.position, transform.rotation);
+		Vector3 point = trans.position;
+		point.z = 0.1f;
+		GameObject baseObject = Instantiate(basePrefab, point, trans.rotation);
+        baseObject.transform.SetParent(trans);
 		baseControl = baseObject.GetComponent<Base>();
         baseControl.owner = owner;
-        baseControl.transform.SetParent(transform);
+        baseControl.StartWithOwner();
     }
 
     void CreateRallyPoint()
     {
-		GameObject rallyPointObject = Instantiate(rallyPointPrefab, transform.position, transform.rotation);
+        Vector3 point = trans.position;
+        point.z = -0.1f;
+		GameObject rallyPointObject = Instantiate(rallyPointPrefab, point, trans.rotation);
+        rallyPointObject.transform.SetParent(trans);
         rallyPoint = rallyPointObject.GetComponent<RallyPoint>();
         rallyPoint.owner = owner;
-        if (owner == 0)
-        {
-#if UNITY_EDITOR
-			rallyPoint.cameraMouse = Camera.main.GetComponent<CameraControlMouse>();
-#endif
-            rallyPoint.cameraTouch = Camera.main.GetComponent<CameraControlTouch>();
-        }
-		rallyPointObject.transform.SetParent(transform);
+        rallyPoint.StartWithOwner();
+
         baseControl.GetComponent<Base>().rallyPointObject = rallyPoint.gameObject;
     }
 

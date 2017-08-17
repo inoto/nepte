@@ -8,7 +8,7 @@ public class GameTimer : MonoBehaviour
     public UILabel label;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
         label = GetComponent<UILabel>();
 	}

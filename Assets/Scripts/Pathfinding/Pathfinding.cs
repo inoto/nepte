@@ -20,57 +20,71 @@ public class Pathfinding : MonoBehaviour
 		{
 			_instance = this;
 		}
+
+        grid = GetComponent<Grid>();
 	}
 
 	Grid grid;
 
-	void Start()
-	{
-		grid = GetComponent<Grid>();
-	}
-
 	public void FillDistances(Vector2 startPoint, int player)
 	{
-		Node startNode = grid.NodeFromWorldPoint(startPoint);
-		Vector3 startNodePoint = startNode.worldPosition;
+        Node startNode = Grid.Instance.NodeFromWorldPoint(startPoint);
+		Vector2 startNodePoint = startNode.worldPosition;
 		startNode.distance[player] = 0;
+        for (int x = 0; x < Grid.Instance.gridCountX; x++)
+        {
+            for (int y = 0; y < Grid.Instance.gridCountY; y++)
+            {
+                Grid.Instance.nodes[x, y].visited[player] = false;
+            }
+        }
 
 		Queue<Node> open = new Queue<Node>();
-		HashSet<Node> visitedSet = new HashSet<Node>();
-
-		List<Node> neigbours = new List<Node>();
-        List<Node> closestToStart = new List<Node>();
 
 		Node currentNode;
 
 		open.Enqueue(startNode);
-		visitedSet.Add(startNode);
+        startNode.visited[player] = true;
+        //visitedSet.Add(startNode);
 
-		while (open.Count > 0)
+        int count = Grid.Instance.gridSize - 1;
+		while (count > 0)
 		{
+            Node[] neigbours = new Node[8];
+
 			currentNode = open.Dequeue();
 
-			neigbours = Grid.Instance.GetNeighbours(currentNode);
-			foreach (Node nextNode in neigbours)
+			if (!currentNode.isNeigboursFilled)
 			{
-				if (nextNode == null || visitedSet.Contains(nextNode))
+                neigbours = Grid.Instance.GetNeighbours(currentNode);
+				currentNode.neigbours = neigbours;
+				currentNode.isNeigboursFilled = true;
+			}
+            else
+                neigbours = currentNode.neigbours;
+
+			//foreach (Node nextNode in neigbours)
+            for (int i = 0; i < neigbours.Length-1; i++)
+			{
+                if (neigbours[i] == null || neigbours[i].visited[player])
 					continue;
-				visitedSet.Add(nextNode);
-				open.Enqueue(nextNode);
+                neigbours[i].visited[player] = true;
+				open.Enqueue(neigbours[i]);
 				//nextNode.distance[player] = 1 + currentNode.distance[player];
 
-				float dist = (nextNode.worldPosition - startNodePoint).sqrMagnitude;
+				float dist = (neigbours[i].worldPosition - startNodePoint).sqrMagnitude;
                 //float distClosest = (neigbours[suitableNode].worldPosition - startNodePoint).sqrMagnitude;
                 //if (dist < distClosest)
                 //    nextNode.distance[player] = 2 + currentNode.distance[player];
                 ////suitableNode = neigbours.IndexOf(nextNode);
                 //else
-                nextNode.distance[player] = Mathf.RoundToInt(dist);//+ currentNode.distance[player];
+                neigbours[i].distance[player] = (int)dist;//+ currentNode.distance[player];
             }
-			//neigbours[suitableNode].suitable[player] = true;
+            //neigbours[suitableNode].suitable[player] = true;
+            // cache neigbours
+            count -= 1;
 		}
 	}
-
 
 	public void FindPath(PathRequest request, Action<PathResult> callback)
 	{
@@ -163,7 +177,6 @@ public class Pathfinding : MonoBehaviour
         Vector2[] waypoints = SimplifyPath(path);
 		Array.Reverse(waypoints);
 		return waypoints;
-
 	}
 
 	Vector2[] SimplifyPath(List<Node> path)

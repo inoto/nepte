@@ -62,8 +62,8 @@ public class Grid : MonoBehaviour {
         rect.min = battlegroundRenderer.bounds.min;
 		rect.max = battlegroundRenderer.bounds.max;
 
-        gridCountX = Mathf.RoundToInt(rect.width / nodeDiameter);
-		gridCountY = Mathf.RoundToInt(rect.height / nodeDiameter);
+        gridCountX = Mathf.RoundToInt(rect.size.x / nodeDiameter);
+		gridCountY = Mathf.RoundToInt(rect.size.y / nodeDiameter);
         gridSize = gridCountX * gridCountY;
         CreateNodes();
 
@@ -97,7 +97,7 @@ public class Grid : MonoBehaviour {
         {
             for (int y = 0; y < gridCountY; y++)
             {
-                nodes[x, y] = new Node(projRect, diameter.x, x, y);
+                nodes[x, y] = new Node(projRect, projRect.center, x, y);
                 projRect.yMin += diameter.x;
                 projRect.yMax += diameter.x;
             }
@@ -231,7 +231,7 @@ public class Grid : MonoBehaviour {
 		return x >= 0 && x < gridCountX && y >= 0 && y < gridCountY;
 	}
 
-	public List<Node> GetNeighbours(Node node)
+    public Node[] GetNeighbours(Node node)
     {
 		List<Node> neighbours = new List<Node>();
 
@@ -243,20 +243,23 @@ public class Grid : MonoBehaviour {
 				int checkX = node.gridX + x;
 				int checkY = node.gridY + y;
 
-				if (checkX >= 0 && checkX < gridCountX && checkY >= 0 && checkY < gridCountY) {
+				if (checkX >= 0 && checkX < gridCountX && checkY >= 0 && checkY < gridCountY)
+                {
 					neighbours.Add(nodes[checkX,checkY]);
 				}
 			}
 		}
 		//Debug.Log(neighbours.Count);
-		return neighbours;
+        return neighbours.ToArray();
 	}
 
-	public Node NodeFromWorldPoint(Vector2 worldPosition)
+	public Node NodeFromWorldPoint(Vector2 point)
     {
-        float percentX = (worldPosition.x + rect.size.x / 2) / rect.size.x;
-		float percentY = (worldPosition.y + rect.size.y / 2) / rect.size.y;
-		//Debug.Log(percentX + " " + percentY);
+        Debug.Log("wp: " + point);
+        Debug.Log("rect size x: " + rect.size.x + " rect size y: " + rect.size.y);
+        float percentX = (point.x + rect.size.x / 2) / rect.size.x;
+        float percentY = (point.y + rect.size.y / 2) / rect.size.y;
+		Debug.Log(percentX + " " + percentY);
 		percentX = Mathf.Clamp01(percentX);
 		percentY = Mathf.Clamp01(percentY);
 
@@ -265,6 +268,7 @@ public class Grid : MonoBehaviour {
 		//if (worldPosition.x < 0)
 		x = Mathf.RoundToInt((gridCountX - 1) * percentX);
 		y = Mathf.RoundToInt((gridCountY - 1) * percentY);
+        Debug.Log("nwp: " + nodes[x,y].worldPosition);
 		return nodes[x,y];
 	}
 
@@ -282,9 +286,9 @@ public class Grid : MonoBehaviour {
                     newColor = Gizmos.color;
                     newColor.a = 0.5f;
                     Gizmos.color = newColor;
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - 0.05f));
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (1 - 0.02f));
 #if UNITY_EDITOR
-                    Handles.Label(n.worldPosition, n.distance[0].ToString() + (n.suitable[0] ? "s" : ""));
+                    Handles.Label(n.worldPosition, n.distance[0].ToString());
 #endif
                 }
             }

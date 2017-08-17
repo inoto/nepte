@@ -144,19 +144,19 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 0
-    absolute: -530
+    absolute: -400
   rightAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 1
-    absolute: 530
+    absolute: 400
   bottomAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 0
-    absolute: 300
+    absolute: 550
   topAnchor:
     target: {fileID: 4175439061827504, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
     relative: 1
-    absolute: 500
+    absolute: 700
   updateAnchors: 2
   mColor: {r: 0.83823526, g: 0.83823526, b: 0.83823526, a: 0.822}
   mPivot: 4
@@ -215,7 +215,7 @@ MonoBehaviour:
   mColor: {r: 0, g: 0.8308824, b: 0.005730177, a: 1}
   mPivot: 4
   mWidth: 98
-  mHeight: 18
+  mHeight: 34
   mDepth: 8
   mMat: {fileID: 0}
   autoResizeBoxCollider: 0
@@ -277,11 +277,11 @@ MonoBehaviour:
   keepAspectRatio: 0
   aspectRatio: 3.764706
   keepCrispWhenShrunk: 1
-  mTrueTypeFont: {fileID: 0}
-  mFont: {fileID: 11400000, guid: 93e68f7902ba67545ba1e60502873fb5, type: 2}
+  mTrueTypeFont: {fileID: 12800000, guid: b42f8bff4941244a69923981277cbebd, type: 3}
+  mFont: {fileID: 0}
   mText: 100%
   mFontSize: 150
-  mFontStyle: 0
+  mFontStyle: 1
   mAlignment: 0
   mEncoding: 1
   mMaxLineCount: 0
@@ -290,7 +290,7 @@ MonoBehaviour:
   mSymbols: 1
   mEffectDistance: {x: 1, y: 1}
   mOverflow: 0
-  mApplyGradient: 1
+  mApplyGradient: 0
   mGradientTop: {r: 1, g: 1, b: 1, a: 1}
   mGradientBottom: {r: 0.7, g: 0.7, b: 0.7, a: 1}
   mSpacingX: 0

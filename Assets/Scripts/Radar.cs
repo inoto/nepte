@@ -3,57 +3,24 @@
 public class Radar : MonoBehaviour
 {
 
+    public float radiusDetection = 5;
+
 	[Header("Cache")]
-	private Drone droneComponent;
+	private Unit unitComponent;
     private IOwnable triggeredDrone;
 
+    public CollisionCircle collisionCircle;
+
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
-        droneComponent = GetComponent<Drone>();
+        unitComponent = GetComponent<Unit>();
 	}
 
-    private void OnEnable()
-    {
-        droneComponent = GetComponent<Drone>();
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (droneComponent.HasNoEnemy)
-        {
-            if (other.gameObject.CompareTag("drone") || other.gameObject.CompareTag("base"))
-            {
-                triggeredDrone = other.gameObject.GetComponent<IOwnable>();
-
-                if (other.gameObject != droneComponent.gameObject
-                    && triggeredDrone.GetOwner() != droneComponent.owner)
-                {
-                    droneComponent.EnterCombatMode(other.gameObject);
-                    triggeredDrone.AddAttacker(droneComponent.gameObject);
-                }
-            }
-        }
-        else
-        {
-            if (droneComponent.enemy.gameObject.CompareTag("base") && other.gameObject.CompareTag("drone"))
-			{
-				triggeredDrone = other.gameObject.GetComponent<IOwnable>();
-
-				if (other.gameObject != droneComponent.gameObject
-					&& triggeredDrone.GetOwner() != droneComponent.owner)
-				{
-					droneComponent.EnterCombatMode(other.gameObject);
-                    droneComponent.attackers.Add(triggeredDrone.GetGameObject());
-                    triggeredDrone.AddAttacker(droneComponent.gameObject);
-				}
-			}
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        triggeredDrone = null;
-    }
+	private void Start()
+	{
+        collisionCircle = new CollisionCircle(transform.position, radiusDetection, this);
+		//CollisionManager.Instance.AddRadar(collisionCircle);
+	}
 
 }

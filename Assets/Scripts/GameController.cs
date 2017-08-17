@@ -8,19 +8,12 @@ public class GameController : MonoBehaviour
 
 	public static GameController Instance { get { return _instance; } }
 
-	private void Awake()
-	{
-		if (_instance != null && _instance != this)
-		{
-			Destroy(this.gameObject);
-		}
-		else
-		{
-			_instance = this;
-		}
-	}
+	public delegate void Game();
+	public event Game OnGamePaused = delegate { };
+    public event Game OnGameContinued = delegate { };
+    public event Game OnGameRestart = delegate { };
 
-    public int players;
+    public int players = 3;
 
     public int winPoints = 0;
 
@@ -61,23 +54,36 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private GameObject playerControllerPrefab;
 
-    // Use this for initialization
-    void Start ()
-    {
-        battlegroundChild = GetComponentInChildren<Battleground>();
-        audioMixerChild = GetComponentInChildren<MixerContoller>();
+	private void Awake()
+	{
+		if (_instance != null && _instance != this)
+		{
+			Destroy(this.gameObject);
+		}
+		else
+		{
+			_instance = this;
+		}
+
+		battlegroundChild = GetComponentInChildren<Battleground>();
 		audioMixerChild = GetComponentInChildren<MixerContoller>();
-		audioMixerChild.SetMusicVolume(0.75f);
-        audioMixerChild.SetSoundsVolume(0.75f);
+		audioMixerChild = GetComponentInChildren<MixerContoller>();
 		objectPoolChild = GetComponentInChildren<ObjectPool>();
+	}
+
+    private void Start()
+    {
+		audioMixerChild.SetMusicVolume(0.75f);
+		audioMixerChild.SetSoundsVolume(0.75f);
 
         BeforeGameMenu();
     }
-    
+
     // Update is called once per frame
     void Update ()
     {
-        gameTimer += Time.deltaTime;
+        if (IsGame)
+            gameTimer += Time.deltaTime;
 
 		// TODO: rework to events or something like this
         if (winPoints > 0)
@@ -163,6 +169,7 @@ public class GameController : MonoBehaviour
         ChangeState(States.BeforeGame);
         startScene.SetActive(true);
 		beforegamePanel.SetActive(true);
+        OnGamePaused();
     }
 
     public void PauseGame()
@@ -171,6 +178,7 @@ public class GameController : MonoBehaviour
         Time.timeScale = 0.0f;
         ingamePanel.SetActive(false);
         pausePanel.SetActive(true);
+        OnGamePaused();
     }
 
 	public void UnPauseGame()
@@ -180,6 +188,7 @@ public class GameController : MonoBehaviour
 		ingamePanel.SetActive(true);
 		pausePanel.SetActive(false);
         settingsPanel.SetActive(false);
+        OnGameContinued();
 	}
 
     public void RestartGame()
@@ -193,6 +202,7 @@ public class GameController : MonoBehaviour
         gameTimer = 0;
         Time.timeScale = 1.0f;
         StartGame();
+        OnGameRestart();
     }
 
 	public void StartGame()
@@ -203,6 +213,7 @@ public class GameController : MonoBehaviour
             beforegamePanel.SetActive(false);
             RemoveStartScene();
             audioMixerChild.StopMainTheme();
+            OnGameContinued();
         }
 		Camera.main.orthographicSize = 10;
         GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
@@ -214,7 +225,6 @@ public class GameController : MonoBehaviour
 		CreatePlayers();
 		state = States.Game;
 		ingamePanel.SetActive(true);
-		
 	}
 
     public void RemoveStartScene()
@@ -258,6 +268,7 @@ public class GameController : MonoBehaviour
 			playerObject.transform.SetParent(transform);
 			PlayerController playerController = playerObject.GetComponent<PlayerController>();
 			playerController.owner = i;
+            playerController.ActionsWithOwner();
 			playerController.transform.position = playerStartPosition[i];
 
             playerControllerObject.Add(playerObject);

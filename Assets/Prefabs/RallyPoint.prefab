@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1423985708805676}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -97,6 +97,7 @@ MonoBehaviour:
   cameraMouse: {fileID: 0}
   cameraTouch: {fileID: 0}
   trans: {fileID: 0}
+  mesh: {fileID: 0}
   materials:
   - {fileID: 2100000, guid: 52aca482341f9264082fa58d78f17c29, type: 2}
   - {fileID: 2100000, guid: 2e28ae6f4fc641d46bbfc0a8576a720c, type: 2}

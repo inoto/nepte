@@ -261,8 +261,11 @@
     <Compile Include="Assets\Scripts\AI\AIPlayer.cs" />
     <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\Battleground.cs" />
+    <Compile Include="Assets\Scripts\Camera controllers\CameraWithEvents.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\PCInputController.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\TouchController.cs" />
+    <Compile Include="Assets\Scripts\Camera controllers\UIBarsCameraSize.cs" />
+    <Compile Include="Assets\Scripts\CollisionCircle.cs" />
     <Compile Include="Assets\Scripts\Drone.cs" />
     <Compile Include="Assets\Scripts\Drone\Quad.cs" />
     <Compile Include="Assets\Scripts\DroneExplosion.cs" />
@@ -287,8 +290,10 @@
     <Compile Include="Assets\Scripts\RallyPoint.cs" />
     <Compile Include="Assets\Scripts\Sounds\MixerContoller.cs" />
     <Compile Include="Assets\Scripts\Sounds\MusicMainTheme.cs" />
+    <Compile Include="Assets\Scripts\UI\FPSCounter.cs" />
     <Compile Include="Assets\Scripts\UI\GameTimer.cs" />
     <Compile Include="Assets\Scripts\UI\LoseWinBlinking.cs" />
+    <Compile Include="Assets\Scripts\UI\ObjectCounter.cs" />
     <Compile Include="Assets\Scripts\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Node : IHeapItem<Node>
 {
 	public bool walkable;
-	public Vector3 worldPosition;
+	public Vector2 worldPosition;
 	public int gridX;
 	public int gridY;
     public Rect rect;
@@ -14,27 +15,28 @@ public class Node : IHeapItem<Node>
 	public Node[] neigbours = new Node[8];
 
 	public int[] distance = new int[GameController.Instance.players];
-	public bool[] suitable = new bool[GameController.Instance.players];
+    public bool isNeigboursFilled = false;
+    public bool[] visited = new bool[GameController.Instance.players];
 
 	public int gCost;
 	public int hCost;
 	public Node parent;
 	int heapIndex;
 	
-	public Node(Rect newRect, float newSize, int _gridX, int _gridY)
+    public Node(Rect newRect, Vector2 pos, int _gridX, int _gridY)
     {
         walkable = true;
         rect = newRect;
-        worldPosition = new Vector2(rect.center.x, rect.center.y);
+        worldPosition = pos;
 		gridX = _gridX;
 		gridY = _gridY;
-        size = newSize;
+        size = rect.size.x;
 		for (int i = 0; i < distance.Length; i++)
 		{
 			distance[i] = 0;
-			suitable[i] = false;
+            visited[i] = false;
 		}
-		neigbours = Grid.Instance.GetNeighbours(this).ToArray();
+		//neigbours = Grid.Instance.GetNeighbours(this);
         //rect = new Rect(worldPosition.x-size/2, worldPosition.y-size/2, size, size);
 	}
 

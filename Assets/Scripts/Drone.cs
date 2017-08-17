@@ -25,11 +25,10 @@ public class Drone : MonoBehaviour, IOwnable
     // TODO: change GameObject to Vector3 for rallypoints
 
     [Header("Components")]
-    public Transform trans;
 	public MeshRenderer mesh;
-    private Unit unitComponent;
-    private Weapon weaponComponent;
-    private Radar radarComponent;
+    public Unit unitComponent;
+    public Weapon weaponComponent;
+    public Radar radarComponent;
 
     public LaserMissile triggeredLaserMissile;
     public IOwnable triggeredDrone;
@@ -44,8 +43,16 @@ public class Drone : MonoBehaviour, IOwnable
 	[SerializeField]
 	private Material[] materials;
 
-	// Use this for initialization
-	void Start ()
+    private void Awake()
+    {
+		mesh = GetComponent<MeshRenderer>();
+		weaponComponent = GetComponent<Weapon>();
+		radarComponent = GetComponent<Radar>();
+		unitComponent = GetComponent<Unit>();
+    }
+
+    // Use this for initialization
+    void Start ()
     {
 		Activate();
     }
@@ -57,12 +64,6 @@ public class Drone : MonoBehaviour, IOwnable
 
     void Activate()
     {
-		trans = GetComponent<Transform>();
-		mesh = GetComponent<MeshRenderer>();
-		weaponComponent = GetComponent<Weapon>();
-		radarComponent = GetComponent<Radar>();
-		unitComponent = GetComponent<Unit>();
-		
 		isDead = false;
         health = 100;
         enemy = null;
@@ -96,7 +97,7 @@ public class Drone : MonoBehaviour, IOwnable
     {
         isDead = true;
         ObjectPool.Recycle(gameObject);
-        GameObject tmpObject = Instantiate(droneExplosionPrefab, trans.position, trans.rotation);
+        GameObject tmpObject = Instantiate(droneExplosionPrefab, unitComponent.trans.position, unitComponent.trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
         UnbindAttackers();
         //CollisionManager.Instance.RemoveUnit(gameObject);
