@@ -60,10 +60,40 @@ public class CollisionManager : MonoBehaviour
         units.Add(unit);
     }
 
+	public void AddBase(CollisionCircle bas)
+	{
+		bases.Add(bas);
+	}
+
+	public void AddRadar(CollisionCircle radar)
+	{
+		radars.Add(radar);
+	}
+
+	public void AddWeapon(CollisionCircle weapon)
+	{
+		weapons.Add(weapon);
+	}
+
     public void RemoveUnit(CollisionCircle unit)
     {
         units.Remove(unit);
     }
+
+	public void RemoveBase(CollisionCircle bas)
+	{
+		bases.Remove(bas);
+	}
+
+	public void RemoveRadar(CollisionCircle radar)
+	{
+		radars.Remove(radar);
+	}
+
+	public void RemoveWeapon(CollisionCircle weapon)
+	{
+		weapons.Remove(weapon);
+	}
 
 	private void Update()
 	{
@@ -71,9 +101,12 @@ public class CollisionManager : MonoBehaviour
         //Debug.Log("total units: " + units.Count);
 		for (int i = 0; i < units.Count; i++)
 		{
-            
 			qtree.Insert(units[i]);
 		}
+		//for (int i = 0; i < radars.Count; i++)
+		//{
+		//	qtree.Insert(radars[i]);
+		//}
 
 		for (int i = 0; i < units.Count; i++)
 		{
@@ -88,6 +121,8 @@ public class CollisionManager : MonoBehaviour
 					//CollisionAttackOrResponse(units[i], returnedUnits[k], dist);
 				}
 			}
+            //returnedRadars.Clear();
+            //qtree.Retrieve(returnedRadars, radars[i]);
 			//for (int k = 0; k < Bases.Count; k++)
 			//{
 			//	float dist = Vector2.Distance(units[i].GetPoint(), Bases[k].transform.position);
@@ -96,19 +131,22 @@ public class CollisionManager : MonoBehaviour
 		}
 	}
 
-	void CheckCollisionsUnits(CollisionCircle unit, CollisionCircle enemy, float dist)
+
+	void CheckCollisionsUnits(CollisionCircle unit1, CollisionCircle unit2, float dist)
 	{
-        float radiusesHard = unit.radiusHard + enemy.radiusHard;
-        float radiuses = unit.radius + enemy.radius;
-        if (dist < radiusesHard * radiusesHard)
-		{
-			
-		}
-        else if (dist < radiuses * radiuses)
-		{
-            if (unit.unit.droneComponent.owner != enemy.unit.droneComponent.owner)
-                unit.unit.weaponComponent.ReleaseLaserMissile(enemy.point);
-		}
+        float radiusesHard = unit1.radiusHard + unit2.radiusHard;
+        float radiuses = unit1.radius + unit2.radius;
+        //if (dist < radiusesHard * radiusesHard)
+        //{
+
+        //}
+        if (dist < radiuses * radiuses)
+        {
+            unit1.unit.trans.position += (unit1.unit.trans.position - unit2.unit.trans.position) * 0.03f;
+            unit2.unit.trans.position += (unit2.unit.trans.position - unit1.unit.trans.position) * 0.03f;
+            //if (unit.unit.droneComponent.owner != enemy.unit.droneComponent.owner)
+            //unit.unit.weaponComponent.ReleaseLaserMissile(enemy.point);
+        }
 	}
 
 	//void CollisionAttackOrResponse(ICollidableUnit unit, ICollidableUnit enemy, float dist)
@@ -117,36 +155,24 @@ public class CollisionManager : MonoBehaviour
 	//	{
 	//		if (dist <= unit.attackRadius + enemy.HardRadius)
 	//		{
-				
+
 	//			unit.Attack(enemy);
 	//		}
 	//		else if (unit.State != UnitState.ResponseTrigger && unit.State != UnitState.Attack)
 	//		{
-				
+
 	//			unit.TriggerOnEnemy(enemy);
 	//		}
 	//	}
 	//}
 
-    public bool RectIntersectsWithCircle(Rect rect, float halfW, float halfH, CollisionCircle circle)
-	{
-        float closestX = Mathf.Clamp(circle.point.x, rect.x, rect.width);
-        float closestY = Mathf.Clamp(circle.point.y, rect.height, rect.y);
-
-		// Calculate the distance between the circle's center and this closest point
-		float distanceX = circle.point.x - closestX;
-		float distanceY = circle.point.y - closestY;
-
-		// If the distance is less than the circle's radius, an intersection occurs
-		float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
-        return distanceSquared < (circle.radius * circle.radius);
-	}
-
 	//Debug view for QuadTreeNode
 	void OnDrawGizmos()
 	{
-		if (showGizmos)
-			if (qtree != null)
-				qtree.DrawDebug();
+        if (showGizmos)
+        {
+            if (qtree != null)
+                qtree.DrawDebug();
+        }
 	}
 }

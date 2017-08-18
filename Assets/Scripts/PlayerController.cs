@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
 
     void CreateBase()
     {
-		Vector3 point = trans.position;
+        Vector3 point = trans.position;
 		point.z = 0.1f;
 		GameObject baseObject = Instantiate(basePrefab, point, trans.rotation);
         baseObject.transform.SetParent(trans);

@@ -286,17 +286,17 @@ public class GameController : MonoBehaviour
 			{
 				case 0:
 					tmpObject = GameObject.Find("StartPlayer");
-                    playerStartPosition.Add(tmpObject.transform.position);
+                    playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
 					Destroy(tmpObject);
 					continue;
 				case 1:
 					tmpObject = GameObject.Find("StartAIFirst");
-					playerStartPosition.Add(tmpObject.transform.position);
+					playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
 					Destroy(tmpObject);
 					continue;
 				case 2:
 					tmpObject = GameObject.Find("StartAISecond");
-					playerStartPosition.Add(tmpObject.transform.position);
+					playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
 					Destroy(tmpObject);
 					continue;
 			}
@@ -322,5 +322,11 @@ public class GameController : MonoBehaviour
     public void CloseGame()
     {
         Application.Quit();
+    }
+
+    private void OnGUI()
+    {
+        Rect r = new Rect(Screen.width - 50, 0, Screen.width, 20);
+        GUI.Label(r, PlayerController.unitCount.ToString());
     }
 }

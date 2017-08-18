@@ -2,12 +2,13 @@
 
 public class Radar : MonoBehaviour
 {
+    public bool drawGizmos = false;
 
     public float radiusDetection = 5;
 
-	[Header("Cache")]
+    [Header("Cache")]
+    public Transform trans;
 	private Unit unitComponent;
-    private IOwnable triggeredDrone;
 
     public CollisionCircle collisionCircle;
 
@@ -15,12 +16,29 @@ public class Radar : MonoBehaviour
 	void Awake ()
     {
         unitComponent = GetComponent<Unit>();
+        trans = GetComponent<Transform>();
 	}
 
 	private void Start()
 	{
         collisionCircle = new CollisionCircle(transform.position, radiusDetection, this);
-		//CollisionManager.Instance.AddRadar(collisionCircle);
+		CollisionManager.Instance.AddRadar(collisionCircle);
+	}
+
+	private void Update()
+	{
+		collisionCircle.point = trans.position;
+	}
+
+	public void OnDrawGizmos()
+	{
+		if (drawGizmos)
+		{
+			Color newColorAgain = Color.yellow;
+			newColorAgain.a = 0.3f;
+			Gizmos.color = newColorAgain;
+			Gizmos.DrawWireSphere(collisionCircle.point, collisionCircle.radius);
+		}
 	}
 
 }

@@ -255,11 +255,11 @@ public class Grid : MonoBehaviour {
 
 	public Node NodeFromWorldPoint(Vector2 point)
     {
-        Debug.Log("wp: " + point);
-        Debug.Log("rect size x: " + rect.size.x + " rect size y: " + rect.size.y);
+        //Debug.Log("wp: " + point);
+        //Debug.Log("rect size x: " + rect.size.x + " rect size y: " + rect.size.y);
         float percentX = (point.x + rect.size.x / 2) / rect.size.x;
         float percentY = (point.y + rect.size.y / 2) / rect.size.y;
-		Debug.Log(percentX + " " + percentY);
+		//Debug.Log(percentX + " " + percentY);
 		percentX = Mathf.Clamp01(percentX);
 		percentY = Mathf.Clamp01(percentY);
 
@@ -268,7 +268,7 @@ public class Grid : MonoBehaviour {
 		//if (worldPosition.x < 0)
 		x = Mathf.RoundToInt((gridCountX - 1) * percentX);
 		y = Mathf.RoundToInt((gridCountY - 1) * percentY);
-        Debug.Log("nwp: " + nodes[x,y].worldPosition);
+        //Debug.Log("nwp: " + nodes[x,y].worldPosition);
 		return nodes[x,y];
 	}
 

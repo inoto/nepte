@@ -279,7 +279,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: b42f8bff4941244a69923981277cbebd, type: 3}
   mFont: {fileID: 0}
-  mText: 100%
+  mText: 100
   mFontSize: 150
   mFontStyle: 1
   mAlignment: 0

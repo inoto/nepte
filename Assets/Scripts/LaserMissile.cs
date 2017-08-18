@@ -58,7 +58,7 @@ public class LaserMissile : MonoBehaviour, IOwnable
     void Rotate()
     {
         angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.AngleAxis(angle-90, Vector3.forward);
         //transform.rotation = Quaternion.LookRotation(Vector3., directionVector);
     }
 

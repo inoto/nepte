@@ -208,7 +208,8 @@ public class QuadTreeNode
 		for (int i = 0; i < 4; i++)
 		{
             if (childs[i] != null)
-                if (childs[i].rect.Contains(unit.point))
+                //if (childs[i].rect.Contains(unit.point))
+                if (RectContainsCircle(childs[i].rect, unit))
                     return i;
 		}
 
@@ -268,82 +269,102 @@ public class QuadTreeNode
 		}
 	}
 
-    //public void Insert(ICollidableUnit obj)
-    //{
-    //    objects.Add(obj);
+	//public void Insert(ICollidableUnit obj)
+	//{
+	//    objects.Add(obj);
 
-    //    if (objects.Count > 1 && rect.size.x > Vector2.one.x * 2 && rect.size.y > Vector2.one.y * 2)
-    //    {
-    //        Split();
+	//    if (objects.Count > 1 && rect.size.x > Vector2.one.x * 2 && rect.size.y > Vector2.one.y * 2)
+	//    {
+	//        Split();
 
-    //        int k = objects.Count - 1;
-    //        while (k >= 0)
-    //        {
-    //            ICollidableUnit unit = objects[k];
-    //            for (int i = 0; i < 4; i++)
-    //            {
-    //                //if (CollisionManager.Instance.RectIntersectsWithCircle(quadrant[i], halfWidthQuadrant, halfHeightQuadrant, obj.GetPoint(), obj.GetRadius()))
-    //                if (childs[i].rect.Contains(objects[k].GetPoint()))
-    //                {
-    //                    // using existing child
-    //                    //if (childs[i] != null)
-    //                    //{
-    //                    //    objects.RemoveAt(objects.Count - 1);
-    //                    //    childs[i].Insert(unit);
-    //                    //}
-    //                    // create new child
-    //                    //else
-    //                    //{
+	//        int k = objects.Count - 1;
+	//        while (k >= 0)
+	//        {
+	//            ICollidableUnit unit = objects[k];
+	//            for (int i = 0; i < 4; i++)
+	//            {
+	//                //if (CollisionManager.Instance.RectIntersectsWithCircle(quadrant[i], halfWidthQuadrant, halfHeightQuadrant, obj.GetPoint(), obj.GetRadius()))
+	//                if (childs[i].rect.Contains(objects[k].GetPoint()))
+	//                {
+	//                    // using existing child
+	//                    //if (childs[i] != null)
+	//                    //{
+	//                    //    objects.RemoveAt(objects.Count - 1);
+	//                    //    childs[i].Insert(unit);
+	//                    //}
+	//                    // create new child
+	//                    //else
+	//                    //{
 
-    //                    childs[i].Insert(unit);
-    //                    //hasChilds = true;
-    //                    //activeNodes |= (byte)(1 << i);
-    //                    //}
-    //                    //Reallocate units here into its child
-    //                    //foreach (ICollidableUnit unit in objects)
-    //                    //{
-    //                    //    ICollidableUnit movedUnit = unit;
-    //                    //    objects.Remove(unit);
-    //                    //    childs[i].Insert(movedUnit);
-    //                    //}
-    //                    //int objectsCo = objects.Count;
-    //                    //for (int k = 0; k < objects.Count - 1; k++)
-    //                    //{
-    //                    //    childs[i].Insert(objects[k]);
-    //                    //    objects.Remove(objects[k]);
-    //                    //}
-    //                    //return;
-    //                }
-    //                objects.RemoveAt(k);
-    //                k--;
-    //            }
-    //            //objects.RemoveAt(k);
-    //            //}
-    //        }
+	//                    childs[i].Insert(unit);
+	//                    //hasChilds = true;
+	//                    //activeNodes |= (byte)(1 << i);
+	//                    //}
+	//                    //Reallocate units here into its child
+	//                    //foreach (ICollidableUnit unit in objects)
+	//                    //{
+	//                    //    ICollidableUnit movedUnit = unit;
+	//                    //    objects.Remove(unit);
+	//                    //    childs[i].Insert(movedUnit);
+	//                    //}
+	//                    //int objectsCo = objects.Count;
+	//                    //for (int k = 0; k < objects.Count - 1; k++)
+	//                    //{
+	//                    //    childs[i].Insert(objects[k]);
+	//                    //    objects.Remove(objects[k]);
+	//                    //}
+	//                    //return;
+	//                }
+	//                objects.RemoveAt(k);
+	//                k--;
+	//            }
+	//            //objects.RemoveAt(k);
+	//            //}
+	//        }
 
-    //        //objects.Add(obj);
-    //    }
-    //}
+	//        //objects.Add(obj);
+	//    }
+	//}
+
+	public bool RectContainsCircle(Rect rect, CollisionCircle circle)
+	{
+        if (!rect.Contains(circle.point))
+            return false;
+        if (circle.point.x - circle.radius < rect.x)
+            return false;
+        if (circle.point.x + circle.radius > rect.width)
+            return false;
+        if (circle.point.y - circle.radius < rect.y)
+            return false;
+        if (circle.point.y + circle.radius > rect.height)
+            return false;
+        return true;
+	}
 
 	public void DrawDebug()
 	{
+#if UNITY_EDITOR
 		Gizmos.color = Color.cyan;
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y), new Vector3(rect.x, rect.y + rect.height));
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y), new Vector3(rect.x + rect.width, rect.y));
 		Gizmos.DrawLine(new Vector3(rect.x + rect.width, rect.y), new Vector3(rect.x + rect.width, rect.y + rect.height));
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y + rect.height), new Vector3(rect.x + rect.width, rect.y + rect.height));
-#if UNITY_EDITOR
-		foreach (CollisionCircle unit in objects)
-		{
-            Handles.Label(unit.unit.trans.position, level.ToString());
-		}
-#endif
+
+		//foreach (CollisionCircle unit in objects)
+		//{
+  //          Handles.Label(unit.unit.trans.position, level.ToString());
+		//}
+        Handles.Label(rect.center, objects.Count.ToString());
 
         for (int i = 0; i < childs.Length; i++)
 		{
-			if (childs[i] != null)
-				childs[i].DrawDebug();
+            if (childs[i] != null)
+            {
+                childs[i].DrawDebug();
+                //Handles.Label(childs[i].rect.center, i.ToString());
+            }
 		}
+#endif
 	}
 
 }

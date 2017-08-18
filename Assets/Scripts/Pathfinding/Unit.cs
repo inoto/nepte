@@ -75,8 +75,7 @@ public class Unit : MonoBehaviour, ICollidableUnit
         playerController.playerUnitCount += 1;
         playerRallyPoint = GameController.Instance.playerControllerObject[droneComponent.owner].GetComponent<PlayerController>().rallyPoint;
         ResetRallyPoint();
-        if (droneComponent.owner == 0)
-            playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
+        playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
     }
 
     private void OnDestroy()
@@ -97,8 +96,7 @@ public class Unit : MonoBehaviour, ICollidableUnit
 
     void Deactivate()
     {
-        if (droneComponent.owner == 0)
-            playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
+        playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
 
         //QuadTree.Instance.qtree.Remove(gameObject);
         playerController.playerUnitCount -= 1;
@@ -116,7 +114,6 @@ public class Unit : MonoBehaviour, ICollidableUnit
 			if (tmpNode != node)
 			{
 				node = tmpNode;
-				DefineNextNode(node);
 			}
 			if (node.worldPosition == destinationPoint)
 			{
@@ -130,8 +127,14 @@ public class Unit : MonoBehaviour, ICollidableUnit
             }
             else
             {
-                droneComponent.EnterIdleMode();
-                yield break;
+				Rotate();
+				Move();
+                DefineNextNode(nextNode);
+            }
+            if (node == destinationNode)
+            {
+				droneComponent.EnterIdleMode();
+				yield break;
             }
 
 
@@ -139,23 +142,21 @@ public class Unit : MonoBehaviour, ICollidableUnit
         }
     }
 
-	void DefineNextNode(Node destNode)
+	void DefineNextNode(Node newNextNode)
 	{
         //List<Node> closestToDestination = new List<Node>();
         //nextNodes = destNode.neigbours; //.Instance.GetNeighbours(destNode);
 
-        bool closestFound = false;
         int closestNodeIndex = 0;
-        for (int i = 0; i < destNode.neigbours.Length - 1; i++)
+        for (int i = 0; i < newNextNode.neigbours.Length; i++)
         //foreach (Node n in nextNodes)
         {
-            if (destNode.neigbours[i] != null)
+            if (newNextNode.neigbours[i] != null)
             {
-                if (destNode.neigbours[i].distance[droneComponent.owner] < destNode.neigbours[closestNodeIndex].distance[droneComponent.owner])
+                if (newNextNode.neigbours[i].distance[droneComponent.owner] < newNextNode.neigbours[closestNodeIndex].distance[droneComponent.owner])
                 {
                     //Debug.Log("node " + nextNodes[i].gridX + "," + nextNodes[i].gridY + " < node " + nextNodes[closestNodeIndex].gridX + "," + nextNodes[closestNodeIndex].gridY);
                     closestNodeIndex = i;//nextNodes.IndexOf(n);//Array.IndexOf(nextNodes, n); 
-                    closestFound = true;
                 }
             }
             //if (n.distance[droneComponent.owner] >= node.distance[droneComponent.owner])
@@ -165,13 +166,12 @@ public class Unit : MonoBehaviour, ICollidableUnit
             //nextNode = n;
             //closestToDestination.Add(n);
         }
-        if (closestFound)
-            nextNode = destNode.neigbours[closestNodeIndex];
+        nextNode = newNextNode.neigbours[closestNodeIndex];
 	}
 
 	void ResetRallyPoint()
 	{
-		destinationPoint = playerRallyPoint.gameObject.transform.position;
+        destinationPoint = (Vector2)playerRallyPoint.gameObject.transform.position;
         destinationNode = Grid.Instance.NodeFromWorldPoint(destinationPoint);
 		if (node == destinationNode)
 		{
@@ -190,9 +190,9 @@ public class Unit : MonoBehaviour, ICollidableUnit
 
     void Rotate()
     {
-        directionVector = nextNode.worldPosition - (Vector2)trans.position;
+        directionVector = (nextNode.worldPosition - (Vector2)trans.position).normalized;
         float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
-        Quaternion qt = Quaternion.AngleAxis(angle, Vector3.forward);
+        Quaternion qt = Quaternion.AngleAxis(angle-90, Vector3.forward);
         trans.rotation = Quaternion.Slerp(trans.rotation, qt, Time.deltaTime * turnSpeed);
     }
 
@@ -205,17 +205,21 @@ public class Unit : MonoBehaviour, ICollidableUnit
 	public void OnDrawGizmos() {
         if (drawGizmos)
         {
-            if (nextNode != null)
-            {
-                Color newColor = Color.green;
-                newColor.a = 0.3f;
-                Gizmos.color = newColor;
-                Gizmos.DrawLine(trans.position, nextNode.worldPosition);
+			if (nextNode != null)
+			{
+			    Color newColor = Color.green;
+			    newColor.a = 0.3f;
+			    Gizmos.color = newColor;
+			    Gizmos.DrawLine(trans.position, nextNode.worldPosition);
 
-                Gizmos.color = newColor;
-                Gizmos.DrawCube(nextNode.worldPosition, nextNode.rect.size * (nextNode.rect.size.x - 0.05f));
-            }
-        }
+			    Gizmos.color = newColor;
+			    Gizmos.DrawCube(nextNode.worldPosition, nextNode.rect.size * (nextNode.rect.size.x - 0.05f));
+			}
+			Color newColorAgain = Color.green;
+		    newColorAgain.a = 0.3f;
+		    Gizmos.color = newColorAgain;
+            Gizmos.DrawWireSphere(collisionCircle.point, collisionCircle.radius);
+		}
 	}
 
     public Drone GetDrone()

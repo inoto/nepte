@@ -30,6 +30,7 @@ public class Pathfinding : MonoBehaviour
 	{
         Node startNode = Grid.Instance.NodeFromWorldPoint(startPoint);
 		Vector2 startNodePoint = startNode.worldPosition;
+
 		startNode.distance[player] = 0;
         for (int x = 0; x < Grid.Instance.gridCountX; x++)
         {
@@ -50,35 +51,33 @@ public class Pathfinding : MonoBehaviour
         int count = Grid.Instance.gridSize - 1;
 		while (count > 0)
 		{
-            Node[] neigbours = new Node[8];
+            //Node[] neigbours = new Node[8];
 
 			currentNode = open.Dequeue();
 
 			if (!currentNode.isNeigboursFilled)
 			{
-                neigbours = Grid.Instance.GetNeighbours(currentNode);
-				currentNode.neigbours = neigbours;
+                currentNode.neigbours = Grid.Instance.GetNeighbours(currentNode);
+				//currentNode.neigbours = neigbours;
 				currentNode.isNeigboursFilled = true;
 			}
-            else
-                neigbours = currentNode.neigbours;
 
 			//foreach (Node nextNode in neigbours)
-            for (int i = 0; i < neigbours.Length-1; i++)
+            for (int i = 0; i < currentNode.neigbours.Length-1; i++)
 			{
-                if (neigbours[i] == null || neigbours[i].visited[player])
+                if (currentNode.neigbours[i] == null || currentNode.neigbours[i].visited[player])
 					continue;
-                neigbours[i].visited[player] = true;
-				open.Enqueue(neigbours[i]);
+                currentNode.neigbours[i].visited[player] = true;
+				open.Enqueue(currentNode.neigbours[i]);
 				//nextNode.distance[player] = 1 + currentNode.distance[player];
 
-				float dist = (neigbours[i].worldPosition - startNodePoint).sqrMagnitude;
+				float dist = (currentNode.neigbours[i].worldPosition - startNodePoint).sqrMagnitude;
                 //float distClosest = (neigbours[suitableNode].worldPosition - startNodePoint).sqrMagnitude;
                 //if (dist < distClosest)
                 //    nextNode.distance[player] = 2 + currentNode.distance[player];
                 ////suitableNode = neigbours.IndexOf(nextNode);
                 //else
-                neigbours[i].distance[player] = (int)dist;//+ currentNode.distance[player];
+                currentNode.neigbours[i].distance[player] = (int)dist;//+ currentNode.distance[player];
             }
             //neigbours[suitableNode].suitable[player] = true;
             // cache neigbours

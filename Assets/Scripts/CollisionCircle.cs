@@ -21,6 +21,8 @@ public class CollisionCircle
     public Radar radar;
     public Weapon weapon;
 
+    public bool collided = false;
+
     public CollisionCircle(Vector2 _point, float _radius, Unit _unit)
     {
         point = _point;

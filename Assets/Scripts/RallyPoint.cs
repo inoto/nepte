@@ -57,20 +57,17 @@ public class RallyPoint : MonoBehaviour
 		Vector3 tmp = position;
 		if (trans.position != tmp)
 		{
-            Debug.Log("new pos: " + position);
+            //.Log("new pos: " + position);
             Node node = Grid.Instance.NodeFromWorldPoint(position);
-            Debug.Log("node pos: " + node.worldPosition);
-            Debug.Log("node center: " + node.rect.center);
+            //Debug.Log("node pos: " + node.worldPosition);
+            //Debug.Log("node center: " + node.rect.center);
 			rect = node.rect;
             trans.position = node.rect.center;
 		}
 
 		Pathfinding.Instance.FillDistances(trans.position, owner);
 
-        if (owner == 0)
-        {
-            OnRallyPointChanged();
-        }
+        OnRallyPointChanged();
 	}
 
 	void AssignMeterial()

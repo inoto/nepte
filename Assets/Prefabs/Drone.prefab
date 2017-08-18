@@ -40,7 +40,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1964420292115662}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -96,11 +96,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96bd4dbb59d8548f489873e666c5e657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawGizmos: 0
+  drawGizmos: 1
   trans: {fileID: 0}
   playerRallyPoint: {fileID: 0}
   directionVector: {x: 0, y: 0}
-  destinationPoint: {x: 0, y: 0, z: 0}
+  destinationPoint: {x: 0, y: 0}
   speed: 2
   speedPercent: 1
   turnSpeed: 10
@@ -122,8 +122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21ada344a9c3bdf47bd5e91be9594fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drawGizmos: 1
   damage: 20
   radiusAttack: 3
+  trans: {fileID: 0}
   laserMissilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}
 --- !u!114 &114664459024262690
@@ -137,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 0.5
+  size: 1
 --- !u!114 &114681786549479558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -149,7 +151,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3bb2d80931e24cecb076136a60490b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drawGizmos: 1
   radiusDetection: 5
+  trans: {fileID: 0}
 --- !u!114 &114829070162426570
 MonoBehaviour:
   m_ObjectHideFlags: 1
