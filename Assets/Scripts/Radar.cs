@@ -1,44 +1,79 @@
 ﻿using UnityEngine;
 
-public class Radar : MonoBehaviour
+public class Radar : MonoBehaviour, ICollidable
 {
-    public bool drawGizmos = false;
+    public bool showRadius = false;
+	public bool isActive = false;
 
-    public float radiusDetection = 5;
+    public float radius = 5;
+	public CollisionType cType = CollisionType.Radar;
 
-    [Header("Cache")]
-    public Transform trans;
-	private Unit unitComponent;
-
-    public CollisionCircle collisionCircle;
+	[Header("Cache")]
+	public Transform trans;
+	public Drone droneParent;
 
 	// Use this for initialization
 	void Awake ()
     {
-        unitComponent = GetComponent<Unit>();
         trans = GetComponent<Transform>();
+		droneParent = trans.parent.gameObject.GetComponent<Drone>();
 	}
 
-	private void Start()
+	public void OnEnable()
 	{
-        collisionCircle = new CollisionCircle(transform.position, radiusDetection, this);
-		CollisionManager.Instance.AddRadar(collisionCircle);
+		trans = GetComponent<Transform>();
+		isActive = true;
+		CollisionManager.Instance.AddCollidable(this);
 	}
 
-	private void Update()
+	public void OnDisable()
 	{
-		collisionCircle.point = trans.position;
+		isActive = false;
+		//CollisionManager.Instance.RemoveCollidable(this);
 	}
 
 	public void OnDrawGizmos()
 	{
-		if (drawGizmos)
+		if (showRadius && isActive)
 		{
 			Color newColorAgain = Color.yellow;
-			newColorAgain.a = 0.3f;
+			newColorAgain.a = 0.5f;
 			Gizmos.color = newColorAgain;
-			Gizmos.DrawWireSphere(collisionCircle.point, collisionCircle.radius);
+			Gizmos.DrawWireSphere(trans.position, radius);
 		}
 	}
 
+	public int InstanceId
+	{
+		get { return gameObject.GetInstanceID(); }
+	}
+	public Vector2 Point
+	{
+		get { return trans.position; }
+		set { trans.position = value; }
+	}
+	public float Radius
+	{
+		get { return radius; }
+	}
+	public float RadiusHard
+	{
+		get { return radius; }
+	}
+	public CollisionType Type
+	{
+		get { return cType; }
+	}
+	public bool Active
+	{
+		get { return gameObject.activeSelf; }
+	}
+	public GameObject GameObject
+	{
+		get { return trans.parent.gameObject; }
+	}
+	public Drone drone
+	{
+		get { return droneParent; }
+	}
 }

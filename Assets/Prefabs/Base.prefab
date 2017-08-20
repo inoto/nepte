@@ -101,7 +101,7 @@ MonoBehaviour:
   rallyPointObject: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
   attackers: []
-  spawnTime: 3
+  spawnTime: 6
   dronePrefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab,
     type: 2}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,

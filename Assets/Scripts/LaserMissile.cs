@@ -17,7 +17,7 @@ public class LaserMissile : MonoBehaviour, IOwnable
 
     [Header("Attack")]
     public int damage;
-    public IOwnable enemy;
+    public ITargetable target;
 
     // Use this for initialization
     void Start ()
@@ -39,10 +39,12 @@ public class LaserMissile : MonoBehaviour, IOwnable
     {
         directionVector = destinationVector - transform.position;
 
-        if (transform.position == destinationVector)
-            ObjectPool.Recycle(gameObject);
-        if (wasExecuted)
-            ObjectPool.Recycle(gameObject);
+		if (transform.position == destinationVector)
+		{
+			if (target.DroneObj != null)
+				target.DroneObj.health -= damage;
+			ObjectPool.Recycle(gameObject);
+		}
 
         //if (angle == Vector3.Angle(transform.forward, directionVector))
             Move();

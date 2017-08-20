@@ -105,33 +105,8 @@ public class Base : MonoBehaviour, IOwnable
         GameObject droneObject = ObjectPool.Spawn(dronePrefab, trans.parent, GameController.Instance.playerStartPosition[owner], trans.rotation);
 		Drone droneSpawned = droneObject.GetComponent<Drone>();
         droneSpawned.owner = owner;
-        droneObject.GetComponent<Unit>().ActivateWithOwner();
+		droneSpawned.ActivateWithOwner();
         //droneSpawned.ResetRallyPoint();
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("missile"))
-        {
-            triggeredLaserMissile = other.gameObject.GetComponent<LaserMissile>();
-            if (triggeredLaserMissile.owner != owner
-                && !triggeredLaserMissile.wasExecuted)
-            {
-                triggeredLaserMissile.wasExecuted = true;
-                if (assignedHPbar != null)
-                {
-                    UISlider HPslider = assignedHPbar.GetComponent<UISlider>();
-                    HPslider.Set((float)health / 1000);
-                }
-                health -= triggeredLaserMissile.damage;
-            }
-
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        triggeredLaserMissile = null;
     }
 
 	public void AddAttacker(GameObject newObj)
@@ -155,6 +130,21 @@ public class Base : MonoBehaviour, IOwnable
 	}
 
 	public GameObject GetGameObject()
+	{
+		return gameObject;
+	}
+
+	public Unit GetUnit()
+	{
+		return null;
+	}
+
+	public Base GetBase()
+	{
+		return this;
+	}
+
+	public GameObject GetGameobject()
 	{
 		return gameObject;
 	}

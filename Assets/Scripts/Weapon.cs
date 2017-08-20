@@ -1,69 +1,80 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+public class Weapon : MonoBehaviour, ICollidable
 {
-    public bool drawGizmos = false;
+    public bool showRadius = false;
+	public bool isActive = false;
 
-    private float waitTime;
+	public float radius = 3;
+	public CollisionType cType = CollisionType.Weapon;
 
-    [Header("Attack")]
-    public int damage = 20;
-    public float radiusAttack = 3;
-
-    [Header("Cache")]
+	[Header("Cache")]
     public Transform trans;
-	private Unit unitComponent;
+	public Drone droneParent;
 
-    [Header("Prefabs")]
-    [SerializeField]
-    private GameObject laserMissilePrefab;
-
-    public CollisionCircle collisionCircle;
-
-    // TODO: move states and other big logic to drone
-
-    // Use this for initialization
-    void Awake ()
+	// Use this for initialization
+	void Awake ()
     {
-        unitComponent = GetComponent<Unit>();
         trans = GetComponent<Transform>();
-    }
-
-	private void Start()
-	{
-        collisionCircle = new CollisionCircle(transform.position, radiusAttack, this);
-		//CollisionManager.Instance.AddWeapon(collisionCircle);
+		droneParent = trans.parent.gameObject.GetComponent<Drone>();
 	}
 
-	private void Update()
+	public void OnEnable()
 	{
-		collisionCircle.point = trans.position;
+		trans = GetComponent<Transform>();
+		isActive = true;
+		CollisionManager.Instance.AddCollidable(this);
 	}
 
-    public void ReleaseLaserMissile(Vector3 newDestinationVector)
-    {
-		//GameObject laserMissileObject = Instantiate(laserMissilePrefab, gameObject.transform.position, gameObject.transform.rotation);
-        //laserMissileObject.transform.SetParent(GameController.Instance.transform);
-        //laserMissileObject.transform.localScale = droneParent.transform.localScale;
-
-        GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, gameObject.transform.position, gameObject.transform.rotation);
-        //laserMissileObject.transform.Rotate(new Vector3(0, 0, -90));
-        //laserMissileObject.transform.position = transform.position;
-        LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
-		laserMissile.destinationVector = newDestinationVector;
-        laserMissile.owner = unitComponent.droneComponent.owner;
-		laserMissile.damage = damage;
-    }
+	public void OnDisable()
+	{
+		isActive = false;
+		//CollisionManager.Instance.RemoveCollidable(this);
+	}
 
 	public void OnDrawGizmos()
 	{
-		if (drawGizmos)
+		if (showRadius && isActive)
 		{
 			Color newColorAgain = Color.red;
-			newColorAgain.a = 0.3f;
+			newColorAgain.a = 0.5f;
 			Gizmos.color = newColorAgain;
-			Gizmos.DrawWireSphere(collisionCircle.point, collisionCircle.radius);
+			Gizmos.DrawWireSphere(trans.position, radius);
 		}
+	}
+
+	public int InstanceId
+	{
+		get { return gameObject.GetInstanceID(); }
+	}
+	public Vector2 Point
+	{
+		get { return trans.position; }
+		set { trans.position = value; }
+	}
+	public float Radius
+	{
+		get { return radius; }
+	}
+	public float RadiusHard
+	{
+		get { return radius; }
+	}
+	public CollisionType Type
+	{
+		get { return cType; }
+	}
+	public bool Active
+	{
+		get { return gameObject.activeSelf; }
+	}
+	public GameObject GameObject
+	{
+		get { return trans.parent.gameObject; }
+	}
+	public Drone drone
+	{
+		get { return droneParent; }
 	}
 }

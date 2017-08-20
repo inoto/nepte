@@ -343,7 +343,7 @@ Prefab:
     - target: {fileID: 114332332320069996, guid: 2f63b9c6570a8415292a283e03945592,
         type: 2}
       propertyPath: showGizmos
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114112252047619162, guid: 2f63b9c6570a8415292a283e03945592,
         type: 2}
@@ -359,6 +359,10 @@ Prefab:
         type: 2}
       propertyPath: size.y
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1639414177698608, guid: 2f63b9c6570a8415292a283e03945592, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2f63b9c6570a8415292a283e03945592, type: 2}

@@ -11,6 +11,38 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1964420292115662}
   m_IsPrefabParent: 1
+--- !u!1 &1013479078457326
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4770839995157482}
+  - component: {fileID: 114069194957310674}
+  m_Layer: 0
+  m_Name: Radar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1374899613095834
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4225555435548420}
+  - component: {fileID: 114282913453910352}
+  m_Layer: 0
+  m_Name: Weapon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1964420292115662
 GameObject:
   m_ObjectHideFlags: 0
@@ -20,9 +52,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4589345348294930}
   - component: {fileID: 114829070162426570}
-  - component: {fileID: 114011818928395442}
-  - component: {fileID: 114681786549479558}
-  - component: {fileID: 114449573046543404}
   - component: {fileID: 33733663575446520}
   - component: {fileID: 114664459024262690}
   - component: {fileID: 23048411818348990}
@@ -33,6 +62,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4225555435548420
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1374899613095834}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4589345348294930}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4589345348294930
 Transform:
   m_ObjectHideFlags: 1
@@ -42,8 +84,23 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4770839995157482}
+  - {fileID: 4225555435548420}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4770839995157482
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1013479078457326}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4589345348294930}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23048411818348990
@@ -85,49 +142,40 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1964420292115662}
   m_Mesh: {fileID: 0}
---- !u!114 &114011818928395442
+--- !u!114 &114069194957310674
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1964420292115662}
+  m_GameObject: {fileID: 1013479078457326}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96bd4dbb59d8548f489873e666c5e657, type: 3}
+  m_Script: {fileID: 11500000, guid: c3bb2d80931e24cecb076136a60490b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawGizmos: 1
+  showRadius: 1
+  isActive: 0
+  radius: 5
+  cType: 2
   trans: {fileID: 0}
-  playerRallyPoint: {fileID: 0}
-  directionVector: {x: 0, y: 0}
-  destinationPoint: {x: 0, y: 0}
-  speed: 2
-  speedPercent: 1
-  turnSpeed: 10
-  turnDst: 5
-  stoppingDst: 10
-  radiusSoft: 0.5
-  radiusHard: 0.5
-  droneComponent: {fileID: 0}
-  radarComponent: {fileID: 0}
-  weaponComponent: {fileID: 0}
---- !u!114 &114449573046543404
+  droneParent: {fileID: 0}
+--- !u!114 &114282913453910352
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1964420292115662}
+  m_GameObject: {fileID: 1374899613095834}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21ada344a9c3bdf47bd5e91be9594fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawGizmos: 1
-  damage: 20
-  radiusAttack: 3
+  showRadius: 1
+  isActive: 0
+  radius: 3
+  cType: 3
   trans: {fileID: 0}
-  laserMissilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
-    type: 2}
+  droneParent: {fileID: 0}
 --- !u!114 &114664459024262690
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -140,20 +188,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 1
---- !u!114 &114681786549479558
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1964420292115662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3bb2d80931e24cecb076136a60490b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  drawGizmos: 1
-  radiusDetection: 5
-  trans: {fileID: 0}
 --- !u!114 &114829070162426570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -165,23 +199,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showPath: 1
+  showRadius: 1
   owner: 0
   health: 100
   isDead: 0
-  bounds:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
   mode: 0
+  trans: {fileID: 0}
   mesh: {fileID: 0}
-  unitComponent: {fileID: 0}
-  weaponComponent: {fileID: 0}
-  radarComponent: {fileID: 0}
-  triggeredLaserMissile: {fileID: 0}
-  enemy: {fileID: 0}
-  attackers: []
+  radar: {fileID: 0}
+  weapon: {fileID: 0}
+  radius: 1
+  radiusHard: 0.5
+  cType: 0
+  playerRallyPoint: {fileID: 0}
+  directionVector: {x: 0, y: 0}
+  destinationPoint: {x: 0, y: 0}
+  speed: 2
+  speedPercent: 1
+  turnSpeed: 3
+  damage: 50
+  laserMissilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
+    type: 2}
   droneExplosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
     type: 2}
   materials:

@@ -86,11 +86,8 @@ public class QuadTreeNode
         for (int i = 0; i < objects.Count - 1; i++)
 		{
             // Moving = 1
-            if (objects[i].unit.droneComponent.mode == Drone.Mode.Moving)
-            {
                 movedUnits.Add(objects[i]);
                 movedUnitsCount += 1;
-            }
 		}
 
         //int objectsCount = objects.Count;
@@ -125,7 +122,7 @@ public class QuadTreeNode
 			QuadTreeNode currentNode = this;
 
 			//while (CollisionManager.Instance.RectIntersectsWithCircle(currentNode.rect, currentNode.halfWidth, currentNode.halfHeight, unit.GetPoint(), unit.GetRadius()))
-            while(!rect.Contains(movedUnits[i].point))
+            //while(!rect.Contains(movedUnits[i].Point))
             {
 				if (currentNode.parent != null) currentNode = currentNode.parent;
 				else break;
@@ -209,7 +206,7 @@ public class QuadTreeNode
 		{
             if (childs[i] != null)
                 //if (childs[i].rect.Contains(unit.point))
-                if (RectContainsCircle(childs[i].rect, unit))
+                //if (RectContainsCircle(childs[i].rect, unit))
                     return i;
 		}
 
@@ -326,7 +323,7 @@ public class QuadTreeNode
 	//    }
 	//}
 
-	public bool RectContainsCircle(Rect rect, CollisionCircle circle)
+	/*public bool RectContainsCircle(Rect rect, CollisionCircle circle)
 	{
         if (!rect.Contains(circle.point))
             return false;
@@ -339,7 +336,7 @@ public class QuadTreeNode
         if (circle.point.y + circle.radius > rect.height)
             return false;
         return true;
-	}
+	}*/
 
 	public void DrawDebug()
 	{

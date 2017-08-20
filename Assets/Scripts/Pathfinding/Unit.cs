@@ -3,14 +3,11 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public class Unit : MonoBehaviour, ICollidableUnit
+public class Unit : MonoBehaviour
 {
-    public bool drawGizmos = false;
-
-    IEnumerator coroutineFollowPath;
-
-    const float minPathUpdateTime = .5f;
-    const float pathUpdateMoveThreshold = .5f;
+    public bool showBodyRadius = false;
+	public bool showRadarRadius = false;
+	public bool showWeaponRadius = false;
 
     private PlayerController playerController;
     public Transform trans;
@@ -26,10 +23,12 @@ public class Unit : MonoBehaviour, ICollidableUnit
     public float turnSpeed = 3;
     public float turnDst = 5;
     public float stoppingDst = 10;
-    public float radiusSoft = 0.5f;
+    public float radius = 0.5f;
     public float radiusHard = 0.5f;
 
-    [Header("Nodes")]
+	[Header("Attack")]
+
+	[Header("Nodes")]
     public Node node;
     public Node[] nextNodes = new Node[8];
 	public Node nextNode;
@@ -37,8 +36,8 @@ public class Unit : MonoBehaviour, ICollidableUnit
     public Node destinationNode;
 
     public Drone droneComponent;
-    public Radar radarComponent;
-	public Weapon weaponComponent;
+    //public Radar radarComponent;
+	//public Weapon weaponComponent;
 
 
     public CollisionCircle collisionCircle;
@@ -47,19 +46,18 @@ public class Unit : MonoBehaviour, ICollidableUnit
     {
         trans = GetComponent<Transform>();
         droneComponent = GetComponent<Drone>();
-        radarComponent = GetComponent<Radar>();
-		weaponComponent = GetComponent<Weapon>();
+        //radarComponent = GetComponent<Radar>();
+		//weaponComponent = GetComponent<Weapon>();
 
-        radiusSoft = gameObject.GetComponent<Quad>().size;
-        radiusHard = radiusSoft/2+radiusSoft/5;
+        radius = gameObject.GetComponent<Quad>().size;
+        radiusHard = radius/2+radius/5;
 
-        collisionCircle = new CollisionCircle(trans.position, gameObject.GetComponent<Quad>().size, this);
     }
 
     void OnEnable()
 	{
         Activate();
-        CollisionManager.Instance.AddUnit(collisionCircle);
+		//CollisionManager.Instance.AddUnit(this);
 	}
 
     void Activate()
@@ -91,7 +89,6 @@ public class Unit : MonoBehaviour, ICollidableUnit
 
     private void Update()
     {
-        collisionCircle.point = trans.position;
     }
 
     void Deactivate()
@@ -105,7 +102,6 @@ public class Unit : MonoBehaviour, ICollidableUnit
 
 	IEnumerator FollowPath()
     {
-        droneComponent.mode = Drone.Mode.Moving;
         speedPercent = 1;
 
         while (true)
@@ -169,7 +165,17 @@ public class Unit : MonoBehaviour, ICollidableUnit
         nextNode = newNextNode.neigbours[closestNodeIndex];
 	}
 
-	void ResetRallyPoint()
+	public void SubscribeResetRallyPoint()
+	{
+		playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
+	}
+
+	public void UnsubscribeResetRallyPoint()
+	{
+		playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
+	}
+
+	public void ResetRallyPoint()
 	{
         destinationPoint = (Vector2)playerRallyPoint.gameObject.transform.position;
         destinationNode = Grid.Instance.NodeFromWorldPoint(destinationPoint);
@@ -188,6 +194,11 @@ public class Unit : MonoBehaviour, ICollidableUnit
         StartCoroutine("FollowPath");
 	}
 
+	public void StopMoving()
+	{
+		StopCoroutine("FollowPath");
+	}
+
     void Rotate()
     {
         directionVector = (nextNode.worldPosition - (Vector2)trans.position).normalized;
@@ -203,49 +214,21 @@ public class Unit : MonoBehaviour, ICollidableUnit
     }
 
 	public void OnDrawGizmos() {
-        if (drawGizmos)
-        {
-			if (nextNode != null)
-			{
-			    Color newColor = Color.green;
-			    newColor.a = 0.3f;
-			    Gizmos.color = newColor;
-			    Gizmos.DrawLine(trans.position, nextNode.worldPosition);
 
-			    Gizmos.color = newColor;
-			    Gizmos.DrawCube(nextNode.worldPosition, nextNode.rect.size * (nextNode.rect.size.x - 0.05f));
-			}
-			Color newColorAgain = Color.green;
-		    newColorAgain.a = 0.3f;
-		    Gizmos.color = newColorAgain;
-            Gizmos.DrawWireSphere(collisionCircle.point, collisionCircle.radius);
-		}
 	}
 
-    public Drone GetDrone()
-    {
-        return droneComponent;
-    }
-
-    public Drone.Mode GetMode()
-    {
-        return droneComponent.mode;
-    }
-
-	public Vector2 GetPoint()
-    {
-        return trans.position;
-    }
-	public float GetRadiusSoft()
-    {
-        return radiusSoft;
-    }
-	public float GetRadiusHard()
+	public Unit GetUnit()
 	{
-		return radiusHard;
+		return this;
 	}
+
+	public Base GetBase()
+	{
+		return null;
+	}
+
 	public GameObject GetGameobject()
-    {
-        return gameObject;
-    }
+	{
+		return gameObject;
+	}
 }
