@@ -216,7 +216,7 @@ public class GameController : MonoBehaviour
             OnGameContinued();
         }
 		Camera.main.orthographicSize = 10;
-        GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
+        //GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
 		Vector3 vec = playerStartPosition[0];
 		vec.z = -10;
 		Camera.main.transform.position = vec;

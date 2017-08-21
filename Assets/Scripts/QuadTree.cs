@@ -12,7 +12,7 @@ public class QuadTreeNode
 	public Rect rect;
 	public float halfWidth, halfHeight;
 
-	public List<CollisionCircle> objects;
+	public List<ICollidable> objects;
     public int objectsCount = 0;
 
 	int maxLifespan = 8;
@@ -30,7 +30,7 @@ public class QuadTreeNode
 		rect = newRect;
 		halfWidth = rect.width / 2;
 		halfHeight = rect.height / 2;
-		objects = new List<CollisionCircle>();
+		objects = new List<ICollidable>();
 		parent = null;
 		childs = new QuadTreeNode[4];
         for (int i = 0; i < 4; i++)
@@ -39,7 +39,7 @@ public class QuadTreeNode
         }
 	}
 
-    public QuadTreeNode(Rect newRect, List<CollisionCircle> units)
+    public QuadTreeNode(Rect newRect, List<ICollidable> units)
     {
         rect = newRect;
         halfWidth = rect.width / 2;
@@ -56,52 +56,17 @@ public class QuadTreeNode
 
 	public void Update()
 	{
-
-  //      if (objectsCount == 0)
-		//{
-		//    //if (parent == null)
-		//        //return;
-  //          if (activeNodes == 0)
-		//    {
-		//        if (curLife == -1)
-		//            curLife = maxLifespan;
-		//        else if (curLife > 0)
-		//            curLife -= 1;
-		//    }
-		//}
-		//else
-		//{
-		//    if (curLife != -1)
-		//    {
-		//        if (maxLifespan <= 64)
-		//            maxLifespan *= 2;
-		//        curLife = -1;
-		//    }
-		//}
-
-		List<CollisionCircle> movedUnits = new List<CollisionCircle>(objects.Count);
+		List<ICollidable> movedUnits = new List<ICollidable>(objects.Count);
         int movedUnitsCount = 0;
 
         //foreach (ICollidableUnit unit in objects)
-        for (int i = 0; i < objects.Count - 1; i++)
+        for (int i = 0; i < objects.Count; i++)
 		{
             // Moving = 1
                 movedUnits.Add(objects[i]);
                 movedUnitsCount += 1;
 		}
 
-        //int objectsCount = objects.Count;
-        //for (int i = 0; i < objectsCount; i++)
-        //{
-        //	// TODO: add check is unit dead or not to optimize adding/removing to/from list
-        //	if (movedUnits.Contains(objects[i]))
-        //		movedUnits.Remove(objects[i]);
-        //	objects.RemoveAt(i--);
-        //	objectsCount -= 1;
-        //}
-
-        //for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
-        //if ((flags & 1) == 1) childs[index].Update();
         bool tmpHasChilds = false;
         //Debug.Log("active nodes: " + activeNodes + " in level " + level);
         for (int i = 0; i < 4; i++)
@@ -117,12 +82,12 @@ public class QuadTreeNode
 
 		// go up
 		//foreach (ICollidableUnit unit in movedUnits)
-        for (int i = 0; i < movedUnits.Count - 1; i++)
+        for (int i = 0; i < movedUnits.Count; i++)
 		{
 			QuadTreeNode currentNode = this;
 
 			//while (CollisionManager.Instance.RectIntersectsWithCircle(currentNode.rect, currentNode.halfWidth, currentNode.halfHeight, unit.GetPoint(), unit.GetRadius()))
-            //while(!rect.Contains(movedUnits[i].Point))
+            while(!RectContainsCircle(rect, movedUnits[i]))
             {
 				if (currentNode.parent != null) currentNode = currentNode.parent;
 				else break;
@@ -133,30 +98,6 @@ public class QuadTreeNode
 			currentNode.Insert(movedUnits[i]);
 		}
 
-		//for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
-			//if ((flags & 1) == 1 && childs[index].curLife == 0)
-			//{
-			//	childs[index] = null;
-			//	activeNodes ^= (byte)(1 << index);       //удаляем узел из списка флагов активных узлов
-   //             if (activeNodes == 0)
-	  //          {
-   //                 hasChilds = false;
-	  //          }
-			//}
-        //for (int i = 0; i < 4; i++)
-        //{
-        //    if (childs[i] != null && childs[i].curLife == 0)
-        //    {
-        //        childs[i] = null;
-        //        activeNodes -= 1;       //удаляем узел из списка флагов активных узлов
-        //    }
-        //}
-
-		// check collisions here
-		//if (parent == null)
-		//{
-
-		//}
 	}
 
 	public void Clear()
@@ -183,37 +124,19 @@ public class QuadTreeNode
         }
 	}
 
-    private int getIndex(CollisionCircle unit)
+    private int getIndex(ICollidable unit)
 	{
-        //int index = -1;
-        //var verticalMidpoint = rect.x + halfWidth;
-        //var horizontalMidpoint = rect.y + halfHeight;
-        //if (rectF.X < verticalMidpoint && rectF.X + rectF.Width < verticalMidpoint)
-        //{
-        //	if (rectF.Y < horizontalMidpoint && rectF.Height < horizontalMidpoint)
-        //		index = 1;
-        //	else if (rectF.Y > horizontalMidpoint)
-        //		index = 2;
-        //}
-        //else if (rectF.X > verticalMidpoint)
-        //{
-        //	if (rectF.Y < horizontalMidpoint && rectF.Height < horizontalMidpoint)
-        //		index = 0;
-        //	else if (rectF.Y > horizontalMidpoint)
-        //		index = 3;
-        //}
 		for (int i = 0; i < 4; i++)
 		{
             if (childs[i] != null)
-                //if (childs[i].rect.Contains(unit.point))
-                //if (RectContainsCircle(childs[i].rect, unit))
+                if (RectContainsCircle(childs[i].rect, unit))
                     return i;
 		}
 
 		return -1;
 	}
 
-	public List<CollisionCircle> Retrieve(List<CollisionCircle> returnObjects, CollisionCircle unit)
+	public List<ICollidable> Retrieve(List<ICollidable> returnObjects, ICollidable unit)
 	{
 		int index = getIndex(unit);
 		if (index != -1 && childs[0] != null)
@@ -226,7 +149,7 @@ public class QuadTreeNode
 		return returnObjects;
 	}
 
-	public void Insert(CollisionCircle unit)
+	public void Insert(ICollidable unit)
 	{
 		if (childs[0] != null)
 		{
@@ -266,77 +189,20 @@ public class QuadTreeNode
 		}
 	}
 
-	//public void Insert(ICollidableUnit obj)
-	//{
-	//    objects.Add(obj);
-
-	//    if (objects.Count > 1 && rect.size.x > Vector2.one.x * 2 && rect.size.y > Vector2.one.y * 2)
-	//    {
-	//        Split();
-
-	//        int k = objects.Count - 1;
-	//        while (k >= 0)
-	//        {
-	//            ICollidableUnit unit = objects[k];
-	//            for (int i = 0; i < 4; i++)
-	//            {
-	//                //if (CollisionManager.Instance.RectIntersectsWithCircle(quadrant[i], halfWidthQuadrant, halfHeightQuadrant, obj.GetPoint(), obj.GetRadius()))
-	//                if (childs[i].rect.Contains(objects[k].GetPoint()))
-	//                {
-	//                    // using existing child
-	//                    //if (childs[i] != null)
-	//                    //{
-	//                    //    objects.RemoveAt(objects.Count - 1);
-	//                    //    childs[i].Insert(unit);
-	//                    //}
-	//                    // create new child
-	//                    //else
-	//                    //{
-
-	//                    childs[i].Insert(unit);
-	//                    //hasChilds = true;
-	//                    //activeNodes |= (byte)(1 << i);
-	//                    //}
-	//                    //Reallocate units here into its child
-	//                    //foreach (ICollidableUnit unit in objects)
-	//                    //{
-	//                    //    ICollidableUnit movedUnit = unit;
-	//                    //    objects.Remove(unit);
-	//                    //    childs[i].Insert(movedUnit);
-	//                    //}
-	//                    //int objectsCo = objects.Count;
-	//                    //for (int k = 0; k < objects.Count - 1; k++)
-	//                    //{
-	//                    //    childs[i].Insert(objects[k]);
-	//                    //    objects.Remove(objects[k]);
-	//                    //}
-	//                    //return;
-	//                }
-	//                objects.RemoveAt(k);
-	//                k--;
-	//            }
-	//            //objects.RemoveAt(k);
-	//            //}
-	//        }
-
-	//        //objects.Add(obj);
-	//    }
-	//}
-
-	/*public bool RectContainsCircle(Rect rect, CollisionCircle circle)
+    public bool RectContainsCircle(Rect rect, ICollidable circle)
 	{
-        if (!rect.Contains(circle.point))
+        if (!rect.Contains(circle.Point))
             return false;
-        if (circle.point.x - circle.radius < rect.x)
+        if (circle.Point.x - circle.Radius < rect.x)
             return false;
-        if (circle.point.x + circle.radius > rect.width)
+        if (circle.Point.x + circle.Radius > rect.width)
             return false;
-        if (circle.point.y - circle.radius < rect.y)
+        if (circle.Point.y - circle.Radius < rect.y)
             return false;
-        if (circle.point.y + circle.radius > rect.height)
+        if (circle.Point.y + circle.Radius > rect.height)
             return false;
         return true;
-	}*/
+	}
 
 	public void DrawDebug()
 	{

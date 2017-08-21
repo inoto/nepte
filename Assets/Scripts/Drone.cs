@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Drone : MonoBehaviour, ITargetable, ICollidable
 {
+    public bool followRally = false;
+    public bool followTarget = false;
+
 	[Header("Gizmos")]
 	public bool showPath = false;
 	public bool showRadius = false;
@@ -11,16 +14,17 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 	[Header("Head")]
 	public int owner;
     public int health = 100;
-	public bool isDead;
 	private PlayerController playerController;
 	//public CollisionCircle collisionCircle;
 
 	public enum Mode
     {
         Idle,
-        MovingRally,
+        FollowRally,
         Combat,
-        Attacking
+        FollowTarget,
+        Attacking,
+        Died
     }
     public Mode mode;
 
@@ -71,13 +75,12 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 
 		radius = gameObject.GetComponent<Quad>().size;
 		radiusHard = radius / 2 + radius / 5;
-
-		//collisionCircle = new CollisionCircle(trans.position, gameObject.GetComponent<Quad>().size, this);
 	}
 
-    void Start ()
+    void Update ()
     {
-		Activate();
+        if (health <= 0)
+            Die();
     }
 
     private void OnEnable()
@@ -89,14 +92,11 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
     {
         health = 100;
         target = null;
-        AssignMaterial();
-		//CollisionManager.Instance.AddUnit(collisionCircle);
 		CollisionManager.Instance.AddCollidable(this);
 		radar.gameObject.SetActive(true);
 		weapon.gameObject.SetActive(false);
 		PlayerController.unitCount += 1;
 		node = Grid.Instance.NodeFromWorldPoint(trans.position);
-		
 	}
 
 	public void ActivateWithOwner()
@@ -105,15 +105,10 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 		playerController.playerUnitCount += 1;
 		playerRallyPoint = GameController.Instance.playerControllerObject[owner].GetComponent<PlayerController>().rallyPoint;
 		EnterIdleMode();
-		ResetRallyPoint();
-		playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
-		
+		NewDestination();
+		//playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
+		AssignMaterial();
 	}
-
-	private void OnDestroy()
-    {
-        Deactivate();
-    }
 
     private void OnDisable()
     {
@@ -122,13 +117,14 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 
     void Deactivate()
     {
-		playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
-		//CollisionManager.Instance.RemoveUnit(collisionCircle);
-		//CollisionManager.Instance.RemoveCollidable(this);
+		playerRallyPoint.OnRallyPointChanged -= NewDestination;
+		CollisionManager.Instance.RemoveCollidable(this);
 		radar.gameObject.SetActive(false);
 		weapon.gameObject.SetActive(false);
 		playerController.playerUnitCount -= 1;
 		PlayerController.unitCount -= 1;
+        StopCoroutine("FollowRally");
+        StopCoroutine("FollowTarget");
 	}
 
 	void AssignMaterial()
@@ -138,13 +134,15 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 
     public void EnterCombatMode(ITargetable _target)
     {
+        StopCoroutine("FollowRally");
         mode = Mode.Combat;
         if (target == _target)
             return;
-		StopCoroutine("FollowPath");
 		target = _target;
-		radar.gameObject.SetActive(false);
+		//radar.gameObject.SetActive(false);
 		weapon.gameObject.SetActive(true);
+        playerRallyPoint.OnRallyPointChanged -= NewDestination;
+        NewTarget();
 	}
 
     public void EnterIdleMode()
@@ -152,17 +150,21 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
         mode = Mode.Idle;
 		weapon.gameObject.SetActive(false);
 		radar.gameObject.SetActive(true);
+        playerRallyPoint.OnRallyPointChanged += NewDestination;
 	}
 
     public void EnterAttackingMode()
     {
         mode = Mode.Attacking;
+        StopCoroutine("FollowTarget");
+        //weapon.gameObject.SetActive(false);
         StartCoroutine(Attack());
     }
 
 	void Die()
 	{
-		Deactivate();
+        mode = Mode.Died;
+        target = null;
 		ObjectPool.Recycle(gameObject);
 		GameObject explosion = Instantiate(droneExplosionPrefab, trans.position, trans.rotation);
 		explosion.transform.SetParent(GameController.Instance.transform);
@@ -176,19 +178,54 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 		trans.rotation = Quaternion.Slerp(trans.rotation, qt, Time.deltaTime * turnSpeed);
 	}
 
+	void RotateToTarget()
+	{
+        directionVector = (target.GameObj.transform.position - trans.position).normalized;
+		float angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
+		Quaternion qt = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+		trans.rotation = Quaternion.Lerp(trans.rotation, qt, Time.deltaTime * turnSpeed);
+	}
+
 	void Move()
 	{
 		float step = Time.deltaTime * speed * speedPercent;
 		trans.position = Vector2.MoveTowards(trans.position, nextNode.worldPosition, step);
 	}
 
-	IEnumerator FollowPath()
+    public void NewTarget()
+    {
+        destinationPoint = target.GameObj.transform.position;
+		StartCoroutine("FollowTarget");
+    }
+
+	public void NewDestination()
 	{
-		mode = Drone.Mode.MovingRally;
+		destinationPoint = playerRallyPoint.gameObject.transform.position;
+		destinationNode = Grid.Instance.NodeFromWorldPoint(destinationPoint);
+		if (node == destinationNode)
+		{
+			EnterIdleMode();
+			return;
+		}
+		DefineNextNode(node);
+		if (node == nextNode)
+		{
+			EnterIdleMode();
+			return;
+		}
+		StopCoroutine("FollowRally");
+		StartCoroutine("FollowRally");
+	}
+
+	IEnumerator FollowRally()
+	{
+        mode = Mode.FollowRally;
 		speedPercent = 1;
 
 		while (true)
 		{
+            if (mode != Mode.FollowRally)
+				yield break;
 			tmpNode = Grid.Instance.NodeFromWorldPoint(trans.position);
 			if (tmpNode != node)
 			{
@@ -215,11 +252,59 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 				EnterIdleMode();
 				yield break;
 			}
-
-
 			yield return null;
 		}
 	}
+
+    IEnumerator FollowTarget()
+    {
+        mode = Mode.FollowTarget;
+        speedPercent = 0.75f;
+        while (true)
+        {
+			if (mode != Mode.FollowTarget)
+				yield break;
+			tmpNode = Grid.Instance.NodeFromWorldPoint(trans.position);
+            if (tmpNode != node)
+            {
+                node = tmpNode;
+            }
+            nextNode = Grid.Instance.NodeFromWorldPoint(target.GameObj.transform.position);
+
+            if (target.DroneObj != null)
+            {
+                if (target.DroneObj.mode != Mode.Died && mode != Mode.Died)
+                {
+                    RotateToTarget();
+                    Move();
+                }
+                else
+                {
+                    target = null;
+                    NewDestination();
+                    EnterIdleMode();
+                    yield break;
+                }
+            }
+            else if (target.BaseObj != null)
+			{
+                if (!target.BaseObj.isDead && mode != Mode.Died)
+				{
+					RotateToTarget();
+					Move();
+				}
+				else
+				{
+					target = null;
+					NewDestination();
+					EnterIdleMode();
+					yield break;
+				}
+            }
+
+            yield return null;
+        }
+    }
 
 	void DefineNextNode(Node newNextNode)
 	{
@@ -237,56 +322,53 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 		nextNode = newNextNode.neigbours[closestNodeIndex];
 	}
 
-	public void ResetRallyPoint()
-	{
-		if (mode != Mode.Idle)
-			return;
-		if (mode != Mode.MovingRally)
-			return;
-		destinationPoint = playerRallyPoint.gameObject.transform.position;
-		destinationNode = Grid.Instance.NodeFromWorldPoint(destinationPoint);
-		if (node == destinationNode)
-		{
-			EnterIdleMode();
-			return;
-		}
-		DefineNextNode(node);
-		if (node == nextNode)
-		{
-			EnterIdleMode();
-			return;
-		}
-		StopCoroutine("FollowPath");
-		StartCoroutine("FollowPath");
-	}
-
 	IEnumerator Attack()
     {
-        while (target != null)
+        while (true)
         {
+            if (mode != Mode.Attacking)
+				yield break;
             float waitTime = Random.Range(0.5f, 1.5f);
-            //directionVector = destinationTransform.position - trans.position;
-            //Rotate();
-            // TODO: remove random to use slow ratation and attack after ration is completed
+            RotateToTarget();
+            // TODO: remove random to use slow rotation and attack after rotation is completed
+            if (target.DroneObj != null)
+            {
+                if (target.DroneObj.mode != Mode.Died && mode != Mode.Died)
+                {
+                    ReleaseLaserMissile(target.DroneObj.trans.position);
+                }
+                else
+                {
+                    target = null;
+					EnterIdleMode();
+					NewDestination();
+                    yield break;
+                }
+            }
+            else if (target.BaseObj != null)
+			{
+                if (!target.BaseObj.isDead && mode != Mode.Died)
+				{
+					ReleaseLaserMissile(target.BaseObj.trans.position);
+				}
+				else
+				{
+					target = null;
+					EnterIdleMode();
+                    NewDestination();
+					yield break;
+				}
+                
+            }
             yield return new WaitForSeconds(waitTime);
-            if (target != null)
-            {
-                //Rotate();
-                ReleaseLaserMissile(target.GameObj.transform.position);
-            }
-            else
-            {
-				ResetRallyPoint();
-				EnterIdleMode();
-                yield break;
-            }
         }
     }
 
 	public void ReleaseLaserMissile(Vector3 newDestinationVector)
 	{
-		GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, trans.position, trans.rotation);
-		//laserMissileObject.transform.position = transform.position;
+        //GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, trans.position, trans.rotation);
+        GameObject laserMissileObject = Instantiate(laserMissilePrefab, trans.position, trans.rotation);
+        laserMissileObject.transform.parent = GameController.Instance.transform;
 		LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;
 		laserMissile.owner = owner;
@@ -298,16 +380,24 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 	{
 		get { return this; }
 	}
-
 	public Base BaseObj
-	{
-		get { return null; }
-	}
-
+    {
+        get { return null; }
+    }
 	public GameObject GameObj
 	{
 		get { return gameObject; }
 	}
+    public bool IsDied
+    {
+        get
+        {
+            if (mode == Mode.Died)
+                return true;
+            else
+                return false;
+        }                
+    }
 
 	public void OnDrawGizmos()
 	{
@@ -364,4 +454,8 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 	{
 		get { return this; }
 	}
+    public Base bas
+    {
+        get { return null; }
+    }
 }

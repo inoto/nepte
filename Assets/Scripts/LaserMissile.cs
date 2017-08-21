@@ -11,7 +11,7 @@ public class LaserMissile : MonoBehaviour, IOwnable
     public Vector3 directionVector;
 
     [Header("Move")]
-    public float speed = 0.2f;
+    public float speed = 5f;
     private float step;
     private float angle;
 
@@ -39,10 +39,25 @@ public class LaserMissile : MonoBehaviour, IOwnable
     {
         directionVector = destinationVector - transform.position;
 
-		if (transform.position == destinationVector)
+        if ((Vector2)transform.position == (Vector2)destinationVector)
 		{
-			if (target.DroneObj != null)
-				target.DroneObj.health -= damage;
+            if (target.DroneObj != null)
+            {
+                if (target.DroneObj.mode != Drone.Mode.Died)
+                    target.DroneObj.health -= damage;
+            }
+			else if (target.BaseObj != null)
+			{
+                if (!target.BaseObj.isDead)
+                {
+                    target.BaseObj.Damage(damage);
+                }
+			}
+            //else
+            //{
+            //    Debug.Log("target nulled");
+            //    creator.target = null;
+            //}
 			ObjectPool.Recycle(gameObject);
 		}
 
@@ -59,9 +74,14 @@ public class LaserMissile : MonoBehaviour, IOwnable
 
     void Rotate()
     {
-        angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle-90, Vector3.forward);
-        //transform.rotation = Quaternion.LookRotation(Vector3., directionVector);
+        //transform.Rotate(Vector3.zero);
+        angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg - 90;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        //directionVector.x = 0;
+        //directionVector.y = 0;
+        ////directionVector.z -= 90;
+        //transform.LookAt(directionVector);
+        //transform.Rotate(Vector3.forward);
     }
 
     void Move()
@@ -94,4 +114,12 @@ public class LaserMissile : MonoBehaviour, IOwnable
     {
         return gameObject;
     }
+
+	//public void OnDrawGizmos()
+	//{
+	//	Color newColorAgain = Color.red;
+	//	newColorAgain.a = 0.5f;
+	//	Gizmos.color = newColorAgain;
+ //       Gizmos.DrawSphere(directionVector, 0.3f);
+	//}
 }

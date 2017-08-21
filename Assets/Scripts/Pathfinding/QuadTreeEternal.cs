@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class QuadTreeEternal
 {
@@ -327,8 +329,10 @@ public class QuadTreeEternal
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y), new Vector3(rect.x + rect.width, rect.y));
 		Gizmos.DrawLine(new Vector3(rect.x + rect.width, rect.y), new Vector3(rect.x + rect.width, rect.y + rect.height));
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y + rect.height), new Vector3(rect.x + rect.width, rect.y + rect.height));
-
+#if UNITY_EDITOR
 		Handles.Label(rect.center, objects.Count.ToString());
+#endif
+		
 
 		for (int i = 0; i < childs.Length; i++)
 		{

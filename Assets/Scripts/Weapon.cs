@@ -4,9 +4,8 @@ using UnityEngine;
 public class Weapon : MonoBehaviour, ICollidable
 {
     public bool showRadius = false;
-	public bool isActive = false;
 
-	public float radius = 3;
+	public float radius = 4;
 	public CollisionType cType = CollisionType.Weapon;
 
 	[Header("Cache")]
@@ -23,19 +22,18 @@ public class Weapon : MonoBehaviour, ICollidable
 	public void OnEnable()
 	{
 		trans = GetComponent<Transform>();
-		isActive = true;
+        droneParent = trans.parent.gameObject.GetComponent<Drone>();
 		CollisionManager.Instance.AddCollidable(this);
 	}
 
 	public void OnDisable()
-	{
-		isActive = false;
-		//CollisionManager.Instance.RemoveCollidable(this);
+    {
+		CollisionManager.Instance.RemoveCollidable(this);
 	}
 
 	public void OnDrawGizmos()
 	{
-		if (showRadius && isActive)
+		if (showRadius)
 		{
 			Color newColorAgain = Color.red;
 			newColorAgain.a = 0.5f;
@@ -76,5 +74,9 @@ public class Weapon : MonoBehaviour, ICollidable
 	public Drone drone
 	{
 		get { return droneParent; }
+	}
+	public Base bas
+	{
+		get { return null; }
 	}
 }

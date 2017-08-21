@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Base : MonoBehaviour, IOwnable
+public class Base : MonoBehaviour, ITargetable, ICollidable
 {
+    public bool showRadius;
+
     public int owner;
 
     public int health = 1000;
+    public float radius;
+    public CollisionType cType = CollisionType.Base;
 
     public bool isDead = false;
 
@@ -17,7 +21,7 @@ public class Base : MonoBehaviour, IOwnable
 	private MeshRenderer mesh;
 	private MeshFilter mf;
     private GameObject playerControllerParent;
-    public UISprite assignedHPbar;
+    public UISlider assignedHPbarSlider;
     public GameObject rallyPointObject;
     public LaserMissile triggeredLaserMissile;
 	public List<GameObject> attackers = new List<GameObject>();
@@ -44,18 +48,22 @@ public class Base : MonoBehaviour, IOwnable
 
     private void Start()
     {
+        radius = GetComponent<Quad>().size;
 		playerControllerParent = transform.parent.gameObject;
 
 		GameObject assignedHPbarObject = Instantiate(HPbarPrefab, trans.position, trans.rotation);
 		assignedHPbarObject.transform.SetParent(GameObject.Find("HPBars").transform);
+        assignedHPbarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-		assignedHPbar = assignedHPbarObject.GetComponent<UISprite>();
-		assignedHPbar.SetAnchor(gameObject);
-		assignedHPbar.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        UISprite assignedHPbarSprite = assignedHPbarObject.GetComponent<UISprite>();
+		assignedHPbarSprite.SetAnchor(gameObject);
+		
+        assignedHPbarSlider = assignedHPbarObject.GetComponent<UISlider>();
 
 		InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
 
 		TakeNodes();
+        CollisionManager.Instance.AddCollidable(this);
     }
 
     public void StartWithOwner()
@@ -74,6 +82,12 @@ public class Base : MonoBehaviour, IOwnable
         //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
 
+    public void Damage(int damage)
+    {
+		health -= damage;
+        assignedHPbarSlider.Set((float)health / 4000);
+    }
+
 	void TakeNodes()
 	{
 		Vector2 tmp = new Vector2(trans.position.x, trans.position.y);
@@ -89,14 +103,20 @@ public class Base : MonoBehaviour, IOwnable
 		mesh.material = materials[owner];
 	}
 
+    private void OnDestroy()
+    {
+        CollisionManager.Instance.RemoveCollidable(this);
+        Destroy(assignedHPbarSlider.gameObject);
+    }
+
     void Die()
     {
         isDead = true;
         GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
-        tmpObject.transform.localScale = trans.localScale;
+        //tmpObject.transform.localScale = trans.localScale;
         Destroy(gameObject);
-        Destroy(assignedHPbar.gameObject);
+        Destroy(assignedHPbarSlider.gameObject);
     }
 
     void SpawnDrone()
@@ -109,43 +129,69 @@ public class Base : MonoBehaviour, IOwnable
         //droneSpawned.ResetRallyPoint();
     }
 
-	public void AddAttacker(GameObject newObj)
+	public void OnDrawGizmos()
 	{
-		attackers.Add(newObj);
+		if (showRadius)
+		{
+			Color newColorAgain = Color.green;
+			newColorAgain.a = 0.5f;
+			Gizmos.color = newColorAgain;
+			Gizmos.DrawWireSphere(trans.position, radius);
+		}
 	}
 
-	public bool IsActive()
+	public int InstanceId
 	{
-        return gameObject.activeSelf;
+		get { return gameObject.GetInstanceID(); }
+	}
+	public Vector2 Point
+	{
+		get { return trans.position; }
+		set { trans.position = value; }
+	}
+	public float Radius
+	{
+        get { return radius; }
+	}
+	public float RadiusHard
+	{
+		get { return radius; }
+	}
+	public CollisionType Type
+	{
+		get { return cType; }
+	}
+	public bool Active
+	{
+		get { return gameObject.activeSelf; }
+	}
+	public GameObject GameObject
+	{
+		get { return gameObject; }
+	}
+	public Drone drone
+	{
+		get { return null; }
+	}
+	public Base bas
+	{
+		get { return this; }
 	}
 
-	public int GetOwner()
+	public Drone DroneObj
 	{
-		return owner;
+		get { return null; }
 	}
-
-	public void SetOwner(int newOwner)
+	public Base BaseObj
 	{
-		owner = newOwner;
+		get { return this; }
 	}
-
-	public GameObject GetGameObject()
+	public GameObject GameObj
 	{
-		return gameObject;
+		get { return gameObject; }
 	}
-
-	public Unit GetUnit()
-	{
-		return null;
-	}
-
-	public Base GetBase()
-	{
-		return this;
-	}
-
-	public GameObject GetGameobject()
-	{
-		return gameObject;
-	}
+    public bool IsDied
+    {
+        get { return isDead; }
+    }
 }

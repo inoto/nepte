@@ -10,6 +10,8 @@ public class CameraWithEvents : MonoBehaviour
 #endif
 	CameraControlTouch cameraTouch;
 
+    GameObject HPCamObject;
+
 	// Use this for initialization
 	void Awake ()
     {
@@ -18,6 +20,8 @@ public class CameraWithEvents : MonoBehaviour
 		cameraMouse = GetComponent<CameraControlMouse>();
 #endif
 		cameraTouch = GetComponent<CameraControlTouch>();
+
+        HPCamObject = GameObject.Find("CameraUIBars");
 	}
 
     private void Start()
@@ -33,5 +37,8 @@ public class CameraWithEvents : MonoBehaviour
 		cameraMouse.enabled = !cameraMouse.enabled;
 #endif
         cameraTouch.enabled = !cameraTouch.enabled;
+
+        if (HPCamObject != null) HPCamObject.SetActive(!HPCamObject.activeSelf);
     }
+
 }

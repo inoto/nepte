@@ -11,3 +11,8 @@ todo.list
 - collision manager
 - quadtree for objects
 - 
+
+- layered background via repspective camera
+- fix game restart
+- fix win/lose screen (it doesn't stop)
+- 

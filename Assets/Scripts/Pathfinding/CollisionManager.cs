@@ -19,6 +19,7 @@ public interface ICollidable
 	CollisionType Type { get; }
 	bool Active { get; }
 	Drone drone { get; }
+    Base bas { get; }
 	GameObject GameObject { get; }
 }
 
@@ -41,20 +42,22 @@ public class CollisionManager : MonoBehaviour
     }
 
 	public bool showGizmos;
-	public int objectsInTree = 0;
+	public int unitsInTree = 0;
+    public int basesInTree = 0;
+    public int radarsInTree = 0;
+    public int weaponsInTree = 0;
 
-	//public QuadTreeNode qtree;
-	public QuadTreeEternal qtree;
+	public QuadTreeNode qtree;
 
-    List<CollisionCircle> units = new List<CollisionCircle>();
-    List<CollisionCircle> bases = new List<CollisionCircle>();
-    List<CollisionCircle> radars = new List<CollisionCircle>();
-    List<CollisionCircle> weapons = new List<CollisionCircle>();
+    List<ICollidable> units = new List<ICollidable>();
+    List<ICollidable> bases = new List<ICollidable>();
+    List<ICollidable> radars = new List<ICollidable>();
+    List<ICollidable> weapons = new List<ICollidable>();
 
-    List<CollisionCircle> returnedUnits = new List<CollisionCircle>();
-    List<CollisionCircle> returnedBases = new List<CollisionCircle>();
-	List<CollisionCircle> returnedRadars = new List<CollisionCircle>();
-	List<CollisionCircle> returnedWeapons = new List<CollisionCircle>();
+    List<ICollidable> returnedUnits = new List<ICollidable>();
+    List<ICollidable> returnedBases = new List<ICollidable>();
+	List<ICollidable> returnedRadars = new List<ICollidable>();
+	List<ICollidable> returnedWeapons = new List<ICollidable>();
 
 	private void Start()
 	{
@@ -62,92 +65,346 @@ public class CollisionManager : MonoBehaviour
 		rect.min = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.min;
 		rect.max = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.max;
 
-		//qtree = new QuadTreeNode(rect);
-		//qtree.Split();
-		qtree = new QuadTreeEternal(rect);
+		qtree = new QuadTreeNode(rect);
 	}
-
-    //public void AddUnit(CollisionCircle unit)
-    //{
-    //    units.Add(unit);
-    //}
 
 	public void AddCollidable(ICollidable obj)
 	{
-		qtree.Insert(obj);
+        //Debug.Log(obj.Type + " added");
+        switch (obj.Type)
+        {
+            case CollisionType.Drone:
+                units.Add(obj);
+                break;
+			case CollisionType.Base:
+                bases.Add(obj);
+				break;
+            case CollisionType.Radar:
+                radars.Add(obj);
+				break;
+            case CollisionType.Weapon:
+                weapons.Add(obj);
+				break;
+        }
+
 	}
 
 	public void RemoveCollidable(ICollidable obj)
 	{
-		qtree.Remove(obj);
+        //Debug.Log(obj.Type + " removed");
+		switch (obj.Type)
+		{
+			case CollisionType.Drone:
+				units.Remove(obj);
+				break;
+			case CollisionType.Base:
+				bases.Remove(obj);
+				break;
+			case CollisionType.Radar:
+				radars.Remove(obj);
+				break;
+			case CollisionType.Weapon:
+				weapons.Remove(obj);
+				break;
+		}
+
 	}
+
+    // update for QuadTreeEternal
+	//private void Update()
+	//{
+	//	qtree.Update();
+
+	//	foreach (CollisionRecord cr in QuadTreeEternal.crList)
+	//	{
+	//		if (cr.CollidedObject.Type == CollisionType.Drone && cr.OtherCollidedObject.Type == CollisionType.Drone)
+	//		{
+	//			cr.CollidedObject.Point += (cr.CollidedObject.Point - cr.OtherCollidedObject.Point) * 0.02f;
+	//			cr.OtherCollidedObject.Point += (cr.OtherCollidedObject.Point - cr.CollidedObject.Point) * 0.02f;
+	//		}
+	//		if (cr.CollidedObject.Type == CollisionType.Radar && cr.OtherCollidedObject.Type == CollisionType.Drone)
+	//		{
+	//			if (cr.CollidedObject.drone.owner != cr.OtherCollidedObject.drone.owner)
+	//				if (cr.CollidedObject.drone.target == null)
+	//					cr.CollidedObject.drone.EnterCombatMode(cr.OtherCollidedObject.drone);
+	//		}
+	//		if (cr.CollidedObject.Type == CollisionType.Drone && cr.OtherCollidedObject.Type == CollisionType.Radar)
+	//		{
+	//			if (cr.CollidedObject.drone.owner != cr.OtherCollidedObject.drone.owner)
+	//				if (cr.OtherCollidedObject.drone.target == null)
+	//					cr.OtherCollidedObject.drone.EnterCombatMode(cr.CollidedObject.drone);
+	//		}
+	//		//
+	//		//if (cr.OtherCollidedObject != null)
+	//		//cr.OtherCollidedObject.unit.trans.position = (Vector2)cr.OtherCollidedObject.unit.trans.position + cr.VectorsSubtraction * 0.03f;
+	//		//cr.CollidedObject.GetGameobject().GetComponent<Weapon>().ReleaseLaserMissile(cr.OtherCollidedObject.GetPoint());
+	//	}
+	//	QuadTreeEternal.crList.Clear();
+	//}
 
 	private void Update()
 	{
-		qtree.Update();
+        unitsInTree = units.Count;
+        basesInTree = bases.Count;
+        radarsInTree = radars.Count;
+        weaponsInTree = weapons.Count;
+		qtree.Clear();
 
-		foreach (CollisionRecord cr in QuadTreeEternal.crList)
+        AddCollidablesToTree();
+
+
+        // units
+        for (int i = 0; i < units.Count; i++)
+        {
+            returnedUnits.Clear();
+            qtree.Retrieve(returnedUnits, units[i]);
+            for (int u = 0; u < returnedUnits.Count; u++)
+            {
+                if (returnedUnits[u] != units[i])
+                {
+                    float dist = (units[i].Point - returnedUnits[u].Point).sqrMagnitude;
+                    CheckCollisionsUnits(units[i], returnedUnits[u], dist);
+                    CheckCollisionsUnitRadar(units[i], returnedUnits[u], dist);
+                    CheckCollisionsUnitWeapon(units[i], returnedUnits[u], dist);
+                }
+            }
+        }
+		for (int i = 0; i < radars.Count; i++)
 		{
-			if (cr.CollidedObject.Type == CollisionType.Drone && cr.OtherCollidedObject.Type == CollisionType.Drone)
+			returnedUnits.Clear();
+			qtree.Retrieve(returnedUnits, radars[i]);
+			for (int u = 0; u < returnedUnits.Count; u++)
 			{
-				cr.CollidedObject.Point += (cr.CollidedObject.Point - cr.OtherCollidedObject.Point) * 0.02f;
-				cr.OtherCollidedObject.Point += (cr.OtherCollidedObject.Point - cr.CollidedObject.Point) * 0.02f;
+				if (returnedUnits[u] != radars[i])
+				{
+					float dist = (returnedUnits[u].Point - radars[i].Point).sqrMagnitude;
+					CheckCollisionsUnitRadar(returnedUnits[u], radars[i], dist);
+					CheckCollisionsUnitWeapon(returnedUnits[u], radars[i], dist);
+				}
 			}
-			if (cr.CollidedObject.Type == CollisionType.Radar && cr.OtherCollidedObject.Type == CollisionType.Drone)
-			{
-				if (cr.CollidedObject.drone.owner != cr.OtherCollidedObject.drone.owner)
-					if (cr.CollidedObject.drone.target == null)
-						cr.CollidedObject.drone.EnterCombatMode(cr.OtherCollidedObject.drone);
-			}
-			if (cr.CollidedObject.Type == CollisionType.Drone && cr.OtherCollidedObject.Type == CollisionType.Radar)
-			{
-				if (cr.CollidedObject.drone.owner != cr.OtherCollidedObject.drone.owner)
-					if (cr.OtherCollidedObject.drone.target == null)
-						cr.OtherCollidedObject.drone.EnterCombatMode(cr.CollidedObject.drone);
-			}
-			//
-			//if (cr.OtherCollidedObject != null)
-			//cr.OtherCollidedObject.unit.trans.position = (Vector2)cr.OtherCollidedObject.unit.trans.position + cr.VectorsSubtraction * 0.03f;
-			//cr.CollidedObject.GetGameobject().GetComponent<Weapon>().ReleaseLaserMissile(cr.OtherCollidedObject.GetPoint());
 		}
-		QuadTreeEternal.crList.Clear();
+		for (int i = 0; i < weapons.Count; i++)
+		{
+			returnedUnits.Clear();
+			qtree.Retrieve(returnedUnits, weapons[i]);
+			for (int u = 0; u < returnedUnits.Count; u++)
+			{
+				if (returnedUnits[u] != weapons[i])
+				{
+					float dist = (returnedUnits[u].Point - weapons[i].Point).sqrMagnitude;
+					CheckCollisionsUnitRadar(returnedUnits[u], weapons[i], dist);
+					CheckCollisionsUnitWeapon(returnedUnits[u], weapons[i], dist);
+				}
+			}
+		}
+		for (int i = 0; i < bases.Count; i++)
+		{
+			returnedUnits.Clear();
+			qtree.Retrieve(returnedUnits, bases[i]);
+			for (int u = 0; u < returnedUnits.Count; u++)
+			{
+				if (returnedUnits[u] != bases[i])
+				{
+					float dist = (bases[i].Point - returnedUnits[u].Point).sqrMagnitude;
+					CheckCollisionsBaseRadar(bases[i], returnedUnits[u], dist);
+					CheckCollisionsBaseWeapon(bases[i], returnedUnits[u], dist);
+				}
+			}
+		}
+
+   //         for (int r = 0; r < radars.Count; r++)
+   //         {
+   //             if (returnedUnits[rr] != units[i] && returnedUnits[rr].drone != units[i].drone)
+   //             {
+   //                 float dist = (units[i].Point - returnedUnits[rr].Point).sqrMagnitude;
+   //                 CheckCollisionsUnitRadar(units[i], returnedUnits[rr], dist);
+   //             }
+			//		//for (int b = 0; b < bases.Count; b++)
+			//		//{
+			//		//	if (returnedRadars[rr] != bases[i])
+			//  //          {
+			//  //              float dist = (bases[i].Point - returnedRadars[rr].Point).sqrMagnitude;
+			//  //              CheckCollisionsUnitRadar(bases[i], returnedRadars[rr], dist);
+			//  //          }
+			//		//}
+   //         }
+   //         for (int w = 0; w < weapons.Count; w++)
+			//{
+			//	for (int rw = 0; rw < returnedWeapons.Count; rw++)
+			//	{
+			//		if (returnedWeapons[rw] != units[i] && returnedWeapons[rw].drone != units[i].drone)
+			//		{
+			//			float dist = (units[i].Point - returnedWeapons[rw].Point).sqrMagnitude;
+			//			CheckCollisionsUnitWeapon(units[i], returnedWeapons[rw], dist);
+			//		}
+			//	}
+			//}
+			//for (int b = 0; b < bases.Count; b++)
+			//{
+			//	returnedBases.Clear();
+			//	qtree.Retrieve(returnedBases, bases[b]);
+			//	for (int rb = 0; rb < returnedBases.Count; rb++)
+			//	{
+			//		if (returnedBases[rb] != units[i] && returnedBases[rb].drone != units[i].drone)
+			//		{
+			//			float dist = (units[i].Point - returnedBases[rb].Point).sqrMagnitude;
+			//			CheckCollisionsUnitBase(units[i], returnedBases[rb], dist);
+			//		}
+			//	}
+			//}
+
+		// bases
+		//for (int i = 0; i < bases.Count; i++)
+		//{
+		//	returnedBases.Clear();
+  //          qtree.Retrieve(returnedBases, bases[i]);
+		//	for (int r = 0; r < radars.Count; r++)
+		//	{
+		//		returnedRadars.Clear();
+		//		qtree.Retrieve(returnedRadars, radars[r]);
+		//		for (int rr = 0; rr < returnedRadars.Count; rr++)
+		//		{
+		//			if (returnedRadars[rr] != bases[i])
+		//			{
+		//				float dist = (bases[i].Point - returnedRadars[rr].Point).sqrMagnitude;
+		//				CheckCollisionsBaseRadar(bases[i], returnedRadars[rr], dist);
+		//			}
+		//		}
+		//	}
+		//	for (int w = 0; w < weapons.Count; w++)
+		//	{
+		//		returnedWeapons.Clear();
+		//		qtree.Retrieve(returnedWeapons, weapons[w]);
+		//		for (int rw = 0; rw < returnedWeapons.Count; rw++)
+		//		{
+		//			if (returnedWeapons[rw] != bases[i])
+		//			{
+		//				float dist = (bases[i].Point - returnedWeapons[rw].Point).sqrMagnitude;
+		//				CheckCollisionsBaseWeapon(bases[i], returnedWeapons[rw], dist);
+		//			}
+		//		}
+		//	}
+		//}
 	}
 
-	/*private void Update()
+    void CheckCollisionsUnits(ICollidable unit1, ICollidable unit2, float dist)
 	{
-		qtree.Clear();
-        //Debug.Log("total units: " + units.Count);
+        if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Drone)
+        {
+            float radiusesHard = unit1.RadiusHard + unit2.RadiusHard;
+            float radiuses = unit1.Radius + unit2.Radius;
+			if (dist < radiusesHard * radiusesHard)
+			{
+				unit1.drone.trans.position += (unit1.drone.trans.position - unit2.drone.trans.position) * 0.03f;
+				unit2.drone.trans.position += (unit2.drone.trans.position - unit1.drone.trans.position) * 0.03f;
+            }
+            if (dist < radiuses * radiuses)
+            {
+
+				unit1.drone.trans.position += (unit1.drone.trans.position - unit2.drone.trans.position) * 0.02f;
+				unit2.drone.trans.position += (unit2.drone.trans.position - unit1.drone.trans.position) * 0.02f;
+            }
+        }
+	}
+	void CheckCollisionsUnitRadar(ICollidable unit1, ICollidable unit2, float dist)
+	{
+		if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Radar)
+		{
+            if (unit1.drone.owner != unit2.drone.owner)
+            {
+                // if drone has no target
+                if (unit2.drone.target == null || unit2.drone.target.BaseObj != null)
+                {
+                    float radiuses = unit1.Radius + unit2.Radius;
+                    if (dist < radiuses * radiuses)
+                    {
+                        unit2.drone.EnterCombatMode(unit1.drone);
+                    }
+                }
+            }
+		}
+	}
+	void CheckCollisionsUnitWeapon(ICollidable unit1, ICollidable unit2, float dist)
+	{
+        //if (unit1 == null || unit2 == null)
+        //    return;
+		if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Weapon)
+		{
+            if (unit2.drone.target.GameObj == unit1.drone.GameObject && unit2.drone.mode != Drone.Mode.Attacking)
+			{
+				float radiuses = unit1.Radius + unit2.Radius;
+				if (dist < radiuses * radiuses)
+				{
+					unit2.drone.EnterAttackingMode();
+				}
+			}
+		}
+	}
+	void CheckCollisionsUnitBase(ICollidable unit1, ICollidable unit2, float dist)
+	{
+		if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Base)
+		{
+			float radiuses = unit1.Radius + unit2.Radius;
+			if (dist < radiuses * radiuses)
+			{
+                Vector3 vec = unit1.drone.trans.position - unit2.bas.trans.position;
+                vec.z = 0;
+				unit1.drone.trans.position += vec * 0.02f;
+			}
+		}
+	}
+	void CheckCollisionsBaseRadar(ICollidable unit1, ICollidable unit2, float dist)
+	{
+		if (unit1.Type == CollisionType.Base && unit2.Type == CollisionType.Radar)
+		{
+			if (unit1.bas.owner != unit2.drone.owner && unit2.drone.target == null)
+			{
+				float radiuses = unit1.Radius + unit2.Radius;
+				if (dist < radiuses * radiuses)
+				{
+                    
+                    unit2.drone.EnterCombatMode(unit1.bas);
+				}
+			}
+		}
+	}
+	void CheckCollisionsBaseWeapon(ICollidable unit1, ICollidable unit2, float dist)
+	{
+		if (unit1 == null || unit2 == null)
+		    return;
+		if (unit1.Type == CollisionType.Base && unit2.Type == CollisionType.Weapon)
+		{
+            if (unit1.bas.owner != unit2.drone.owner && unit2.drone.target == unit1 && unit2.drone.mode != Drone.Mode.Attacking)
+			{
+				float radiuses = unit1.Radius + unit2.Radius;
+				if (dist < radiuses * radiuses)
+				{
+					unit2.drone.EnterAttackingMode();
+				}
+			}
+		}
+	}
+
+    void AddCollidablesToTree()
+    {
 		for (int i = 0; i < units.Count; i++)
 		{
 			qtree.Insert(units[i]);
 		}
-		//for (int i = 0; i < radars.Count; i++)
-		//{
-		//	qtree.Insert(radars[i]);
-		//}
-
-		for (int i = 0; i < units.Count; i++)
+		for (int i = 0; i < radars.Count; i++)
 		{
-            returnedUnits.Clear();
-			qtree.Retrieve(returnedUnits, units[i]);
-			for (int k = 0; k < returnedUnits.Count; k++)
-			{
-				if (returnedUnits[k] != units[i])
-				{
-                    float dist = (units[i].point - returnedUnits[k].point).sqrMagnitude;
-					CheckCollisionsUnits(units[i], returnedUnits[k], dist);
-					//CollisionAttackOrResponse(units[i], returnedUnits[k], dist);
-				}
-			}
-            //returnedRadars.Clear();
-            //qtree.Retrieve(returnedRadars, radars[i]);
-			//for (int k = 0; k < Bases.Count; k++)
-			//{
-			//	float dist = Vector2.Distance(units[i].GetPoint(), Bases[k].transform.position);
-			//	//CollisionAttackOrResponse(units[i], Bases[k], dist);
-			//}
+			qtree.Insert(radars[i]);
 		}
-	}*/
+		for (int i = 0; i < weapons.Count; i++)
+		{
+			qtree.Insert(weapons[i]);
+		}
+		for (int i = 0; i < bases.Count; i++)
+		{
+			qtree.Insert(bases[i]);
+		}
+		
+    }
 
 	//Debug view for QuadTreeNode
 	void OnDrawGizmos()

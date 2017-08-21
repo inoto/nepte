@@ -7,4 +7,5 @@ public interface ITargetable
 	Drone DroneObj { get; }
 	Base BaseObj { get; }
 	GameObject GameObj { get; }
+    bool IsDied { get; }
 }

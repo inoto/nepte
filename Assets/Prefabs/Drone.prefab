@@ -27,15 +27,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1374899613095834
+--- !u!1 &1403905654297728
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4225555435548420}
-  - component: {fileID: 114282913453910352}
+  - component: {fileID: 4495765262335052}
+  - component: {fileID: 114126894317679250}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
@@ -62,13 +62,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4225555435548420
+--- !u!4 &4495765262335052
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1374899613095834}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 1403905654297728}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -86,7 +86,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4770839995157482}
-  - {fileID: 4225555435548420}
+  - {fileID: 4495765262335052}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -154,25 +154,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showRadius: 1
-  isActive: 0
   radius: 5
   cType: 2
   trans: {fileID: 0}
   droneParent: {fileID: 0}
---- !u!114 &114282913453910352
+--- !u!114 &114126894317679250
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1374899613095834}
+  m_GameObject: {fileID: 1403905654297728}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21ada344a9c3bdf47bd5e91be9594fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showRadius: 1
-  isActive: 0
-  radius: 3
+  radius: 4
   cType: 3
   trans: {fileID: 0}
   droneParent: {fileID: 0}
@@ -199,11 +197,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  followRally: 0
+  followTarget: 0
   showPath: 1
   showRadius: 1
   owner: 0
   health: 100
-  isDead: 0
   mode: 0
   trans: {fileID: 0}
   mesh: {fileID: 0}
@@ -218,7 +217,7 @@ MonoBehaviour:
   speed: 2
   speedPercent: 1
   turnSpeed: 3
-  damage: 50
+  damage: 40
   laserMissilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}
   droneExplosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
