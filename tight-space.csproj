@@ -269,6 +269,7 @@
     <Compile Include="Assets\Scripts\Collisions\CollisionRecord.cs" />
     <Compile Include="Assets\Scripts\Drone.cs" />
     <Compile Include="Assets\Scripts\Drone\Quad.cs" />
+    <Compile Include="Assets\Scripts\Drone\RectangleMesh.cs" />
     <Compile Include="Assets\Scripts\DroneExplosion.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\IOwnable.cs" />
@@ -293,6 +294,7 @@
     <Compile Include="Assets\Scripts\RallyPoint.cs" />
     <Compile Include="Assets\Scripts\Sounds\MixerContoller.cs" />
     <Compile Include="Assets\Scripts\Sounds\MusicMainTheme.cs" />
+    <Compile Include="Assets\Scripts\StarsMover.cs" />
     <Compile Include="Assets\Scripts\UI\FPSCounter.cs" />
     <Compile Include="Assets\Scripts\UI\GameTimer.cs" />
     <Compile Include="Assets\Scripts\UI\LoseWinBlinking.cs" />

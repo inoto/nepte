@@ -8,9 +8,10 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 
     public int owner;
 
-    public int health = 1000;
+    public int health = 4000;
     public float radius;
     public CollisionType cType = CollisionType.Base;
+    public TargetType tType = TargetType.Base;
 
     public bool isDead = false;
 
@@ -22,7 +23,7 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 	private MeshFilter mf;
     private GameObject playerControllerParent;
     public UISlider assignedHPbarSlider;
-    public GameObject rallyPointObject;
+    public RallyPoint rallyPoint;
     public LaserMissile triggeredLaserMissile;
 	public List<GameObject> attackers = new List<GameObject>();
 
@@ -106,17 +107,19 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
     private void OnDestroy()
     {
         CollisionManager.Instance.RemoveCollidable(this);
-        Destroy(assignedHPbarSlider.gameObject);
     }
 
     void Die()
     {
+        CancelInvoke();
         isDead = true;
         GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
-        //tmpObject.transform.localScale = trans.localScale;
-        Destroy(gameObject);
+		//tmpObject.transform.localScale = trans.localScale;
+		CollisionManager.Instance.RemoveCollidable(this);
         Destroy(assignedHPbarSlider.gameObject);
+        //Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     void SpawnDrone()
@@ -125,6 +128,7 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
         GameObject droneObject = ObjectPool.Spawn(dronePrefab, trans.parent, GameController.Instance.playerStartPosition[owner], trans.rotation);
 		Drone droneSpawned = droneObject.GetComponent<Drone>();
         droneSpawned.owner = owner;
+        droneSpawned.playerRallyPoint = rallyPoint;
 		droneSpawned.ActivateWithOwner();
         //droneSpawned.ResetRallyPoint();
     }
@@ -157,7 +161,7 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 	{
 		get { return radius; }
 	}
-	public CollisionType Type
+	public CollisionType collisionType
 	{
 		get { return cType; }
 	}
@@ -189,6 +193,10 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 	public GameObject GameObj
 	{
 		get { return gameObject; }
+	}
+	public TargetType targetableType
+	{
+		get { return tType; }
 	}
     public bool IsDied
     {

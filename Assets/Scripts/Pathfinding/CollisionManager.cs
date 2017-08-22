@@ -16,7 +16,7 @@ public interface ICollidable
 	Vector2 Point { get; set; }
 	float Radius { get; }
     float RadiusHard { get; }
-	CollisionType Type { get; }
+	CollisionType collisionType { get; }
 	bool Active { get; }
 	Drone drone { get; }
     Base bas { get; }
@@ -71,7 +71,7 @@ public class CollisionManager : MonoBehaviour
 	public void AddCollidable(ICollidable obj)
 	{
         //Debug.Log(obj.Type + " added");
-        switch (obj.Type)
+        switch (obj.collisionType)
         {
             case CollisionType.Drone:
                 units.Add(obj);
@@ -92,7 +92,7 @@ public class CollisionManager : MonoBehaviour
 	public void RemoveCollidable(ICollidable obj)
 	{
         //Debug.Log(obj.Type + " removed");
-		switch (obj.Type)
+		switch (obj.collisionType)
 		{
 			case CollisionType.Drone:
 				units.Remove(obj);
@@ -151,7 +151,6 @@ public class CollisionManager : MonoBehaviour
 		qtree.Clear();
 
         AddCollidablesToTree();
-
 
         // units
         for (int i = 0; i < units.Count; i++)
@@ -289,7 +288,7 @@ public class CollisionManager : MonoBehaviour
 
     void CheckCollisionsUnits(ICollidable unit1, ICollidable unit2, float dist)
 	{
-        if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Drone)
+        if (unit1.collisionType == CollisionType.Drone && unit2.collisionType == CollisionType.Drone)
         {
             float radiusesHard = unit1.RadiusHard + unit2.RadiusHard;
             float radiuses = unit1.Radius + unit2.Radius;
@@ -308,12 +307,14 @@ public class CollisionManager : MonoBehaviour
 	}
 	void CheckCollisionsUnitRadar(ICollidable unit1, ICollidable unit2, float dist)
 	{
-		if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Radar)
+		if (unit1 == null || unit2 == null)
+			return;
+		if (unit1.collisionType == CollisionType.Drone && unit2.collisionType == CollisionType.Radar)
 		{
             if (unit1.drone.owner != unit2.drone.owner)
             {
                 // if drone has no target
-                if (unit2.drone.target == null || unit2.drone.target.BaseObj != null)
+                if (unit2.drone.target == null)
                 {
                     float radiuses = unit1.Radius + unit2.Radius;
                     if (dist < radiuses * radiuses)
@@ -326,11 +327,11 @@ public class CollisionManager : MonoBehaviour
 	}
 	void CheckCollisionsUnitWeapon(ICollidable unit1, ICollidable unit2, float dist)
 	{
-        //if (unit1 == null || unit2 == null)
-        //    return;
-		if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Weapon)
+        if (unit1 == null || unit2 == null)
+            return;
+		if (unit1.collisionType == CollisionType.Drone && unit2.collisionType == CollisionType.Weapon)
 		{
-            if (unit2.drone.target.GameObj == unit1.drone.GameObject && unit2.drone.mode != Drone.Mode.Attacking)
+            if (unit2.drone.target == unit1 && unit2.drone.mode != Drone.Mode.Attacking)
 			{
 				float radiuses = unit1.Radius + unit2.Radius;
 				if (dist < radiuses * radiuses)
@@ -342,7 +343,9 @@ public class CollisionManager : MonoBehaviour
 	}
 	void CheckCollisionsUnitBase(ICollidable unit1, ICollidable unit2, float dist)
 	{
-		if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Base)
+		if (unit1 == null || unit2 == null)
+			return;
+		if (unit1.collisionType == CollisionType.Drone && unit2.collisionType == CollisionType.Base)
 		{
 			float radiuses = unit1.Radius + unit2.Radius;
 			if (dist < radiuses * radiuses)
@@ -355,7 +358,9 @@ public class CollisionManager : MonoBehaviour
 	}
 	void CheckCollisionsBaseRadar(ICollidable unit1, ICollidable unit2, float dist)
 	{
-		if (unit1.Type == CollisionType.Base && unit2.Type == CollisionType.Radar)
+		if (unit1 == null || unit2 == null)
+			return;
+		if (unit1.collisionType == CollisionType.Base && unit2.collisionType == CollisionType.Radar)
 		{
 			if (unit1.bas.owner != unit2.drone.owner && unit2.drone.target == null)
 			{
@@ -372,7 +377,7 @@ public class CollisionManager : MonoBehaviour
 	{
 		if (unit1 == null || unit2 == null)
 		    return;
-		if (unit1.Type == CollisionType.Base && unit2.Type == CollisionType.Weapon)
+		if (unit1.collisionType == CollisionType.Base && unit2.collisionType == CollisionType.Weapon)
 		{
             if (unit1.bas.owner != unit2.drone.owner && unit2.drone.target == unit1 && unit2.drone.mode != Drone.Mode.Attacking)
 			{

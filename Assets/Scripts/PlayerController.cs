@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
 		// TODO: rework to use events or something like this
         if (isInitialized)
         {
-            if (baseControl == null)
+            if (baseControl.isDead)
             {
 
                 if (owner != 0)
@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
                         GameController.Instance.winPoints += 1;
                     // define enemies
 
-                    Destroy(gameObject);
+                    gameObject.SetActive(false);
                 }
                 else
                     GameController.Instance.winPoints -= 1;
@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
         rallyPoint.owner = owner;
         rallyPoint.StartWithOwner();
 
-        baseControl.GetComponent<Base>().rallyPointObject = rallyPoint.gameObject;
+        baseControl.GetComponent<Base>().rallyPoint = rallyPoint;
     }
 
 	public int GetOwner()

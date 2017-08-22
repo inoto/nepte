@@ -48,7 +48,7 @@ AudioSource:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1599353025881746}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 243728948967832870, guid: 1bf98af5903ce4d959849ea976444ac5,
     type: 2}
@@ -135,7 +135,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: 0
-  creator: {fileID: 0}
   wasExecuted: 0
   destinationVector: {x: 0, y: 0, z: 0}
   directionVector: {x: 0, y: 0, z: 0}

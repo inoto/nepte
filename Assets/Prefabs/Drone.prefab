@@ -211,10 +211,11 @@ MonoBehaviour:
   radius: 1
   radiusHard: 0.5
   cType: 0
+  tType: 0
   playerRallyPoint: {fileID: 0}
   directionVector: {x: 0, y: 0}
   destinationPoint: {x: 0, y: 0}
-  speed: 2
+  speed: 3
   speedPercent: 1
   turnSpeed: 3
   damage: 40

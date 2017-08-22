@@ -38,6 +38,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 	public float radius = 1f;
 	public float radiusHard = 0.5f;
 	public CollisionType cType = CollisionType.Drone;
+    public TargetType tType = TargetType.Drone;
 
 	[Header("Move")]
 	public RallyPoint playerRallyPoint;
@@ -80,7 +81,11 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
     void Update ()
     {
         if (health <= 0)
+        {
+			GameObject explosion = Instantiate(droneExplosionPrefab, trans.position, trans.rotation);
+			explosion.transform.SetParent(GameController.Instance.transform);
             Die();
+        }
     }
 
     private void OnEnable()
@@ -103,33 +108,19 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 	{
 		playerController = trans.parent.gameObject.GetComponent<PlayerController>();
 		playerController.playerUnitCount += 1;
-		playerRallyPoint = GameController.Instance.playerControllerObject[owner].GetComponent<PlayerController>().rallyPoint;
 		EnterIdleMode();
 		NewDestination();
-		//playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
 		AssignMaterial();
 	}
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        Deactivate();
+        Die();
     }
-
-    void Deactivate()
-    {
-		playerRallyPoint.OnRallyPointChanged -= NewDestination;
-		CollisionManager.Instance.RemoveCollidable(this);
-		radar.gameObject.SetActive(false);
-		weapon.gameObject.SetActive(false);
-		playerController.playerUnitCount -= 1;
-		PlayerController.unitCount -= 1;
-        StopCoroutine("FollowRally");
-        StopCoroutine("FollowTarget");
-	}
 
 	void AssignMaterial()
 	{
-		mesh.material = materials[owner];
+        mesh.sharedMaterial = materials[owner];
 	}
 
     public void EnterCombatMode(ITargetable _target)
@@ -163,11 +154,17 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 
 	void Die()
 	{
+		StopCoroutine("FollowRally");
+		StopCoroutine("FollowTarget");
         mode = Mode.Died;
+        playerRallyPoint.OnRallyPointChanged -= NewDestination;
+        CollisionManager.Instance.RemoveCollidable(this);
         target = null;
-		ObjectPool.Recycle(gameObject);
-		GameObject explosion = Instantiate(droneExplosionPrefab, trans.position, trans.rotation);
-		explosion.transform.SetParent(GameController.Instance.transform);
+		radar.gameObject.SetActive(false);
+		weapon.gameObject.SetActive(false);
+		playerController.playerUnitCount -= 1;
+		PlayerController.unitCount -= 1;
+        ObjectPool.Recycle(gameObject);
 	}
 
 	void Rotate()
@@ -214,7 +211,8 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 			return;
 		}
 		StopCoroutine("FollowRally");
-		StartCoroutine("FollowRally");
+        if (mode != Mode.Died)
+		    StartCoroutine("FollowRally");
 	}
 
 	IEnumerator FollowRally()
@@ -224,7 +222,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 
 		while (true)
 		{
-            if (mode != Mode.FollowRally)
+            if (mode != Mode.FollowRally || mode == Mode.Died)
 				yield break;
 			tmpNode = Grid.Instance.NodeFromWorldPoint(trans.position);
 			if (tmpNode != node)
@@ -252,7 +250,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 				EnterIdleMode();
 				yield break;
 			}
-			yield return null;
+            yield return new WaitForSeconds(0.01f);
 		}
 	}
 
@@ -262,7 +260,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
         speedPercent = 0.75f;
         while (true)
         {
-			if (mode != Mode.FollowTarget)
+            if (mode != Mode.FollowTarget || mode == Mode.Died)
 				yield break;
 			tmpNode = Grid.Instance.NodeFromWorldPoint(trans.position);
             if (tmpNode != node)
@@ -271,7 +269,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
             }
             nextNode = Grid.Instance.NodeFromWorldPoint(target.GameObj.transform.position);
 
-            if (target.DroneObj != null)
+            if (target.targetableType == TargetType.Drone)
             {
                 if (target.DroneObj.mode != Mode.Died && mode != Mode.Died)
                 {
@@ -286,7 +284,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
                     yield break;
                 }
             }
-            else if (target.BaseObj != null)
+            else if (target.targetableType == TargetType.Base)
 			{
                 if (!target.BaseObj.isDead && mode != Mode.Died)
 				{
@@ -302,7 +300,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 				}
             }
 
-            yield return null;
+            yield return new WaitForSeconds(0.01f);
         }
     }
 
@@ -326,15 +324,15 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
     {
         while (true)
         {
-            if (mode != Mode.Attacking)
+            if (mode != Mode.Attacking || mode == Mode.Died)
 				yield break;
             float waitTime = Random.Range(0.5f, 1.5f);
-            RotateToTarget();
             // TODO: remove random to use slow rotation and attack after rotation is completed
-            if (target.DroneObj != null)
+            if (target.targetableType == TargetType.Drone)
             {
                 if (target.DroneObj.mode != Mode.Died && mode != Mode.Died)
                 {
+                    RotateToTarget();
                     ReleaseLaserMissile(target.DroneObj.trans.position);
                 }
                 else
@@ -345,10 +343,11 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
                     yield break;
                 }
             }
-            else if (target.BaseObj != null)
+            else if (target.targetableType == TargetType.Base)
 			{
                 if (!target.BaseObj.isDead && mode != Mode.Died)
 				{
+                    RotateToTarget();
 					ReleaseLaserMissile(target.BaseObj.trans.position);
 				}
 				else
@@ -388,6 +387,11 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 	{
 		get { return gameObject; }
 	}
+    public TargetType targetableType
+    {
+        get { return tType; }
+    }
+
     public bool IsDied
     {
         get
@@ -438,7 +442,7 @@ public class Drone : MonoBehaviour, ITargetable, ICollidable
 	{
 		get { return radiusHard; }
 	}
-	public CollisionType Type
+	public CollisionType collisionType
 	{
 		get { return cType; }
 	}

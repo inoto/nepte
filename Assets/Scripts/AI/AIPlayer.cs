@@ -31,8 +31,13 @@ public class AIPlayer : MonoBehaviour
 
     public void DefineEnemies()
     {
-        int activePlayers = GameController.Instance.playerControllerObject.Count;
-        if (activePlayers - 1 == enemies.Count)
+        int activePlayers = -1;
+        foreach(GameObject player in GameController.Instance.playerControllerObject)
+        {
+            if (player.activeSelf)
+                activePlayers += 1;
+        }
+        if (activePlayers == enemies.Count)
             return;
 
         enemies.Clear();
@@ -46,10 +51,11 @@ public class AIPlayer : MonoBehaviour
 
     IEnumerator TakeDecision()
     {
+        yield return new WaitForSeconds(3.0f);
         while(true)
         {
-            yield return new WaitForSeconds(3.0f + playerController.owner);
-            int randDes = Random.Range(0, 3);
+            
+            int randDes = Random.Range(0, 2);
             switch (randDes)
             {
                 case 0:
@@ -63,6 +69,7 @@ public class AIPlayer : MonoBehaviour
                     //Debug.Log("player's " + playerController.owner + " decision is center");
                     break;
             }
+            yield return new WaitForSeconds(3.0f + playerController.owner);
         }
     }
 

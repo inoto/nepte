@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 885b833771e64483d95ea51486e20c63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 0, y: 0, z: 0}
+  size: {x: 60, y: 50, z: 0}
   width: 0
   height: 0
 --- !u!114 &114332332320069996
@@ -179,8 +179,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68fc4ef1985d54d2681097b6f0e9acfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showGizmos: 0
-  objectsInTree: 0
+  showGizmos: 1
+  unitsInTree: 0
+  basesInTree: 0
+  radarsInTree: 0
+  weaponsInTree: 0
 --- !u!114 &114693108608303716
 MonoBehaviour:
   m_ObjectHideFlags: 1

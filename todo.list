@@ -1,18 +1,9 @@
 todo.list
 
 #features
-- move sprite sets to its owner somehow
 - make atlas from all used sprites
 - GUI and screen rotation in runtime 
-- static background
-- add few background layers
 - remove random to use slow ratation and attack after ration is completed
 - initialization queue to remove most actions from start
-- collision manager
-- quadtree for objects
-- 
-
-- layered background via repspective camera
-- fix game restart
-- fix win/lose screen (it doesn't stop)
+- restruct scripts folder
 - 

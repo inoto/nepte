@@ -58,7 +58,7 @@ public class Radar : MonoBehaviour, ICollidable
 	{
 		get { return radius; }
 	}
-	public CollisionType Type
+	public CollisionType collisionType
 	{
 		get { return cType; }
 	}

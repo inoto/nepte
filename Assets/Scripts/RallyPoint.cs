@@ -27,6 +27,17 @@ public class RallyPoint : MonoBehaviour
 		mesh = GetComponent<MeshRenderer>();
     }
 
+    private void OnDestroy()
+    {
+        if (owner == 0)
+        {
+#if UNITY_EDITOR
+            cameraMouse.onClickTap -= SetNew;
+#endif
+            cameraTouch.onClickTap -= SetNew;
+        }
+    }
+
     public void StartWithOwner()
     {
 		if (owner == 0)

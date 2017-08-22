@@ -28,7 +28,7 @@ GameObject:
   m_TagString: base
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &4175439061827504
 Transform:
@@ -98,10 +98,11 @@ MonoBehaviour:
   health: 4000
   radius: 0
   cType: 1
+  tType: 1
   isDead: 0
   trans: {fileID: 0}
   assignedHPbarSlider: {fileID: 0}
-  rallyPointObject: {fileID: 0}
+  rallyPoint: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
   attackers: []
   spawnTime: 5

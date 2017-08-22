@@ -83,18 +83,20 @@ public class GameController : MonoBehaviour
     void Update ()
     {
         if (IsGame)
+        {
             gameTimer += Time.deltaTime;
 
-		// TODO: rework to events or something like this
-        if (winPoints > 0)
-        {
-            Win();
-            winPoints = 0;
-        }
-        else if (winPoints < 0)
-        {
-            Lose();
-            winPoints = 0;
+            // TODO: rework to events or something like this
+            if (winPoints > 0)
+            {
+                Win();
+                winPoints = 0;
+            }
+            else if (winPoints < 0)
+            {
+                Lose();
+                winPoints = 0;
+            }
         }
     }
 
@@ -139,56 +141,65 @@ public class GameController : MonoBehaviour
 
     public void Lose()
     {
+        OnGamePaused();
         ChangeState(States.Lose);
 		Time.timeScale = 0.1f;
         ingamePanel.SetActive(false);
         losePanel.SetActive(true);
         StartCoroutine(LoseWinWait());
+
     }
 
 	public void Win()
 	{
+        OnGamePaused();
         ChangeState(States.Win);
 		Time.timeScale = 0.1f;
 		ingamePanel.SetActive(false);
 		winPanel.SetActive(true);
         StartCoroutine(LoseWinWait());
+
 	}
 
     IEnumerator LoseWinWait()
     {
-        if (!IsGame)
-        {
-            yield return new WaitForSeconds(0.5f);
+        
+        yield return new WaitForSeconds(0.5f);
+		if (!IsGame)
+		{
             Time.timeScale = 0.0f;
+            yield break;
         }
     }
 
     public void BeforeGameMenu()
     {
+        OnGamePaused();
         ChangeState(States.BeforeGame);
         startScene.SetActive(true);
 		beforegamePanel.SetActive(true);
-        OnGamePaused();
+
     }
 
     public void PauseGame()
     {
+        OnGamePaused();
         state = States.PauseMenu;
         Time.timeScale = 0.0f;
         ingamePanel.SetActive(false);
         pausePanel.SetActive(true);
-        OnGamePaused();
+
     }
 
 	public void UnPauseGame()
 	{
+        OnGameContinued();
 		state = States.Game;
 		Time.timeScale = 1.0f;
 		ingamePanel.SetActive(true);
 		pausePanel.SetActive(false);
         settingsPanel.SetActive(false);
-        OnGameContinued();
+
 	}
 
     public void RestartGame()
@@ -213,8 +224,8 @@ public class GameController : MonoBehaviour
             beforegamePanel.SetActive(false);
             RemoveStartScene();
             audioMixerChild.StopMainTheme();
-            OnGameContinued();
         }
+        OnGameContinued();
 		Camera.main.orthographicSize = 10;
         //GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
 		Vector3 vec = playerStartPosition[0];
@@ -225,6 +236,7 @@ public class GameController : MonoBehaviour
 		CreatePlayers();
 		state = States.Game;
 		ingamePanel.SetActive(true);
+
 	}
 
     public void RemoveStartScene()
