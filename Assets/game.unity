@@ -3407,7 +3407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cffb7250549c0450cb79d558fc3641ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dronePoolSize: 300
+  dronePoolSize: 100
   laserMissilePoolSize: 0
   dronePrefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab,
     type: 2}
