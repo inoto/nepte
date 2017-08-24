@@ -23,7 +23,9 @@ public class Grid : MonoBehaviour {
 		}
 	}
 
-	public bool displayGridGizmos = true;
+	public bool showGrid = true;
+    public bool showDistances = true;
+    public bool showFlowDirection = true;
     public LayerMask unwalkableMask;
     
 	public TerrainType[] walkableRegions;
@@ -272,13 +274,58 @@ public class Grid : MonoBehaviour {
 		return nodes[x,y];
 	}
 
+	public Node DefineNextNode(Node _node, int _playerNumber)
+	{
+        bool found = false;
+		int closestNodeIndex = 0;
+		for (int i = 0; i < _node.neigbours.Length; i++)
+		{
+			if (_node.neigbours[i] != null)
+			{
+                if (_node.neigbours[i].distance[_playerNumber] < _node.neigbours[closestNodeIndex].distance[_playerNumber]
+                    && _node.neigbours[i].walkable)
+				{
+					closestNodeIndex = i;
+                    found = true;
+				}
+			}
+		}
+        if (found || closestNodeIndex == 0)
+            return _node.neigbours[closestNodeIndex];
+        else
+            return null;
+	}
+
+	public Node DefineNextNode(Node _node, List<Node> _currentPathNodes, int _playerNumber)
+	{
+		bool found = false;
+		int closestNodeIndex = 0;
+		for (int i = 0; i < _node.neigbours.Length; i++)
+		{
+			if (_node.neigbours[i] != null)
+			{
+				if (_node.neigbours[i].distance[_playerNumber] < _node.neigbours[closestNodeIndex].distance[_playerNumber]
+                    && _node.neigbours[i].walkable
+                    && !_currentPathNodes.Contains(_node.neigbours[i]))
+				{
+					closestNodeIndex = i;
+					found = true;
+				}
+			}
+		}
+		if (found || closestNodeIndex == 0)
+			return _node.neigbours[closestNodeIndex];
+		else
+			return null;
+	}
+
 	void OnDrawGizmos()
     {
-        if (displayGridGizmos)
-        {
+		if (nodes != null)
+		{
             Color newColor;
-            if (nodes != null)
-            {
+			if (showGrid)
+			{
                 foreach (Node n in nodes)
                 {
                     Gizmos.color = Color.Lerp(Color.white, Color.black, Mathf.InverseLerp(penaltyMin, penaltyMax, n.movementPenalty));
@@ -287,9 +334,19 @@ public class Grid : MonoBehaviour {
                     newColor.a = 0.5f;
                     Gizmos.color = newColor;
                     Gizmos.DrawCube(n.worldPosition, Vector3.one * (1 - 0.02f));
+                    if (showDistances)
+                    {
 #if UNITY_EDITOR
-                    Handles.Label(n.worldPosition, n.distance[0].ToString());
+                        Handles.Label(n.worldPosition, n.distance[0].ToString());
 #endif
+                    }
+                    if (showFlowDirection)
+                    {
+                        newColor = Color.white;
+						newColor.a = 0.7f;
+						Gizmos.color = newColor;
+                        Gizmos.DrawLine(n.worldPosition, n.flowVector[0]);
+                    }
                 }
             }
         }

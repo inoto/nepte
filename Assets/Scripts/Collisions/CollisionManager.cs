@@ -162,9 +162,9 @@ public class CollisionManager : MonoBehaviour
                 if (returnedUnits[u] != units[i])
                 {
                     float dist = (units[i].Point - returnedUnits[u].Point).sqrMagnitude;
-                    CheckCollisionsUnits(units[i], returnedUnits[u], dist);
-                    CheckCollisionsUnitRadar(units[i], returnedUnits[u], dist);
-                    CheckCollisionsUnitWeapon(units[i], returnedUnits[u], dist);
+                    //CheckCollisionsUnits(units[i], returnedUnits[u], dist);
+                    //CheckCollisionsUnitRadar(units[i], returnedUnits[u], dist);
+                    //CheckCollisionsUnitWeapon(units[i], returnedUnits[u], dist);
                 }
             }
         }
@@ -177,8 +177,8 @@ public class CollisionManager : MonoBehaviour
 				if (returnedUnits[u] != radars[i])
 				{
 					float dist = (returnedUnits[u].Point - radars[i].Point).sqrMagnitude;
-					CheckCollisionsUnitRadar(returnedUnits[u], radars[i], dist);
-					CheckCollisionsUnitWeapon(returnedUnits[u], radars[i], dist);
+					//CheckCollisionsUnitRadar(returnedUnits[u], radars[i], dist);
+					//CheckCollisionsUnitWeapon(returnedUnits[u], radars[i], dist);
 				}
 			}
 		}
@@ -191,8 +191,8 @@ public class CollisionManager : MonoBehaviour
 				if (returnedUnits[u] != weapons[i])
 				{
 					float dist = (returnedUnits[u].Point - weapons[i].Point).sqrMagnitude;
-					CheckCollisionsUnitRadar(returnedUnits[u], weapons[i], dist);
-					CheckCollisionsUnitWeapon(returnedUnits[u], weapons[i], dist);
+					//CheckCollisionsUnitRadar(returnedUnits[u], weapons[i], dist);
+					//CheckCollisionsUnitWeapon(returnedUnits[u], weapons[i], dist);
 				}
 			}
 		}
@@ -205,8 +205,8 @@ public class CollisionManager : MonoBehaviour
 				if (returnedUnits[u] != bases[i])
 				{
 					float dist = (bases[i].Point - returnedUnits[u].Point).sqrMagnitude;
-					CheckCollisionsBaseRadar(bases[i], returnedUnits[u], dist);
-					CheckCollisionsBaseWeapon(bases[i], returnedUnits[u], dist);
+					//CheckCollisionsBaseRadar(bases[i], returnedUnits[u], dist);
+					//CheckCollisionsBaseWeapon(bases[i], returnedUnits[u], dist);
 				}
 			}
 		}
@@ -285,7 +285,7 @@ public class CollisionManager : MonoBehaviour
 		//	}
 		//}
 	}
-
+    /*
     void CheckCollisionsUnits(ICollidable unit1, ICollidable unit2, float dist)
 	{
         if (unit1.collisionType == CollisionType.Drone && unit2.collisionType == CollisionType.Drone)
@@ -389,6 +389,7 @@ public class CollisionManager : MonoBehaviour
 			}
 		}
 	}
+    */
 
     void AddCollidablesToTree()
     {

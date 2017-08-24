@@ -46,19 +46,15 @@ public class Pathfinding : MonoBehaviour
 
 		open.Enqueue(startNode);
         startNode.visited[player] = true;
-        //visitedSet.Add(startNode);
 
         int count = Grid.Instance.gridSize - 1;
 		while (count > 0)
 		{
-            //Node[] neigbours = new Node[8];
-
 			currentNode = open.Dequeue();
 
 			if (!currentNode.isNeigboursFilled)
 			{
                 currentNode.neigbours = Grid.Instance.GetNeighbours(currentNode);
-				//currentNode.neigbours = neigbours;
 				currentNode.isNeigboursFilled = true;
 			}
 
@@ -69,18 +65,10 @@ public class Pathfinding : MonoBehaviour
 					continue;
                 currentNode.neigbours[i].visited[player] = true;
 				open.Enqueue(currentNode.neigbours[i]);
-				//nextNode.distance[player] = 1 + currentNode.distance[player];
 
-				float dist = (currentNode.neigbours[i].worldPosition - startNodePoint).sqrMagnitude;
-                //float distClosest = (neigbours[suitableNode].worldPosition - startNodePoint).sqrMagnitude;
-                //if (dist < distClosest)
-                //    nextNode.distance[player] = 2 + currentNode.distance[player];
-                ////suitableNode = neigbours.IndexOf(nextNode);
-                //else
-                currentNode.neigbours[i].distance[player] = (int)dist;//+ currentNode.distance[player];
+                currentNode.neigbours[i].distance[player] = (int)(currentNode.neigbours[i].worldPosition - startNodePoint).sqrMagnitude;
+                currentNode.neigbours[i].flowVector[player] = (currentNode.neigbours[i].worldPosition - currentNode.worldPosition).normalized;
             }
-            //neigbours[suitableNode].suitable[player] = true;
-            // cache neigbours
             count -= 1;
 		}
 	}

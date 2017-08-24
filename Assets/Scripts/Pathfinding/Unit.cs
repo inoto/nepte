@@ -39,9 +39,6 @@ public class Unit : MonoBehaviour
     //public Radar radarComponent;
 	//public Weapon weaponComponent;
 
-
-    public CollisionCircle collisionCircle;
-
     private void Awake()
     {
         trans = GetComponent<Transform>();
@@ -49,7 +46,7 @@ public class Unit : MonoBehaviour
         //radarComponent = GetComponent<Radar>();
 		//weaponComponent = GetComponent<Weapon>();
 
-        radius = gameObject.GetComponent<Quad>().size;
+        radius = gameObject.GetComponent<QuadMesh>().size;
         radiusHard = radius/2+radius/5;
 
     }
@@ -71,9 +68,9 @@ public class Unit : MonoBehaviour
     {
         playerController = transform.parent.gameObject.GetComponent<PlayerController>();
         playerController.playerUnitCount += 1;
-        playerRallyPoint = GameController.Instance.playerControllerObject[droneComponent.owner].GetComponent<PlayerController>().rallyPoint;
+        //playerRallyPoint = GameController.Instance.playerControllerObject[droneComponent.owner].GetComponent<PlayerController>().rallyPoint;
         ResetRallyPoint();
-        playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
+        //playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
     }
 
     private void OnDestroy()
@@ -93,7 +90,7 @@ public class Unit : MonoBehaviour
 
     void Deactivate()
     {
-        playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
+        //playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
 
         //QuadTree.Instance.qtree.Remove(gameObject);
         playerController.playerUnitCount -= 1;
@@ -113,7 +110,7 @@ public class Unit : MonoBehaviour
 			}
 			if (node.worldPosition == destinationPoint)
 			{
-				droneComponent.EnterIdleMode();
+				//droneComponent.EnterIdleMode();
 				yield break;
 			}
             if (nextNode != node && nextNode != null)
@@ -129,7 +126,7 @@ public class Unit : MonoBehaviour
             }
             if (node == destinationNode)
             {
-				droneComponent.EnterIdleMode();
+				//droneComponent.EnterIdleMode();
 				yield break;
             }
 
@@ -149,7 +146,7 @@ public class Unit : MonoBehaviour
         {
             if (newNextNode.neigbours[i] != null)
             {
-                if (newNextNode.neigbours[i].distance[droneComponent.owner] < newNextNode.neigbours[closestNodeIndex].distance[droneComponent.owner])
+                //if (newNextNode.neigbours[i].distance[droneComponent.owner] < newNextNode.neigbours[closestNodeIndex].distance[droneComponent.owner])
                 {
                     //Debug.Log("node " + nextNodes[i].gridX + "," + nextNodes[i].gridY + " < node " + nextNodes[closestNodeIndex].gridX + "," + nextNodes[closestNodeIndex].gridY);
                     closestNodeIndex = i;//nextNodes.IndexOf(n);//Array.IndexOf(nextNodes, n); 
@@ -167,12 +164,12 @@ public class Unit : MonoBehaviour
 
 	public void SubscribeResetRallyPoint()
 	{
-		playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
+		//playerRallyPoint.OnRallyPointChanged += ResetRallyPoint;
 	}
 
 	public void UnsubscribeResetRallyPoint()
 	{
-		playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
+		//playerRallyPoint.OnRallyPointChanged -= ResetRallyPoint;
 	}
 
 	public void ResetRallyPoint()
@@ -181,13 +178,13 @@ public class Unit : MonoBehaviour
         destinationNode = Grid.Instance.NodeFromWorldPoint(destinationPoint);
 		if (node == destinationNode)
 		{
-			droneComponent.EnterIdleMode();
+			//droneComponent.EnterIdleMode();
 			return;
 		}
 		DefineNextNode(node);
         if (node == nextNode)
         {
-            droneComponent.EnterIdleMode();
+            //droneComponent.EnterIdleMode();
             return;
         }
         StopCoroutine("FollowPath");

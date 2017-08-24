@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Quad : MonoBehaviour {
+public class QuadMesh : MonoBehaviour {
 
     public float size = 1.0f;
 

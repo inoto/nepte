@@ -350,6 +350,41 @@ Prefab:
       propertyPath: size.y
       value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 114332332320069996, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114332332320069996, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: showGizmos
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114693108608303716, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: displayGridGizmos
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114693108608303716, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: showDistances
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114693108608303716, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: showGrid
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114693108608303716, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114693108608303716, guid: 2f63b9c6570a8415292a283e03945592,
+        type: 2}
+      propertyPath: showFlowDirection
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2f63b9c6570a8415292a283e03945592, type: 2}
   m_IsPrefabParent: 0
@@ -463,7 +498,7 @@ Transform:
   m_GameObject: {fileID: 103451744}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -62.15, z: 0}
-  m_LocalScale: {x: 0.0047281324, y: 0.0047281324, z: 0.0047281324}
+  m_LocalScale: {x: 0.0047393367, y: 0.0047393367, z: 0.0047393367}
   m_Children:
   - {fileID: 1815981353}
   - {fileID: 1393607019}
@@ -1363,7 +1398,7 @@ Transform:
   m_GameObject: {fileID: 313740308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0047281324, y: 0.0047281324, z: 0.0047281324}
+  m_LocalScale: {x: 0.0047393367, y: 0.0047393367, z: 0.0047393367}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0

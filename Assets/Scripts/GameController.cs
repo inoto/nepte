@@ -279,7 +279,7 @@ public class GameController : MonoBehaviour
 			playerObject = Instantiate(playerControllerPrefab);
 			playerObject.transform.SetParent(transform);
 			PlayerController playerController = playerObject.GetComponent<PlayerController>();
-			playerController.owner = i;
+			playerController.owner.playerNumber = i;
             playerController.ActionsWithOwner();
 			playerController.transform.position = playerStartPosition[i];
 

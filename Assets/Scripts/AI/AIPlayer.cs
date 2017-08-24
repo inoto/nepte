@@ -43,7 +43,7 @@ public class AIPlayer : MonoBehaviour
         enemies.Clear();
         for (int i = 0; i < activePlayers; i++)
         {
-            if (playerController.owner == i)
+            if (playerController.owner.playerNumber == i)
                 continue;
             enemies.Add(GameController.Instance.playerControllerObject[i]);
         }
@@ -69,7 +69,7 @@ public class AIPlayer : MonoBehaviour
                     //Debug.Log("player's " + playerController.owner + " decision is center");
                     break;
             }
-            yield return new WaitForSeconds(3.0f + playerController.owner);
+            yield return new WaitForSeconds(3.0f + playerController.owner.playerNumber);
         }
     }
 

@@ -57,7 +57,7 @@ public class PCInputController : MonoBehaviour
                 //GameObject[] players = gameController.playerControllerObject;
                 foreach (GameObject player in GameController.Instance.playerControllerObject)
                 {
-                    mousePosition = player.GetComponent<PlayerController>().baseControl.transform.position;
+                    mousePosition = player.GetComponent<PlayerController>().bas.transform.position;
                     mousePosition.z = 0;
                     //player.GetComponent<PlayerController>().rallyPoint.SetNew(mousePosition);
                 }

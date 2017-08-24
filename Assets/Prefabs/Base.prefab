@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 33091352823712140}
   - component: {fileID: 23086487595305584}
   - component: {fileID: 114969710160545916}
+  - component: {fileID: 114358262193089728}
   m_Layer: 9
   m_Name: Base
   m_TagString: base
@@ -93,21 +94,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58262da786bcb4ce1a40a48a9c7dc123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner:
+    playerNumber: 0
   showRadius: 1
-  owner: 0
   health: 4000
   radius: 0
   cType: 1
   tType: 1
   isDead: 0
   trans: {fileID: 0}
+  spawner: {fileID: 0}
   assignedHPbarSlider: {fileID: 0}
   rallyPoint: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
   attackers: []
-  spawnTime: 5
-  dronePrefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab,
-    type: 2}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
     type: 2}
   HPbarPrefab: {fileID: 1715169125782130, guid: a67e5c7027d85448aa83ab0928ac2ba9,
@@ -116,6 +116,23 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7eaf52c9e38d34b41af62514b874c3ed, type: 2}
   - {fileID: 2100000, guid: 7326301bab270a949945db0a00c87a99, type: 2}
   - {fileID: 2100000, guid: 62deb8efdff8f80408b03b2c60864186, type: 2}
+--- !u!114 &114358262193089728
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1771483991996188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55587925037df433282650f8c4ef7d6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 0
+  delay: 2
+  intervalMin: 3
+  intervalMax: 3
+  point: {x: 0, y: 0}
+  prefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab, type: 2}
 --- !u!114 &114969710160545916
 MonoBehaviour:
   m_ObjectHideFlags: 1

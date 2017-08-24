@@ -2,21 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class Node : IHeapItem<Node>
 {
 	public bool walkable;
 	public Vector2 worldPosition;
 	public int gridX;
 	public int gridY;
+    [System.NonSerialized]
     public Rect rect;
+    [System.NonSerialized]
     public float size;
     public GameObject prisoner;
 	public int movementPenalty;
+    [System.NonSerialized]
 	public Node[] neigbours = new Node[8];
 
+    [System.NonSerialized]
 	public int[] distance = new int[GameController.Instance.players];
     public bool isNeigboursFilled = false;
+    [System.NonSerialized]
     public bool[] visited = new bool[GameController.Instance.players];
+    [System.NonSerialized]
+    public Vector2[] flowVector = new Vector2[GameController.Instance.players];
 
 	public int gCost;
 	public int hCost;
@@ -44,13 +52,13 @@ public class Node : IHeapItem<Node>
     {
         walkable = false;
         prisoner = obj;
-        obj.GetComponent<Base>().node.Add(this);
+        //obj.GetComponent<Drone>().move.node.Add(this);
     }
 
     public void ReleaseObject()
     {
         walkable = true;
-        prisoner.GetComponent<Base>().node.Remove(this);
+        //prisoner.GetComponent<Drone>().node.Remove(this);
         prisoner = null;
     }
 

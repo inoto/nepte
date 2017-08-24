@@ -2,7 +2,10 @@
 
 public class PlayerController : MonoBehaviour
 {
-    public int owner;
+    public Owner owner = new Owner();
+
+	public delegate void Player();
+	public event Player OnPlayerDefeated = delegate { };
 
     public int playerUnitCount = 0;
     public static int unitCount = 0;
@@ -12,7 +15,7 @@ public class PlayerController : MonoBehaviour
 	[Header("Cache")]
 	public Transform trans;
     public RallyPoint rallyPoint;
-    public Base baseControl;
+    public Base bas;
     public AIPlayer aiPlayer;
 
     [Header("Prefabs")]
@@ -28,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        owner.playerController = this;
+
 		CreateBase();
 
 		CreateRallyPoint();
@@ -35,7 +40,7 @@ public class PlayerController : MonoBehaviour
 
     public void ActionsWithOwner()
     {
-		if (owner != 0)
+        if (owner.playerNumber != 0)
 			aiPlayer = gameObject.AddComponent<AIPlayer>();
         isInitialized = true;
     }
@@ -45,10 +50,10 @@ public class PlayerController : MonoBehaviour
 		// TODO: rework to use events or something like this
         if (isInitialized)
         {
-            if (baseControl.isDead)
+            if (bas.isDead)
             {
 
-                if (owner != 0)
+                if (owner.playerNumber != 0)
                 {
                     GameController.Instance.playerControllerObject.Remove(gameObject);
                     if (GameController.Instance.playerControllerObject.Count <= 1)
@@ -74,9 +79,9 @@ public class PlayerController : MonoBehaviour
 		point.z = 0.1f;
 		GameObject baseObject = Instantiate(basePrefab, point, trans.rotation);
         baseObject.transform.SetParent(trans);
-		baseControl = baseObject.GetComponent<Base>();
-        baseControl.owner = owner;
-        baseControl.StartWithOwner();
+		bas = baseObject.GetComponent<Base>();
+        bas.owner = owner;
+        bas.StartWithOwner();
     }
 
     void CreateRallyPoint()
@@ -89,17 +94,17 @@ public class PlayerController : MonoBehaviour
         rallyPoint.owner = owner;
         rallyPoint.StartWithOwner();
 
-        baseControl.GetComponent<Base>().rallyPoint = rallyPoint;
+        bas.GetComponent<Base>().rallyPoint = rallyPoint;
     }
 
 	public int GetOwner()
 	{
-		return owner;
+		return owner.playerNumber;
 	}
 
 	public void SetOwner(int newOwner)
 	{
-		owner = newOwner;
+		owner.playerNumber = newOwner;
 	}
 
     public GameObject GetGameObject()

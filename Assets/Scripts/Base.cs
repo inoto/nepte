@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Base : MonoBehaviour, ITargetable, ICollidable
+public class Base : MonoBehaviour
 {
-    public bool showRadius;
+    public Owner owner;
 
-    public int owner;
+    public bool showRadius;
 
     public int health = 4000;
     public float radius;
-    public CollisionType cType = CollisionType.Base;
     public TargetType tType = TargetType.Base;
 
     public bool isDead = false;
@@ -19,6 +18,7 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 
     [Header("Cache")]
     public Transform trans;
+    public Spawner spawner;
 	private MeshRenderer mesh;
 	private MeshFilter mf;
     private GameObject playerControllerParent;
@@ -26,10 +26,6 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
     public RallyPoint rallyPoint;
     public LaserMissile triggeredLaserMissile;
 	public List<GameObject> attackers = new List<GameObject>();
-
-    [Header("Spawn")]
-    public float spawnTime = 3f;
-    public GameObject dronePrefab;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -45,11 +41,12 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
 		mf = GetComponent<MeshFilter>();
+        spawner = GetComponent<Spawner>();
     }
 
     private void Start()
     {
-        radius = GetComponent<Quad>().size;
+        radius = GetComponent<QuadMesh>().size;
 		playerControllerParent = transform.parent.gameObject;
 
 		GameObject assignedHPbarObject = Instantiate(HPbarPrefab, trans.position, trans.rotation);
@@ -61,10 +58,8 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 		
         assignedHPbarSlider = assignedHPbarObject.GetComponent<UISlider>();
 
-		InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
-
-		TakeNodes();
-        CollisionManager.Instance.AddCollidable(this);
+		//TakeNodes();
+        spawner.StartSpawn(trans.position);
     }
 
     public void StartWithOwner()
@@ -92,7 +87,7 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 	void TakeNodes()
 	{
 		Vector2 tmp = new Vector2(trans.position.x, trans.position.y);
-		List<Node> list = Grid.Instance.FindNodesInRadius(tmp, GetComponent<Quad>().size);
+		List<Node> list = Grid.Instance.FindNodesInRadius(tmp, GetComponent<QuadMesh>().size);
 		foreach (Node n in list)
 		{
 			n.ImprisonObject(gameObject);
@@ -101,13 +96,8 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 
 	void AssignMaterial()
 	{
-		mesh.material = materials[owner];
+        mesh.material = materials[owner.playerNumber];
 	}
-
-    private void OnDestroy()
-    {
-        CollisionManager.Instance.RemoveCollidable(this);
-    }
 
     void Die()
     {
@@ -116,21 +106,9 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
         GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
 		//tmpObject.transform.localScale = trans.localScale;
-		CollisionManager.Instance.RemoveCollidable(this);
         Destroy(assignedHPbarSlider.gameObject);
         //Destroy(gameObject);
         gameObject.SetActive(false);
-    }
-
-    void SpawnDrone()
-    {
-		
-        GameObject droneObject = ObjectPool.Spawn(dronePrefab, trans.parent, GameController.Instance.playerStartPosition[owner], trans.rotation);
-		Drone droneSpawned = droneObject.GetComponent<Drone>();
-        droneSpawned.owner = owner;
-        droneSpawned.playerRallyPoint = rallyPoint;
-		droneSpawned.ActivateWithOwner();
-        //droneSpawned.ResetRallyPoint();
     }
 
 	public void OnDrawGizmos()
@@ -143,63 +121,4 @@ public class Base : MonoBehaviour, ITargetable, ICollidable
 			Gizmos.DrawWireSphere(trans.position, radius);
 		}
 	}
-
-	public int InstanceId
-	{
-		get { return gameObject.GetInstanceID(); }
-	}
-	public Vector2 Point
-	{
-		get { return trans.position; }
-		set { trans.position = value; }
-	}
-	public float Radius
-	{
-        get { return radius; }
-	}
-	public float RadiusHard
-	{
-		get { return radius; }
-	}
-	public CollisionType collisionType
-	{
-		get { return cType; }
-	}
-	public bool Active
-	{
-		get { return gameObject.activeSelf; }
-	}
-	public GameObject GameObject
-	{
-		get { return gameObject; }
-	}
-	public Drone drone
-	{
-		get { return null; }
-	}
-	public Base bas
-	{
-		get { return this; }
-	}
-
-	public Drone DroneObj
-	{
-		get { return null; }
-	}
-	public Base BaseObj
-	{
-		get { return this; }
-	}
-	public GameObject GameObj
-	{
-		get { return gameObject; }
-	}
-	public TargetType targetableType
-	{
-		get { return tType; }
-	}
-    public bool IsDied
-    {
-        get { return isDead; }
-    }
 }

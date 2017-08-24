@@ -43,8 +43,8 @@ public class LaserMissile : MonoBehaviour, IOwnable
 		{
             if (target.DroneObj != null)
             {
-                if (target.DroneObj.mode != Drone.Mode.Died)
-                    target.DroneObj.health -= damage;
+                //if (target.DroneObj.mode != Drone.Mode.Died)
+                //    target.DroneObj.health -= damage;
             }
 			else if (target.BaseObj != null)
 			{
