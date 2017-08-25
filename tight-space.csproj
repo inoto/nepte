@@ -295,7 +295,7 @@
     <Compile Include="Assets\Scripts\Pathfinding\Unit.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Collisions\QuadTree.cs" />
-    <Compile Include="Assets\Scripts\Radar.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Radar.cs" />
     <Compile Include="Assets\Scripts\RallyPoint.cs" />
     <Compile Include="Assets\Scripts\Sounds\MixerContoller.cs" />
     <Compile Include="Assets\Scripts\Sounds\MusicMainTheme.cs" />
@@ -304,7 +304,11 @@
     <Compile Include="Assets\Scripts\UI\GameTimer.cs" />
     <Compile Include="Assets\Scripts\UI\LoseWinBlinking.cs" />
     <Compile Include="Assets\Scripts\UI\ObjectCounter.cs" />
-    <Compile Include="Assets\Scripts\Weapon.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Weapon.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\FollowRally.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Body.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Separation.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\NewMonoBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />

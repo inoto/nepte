@@ -385,7 +385,8 @@ Prefab:
       propertyPath: showFlowDirection
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114332332320069996, guid: 2f63b9c6570a8415292a283e03945592, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 2f63b9c6570a8415292a283e03945592, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &103451744
@@ -1738,6 +1739,27 @@ MonoBehaviour:
   mMaxLineHeight: 0
   mLineWidth: 0
   mMultiline: 1
+--- !u!1 &401584222 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1639414177698608, guid: 2f63b9c6570a8415292a283e03945592,
+    type: 2}
+  m_PrefabInternal: {fileID: 80784257}
+--- !u!114 &401584223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 401584222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83ad4adba175440ab8d25e4ad094a5cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showGizmos: 0
+  unitsInTree: 0
+  basesInTree: 0
+  radarsInTree: 0
+  weaponsInTree: 0
 --- !u!1 &446709498
 GameObject:
   m_ObjectHideFlags: 0

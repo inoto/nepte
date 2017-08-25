@@ -93,11 +93,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1417484075c8e4c04860d8fe4148045f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  owner:
+    playerNumber: 0
+    playerController: {fileID: 0}
   cameraMouse: {fileID: 0}
   cameraTouch: {fileID: 0}
   trans: {fileID: 0}
   mesh: {fileID: 0}
+  node:
+    walkable: 0
+    worldPosition: {x: 0, y: 0}
+    gridX: 0
+    gridY: 0
+    prisoner: {fileID: 0}
+    movementPenalty: 0
+    isNeigboursFilled: 0
+    gCost: 0
+    hCost: 0
+  body:
+    showRadius: 0
+    radius: 0.5
+    radiusHard: 0.2
+    strength: 0
   materials:
   - {fileID: 2100000, guid: 52aca482341f9264082fa58d78f17c29, type: 2}
   - {fileID: 2100000, guid: 2e28ae6f4fc641d46bbfc0a8576a720c, type: 2}

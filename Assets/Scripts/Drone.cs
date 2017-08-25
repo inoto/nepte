@@ -16,22 +16,33 @@ public class Drone : MonoBehaviour
     [Header("Modules")]
     public Owner owner;
     public Health health = new Health(100);
+    public Body body;
 
     [Header("Components")]
     public Transform trans;
     MeshRenderer mesh;
-    public Mover move;
+    public Mover mover;
+    public Radar radar;
 
     private void Awake()
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
-        move = GetComponent<Mover>();
+        mover = GetComponent<Mover>();
+        radar = GetComponent<Radar>();
+    }
+
+    private void Start()
+    {
+        body = new Body(this);
+
     }
 
     public void ActivateWithOwner()
     {
-        move.ActivateWithOwner();
+        mover.ActivateWithOwner();
+        owner.playerController.playerUnitCount += 1;
+        PlayerController.unitCount += 1;
     }
 
 }

@@ -11,13 +11,14 @@ public class RallyPoint : MonoBehaviour
 #endif
 	public CameraControlTouch cameraTouch;
 
-	public delegate void StartMoving(Vector2 point);
-    public event StartMoving OnRallyPointChanged = delegate { };
+	public delegate void UpdateRallyPoint();
+    public event UpdateRallyPoint OnRallyPointChanged = delegate { };
 
 	[Header("Cache")]
 	public Transform trans;
 	public MeshRenderer mesh;
     public Node node;
+    public Body body;
 
 	[Header("Colors")]
 	public Material[] materials;
@@ -80,7 +81,7 @@ public class RallyPoint : MonoBehaviour
 
 		Pathfinding.Instance.FillDistances(trans.position, owner.playerNumber);
 
-        OnRallyPointChanged(trans.position);
+        OnRallyPointChanged();
 	}
 
 	void AssignMeterial()

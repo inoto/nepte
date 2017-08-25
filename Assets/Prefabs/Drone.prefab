@@ -23,7 +23,9 @@ GameObject:
   - component: {fileID: 33425899918793512}
   - component: {fileID: 23790409747704556}
   - component: {fileID: 114835238842844082}
-  - component: {fileID: 114643301695085346}
+  - component: {fileID: 114507272362157692}
+  - component: {fileID: 114997923597211442}
+  - component: {fileID: 114271282287821818}
   m_Layer: 0
   m_Name: Drone
   m_TagString: drone
@@ -83,7 +85,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1964420292115662}
   m_Mesh: {fileID: 0}
---- !u!114 &114643301695085346
+--- !u!114 &114271282287821818
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -91,42 +93,50 @@ MonoBehaviour:
   m_GameObject: {fileID: 1964420292115662}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbef38f4393fa47dd984571c876c9fd7, type: 3}
+  m_Script: {fileID: 11500000, guid: 5505f01a6115242f9bf776b9d4162ed6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showCurrentNode: 1
-  showPath: 1
+  maxSpeed: 2
+  maxAcceleration: 2
+  distanceAddition: 1
+--- !u!114 &114507272362157692
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d70a6ae8db14d5080040b869c98986, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableFollowRally: 1
+  enableSeparation: 1
+  enableAlignment: 1
+  enableCohesion: 1
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
-  destinationType: 0
+  currentSpeed: 0
+  currentAcceleration: 0
+  mass: 1
+  maxForce: 2
+  maxSpeed: 1
+  maxAcceleration: 1
+  accelerationStep: 0.1
+  targetRadius: 1
+  slowDownRadius: 3
+  timeToTarget: 0.1
+  turnSpeed: 5
+  smoothing: 1
+  numSamplesForSmoothing: 5
   isActive: 0
-  destinationPoint: {x: 0, y: 0}
-  speed: 1
-  speedPercent: 1
-  node:
-    walkable: 0
-    worldPosition: {x: 0, y: 0}
-    gridX: 0
-    gridY: 0
-    prisoner: {fileID: 0}
-    movementPenalty: 0
-    isNeigboursFilled: 0
-    gCost: 0
-    hCost: 0
-  path:
-    futureNodeCount: 3
-    realNodeCount: 0
-    waypoints: []
-    destinationNode:
-      walkable: 0
-      worldPosition: {x: 0, y: 0}
-      gridX: 0
-      gridY: 0
-      prisoner: {fileID: 0}
-      movementPenalty: 0
-      isNeigboursFilled: 0
-      gCost: 0
-      hCost: 0
+  drone: {fileID: 0}
+  followRally:
+    arrived: 0
+    rallyPointMass: 0
+    rallyPointG: 0
+    stopRadius: 1
+    slowDownRadius: 3
 --- !u!114 &114829070162426570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -145,8 +155,14 @@ MonoBehaviour:
     max: 100
     current: 100
     percent: 1
+  body:
+    showRadius: 0
+    radius: 1
+    radiusHard: 0.5
+    strength: 0
   trans: {fileID: 0}
-  move: {fileID: 0}
+  mover: {fileID: 0}
+  radar: {fileID: 0}
 --- !u!114 &114835238842844082
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -159,3 +175,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 1
+--- !u!114 &114997923597211442
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929e939d8118a4abc8a2e55931f7c32f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showRadius: 1
+  radius: 5
+  drone: {fileID: 0}
