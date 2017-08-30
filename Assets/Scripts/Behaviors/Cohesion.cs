@@ -4,9 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class Cohesion
 {
-	public bool cohesive = false;
-
-    public int count;
+public int count;
 	public Vector2 sum;
 	public float desired;
 
@@ -30,9 +28,8 @@ public class Cohesion
 
 	public void Clear()
 	{
-        cohesive = false;
 		sum = Vector2.zero;
-		desired = mover.body.radius * 3;
+		//desired = mover.body.radius * 3;
 		count = 0;
 	}
 
@@ -46,7 +43,6 @@ public class Cohesion
 	{
 		if (count > 0)
 		{
-            cohesive = true;
 			sum /= count;
 			mover.Seek(sum);
 			//force *= 0.8f;

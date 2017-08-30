@@ -14,7 +14,7 @@ public class QuadTreeEternal
 	public Rect rect;
 	float halfWidth, halfHeight;
 
-	public List<ICollidable> objects;
+	public List<CollisionCircle> objects;
 
 	int maxLifespan = 8;
 	int curLife = -1;
@@ -32,7 +32,7 @@ public class QuadTreeEternal
 		rect = newRect;
 		halfWidth = rect.width / 2;
 		halfHeight = rect.height / 2;
-		objects = new List<ICollidable>();
+		objects = new List<CollisionCircle>();
 		parent = null;
 		childs = new QuadTreeEternal[4];
 		for (int i = 0; i < 4; i++)
@@ -41,7 +41,7 @@ public class QuadTreeEternal
 		}
 	}
 
-	public QuadTreeEternal(Rect newRect, List<ICollidable> units)
+	public QuadTreeEternal(Rect newRect, List<CollisionCircle> units)
 	{
 		rect = newRect;
 		halfWidth = rect.width / 2;
@@ -75,7 +75,7 @@ public class QuadTreeEternal
 			}
 		}
 
-		List<ICollidable> movedUnits = new List<ICollidable>(objects);
+		List<CollisionCircle> movedUnits = new List<CollisionCircle>(objects);
 		//foreach (ICollidable unit in objects)
 		//{
 		//	if (unit.Active)
@@ -86,7 +86,7 @@ public class QuadTreeEternal
 		int objectsCount = objects.Count;
 		for (int i = 0; i < objectsCount; i++)
 		{
-            if (!objects[i].Active)
+            if (!objects[i].trans.gameObject.activeSelf)
             {
                 if (movedUnits.Contains(objects[i]))
                     movedUnits.Remove(objects[i]);
@@ -99,7 +99,7 @@ public class QuadTreeEternal
 			if ((flags & 1) == 1) childs[index].Update();
 
 		// 
-		foreach (ICollidable unit in movedUnits)
+		foreach (CollisionCircle unit in movedUnits)
 		//for (int k = 0; k < movedUnits.Count; k++)
 		{
 			QuadTreeEternal currentNode = this;
@@ -128,12 +128,12 @@ public class QuadTreeEternal
 		//check collisions here
 		if (parent == null)
 		{
-			crList = GetCollisions(new List<ICollidable>());
+			crList = GetCollisions(new List<CollisionCircle>());
 			
 		}
 	}
 
-	public void Insert(ICollidable obj)
+	public void Insert(CollisionCircle obj)
 	{
 		if (objects.Count < 1 && activeNodes == 0)
 		{
@@ -198,21 +198,21 @@ public class QuadTreeEternal
 		}
 	}
 
-    private List<CollisionRecord> GetCollisions(List<ICollidable> parentObjs)
+    private List<CollisionRecord> GetCollisions(List<CollisionCircle> parentObjs)
 	{
 		List<CollisionRecord> collisionsList = new List<CollisionRecord>();
 
 		// считаем, что для всех родительских объектов уже были выполнены проверки коллизий. 
 		// проверяем коллизии всех родительских объектов со всеми объектами в локальном узле
-		foreach (ICollidable pObj in parentObjs)
+		foreach (CollisionCircle pObj in parentObjs)
 		{
-			foreach (ICollidable lObj in objects)
+			foreach (CollisionCircle lObj in objects)
 			{
                 // Если произошла коллизия, то пополняем список объектов соприкосновения.
                 // Делаем это для обоих объектов
                 // В дополнении делаем проверку что коллизии - компоненты разных объектов
 
-                if (pObj.collisionType == CollisionType.Body && lObj.collisionType == CollisionType.Body)
+                if (pObj.collisionType == CollisionCircle.CollisionType.Body && lObj.collisionType == CollisionCircle.CollisionType.Body)
                     CheckBodies(pObj, lObj);
                 
 				//CollisionRecord cr = CheckCollision(pObj, lObj);
@@ -244,12 +244,12 @@ public class QuadTreeEternal
 			* обычное*/
 			for (int i = 0; i < objects.Count; i++)
 			{
-				List<ICollidable> tmpList = new List<ICollidable>(objects.Count);
+				List<CollisionCircle> tmpList = new List<CollisionCircle>(objects.Count);
 				tmpList.AddRange(objects);
 
 				while (tmpList.Count > 0)
 				{
-					foreach (ICollidable lObj2 in tmpList)
+					foreach (CollisionCircle lObj2 in tmpList)
 					{
                         //if (tmpList[tmpList.Count - 1] == lObj2 || (tmpList[tmpList.Count - 1].IsStatic && lObj2.IsStatic)) continue;
                         //IntersectionRecord ir = tmpList[tmpList.Count - 1].Intersects(lObj2);
@@ -266,7 +266,7 @@ public class QuadTreeEternal
 								//lObj2.RemoveCollided(tmpList[tmpList.Count - 1]);
                         //    }
                         //}
-                        if (tmpList[tmpList.Count - 1].collisionType == CollisionType.Body && lObj2.collisionType == CollisionType.Body)
+                        if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Body && lObj2.collisionType == CollisionCircle.CollisionType.Body)
                             CheckBodies(tmpList[tmpList.Count - 1], lObj2);
 						//CollisionRecord cr = CheckCollision(tmpList[tmpList.Count - 1], lObj2);
 						//if (cr != null)
@@ -280,7 +280,7 @@ public class QuadTreeEternal
 		}
 
 		// Теперь объединяем список локальных объектов со списком родительских объектов, а затем передаём его вниз всем дочерним узлам.
-		foreach (ICollidable lObj in objects) /*if (lObj.IsStatic == false)*/ parentObjs.Add(lObj);
+		foreach (CollisionCircle lObj in objects) /*if (lObj.IsStatic == false)*/ parentObjs.Add(lObj);
 
 		//parentObjs.AddRange(m_objects);
 		//каждый дочерний узел даст нам список записей пересечений, который мы затем объединим с собственными записями пересечений.
@@ -289,31 +289,31 @@ public class QuadTreeEternal
 				return collisionsList;
 	}
 
-    void CheckBodies(ICollidable unit1, ICollidable unit2)
+    void CheckBodies(CollisionCircle unit1, CollisionCircle unit2)
 	{
-        if (unit1.GameObject == unit2.GameObject)
-            return;
-		float distance = ((Vector2)unit1.Point - unit2.Point).sqrMagnitude;
+	    if (unit1.trans.gameObject.GetInstanceID() == unit2.trans.gameObject.GetInstanceID())
+	            return;
+	    float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
 		if (distance > 0)
 		{
             // check all bodies to apply separation
-			if (distance < unit1.Mover.separation.desired * unit1.Mover.separation.desired)
+			if (distance < unit1.mover.separation.desired * unit1.mover.separation.desired)
 			{
-                if (unit1.Mover.enableSeparation)
-				    unit1.Mover.separation.AddSeparation(unit2.Point, distance);
-                if (unit2.Mover.enableSeparation)
-				    unit2.Mover.separation.AddSeparation(unit1.Point, distance);
+                if (unit1.mover.enableSeparation)
+				    unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
+                if (unit2.mover.enableSeparation)
+				    unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
 			}
 			// check ally bodies only
-			if (unit1.Owner == unit2.Owner)
+			if (unit1.owner == unit2.owner)
             {
                 // check to apply cohesion
-                if (distance < unit1.Mover.cohesion.desired * unit1.Mover.cohesion.desired)
+                if (distance < unit1.mover.cohesion.desired * unit1.mover.cohesion.desired)
                 {
-					if (unit1.Mover.enableCohesion)
-						unit1.Mover.cohesion.AddCohesion(unit2.Point);
-					if (unit2.Mover.enableCohesion)
-						unit2.Mover.cohesion.AddCohesion(unit1.Point);
+					if (unit1.mover.enableCohesion)
+						unit1.mover.cohesion.AddCohesion(unit2.trans.position);
+					if (unit2.mover.enableCohesion)
+						unit2.mover.cohesion.AddCohesion(unit1.trans.position);
                 }
             }
 		}
@@ -343,18 +343,18 @@ public class QuadTreeEternal
         //}
 	}
 
-	public bool RectContainsCircle(Rect rect, ICollidable obj)
+	public bool RectContainsCircle(Rect rect, CollisionCircle obj)
 	{
         
-		if (!rect.Contains(obj.Point))
+        if (!rect.Contains(obj.trans.position))
 			return false;
-        if ((obj.Point.x - obj.Radius) < rect.x)
+        if ((obj.trans.position.x - obj.GetRadius()) < rect.x)
 			return false;
-        if ((obj.Point.x + obj.Radius) > (rect.x + rect.width))
+        if ((obj.trans.position.x + obj.GetRadius()) > (rect.x + rect.width))
 				return false;
-	    if ((obj.Point.y - obj.Radius) < rect.y)
+	    if ((obj.trans.position.y - obj.GetRadius()) < rect.y)
 				return false;
-        if ((obj.Point.y + obj.Radius) > (rect.y + rect.height))
+        if ((obj.trans.position.y + obj.GetRadius()) > (rect.y + rect.height))
 				return false;
 		return true;
 	}

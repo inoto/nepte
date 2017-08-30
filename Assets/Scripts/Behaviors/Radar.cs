@@ -1,7 +1,7 @@
 ﻿﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Radar : MonoBehaviour, ICollidable
+public class Radar : MonoBehaviour
 {
     public bool showRadius = false;
     public int collidedCount = 0;
@@ -25,8 +25,8 @@ public class Radar : MonoBehaviour, ICollidable
 
 	private void Start()
 	{
-        collision = new CollisionCircle(this);
-		CollisionManager.Instance.AddCollidable(this);
+        collision = new CollisionCircle(this, trans, mover, owner);
+		CollisionManager.Instance.AddCollidable(collision);
 	}
 
 	private void Update()
@@ -55,10 +55,6 @@ public class Radar : MonoBehaviour, ICollidable
 	public float RadiusHard
 	{
 		get { return radius; }
-	}
-	public CollisionType collisionType
-	{
-		get { return CollisionType.Body; }
 	}
 	public GameObject GameObject
 	{

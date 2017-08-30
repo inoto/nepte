@@ -102,6 +102,7 @@ public class FollowRally
                 desired *= mover.maxSpeed * ((dist - stopRadius) / (slowDownRadius - stopRadius));
             else
             {
+                arrived = true;
                 Attract();
                 return;
             }

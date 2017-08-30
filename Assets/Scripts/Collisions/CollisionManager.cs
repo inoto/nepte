@@ -45,7 +45,7 @@ public class CollisionManager : MonoBehaviour
 		qtree = new QuadTreeEternal(rect);
 	}
 
-	public void AddCollidable(ICollidable obj)
+    public void AddCollidable(CollisionCircle obj)
 	{
         qtree.Insert(obj);
 	}

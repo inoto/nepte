@@ -16,29 +16,51 @@ public class CollisionCircle
     public Radar radar;
     public Weapon weapon;
 
+    public Transform trans;
+    public Mover mover;
+    public Owner owner;
+
     public bool isCollided = false;
 
-    public List<CollisionCircle> collidedList;
-
-    public CollisionCircle(Body _body)
+    public CollisionCircle(Body _body, Transform _trans, Mover _mover, Owner _owner)
     {
         body = _body;
         collisionType = CollisionType.Body;
+        trans = _trans;
+        mover = _mover;
+        owner = _owner;
         isCollided = false;
-        collidedList = new List<CollisionCircle>();
     }
-	public CollisionCircle(Radar _radar)
+	public CollisionCircle(Radar _radar, Transform _trans, Mover _mover, Owner _owner)
 	{
 		radar = _radar;
         collisionType = CollisionType.Radar;
+		trans = _trans;
+		mover = _mover;
+		owner = _owner;
 		isCollided = false;
-		collidedList = new List<CollisionCircle>();
 	}
-	public CollisionCircle(Weapon _weapon)
+	public CollisionCircle(Weapon _weapon, Transform _trans, Mover _mover, Owner _owner)
 	{
 		weapon = _weapon;
         collisionType = CollisionType.Weapon;
+		trans = _trans;
+		mover = _mover;
+		owner = _owner;
 		isCollided = false;
-		collidedList = new List<CollisionCircle>();
+	}
+
+	public float GetRadius()
+	{
+		switch (collisionType)
+		{
+			case CollisionType.Body:
+				return body.radius;
+			case CollisionType.Radar:
+				return radar.radius;
+			case CollisionType.Weapon:
+				return weapon.radius;
+		}
+		return 0;
 	}
 }

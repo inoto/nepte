@@ -4,8 +4,6 @@ using System.Collections;
 [System.Serializable]
 public class Separation
 {
-    public bool separated = false;
-
     public int count;
     public Vector2 sum;
 	public float desired;
@@ -30,9 +28,8 @@ public class Separation
 
     public void Clear()
     {
-        separated = false;
 		sum = Vector2.zero;
-		desired = mover.body.radius * 2;
+		//desired = mover.body.radius * 2;
 		count = 0;
     }
 
@@ -49,7 +46,7 @@ public class Separation
 		if (count > 0)
 		{
             //Debug.Log("separation works");
-            separated = true;
+ 
 			sum /= count;
 			//sum.Normalize();
 			sum *= maxSpeed;
