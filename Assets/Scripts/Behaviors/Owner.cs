@@ -2,10 +2,10 @@ using UnityEngine;
 using System.Collections;
 
 [System.Serializable]
-public class Owner
+public class Owner : MonoBehaviour
 {
-    public int playerNumber;
-    public PlayerController playerController;
+    public int playerNumber = 0;
+    public PlayerController playerController = null;
 
     public Owner()
     {

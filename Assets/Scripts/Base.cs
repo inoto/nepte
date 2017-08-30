@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Base : MonoBehaviour
 {
-    public Owner owner;
-
     public bool showRadius;
 
     public int health = 4000;
@@ -18,6 +16,7 @@ public class Base : MonoBehaviour
 
     [Header("Cache")]
     public Transform trans;
+    public Owner owner;
     public Spawner spawner;
 	private MeshRenderer mesh;
 	private MeshFilter mf;
@@ -42,10 +41,13 @@ public class Base : MonoBehaviour
 		mesh = GetComponent<MeshRenderer>();
 		mf = GetComponent<MeshFilter>();
         spawner = GetComponent<Spawner>();
+        owner = GetComponent<Owner>();
     }
 
     private void Start()
     {
+        SetOwnerAsInParent();
+
         radius = GetComponent<QuadMesh>().size;
 		playerControllerParent = transform.parent.gameObject;
 
@@ -60,6 +62,13 @@ public class Base : MonoBehaviour
 
 		//TakeNodes();
         spawner.StartSpawn(trans.position);
+    }
+
+    void SetOwnerAsInParent()
+    {
+		var ownerParent = trans.parent.GetComponent<Owner>();
+		owner.playerNumber = ownerParent.playerNumber;
+		owner.playerController = ownerParent.playerController;
     }
 
     public void StartWithOwner()
@@ -96,7 +105,10 @@ public class Base : MonoBehaviour
 
 	void AssignMaterial()
 	{
-        mesh.material = materials[owner.playerNumber];
+		if (mesh != null && owner != null)
+			mesh.sharedMaterial = materials[owner.playerNumber];
+		else
+			Debug.LogError("Cannot assign material.");
 	}
 
     void Die()

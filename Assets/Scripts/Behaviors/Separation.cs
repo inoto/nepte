@@ -1,8 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
-public class Separation : MonoBehaviour
+[System.Serializable]
+public class Separation
 {
+    public bool separated = false;
+
+    public int count;
+    public Vector2 sum;
+	public float desired;
+
     public float maxSpeed = 2;
 	public float maxAcceleration = 2;
 
@@ -13,84 +20,76 @@ public class Separation : MonoBehaviour
 
     [System.NonSerialized] public Mover mover;
 
-    private void Awake()
+    public Separation(Mover _mover)
     {
-        mover = GetComponent<Mover>();
+        mover = _mover;
+        sum = new Vector2();
+		desired = mover.body.radius * 2;
+		count = 0;
     }
 
-	private void Update()
-	{
+    public void Clear()
+    {
+        separated = false;
+		sum = Vector2.zero;
+		desired = mover.body.radius * 2;
+		count = 0;
+    }
 
-        Separate();
-
+    public void AddSeparation(Vector2 point, float dist)
+    {
+        Vector2 diff = ((Vector2)mover.trans.position - point).normalized;
+        diff /= dist;
+        sum += diff;
+        count++;
 	}
 
     public void Separate()
 	{
-		Vector2 sum = new Vector2();
-		float desiredSeparation = mover.drone.body.radius * 2;
-		int countSeparation = 0;
-
-        // cohesion
-        Vector2 sumCohesion = new Vector2();
-        float desiredCohesion = mover.drone.radar.radius*2;
-		int countCohesion = 0;
-
+		if (count > 0)
+		{
+            //Debug.Log("separation works");
+            separated = true;
+			sum /= count;
+			//sum.Normalize();
+			sum *= maxSpeed;
+			Vector2 force = sum - mover.velocity;
+			force = Mover.LimitVector(force, mover.maxForce);
+			//force *= 1.5f;
+			mover.AddForce(force);
+            Clear();
+		}
 		//Vector2 sumAlign = new Vector2();
 		//float desiredAlign = mover.drone.radar.radius * 2;
         //int countAlign = 0;
 
-        foreach (Drone unit in CollisionManager.Instance.objects)
-        {
-            if (mover.drone == unit)
-                continue;
-            float dist = (mover.drone.trans.position - unit.trans.position).magnitude;
-            if (dist > 0 && dist < desiredSeparation)
-            {
-                Vector2 diff = (mover.drone.trans.position - unit.trans.position).normalized;
-                diff /= dist;
-                sum += diff;
-                countSeparation++;
-            }
-    //        if (mover.drone.trans.position == unit.trans.position)
+    //    foreach (CollisionCircle unit in CollisionManager.Instance.objects)
+    //    {
+    //        if (mover == unit)
+    //            continue;
+    //        float dist = (mover.trans.position - unit.trans.position).magnitude;
+    //        if (dist > 0 && dist < desiredSeparation)
     //        {
-    //            Vector2 direction = new Vector2(0, 0).normalized;
-				//direction /= dist;
-				//sum += direction;
-				//countSeparation++;
-            //}
-            // cohesion
-            if (dist > 0 && dist < desiredCohesion
-                && mover.drone.owner == unit.owner)
-            {
-                sumCohesion += (Vector2)unit.trans.position;
-                countCohesion++;
-            }
-            // align
-            //if (mover.drone.owner == unit.owner)
-            //{
-            //    sumAlign += unit.mover.velocity;
-            //    countAlign++;
-            //}
-        }
-        if (countSeparation > 0)
-        {
-            sum /= countSeparation;
-            //sum.Normalize();
-            sum *= maxSpeed;
-            Vector2 force = sum - mover.velocity;
-            force = Mover.LimitVector(force, mover.maxForce);
-            //force *= 1.5f;
-            mover.AddForce(force);
-        }
-        // cohesion
-        if (countCohesion > 0)
-        {
-            sumCohesion /= countCohesion;
-            mover.Seek(sumCohesion);
-            //force *= 0.8f;
-            //mover.AddForce(force);
-        }
+    //            Vector2 diff = (mover.trans.position - unit.trans.position).normalized;
+    //            diff /= dist;
+    //            sum += diff;
+    //            countSeparation++;
+    //        }
+    ////        if (mover.drone.trans.position == unit.trans.position)
+    ////        {
+    ////            Vector2 direction = new Vector2(0, 0).normalized;
+				////direction /= dist;
+				////sum += direction;
+				////countSeparation++;
+        //    //}
+        //    // align
+        //    //if (mover.drone.owner == unit.owner)
+        //    //{
+        //    //    sumAlign += unit.mover.velocity;
+        //    //    countAlign++;
+        //    //}
+        //}
+
         // align
         //sumAlign /= countAlign;
         ////sumAlign. = maxSpeed;

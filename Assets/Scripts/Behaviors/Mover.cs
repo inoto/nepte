@@ -15,8 +15,8 @@ public class Mover : MonoBehaviour
     [Header("Enablers")]
     public bool enableFollowRally = true;
     public bool enableSeparation = true;
-    public bool enableAlignment = true;
     public bool enableCohesion = true;
+    public bool enableAlignment = true;
 
     [Header("Main")]
     public Vector2 velocity;
@@ -42,19 +42,29 @@ public class Mover : MonoBehaviour
 	private Queue<Vector2> velocitySamples = new Queue<Vector2>();
 
     public bool isActive = false;
-    public Drone drone;
 
     [Header("Modules")]
     public FollowRally followRally;
+    public Separation separation;
+    public Cohesion cohesion;
+
+    [Header("Components")]
+    public Transform trans;
+    public Owner owner;
+    public Body body;
 
     private void Awake()
     {
-        drone = GetComponent<Drone>();
+        trans = GetComponent<Transform>();
+        owner = GetComponent<Owner>();
+        body = GetComponent<Body>();
     }
 
     private void Start()
     {
         followRally = new FollowRally(this);
+        separation = new Separation(this);
+        cohesion = new Cohesion(this);
     }
 
     public void ActivateWithOwner()
@@ -73,9 +83,17 @@ public class Mover : MonoBehaviour
                 LookWhereYoureGoing();
             }
         }
+        if (enableSeparation)
+		{
+            separation.Separate();
+		}
+        if (enableCohesion)
+		{
+            cohesion.Cohesie();
+		}
         velocity += acceleration * Time.deltaTime;
         velocity *= maxSpeed;
-		drone.trans.position += (Vector3)velocity * 0.1f;
+		trans.position += (Vector3)velocity * 0.1f;
         acceleration *= 0;
     }
 
@@ -98,7 +116,7 @@ public class Mover : MonoBehaviour
     public Vector2 Arrive(Vector2 targetPosition)
 	{
 		/* Get the right direction for the linear acceleration */
-        Vector2 direction = targetPosition - (Vector2)drone.trans.position;
+        Vector2 direction = targetPosition - (Vector2)trans.position;
 
 		/* Get the distance to the target */
 		float dist = direction.magnitude;
@@ -147,7 +165,7 @@ public class Mover : MonoBehaviour
 	/* A seek steering behavior. Will return the steering for the current game object to seek a given position */
 	public void Seek(Vector2 targetPosition)
 	{
-        Vector2 desired = targetPosition - (Vector2)drone.trans.position;
+        Vector2 desired = targetPosition - (Vector2)trans.position;
 
 		desired.Normalize();
 
@@ -205,12 +223,12 @@ public class Mover : MonoBehaviour
 		direction.Normalize();
 
 		// If we have a non-zero direction then look towards that direciton otherwise do nothing
-		if (direction.sqrMagnitude > 0.001f)
+		if (direction.sqrMagnitude > 0.01f)
 		{
 			float toRotation = (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg)-90;
-			float rotation = Mathf.LerpAngle(drone.trans.rotation.eulerAngles.z, toRotation, Time.deltaTime * turnSpeed);
+			float rotation = Mathf.LerpAngle(trans.rotation.eulerAngles.z, toRotation, Time.deltaTime * turnSpeed);
 
-            drone.trans.rotation = Quaternion.Euler(0, 0, rotation);
+            trans.rotation = Quaternion.Euler(0, 0, rotation);
 		}
 	}
 
@@ -221,9 +239,9 @@ public class Mover : MonoBehaviour
 
 	public void LookAtDirection(float toRotation)
 	{
-		float rotation = Mathf.LerpAngle(drone.trans.rotation.eulerAngles.z, toRotation, Time.deltaTime * turnSpeed);
+		float rotation = Mathf.LerpAngle(trans.rotation.eulerAngles.z, toRotation, Time.deltaTime * turnSpeed);
 
-		drone.trans.rotation = Quaternion.Euler(0, 0, rotation);
+		trans.rotation = Quaternion.Euler(0, 0, rotation);
 	}
 
 	
@@ -232,7 +250,7 @@ public class Mover : MonoBehaviour
 	{
 		Vector2 midPoint = (target1.position + target2.position) / 2;
 
-        float timeToReachMidPoint = Vector2.Distance(midPoint, drone.trans.position) / maxSpeed;
+        float timeToReachMidPoint = Vector2.Distance(midPoint, trans.position) / maxSpeed;
 
 		Vector2 futureTarget1Pos = target1.position + target1.velocity * timeToReachMidPoint;
 		Vector2 futureTarget2Pos = target2.position + target2.velocity * timeToReachMidPoint;
@@ -250,9 +268,9 @@ public class Mover : MonoBehaviour
 
 	public bool IsFacing(Vector2 target, float cosineValue)
 	{
-        Vector2 facing = drone.trans.right.normalized;
+        Vector2 facing = trans.right.normalized;
 
-        Vector2 directionToTarget = (target - (Vector2)drone.trans.position);
+        Vector2 directionToTarget = (target - (Vector2)trans.position);
 		directionToTarget.Normalize();
 
 		return Vector2.Dot(facing, directionToTarget) >= cosineValue;

@@ -2,8 +2,6 @@
 
 public class RallyPoint : MonoBehaviour
 {
-    public Owner owner;
-
     Rect rect;
 
 #if UNITY_EDITOR
@@ -16,6 +14,7 @@ public class RallyPoint : MonoBehaviour
 
 	[Header("Cache")]
 	public Transform trans;
+    public Owner owner;
 	public MeshRenderer mesh;
     public Node node;
     public Body body;
@@ -27,6 +26,7 @@ public class RallyPoint : MonoBehaviour
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
+        owner = GetComponent<Owner>();
     }
 
     private void OnDestroy()
@@ -40,8 +40,10 @@ public class RallyPoint : MonoBehaviour
         }
     }
 
-    public void StartWithOwner()
+    public void DelayedStart()
     {
+        SetOwnerAsInParent();
+
 		if (owner.playerNumber == 0)
 		{
 #if UNITY_EDITOR
@@ -66,6 +68,13 @@ public class RallyPoint : MonoBehaviour
         node = Grid.Instance.NodeFromWorldPoint(trans.position);
 	}
 
+	void SetOwnerAsInParent()
+	{
+		var ownerParent = trans.parent.GetComponent<Owner>();
+		owner.playerNumber = ownerParent.playerNumber;
+		owner.playerController = ownerParent.playerController;
+	}
+
 	public void SetNew(Vector2 position)
 	{
         Node tmpNode = Grid.Instance.NodeFromWorldPoint(position);
@@ -86,8 +95,9 @@ public class RallyPoint : MonoBehaviour
 
 	void AssignMeterial()
 	{
-        //if (mesh == null)
-        //    mesh = GetComponent<MeshRenderer>();
-		mesh.material = materials[owner.playerNumber];
+        if (mesh != null && owner != null)
+            mesh.sharedMaterial = materials[owner.playerNumber];
+        else
+            Debug.LogError("Cannot assign material.");
 	}
 }

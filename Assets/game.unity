@@ -1755,7 +1755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83ad4adba175440ab8d25e4ad094a5cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showGizmos: 0
+  showGizmos: 1
   unitsInTree: 0
   basesInTree: 0
   radarsInTree: 0

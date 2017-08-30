@@ -20,7 +20,7 @@ public class FollowRally
     public FollowRally(Mover _mover)
     {
         mover = _mover;
-        mover.drone.owner.playerController.rallyPoint.OnRallyPointChanged += UpdateRallyPoint;
+        mover.owner.playerController.rallyPoint.OnRallyPointChanged += UpdateRallyPoint;
         UpdateRallyPoint();
     }
 
@@ -39,7 +39,7 @@ public class FollowRally
     {
 		float mass = 10;
 	    float G = 0.3f;
-        Vector2 force = rallyPoint - (Vector2)mover.drone.trans.position;
+        Vector2 force = rallyPoint - (Vector2)mover.trans.position;
         float dist = force.magnitude;
         dist = Mathf.Clamp(dist, 1, 3);
         force.Normalize();
@@ -52,12 +52,12 @@ public class FollowRally
     void UpdateRallyPoint()
     {
         arrived = false;
-        rallyPoint = mover.drone.owner.playerController.rallyPoint.trans.position;
+        rallyPoint = mover.owner.playerController.rallyPoint.trans.position;
     }
 
 	public void Seek()
 	{
-		Vector2 desired = rallyPoint - (Vector2)mover.drone.trans.position;
+		Vector2 desired = rallyPoint - (Vector2)mover.trans.position;
 
 		desired.Normalize();
 
@@ -85,7 +85,7 @@ public class FollowRally
     public void Arrive()
 	{
 		/* Get the right direction for the linear acceleration */
-		Vector2 desired = rallyPoint - (Vector2)mover.drone.trans.position;
+		Vector2 desired = rallyPoint - (Vector2)mover.trans.position;
 
 		/* Get the distance to the target */
 		float dist = desired.magnitude;

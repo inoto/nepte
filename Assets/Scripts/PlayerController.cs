@@ -2,8 +2,6 @@
 
 public class PlayerController : MonoBehaviour
 {
-    public Owner owner = new Owner();
-
 	public delegate void Player();
 	public event Player OnPlayerDefeated = delegate { };
 
@@ -14,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
 	[Header("Cache")]
 	public Transform trans;
+    public Owner owner;
     public RallyPoint rallyPoint;
     public Base bas;
     public AIPlayer aiPlayer;
@@ -27,19 +26,22 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         trans = GetComponent<Transform>();
+        owner = GetComponent<Owner>();
     }
 
     private void Start()
     {
         owner.playerController = this;
 
+		
+    }
+
+    public void DelayedStart()
+    {
 		CreateBase();
 
 		CreateRallyPoint();
-    }
 
-    public void ActionsWithOwner()
-    {
         if (owner.playerNumber != 0)
 			aiPlayer = gameObject.AddComponent<AIPlayer>();
         isInitialized = true;
@@ -80,7 +82,7 @@ public class PlayerController : MonoBehaviour
 		GameObject baseObject = Instantiate(basePrefab, point, trans.rotation);
         baseObject.transform.SetParent(trans);
 		bas = baseObject.GetComponent<Base>();
-        bas.owner = owner;
+        //bas.owner = owner;
         bas.StartWithOwner();
     }
 
@@ -91,8 +93,8 @@ public class PlayerController : MonoBehaviour
 		GameObject rallyPointObject = Instantiate(rallyPointPrefab, point, trans.rotation);
         rallyPointObject.transform.SetParent(trans);
         rallyPoint = rallyPointObject.GetComponent<RallyPoint>();
-        rallyPoint.owner = owner;
-        rallyPoint.StartWithOwner();
+        //rallyPoint.owner = owner;
+        rallyPoint.DelayedStart();
 
         bas.GetComponent<Base>().rallyPoint = rallyPoint;
     }

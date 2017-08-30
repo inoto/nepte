@@ -23,9 +23,11 @@ GameObject:
   - component: {fileID: 33425899918793512}
   - component: {fileID: 23790409747704556}
   - component: {fileID: 114835238842844082}
+  - component: {fileID: 114783534892546512}
   - component: {fileID: 114507272362157692}
   - component: {fileID: 114997923597211442}
   - component: {fileID: 114271282287821818}
+  - component: {fileID: 114903286341286124}
   m_Layer: 0
   m_Name: Drone
   m_TagString: drone
@@ -91,7 +93,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1964420292115662}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5505f01a6115242f9bf776b9d4162ed6, type: 3}
   m_Name: 
@@ -119,24 +121,39 @@ MonoBehaviour:
   currentSpeed: 0
   currentAcceleration: 0
   mass: 1
-  maxForce: 2
+  maxForce: 10
   maxSpeed: 1
   maxAcceleration: 1
   accelerationStep: 0.1
   targetRadius: 1
   slowDownRadius: 3
   timeToTarget: 0.1
-  turnSpeed: 5
+  turnSpeed: 3
   smoothing: 1
   numSamplesForSmoothing: 5
   isActive: 0
-  drone: {fileID: 0}
   followRally:
     arrived: 0
     rallyPointMass: 0
     rallyPointG: 0
     stopRadius: 1
     slowDownRadius: 3
+  trans: {fileID: 0}
+  owner: {fileID: 0}
+  body: {fileID: 0}
+--- !u!114 &114783534892546512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: 0
+  playerController: {fileID: 0}
 --- !u!114 &114829070162426570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -148,19 +165,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner:
-    playerNumber: 0
-    playerController: {fileID: 0}
   health:
     max: 100
     current: 100
     percent: 1
-  body:
-    showRadius: 0
-    radius: 1
-    radiusHard: 0.5
-    strength: 0
   trans: {fileID: 0}
+  owner: {fileID: 0}
+  body: {fileID: 0}
   mover: {fileID: 0}
   radar: {fileID: 0}
 --- !u!114 &114835238842844082
@@ -175,6 +186,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 1
+--- !u!114 &114903286341286124
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3448215bd05c14e00863b307f5e9bc40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showRadius: 0
+  trans: {fileID: 0}
+  radius: 0
+  radiusHard: 0
+  strength: 0
 --- !u!114 &114997923597211442
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -186,6 +213,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 929e939d8118a4abc8a2e55931f7c32f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showRadius: 1
+  showRadius: 0
   radius: 5
-  drone: {fileID: 0}
+  trans: {fileID: 0}

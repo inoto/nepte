@@ -13,13 +13,13 @@ public class Spawner : MonoBehaviour
     public GameObject prefab;
 
     Transform trans;
-    Base bas;
+    //Base bas;
     IEnumerator spawnCoroutine;
 
     private void Awake()
     {
         trans = GetComponent<Transform>();
-        bas = GetComponent<Base>();
+        //bas = GetComponent<Base>();
     }
 
 	private void Start()
@@ -47,9 +47,9 @@ public class Spawner : MonoBehaviour
         {
 			GameObject obj = ObjectPool.Spawn(prefab, trans.parent, point, trans.rotation);
 			Drone droneSpawned = obj.GetComponent<Drone>();
-			droneSpawned.owner = bas.owner;
-			//droneSpawned.playerRallyPoint = rallyPoint;
-			droneSpawned.ActivateWithOwner();
+            //droneSpawned.owner = bas.owner;
+            //droneSpawned.playerRallyPoint = rallyPoint;
+            droneSpawned.DelayedStart();
 			//droneSpawned.ResetRallyPoint();
 
 			float interval;

@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 23086487595305584}
   - component: {fileID: 114969710160545916}
   - component: {fileID: 114358262193089728}
+  - component: {fileID: 114681370771658558}
   m_Layer: 9
   m_Name: Base
   m_TagString: base
@@ -94,15 +95,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58262da786bcb4ce1a40a48a9c7dc123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner:
-    playerNumber: 0
   showRadius: 1
   health: 4000
   radius: 0
-  cType: 1
   tType: 1
   isDead: 0
+  node: []
   trans: {fileID: 0}
+  owner: {fileID: 0}
   spawner: {fileID: 0}
   assignedHPbarSlider: {fileID: 0}
   rallyPoint: {fileID: 0}
@@ -129,10 +129,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 0
   delay: 2
-  intervalMin: 3
-  intervalMax: 3
+  intervalMin: 5
+  intervalMax: 5
   point: {x: 0, y: 0}
   prefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab, type: 2}
+--- !u!114 &114681370771658558
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1771483991996188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: 0
+  playerController: {fileID: 0}
 --- !u!114 &114969710160545916
 MonoBehaviour:
   m_ObjectHideFlags: 1

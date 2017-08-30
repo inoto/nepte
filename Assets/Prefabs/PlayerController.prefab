@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4352747870054206}
   - component: {fileID: 114941429271116004}
+  - component: {fileID: 114311425871562664}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Untagged
@@ -40,6 +41,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114311425871562664
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1471363904131076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: 0
+  playerController: {fileID: 0}
 --- !u!114 &114941429271116004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -51,12 +65,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4042b551e32244fb28acc8e4810f4d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner:
-    playerNumber: 0
   playerUnitCount: 0
   isInitialized: 0
   isDefeated: 0
   trans: {fileID: 0}
+  owner: {fileID: 0}
   rallyPoint: {fileID: 0}
   bas: {fileID: 0}
   aiPlayer: {fileID: 0}

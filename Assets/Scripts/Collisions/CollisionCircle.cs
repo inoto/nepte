@@ -4,35 +4,41 @@ using UnityEngine;
 
 public class CollisionCircle
 {
-    public enum Type
+    public enum CollisionType
     {
-        Unit,
-        Base,
+        Body,
         Radar,
         Weapon
     }
-    public Type type;
+    public CollisionType collisionType;
 
-    public Drone drone;
-    public Base bas;
+    public Body body;
+    public Radar radar;
+    public Weapon weapon;
 
-    public bool collided = false;
+    public bool isCollided = false;
 
-    public CollisionCircle(Vector2 _point, float _radius, Drone _unit)
+    public List<CollisionCircle> collidedList;
+
+    public CollisionCircle(Body _body)
     {
-        //point = _point;
-        //radius = _radius;
-        //radiusHard = radius / 2 + radius / 5;
-        drone = _unit;
-        type = Type.Unit;
+        body = _body;
+        collisionType = CollisionType.Body;
+        isCollided = false;
+        collidedList = new List<CollisionCircle>();
     }
-
-	public CollisionCircle(Vector2 _point, float _radius, Base _bas)
+	public CollisionCircle(Radar _radar)
 	{
-		//point = _point;
-		//radius = _radius;
-		//radiusHard = radius / 2 + radius / 5;
-		bas = _bas;
-        type = Type.Base;
+		radar = _radar;
+        collisionType = CollisionType.Radar;
+		isCollided = false;
+		collidedList = new List<CollisionCircle>();
+	}
+	public CollisionCircle(Weapon _weapon)
+	{
+		weapon = _weapon;
+        collisionType = CollisionType.Weapon;
+		isCollided = false;
+		collidedList = new List<CollisionCircle>();
 	}
 }

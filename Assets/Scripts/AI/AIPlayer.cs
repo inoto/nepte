@@ -31,19 +31,21 @@ public class AIPlayer : MonoBehaviour
 
     public void DefineEnemies()
     {
-        int activePlayers = -1;
-        foreach(GameObject player in GameController.Instance.playerControllerObject)
-        {
-            if (player.activeSelf)
-                activePlayers += 1;
-        }
-        if (activePlayers == enemies.Count)
-            return;
+        //int activePlayers = 0;
+        //foreach(GameObject player in GameController.Instance.playerControllerObject)
+        //{
+        //    if (player.activeSelf)
+        //        activePlayers += 1;
+        //}
+        //if (activePlayers == enemies.Count)
+            //return;
 
         enemies.Clear();
-        for (int i = 0; i < activePlayers; i++)
+        for (int i = 0; i < GameController.Instance.players; i++)
         {
             if (playerController.owner.playerNumber == i)
+                continue;
+            if (!playerController.gameObject.activeSelf)
                 continue;
             enemies.Add(GameController.Instance.playerControllerObject[i]);
         }

@@ -280,7 +280,7 @@ public class GameController : MonoBehaviour
 			playerObject.transform.SetParent(transform);
 			PlayerController playerController = playerObject.GetComponent<PlayerController>();
 			playerController.owner.playerNumber = i;
-            playerController.ActionsWithOwner();
+            playerController.DelayedStart();
 			playerController.transform.position = playerStartPosition[i];
 
             playerControllerObject.Add(playerObject);

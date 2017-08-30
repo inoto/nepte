@@ -14,35 +14,57 @@ public class Drone : MonoBehaviour
     }
 
     [Header("Modules")]
-    public Owner owner;
     public Health health = new Health(100);
-    public Body body;
 
     [Header("Components")]
     public Transform trans;
     MeshRenderer mesh;
+    public Owner owner;
+    public Body body;
     public Mover mover;
     public Radar radar;
+
+	[Header("Colors")]
+	[SerializeField]
+	private Material[] materials;
 
     private void Awake()
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
+        owner = GetComponent<Owner>();
+        body = GetComponent<Body>();
         mover = GetComponent<Mover>();
         radar = GetComponent<Radar>();
     }
 
-    private void Start()
+    public void DelayedStart()
     {
-        body = new Body(this);
-
-    }
-
-    public void ActivateWithOwner()
-    {
+        SetOwnerAsInParent();
+        AssignMaterial();
         mover.ActivateWithOwner();
         owner.playerController.playerUnitCount += 1;
         PlayerController.unitCount += 1;
     }
+
+	void SetOwnerAsInParent()
+	{
+		var ownerParent = trans.parent.GetComponent<Owner>();
+		owner.playerNumber = ownerParent.playerNumber;
+		owner.playerController = ownerParent.playerController;
+	}
+
+    public void CollisionTrigger(CollisionCircle other)
+    {
+        
+    }
+
+	void AssignMaterial()
+	{
+		if (mesh != null && owner != null)
+			mesh.sharedMaterial = materials[owner.playerNumber];
+		else
+			Debug.LogError("Cannot assign material.");
+	}
 
 }
