@@ -19,12 +19,12 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4175439061827504}
+  - component: {fileID: 114681370771658558}
   - component: {fileID: 114017529968746086}
   - component: {fileID: 33091352823712140}
   - component: {fileID: 23086487595305584}
   - component: {fileID: 114969710160545916}
   - component: {fileID: 114358262193089728}
-  - component: {fileID: 114681370771658558}
   m_Layer: 9
   m_Name: Base
   m_TagString: base
@@ -58,7 +58,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 7eaf52c9e38d34b41af62514b874c3ed, type: 2}
+  - {fileID: 2100000, guid: 801c837e071a242239e7dbd813b6ad0e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58262da786bcb4ce1a40a48a9c7dc123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showRadius: 1
+  showRadius: 0
   health: 4000
   radius: 0
   tType: 1
@@ -112,6 +112,7 @@ MonoBehaviour:
     type: 2}
   HPbarPrefab: {fileID: 1715169125782130, guid: a67e5c7027d85448aa83ab0928ac2ba9,
     type: 2}
+  materialNeutral: {fileID: 2100000, guid: 801c837e071a242239e7dbd813b6ad0e, type: 2}
   materials:
   - {fileID: 2100000, guid: 7eaf52c9e38d34b41af62514b874c3ed, type: 2}
   - {fileID: 2100000, guid: 7326301bab270a949945db0a00c87a99, type: 2}
@@ -129,8 +130,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 0
   delay: 2
-  intervalMin: 5
-  intervalMax: 5
+  intervalMin: 3
+  intervalMax: 3
   point: {x: 0, y: 0}
   prefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab, type: 2}
 --- !u!114 &114681370771658558

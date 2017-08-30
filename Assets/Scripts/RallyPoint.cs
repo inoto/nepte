@@ -63,9 +63,11 @@ public class RallyPoint : MonoBehaviour
 
 		AssignMeterial();
 
-        Pathfinding.Instance.FillDistances(trans.position, owner.playerNumber);
+        SetNew(owner.playerController.trans.position);
 
-        node = Grid.Instance.NodeFromWorldPoint(trans.position);
+        //Pathfinding.Instance.FillDistances(trans.position, owner.playerNumber);
+
+        //node = Grid.Instance.NodeFromWorldPoint(trans.position);
 	}
 
 	void SetOwnerAsInParent()
@@ -85,7 +87,9 @@ public class RallyPoint : MonoBehaviour
             //Debug.Log("node pos: " + node.worldPosition);
             //Debug.Log("node center: " + node.rect.center);
 			rect = node.rect;
-            trans.position = node.worldPosition;
+            Vector3 tmp = node.worldPosition;
+            tmp.z = -0.1f;
+            trans.position = tmp;
 		}
 
 		Pathfinding.Instance.FillDistances(trans.position, owner.playerNumber);

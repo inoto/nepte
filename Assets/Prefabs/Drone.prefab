@@ -19,15 +19,14 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4589345348294930}
+  - component: {fileID: 114783534892546512}
   - component: {fileID: 114829070162426570}
   - component: {fileID: 33425899918793512}
   - component: {fileID: 23790409747704556}
   - component: {fileID: 114835238842844082}
-  - component: {fileID: 114783534892546512}
   - component: {fileID: 114507272362157692}
-  - component: {fileID: 114997923597211442}
-  - component: {fileID: 114271282287821818}
   - component: {fileID: 114903286341286124}
+  - component: {fileID: 114997923597211442}
   m_Layer: 0
   m_Name: Drone
   m_TagString: drone
@@ -87,20 +86,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1964420292115662}
   m_Mesh: {fileID: 0}
---- !u!114 &114271282287821818
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1964420292115662}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5505f01a6115242f9bf776b9d4162ed6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxSpeed: 2
-  maxAcceleration: 2
-  distanceAddition: 1
 --- !u!114 &114507272362157692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -114,14 +99,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableFollowRally: 1
   enableSeparation: 1
-  enableAlignment: 1
   enableCohesion: 1
+  enableAlignment: 0
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
   currentSpeed: 0
   currentAcceleration: 0
   mass: 1
-  maxForce: 10
+  maxForce: 2
   maxSpeed: 1
   maxAcceleration: 1
   accelerationStep: 0.1
@@ -138,6 +123,21 @@ MonoBehaviour:
     rallyPointG: 0
     stopRadius: 1
     slowDownRadius: 3
+  separation:
+    count: 0
+    sum: {x: 0, y: 0}
+    desired: 0
+    forceMultiplier: 1
+    maxSpeed: 2
+    maxAcceleration: 1
+    distanceAddition: 0
+  cohesion:
+    count: 0
+    sum: {x: 0, y: 0}
+    desired: 0
+    maxSpeed: 2
+    maxAcceleration: 1
+    distanceAddition: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
   body: {fileID: 0}
@@ -174,6 +174,10 @@ MonoBehaviour:
   body: {fileID: 0}
   mover: {fileID: 0}
   radar: {fileID: 0}
+  materials:
+  - {fileID: 2100000, guid: dd1135459b9084bd18b6ad32a1af18ef, type: 2}
+  - {fileID: 2100000, guid: c6e88d3c5145b4a079954b5a773aa640, type: 2}
+  - {fileID: 2100000, guid: 48e89b4ffcef743e4adf04855a700f2b, type: 2}
 --- !u!114 &114835238842844082
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -197,10 +201,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3448215bd05c14e00863b307f5e9bc40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showRadius: 0
+  showRadius: 1
+  collidedCount: 0
   trans: {fileID: 0}
-  radius: 0
-  radiusHard: 0
+  owner: {fileID: 0}
+  mover: {fileID: 0}
+  radius: 1
+  radiusHard: 0.5
   strength: 0
 --- !u!114 &114997923597211442
 MonoBehaviour:
@@ -213,6 +220,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 929e939d8118a4abc8a2e55931f7c32f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showRadius: 0
+  showRadius: 1
+  collidedCount: 0
   radius: 5
   trans: {fileID: 0}
+  owner: {fileID: 0}
+  mover: {fileID: 0}

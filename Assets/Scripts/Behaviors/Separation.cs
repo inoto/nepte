@@ -4,10 +4,11 @@ using System.Collections;
 [System.Serializable]
 public class Separation
 {
-    public int count;
+public int count;
     public Vector2 sum;
 	public float desired;
 
+    public float forceMultiplier = 1;
     public float maxSpeed = 2;
 	public float maxAcceleration = 2;
 
@@ -28,7 +29,7 @@ public class Separation
 
     public void Clear()
     {
-		sum = Vector2.zero;
+        sum = Vector2.zero;
 		//desired = mover.body.radius * 2;
 		count = 0;
     }
@@ -52,7 +53,7 @@ public class Separation
 			sum *= maxSpeed;
 			Vector2 force = sum - mover.velocity;
 			force = Mover.LimitVector(force, mover.maxForce);
-			//force *= 1.5f;
+            force *= forceMultiplier;
 			mover.AddForce(force);
             Clear();
 		}

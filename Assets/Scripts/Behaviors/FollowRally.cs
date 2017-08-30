@@ -15,6 +15,9 @@ public class FollowRally
     public float stopRadius = 1;
     public float slowDownRadius = 3;
 
+    float forceMultiplier = 1;
+    float forceMultiplierOriginal = 0;
+
     [System.NonSerialized] private Mover mover;
 
     public FollowRally(Mover _mover)
@@ -52,6 +55,8 @@ public class FollowRally
     void UpdateRallyPoint()
     {
         arrived = false;
+		if (forceMultiplierOriginal > 0)
+			forceMultiplier = forceMultiplierOriginal;
         rallyPoint = mover.owner.playerController.rallyPoint.trans.position;
     }
 
@@ -103,7 +108,8 @@ public class FollowRally
             else
             {
                 arrived = true;
-                Attract();
+                forceMultiplierOriginal = forceMultiplier;
+                forceMultiplier = 0.5f;
                 return;
             }
 		}
@@ -131,6 +137,7 @@ public class FollowRally
 		//	force *= mover.maxAcceleration;
 		//}
         force *= 2f;
+        force *= forceMultiplier;
         mover.AddForce(force);
 	}
 }

@@ -13,7 +13,7 @@ public class Spawner : MonoBehaviour
     public GameObject prefab;
 
     Transform trans;
-    //Base bas;
+    Owner owner;
     IEnumerator spawnCoroutine;
 
     private void Awake()
@@ -22,9 +22,10 @@ public class Spawner : MonoBehaviour
         //bas = GetComponent<Base>();
     }
 
-	private void Start()
+	public void DelayedStart()
 	{
-		spawnCoroutine = Spawn();
+        owner = GetComponent<Owner>();
+		//spawnCoroutine = Spawn();
 	}
 
     public void StartSpawn(Vector2 _point)
@@ -45,9 +46,10 @@ public class Spawner : MonoBehaviour
         //Debug.Log("Spawn started");
         while (isActive)
         {
-			GameObject obj = ObjectPool.Spawn(prefab, trans.parent, point, trans.rotation);
-			Drone droneSpawned = obj.GetComponent<Drone>();
-            //droneSpawned.owner = bas.owner;
+            GameObject obj = ObjectPool.Spawn(prefab, owner.playerController.trans, point, trans.rotation);
+            Drone droneSpawned = obj.GetComponent<Drone>();
+            droneSpawned.owner.playerNumber = owner.playerNumber;
+            droneSpawned.owner.playerController = owner.playerController;
             //droneSpawned.playerRallyPoint = rallyPoint;
             droneSpawned.DelayedStart();
 			//droneSpawned.ResetRallyPoint();

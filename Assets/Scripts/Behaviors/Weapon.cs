@@ -13,8 +13,6 @@ public class Weapon : MonoBehaviour
     public Mover mover;
     public CollisionCircle collision;
 
-    public List<ICollidable> collidedList = new List<ICollidable>();
-
 	// Use this for initialization
 	void Awake()
 	{
@@ -27,11 +25,6 @@ public class Weapon : MonoBehaviour
 	{
         collision = new CollisionCircle(this, trans, mover, owner);
 		CollisionManager.Instance.AddCollidable(collision);
-	}
-
-	private void Update()
-	{
-		collidedCount = collidedList.Count;
 	}
 
 	public void OnDrawGizmos()
@@ -72,8 +65,5 @@ public class Weapon : MonoBehaviour
 	{
 		get { if (mover != null) return mover; return null; }
 	}
-	public void CheckCollision(ICollidable other)
-	{
-		
-	}
+
 }

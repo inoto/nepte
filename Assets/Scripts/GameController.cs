@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour
     public event Game OnGameContinued = delegate { };
     public event Game OnGameRestart = delegate { };
 
-    public int players = 3;
+    public int players = 2;
 
     public int winPoints = 0;
 
@@ -49,6 +49,7 @@ public class GameController : MonoBehaviour
     [Header("Cache")]
     public List<GameObject> playerControllerObject;
     public List<Vector3> playerStartPosition;
+    public List<Base> bases;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -220,20 +221,20 @@ public class GameController : MonoBehaviour
 	{
         if (IsState(States.BeforeGame))
         {
-            AssignStartPositions();
             beforegamePanel.SetActive(false);
             RemoveStartScene();
             audioMixerChild.StopMainTheme();
         }
         OnGameContinued();
-		Camera.main.orthographicSize = 10;
+		//Camera.main.orthographicSize = 10;
         //GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
-		Vector3 vec = playerStartPosition[0];
-		vec.z = -10;
-		Camera.main.transform.position = vec;
+		//Vector3 vec = playerStartPosition[0];
+		//vec.z = -10;
+		//Camera.main.transform.position = vec;
 
 
 		CreatePlayers();
+        AssignBases();
 		state = States.Game;
 		ingamePanel.SetActive(true);
 
@@ -255,6 +256,8 @@ public class GameController : MonoBehaviour
             if (child.gameObject == audioMixerChild.gameObject)
 				continue;
             if (child.gameObject == objectPoolChild.gameObject)
+				continue;
+            if (child.gameObject == GameObject.Find("Bases"))
 				continue;
 			Destroy(child.gameObject);
 		}
@@ -280,40 +283,54 @@ public class GameController : MonoBehaviour
 			playerObject.transform.SetParent(transform);
 			PlayerController playerController = playerObject.GetComponent<PlayerController>();
 			playerController.owner.playerNumber = i;
+            playerController.owner.playerController = playerController;
             playerController.DelayedStart();
-			playerController.transform.position = playerStartPosition[i];
 
             playerControllerObject.Add(playerObject);
 		}
 	}
 
-	void AssignStartPositions()
+	void AssignBases()
 	{
-        playerStartPosition = new List<Vector3>();
+        bases.AddRange(FindObjectsOfType<Base>());
 
-		GameObject tmpObject;
-		for (int i = 0; i < players; i++)
-		{
-			switch (i)
-			{
-				case 0:
-					tmpObject = GameObject.Find("StartPlayer");
-                    playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-					Destroy(tmpObject);
-					continue;
-				case 1:
-					tmpObject = GameObject.Find("StartAIFirst");
-					playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-					Destroy(tmpObject);
-					continue;
-				case 2:
-					tmpObject = GameObject.Find("StartAISecond");
-					playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-					Destroy(tmpObject);
-					continue;
-			}
+        int counter = 0;
+        foreach (Base b in bases)
+        {
+            if (b.isStartPosition)
+            {
+                //playerStartPosition[counter] = b.trans.position;
+                b.SetOwner(counter, playerControllerObject[counter].GetComponent<PlayerController>());
+                playerControllerObject[counter].GetComponent<PlayerController>().trans.position = b.trans.position;
+                //b.DelayedStart();
+                counter++;
+            }
+        }
 
-		}
+		//GameObject tmpObject;
+		//for (int i = 0; i < players; i++)
+		//{
+		//	switch (i)
+		//	{
+		//		case 0:
+		//			tmpObject = GameObject.Find("StartPlayer");
+  //                  playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
+		//			Destroy(tmpObject);
+		//			continue;
+		//		case 1:
+		//			tmpObject = GameObject.Find("StartAIFirst");
+		//			playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
+		//			Destroy(tmpObject);
+		//			continue;
+		//		case 2:
+		//			tmpObject = GameObject.Find("StartAISecond");
+		//			playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
+		//			Destroy(tmpObject);
+		//			continue;
+		//	}
+
+		//}
+
 	}
 
     public void SettingsMenu()

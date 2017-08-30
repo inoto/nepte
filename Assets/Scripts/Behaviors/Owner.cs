@@ -4,12 +4,12 @@ using System.Collections;
 [System.Serializable]
 public class Owner : MonoBehaviour
 {
-    public int playerNumber = 0;
+    public int playerNumber = -1;
     public PlayerController playerController = null;
 
     public Owner()
     {
-        playerNumber = 0;
+        playerNumber = -1;
         playerController = null;
     }
 

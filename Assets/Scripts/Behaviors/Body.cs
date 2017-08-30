@@ -16,8 +16,6 @@ public class Body : MonoBehaviour
     public float radiusHard = 0.5f;
     public int strength = 0;
 
-    public List<ICollidable> collidedList = new List<ICollidable>();
-
 	// Use this for initialization
 	void Awake()
 	{
@@ -25,11 +23,6 @@ public class Body : MonoBehaviour
         owner = GetComponent<Owner>();
         mover = GetComponent<Mover>();
 	}
-
-    private void Update()
-    {
-        collidedCount = collidedList.Count;
-    }
 
     private void Start()
     {
@@ -75,29 +68,5 @@ public class Body : MonoBehaviour
     {
         get { if (mover != null) return mover; return null; }
     }
-    public void CheckCollision(ICollidable other)
-    {
-        float dist = ((Vector2)mover.trans.position - other.Point).sqrMagnitude;
-		if (dist > 0)
-		{
-            if (dist < mover.separation.desired * mover.separation.desired)
-            {
-                mover.separation.AddSeparation(other.Point, dist);
-                mover.separation.AddSeparation(other.Point, dist);
-            }
-            if (dist < mover.separation.desired * mover.separation.desired)
-            {
-                
-            }
-		}
-    }
-	public void AddSeparation(ICollidable other)
-    {
-        //if (mover != null && mover.separation != null)
-            //mover.separation.AddSeparation(other);
-    }
-	public void AddCohesionAlign(ICollidable other)
-    {
-        
-    }
+
 }

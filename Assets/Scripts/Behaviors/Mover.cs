@@ -43,6 +43,8 @@ public class Mover : MonoBehaviour
 
     public bool isActive = false;
 
+    bool isInitialized = false;
+
     [Header("Modules")]
     public FollowRally followRally;
     public Separation separation;
@@ -56,45 +58,44 @@ public class Mover : MonoBehaviour
     private void Awake()
     {
         trans = GetComponent<Transform>();
-        owner = GetComponent<Owner>();
         body = GetComponent<Body>();
     }
 
-    private void Start()
+    public void DelayedStart()
     {
-        followRally = new FollowRally(this);
-        separation = new Separation(this);
-        cohesion = new Cohesion(this);
-    }
-
-    public void ActivateWithOwner()
-    {
-        
-        //ApplyForce(drone.owner.playerController.rallyPoint.trans.position);
+        owner = GetComponent<Owner>();
+		followRally = new FollowRally(this);
+		separation = new Separation(this);
+		cohesion = new Cohesion(this);
+        isInitialized = true;
     }
 
     public void Update()
     {
-        if (enableFollowRally)
+        if (isInitialized)
         {
-            if (!followRally.arrived)
+            if (enableFollowRally)
             {
                 followRally.Arrive();
-                LookWhereYoureGoing();
+                if (!followRally.arrived)
+                {
+
+                    LookWhereYoureGoing();
+                }
             }
+            if (enableSeparation)
+            {
+                separation.Separate();
+            }
+            if (enableCohesion)
+            {
+                cohesion.Cohesie();
+            }
+            velocity += acceleration * Time.deltaTime;
+            velocity *= maxSpeed;
+            trans.position += (Vector3)velocity * 0.1f;
+            acceleration *= 0;
         }
-        if (enableSeparation)
-		{
-            separation.Separate();
-		}
-        if (enableCohesion)
-		{
-            cohesion.Cohesie();
-		}
-        velocity += acceleration * Time.deltaTime;
-        velocity *= maxSpeed;
-		trans.position += (Vector3)velocity * 0.1f;
-        acceleration *= 0;
     }
 
 	/* Updates the velocity of the current game object by the given linear acceleration */

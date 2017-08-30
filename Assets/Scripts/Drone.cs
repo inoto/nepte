@@ -40,9 +40,9 @@ public class Drone : MonoBehaviour
 
     public void DelayedStart()
     {
-        SetOwnerAsInParent();
+        //SetOwnerAsInParent();
         AssignMaterial();
-        mover.ActivateWithOwner();
+        mover.DelayedStart();
         owner.playerController.playerUnitCount += 1;
         PlayerController.unitCount += 1;
     }
