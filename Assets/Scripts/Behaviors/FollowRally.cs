@@ -4,6 +4,8 @@ using System.Collections;
 [System.Serializable]
 public class FollowRally
 {
+	public bool followingRally = false;
+	
     public bool arrived = false;
 
     Vector2 rallyPoint;
@@ -87,6 +89,13 @@ public class FollowRally
         return mover.Arrive(centerOfMass);
 	}
 
+	public void EndArrive(bool successfully)
+	{
+		arrived = true;
+		forceMultiplierOriginal = forceMultiplier;
+		forceMultiplier = 0.5f;
+	}
+
     public void Arrive()
 	{
 		/* Get the right direction for the linear acceleration */
@@ -107,9 +116,7 @@ public class FollowRally
                 desired *= mover.maxSpeed * ((dist - stopRadius) / (slowDownRadius - stopRadius));
             else
             {
-                arrived = true;
-                forceMultiplierOriginal = forceMultiplier;
-                forceMultiplier = 0.5f;
+	            EndArrive(true);
                 return;
             }
 		}

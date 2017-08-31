@@ -141,6 +141,8 @@ MonoBehaviour:
   trans: {fileID: 0}
   owner: {fileID: 0}
   body: {fileID: 0}
+  radar: {fileID: 0}
+  weapon: {fileID: 0}
 --- !u!114 &114783534892546512
 MonoBehaviour:
   m_ObjectHideFlags: 1

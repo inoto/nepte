@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Base : MonoBehaviour
 {
-    public bool isStartPosition = false;
+    public bool useAsStartPosition = false;
 
     public bool isDead = false;
 
@@ -71,10 +71,16 @@ public class Base : MonoBehaviour
         owner.playerController.rallyPoint.DelayedStart();
 
         AssignMaterial();
+		AddHPBar();
 
         spawner.enabled = true;
         spawner.DelayedStart();
         spawner.StartSpawn(trans.position);
+	}
+
+	public void SetMold()
+	{
+		
 	}
 
     void AddHPBar()

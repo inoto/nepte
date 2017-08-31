@@ -1,29 +1,26 @@
 ﻿<Properties StartupConfiguration="{61C26825-5648-5EE4-984F-59B873DE76F4}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Behaviors/Separation.cs">
     <Files>
-      <File FileName="Assets/Scripts/GameController.cs" Line="277" Column="57" />
-      <File FileName="Assets/Scripts/PlayerController.cs" Line="41" Column="3" />
-      <File FileName="Assets/Scripts/Base.cs" Line="70" Column="39" />
-      <File FileName="Assets/Scripts/RallyPoint.cs" Line="80" Column="67" />
+      <File FileName="Assets/Scripts/GameController.cs" Line="305" Column="36" />
+      <File FileName="Assets/Scripts/PlayerController.cs" Line="91" Column="86" />
+      <File FileName="Assets/Scripts/RallyPoint.cs" Line="66" Column="55" />
+      <File FileName="Assets/Scripts/Base.cs" Line="47" Column="6" />
+      <File FileName="Assets/Scripts/Behaviors/Spawner.cs" Line="52" Column="74" />
       <File FileName="Assets/Scripts/Behaviors/Radar.cs" Line="30" Column="28" />
       <File FileName="Assets/Scripts/Behaviors/Weapon.cs" Line="68" Column="1" />
       <File FileName="Assets/Scripts/Behaviors/Body.cs" Line="71" Column="1" />
-      <File FileName="Assets/Scripts/Drone.cs" Line="17" Column="28" />
+      <File FileName="Assets/Scripts/Drone.cs" Line="43" Column="32" />
       <File FileName="Assets/Scripts/Collisions/CollisionManager.cs" Line="48" Column="51" />
-      <File FileName="Assets/Scripts/Collisions/QuadTreeEternal.cs" Line="351" Column="63" />
-      <File FileName="Assets/Scripts/Behaviors/Mover.cs" Line="111" Column="76" />
-      <File FileName="Assets/Scripts/Behaviors/FollowRally.cs" Line="107" Column="99" />
-      <File FileName="Assets/Scripts/Behaviors/Separation.cs" Line="19" Column="5" />
-      <File FileName="Assets/Scripts/Behaviors/Cohesion.cs" Line="12" Column="35" />
-      <File FileName="Assets/Scripts/Behaviors/Owner.cs" Line="12" Column="27" />
-      <File FileName="Assets/Scripts/Behaviors/Spawner.cs" Line="30" Column="43" />
+      <File FileName="Assets/Scripts/Collisions/QuadTreeEternal.cs" Line="271" Column="80" />
+      <File FileName="Assets/Scripts/Behaviors/Mover.cs" Line="99" Column="57" />
+      <File FileName="Assets/Scripts/Behaviors/FollowRally.cs" Line="47" Column="40" />
+      <File FileName="Assets/Scripts/Behaviors/Separation.cs" Line="41" Column="22" />
+      <File FileName="Assets/Scripts/Behaviors/Cohesion.cs" Line="26" Column="38" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/dimka/tight-space/Assets/Scripts/GameController.cs" relfile="Assets/Scripts/GameController.cs" line="304" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />

@@ -5,16 +5,16 @@ using System.Collections.Generic;
 public class Body : MonoBehaviour
 {
     public bool showRadius = false;
-    public int collidedCount = 0;
+	
+	public float radius = 1;
+	public float radiusHard = 0.5f;
+	public int strength = 0;
 
+	[Header("Components")]
     public Transform trans;
     public Owner owner;
     public Mover mover;
     public CollisionCircle collision;
-
-    public float radius = 1;
-    public float radiusHard = 0.5f;
-    public int strength = 0;
 
 	// Use this for initialization
 	void Awake()

@@ -1,16 +1,21 @@
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
 [System.Serializable]
 public class Mover : MonoBehaviour
 {
-    public enum State
+    public enum MoveType
     {
         None,
         Rally,
         Drone,
         Base
     }
+
+	public MoveType moveType;
+
+	public bool isMoving;
 
     [Header("Enablers")]
     public bool enableFollowRally = true;
@@ -54,11 +59,15 @@ public class Mover : MonoBehaviour
     public Transform trans;
     public Owner owner;
     public Body body;
+    public Radar radar;
+    public Weapon weapon;
 
     private void Awake()
     {
         trans = GetComponent<Transform>();
         body = GetComponent<Body>();
+        radar = GetComponent<Radar>();
+        weapon = GetComponent<Weapon>();
     }
 
     public void DelayedStart()
@@ -67,34 +76,44 @@ public class Mover : MonoBehaviour
 		followRally = new FollowRally(this);
 		separation = new Separation(this);
 		cohesion = new Cohesion(this);
-        isInitialized = true;
+	    StartCoroutine("Move");
     }
+
+	IEnumerator Move()
+	{
+		isMoving = true;
+		while (isMoving)
+		{
+			if (enableFollowRally)
+			{
+				
+				followRally.Arrive();
+				if (!followRally.arrived)
+				{
+					LookWhereYoureGoing();
+				}
+			}
+			if (enableSeparation)
+			{
+				separation.Separate();
+			}
+			if (enableCohesion)
+			{
+				cohesion.Cohesie();
+			}
+			velocity += acceleration * Time.deltaTime;
+			velocity *= maxSpeed;
+			trans.position += (Vector3) velocity * 0.05f;
+			acceleration *= 0;
+			yield return new WaitForSeconds(0.01f);
+		}
+	}
 
     public void Update()
     {
         if (isInitialized)
         {
-            if (enableFollowRally)
-            {
-                followRally.Arrive();
-                if (!followRally.arrived)
-                {
-
-                    LookWhereYoureGoing();
-                }
-            }
-            if (enableSeparation)
-            {
-                separation.Separate();
-            }
-            if (enableCohesion)
-            {
-                cohesion.Cohesie();
-            }
-            velocity += acceleration * Time.deltaTime;
-            velocity *= maxSpeed;
-            trans.position += (Vector3)velocity * 0.1f;
-            acceleration *= 0;
+            
         }
     }
 
@@ -110,8 +129,6 @@ public class Mover : MonoBehaviour
 	//{
 	//	this.steer(new Vector3(linearAcceleration.x, linearAcceleration.y, 0));
 	//}
-
-
 
 	/* Returns the steering for a character so it arrives at the target */
     public Vector2 Arrive(Vector2 targetPosition)

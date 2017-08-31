@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drone : MonoBehaviour
+public class Drone : MonoBehaviour, ITargetable
 {
     public enum Mode
     {
         Idle,
-        MovingRally,
-        MovingTarget,
+        Moving,
         Attacking,
         Dead
     }
+
+	public Mode mode;
 
     [Header("Modules")]
     public Health health = new Health(100);
@@ -47,17 +48,20 @@ public class Drone : MonoBehaviour
         PlayerController.unitCount += 1;
     }
 
+	void Die()
+	{
+		mode = Mode.Dead;
+		owner.playerController.playerUnitCount -= 1;
+		PlayerController.unitCount -= 1;
+		ObjectPool.Recycle(gameObject);
+	}
+
 	void SetOwnerAsInParent()
 	{
 		var ownerParent = trans.parent.GetComponent<Owner>();
 		owner.playerNumber = ownerParent.playerNumber;
 		owner.playerController = ownerParent.playerController;
 	}
-
-    public void CollisionTrigger(CollisionCircle other)
-    {
-        
-    }
 
 	void AssignMaterial()
 	{
@@ -67,4 +71,20 @@ public class Drone : MonoBehaviour
 			Debug.LogError("Cannot assign material.");
 	}
 
+	public void Damage(int damage)
+	{
+		health.current -= damage;
+		if (health.current <= 0)
+			Die();
+	}
+
+	public GameObject GameObj
+	{
+		get { return gameObject; }
+	}
+
+	public bool IsDied
+	{
+		get { return (mode == Mode.Dead); }
+	}
 }

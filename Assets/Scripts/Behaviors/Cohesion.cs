@@ -23,6 +23,7 @@ public int count;
 		mover = _mover;
 		sum = new Vector2();
 		desired = mover.body.radius * 3;
+//        desired = mover.radar.radius;
 		count = 0;
 	}
 

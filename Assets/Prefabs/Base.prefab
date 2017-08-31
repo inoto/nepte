@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771483991996188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -95,19 +95,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58262da786bcb4ce1a40a48a9c7dc123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showRadius: 0
-  health: 4000
-  radius: 0
-  tType: 1
+  isStartPosition: 0
   isDead: 0
   node: []
-  trans: {fileID: 0}
-  owner: {fileID: 0}
-  spawner: {fileID: 0}
   assignedHPbarSlider: {fileID: 0}
   rallyPoint: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
   attackers: []
+  health:
+    max: 100
+    current: 100
+    percent: 1
+  trans: {fileID: 0}
+  owner: {fileID: 0}
+  spawner: {fileID: 0}
+  body: {fileID: 0}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
     type: 2}
   HPbarPrefab: {fileID: 1715169125782130, guid: a67e5c7027d85448aa83ab0928ac2ba9,
@@ -158,4 +160,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 3
+  size: 2

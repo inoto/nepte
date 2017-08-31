@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class LaserMissile : MonoBehaviour, IOwnable
+public class LaserMissile : MonoBehaviour
 {
     public int owner;
 
@@ -19,7 +19,6 @@ public class LaserMissile : MonoBehaviour, IOwnable
     public int damage;
     public ITargetable target;
 
-    // Use this for initialization
     void Start ()
     {
         directionVector = destinationVector - transform.position;
@@ -34,30 +33,16 @@ public class LaserMissile : MonoBehaviour, IOwnable
 		Rotate();
 	}
 
-    // Update is called once per frame
     void Update ()
     {
         directionVector = destinationVector - transform.position;
 
         if ((Vector2)transform.position == (Vector2)destinationVector)
 		{
-            if (target.DroneObj != null)
+            if (!target.IsDied)
             {
-                //if (target.DroneObj.mode != Drone.Mode.Died)
-                //    target.DroneObj.health -= damage;
+                target.Damage(damage);
             }
-			else if (target.BaseObj != null)
-			{
-                if (!target.BaseObj.isDead)
-                {
-                    target.BaseObj.Damage(damage);
-                }
-			}
-            //else
-            //{
-            //    Debug.Log("target nulled");
-            //    creator.target = null;
-            //}
 			ObjectPool.Recycle(gameObject);
 		}
 
@@ -69,8 +54,6 @@ public class LaserMissile : MonoBehaviour, IOwnable
         //    Rotate();
         //}
     }
-
-	
 
     void Rotate()
     {
@@ -88,31 +71,6 @@ public class LaserMissile : MonoBehaviour, IOwnable
     {
 		step = speed * Time.deltaTime;
 		transform.position = Vector2.MoveTowards(transform.position, destinationVector, step);
-    }
-
-    public void AddAttacker(GameObject newObj)
-    {
-        return;
-    }
-
-    public bool IsActive()
-    {
-        return gameObject.activeSelf;
-    }
-
-	public int GetOwner()
-	{
-		return owner;
-	}
-
-	public void SetOwner(int newOwner)
-	{
-		owner = newOwner;
-	}
-
-    public GameObject GetGameObject()
-    {
-        return gameObject;
     }
 
 	//public void OnDrawGizmos()

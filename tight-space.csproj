@@ -11,13 +11,16 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>2017.1.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
     <NoConfig>true</NoConfig>
     <NoStdLib>true</NoStdLib>
@@ -57,7 +60,7 @@
     <Reference Include="System">
       <HintPath>/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.dll</HintPath>
     </Reference>
-    <Reference Include="System.XML">
+    <Reference Include="System.Xml">
       <HintPath>/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.XML.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
@@ -261,28 +264,37 @@
     <Compile Include="Assets\Scripts\AI\AIPlayer.cs" />
     <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\Battleground.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Body.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Cohesion.cs" />
     <Compile Include="Assets\Scripts\Behaviors\DroneLinks.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\FollowRally.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Health.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Mover.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Owner.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Radar.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Separation.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Spawner.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Weapon.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\CameraWithEvents.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\PCInputController.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\TouchController.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\UIBarsCameraSize.cs" />
+    <Compile Include="Assets\Scripts\Cards\CardManager.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionCircle.cs" />
+    <Compile Include="Assets\Scripts\Collisions\CollisionGrid.cs" />
+    <Compile Include="Assets\Scripts\Collisions\CollisionManager.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionRecord.cs" />
+    <Compile Include="Assets\Scripts\Collisions\ICollidable.cs" />
+    <Compile Include="Assets\Scripts\Collisions\QuadTree.cs" />
+    <Compile Include="Assets\Scripts\Collisions\QuadTreeEternal.cs" />
     <Compile Include="Assets\Scripts\Drone.cs" />
     <Compile Include="Assets\Scripts\DroneExplosion.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
-    <Compile Include="Assets\Scripts\IOwnable.cs" />
     <Compile Include="Assets\Scripts\ITargetable.cs" />
     <Compile Include="Assets\Scripts\LaserMissile.cs" />
     <Compile Include="Assets\Scripts\Meshes\QuadMesh.cs" />
     <Compile Include="Assets\Scripts\Meshes\RectangleMesh.cs" />
     <Compile Include="Assets\Scripts\ObjectPool.cs" />
-    <Compile Include="Assets\Scripts\Collisions\CollisionGrid.cs" />
-    <Compile Include="Assets\Scripts\Collisions\CollisionManager.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\Grid.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\Heap.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\Line.cs" />
@@ -291,11 +303,8 @@
     <Compile Include="Assets\Scripts\Pathfinding\Path.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\Pathfinding.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\PathRequestManager.cs" />
-    <Compile Include="Assets\Scripts\Collisions\QuadTreeEternal.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\Unit.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\Collisions\QuadTree.cs" />
-    <Compile Include="Assets\Scripts\Behaviors\Radar.cs" />
     <Compile Include="Assets\Scripts\RallyPoint.cs" />
     <Compile Include="Assets\Scripts\Sounds\MixerContoller.cs" />
     <Compile Include="Assets\Scripts\Sounds\MusicMainTheme.cs" />
@@ -304,12 +313,6 @@
     <Compile Include="Assets\Scripts\UI\GameTimer.cs" />
     <Compile Include="Assets\Scripts\UI\LoseWinBlinking.cs" />
     <Compile Include="Assets\Scripts\UI\ObjectCounter.cs" />
-    <Compile Include="Assets\Scripts\Behaviors\Weapon.cs" />
-    <Compile Include="Assets\Scripts\Behaviors\FollowRally.cs" />
-    <Compile Include="Assets\Scripts\Behaviors\Body.cs" />
-    <Compile Include="Assets\Scripts\Behaviors\Separation.cs" />
-    <Compile Include="Assets\Scripts\Collisions\ICollidable.cs" />
-    <Compile Include="Assets\Scripts\Behaviors\Cohesion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />

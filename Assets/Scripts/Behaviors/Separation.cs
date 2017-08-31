@@ -24,6 +24,7 @@ public int count;
         mover = _mover;
         sum = new Vector2();
 		desired = mover.body.radius * 2;
+//        desired = mover.radar.radius;
 		count = 0;
     }
 

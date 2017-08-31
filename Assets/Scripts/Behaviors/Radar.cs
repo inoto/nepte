@@ -4,10 +4,10 @@ using System.Collections.Generic;
 public class Radar : MonoBehaviour
 {
     public bool showRadius = false;
-    public int collidedCount = 0;
 
     public float radius = 5;
 
+	[Header("Components")]
 	public Transform trans;
     public Owner owner;
     public Mover mover;
@@ -27,6 +27,11 @@ public class Radar : MonoBehaviour
 		CollisionManager.Instance.AddCollidable(collision);
 	}
 
+	public void ActivateCombat()
+	{
+		
+	}
+
 	public void OnDrawGizmos()
 	{
 		if (showRadius)
@@ -37,33 +42,4 @@ public class Radar : MonoBehaviour
             Gizmos.DrawWireSphere(trans.position, radius);
 		}
 	}
-	public Vector2 Point
-	{
-		get { return trans.position; }
-	}
-	public float Radius
-	{
-		get { return radius; }
-	}
-	public float RadiusHard
-	{
-		get { return radius; }
-	}
-	public GameObject GameObject
-	{
-		get { return gameObject; }
-	}
-	public bool Active
-	{
-		get { return this.enabled; }
-	}
-	public Owner Owner
-	{
-		get { if (owner != null) return owner; return null; }
-	}
-	public Mover Mover
-	{
-		get { if (mover != null) return mover; return null; }
-	}
-
 }

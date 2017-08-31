@@ -24,16 +24,6 @@ public class CollisionManager : MonoBehaviour
 
 	public QuadTreeEternal qtree;
 
-    List<ICollidable> units = new List<ICollidable>();
-    List<ICollidable> bases = new List<ICollidable>();
-    List<ICollidable> radars = new List<ICollidable>();
-    List<ICollidable> weapons = new List<ICollidable>();
-
-    List<ICollidable> returnedUnits = new List<ICollidable>();
-    List<ICollidable> returnedBases = new List<ICollidable>();
-	List<ICollidable> returnedRadars = new List<ICollidable>();
-	List<ICollidable> returnedWeapons = new List<ICollidable>();
-
     public List<ICollidable> objects = new List<ICollidable>();
 
 	private void Start()

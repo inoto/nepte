@@ -214,6 +214,8 @@ public class QuadTreeEternal
 
                 if (pObj.collisionType == CollisionCircle.CollisionType.Body && lObj.collisionType == CollisionCircle.CollisionType.Body)
                     CheckBodies(pObj, lObj);
+				else if (pObj.collisionType == CollisionCircle.CollisionType.Radar || lObj.collisionType == CollisionCircle.CollisionType.Radar)
+	                CheckRadar(pObj, lObj);
                 
 				//CollisionRecord cr = CheckCollision(pObj, lObj);
 				//if (cr != null)
@@ -268,6 +270,8 @@ public class QuadTreeEternal
                         //}
                         if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Body && lObj2.collisionType == CollisionCircle.CollisionType.Body)
                             CheckBodies(tmpList[tmpList.Count - 1], lObj2);
+						else if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Radar || lObj2.collisionType == CollisionCircle.CollisionType.Radar)
+							CheckRadar(tmpList[tmpList.Count - 1], lObj2);
 						//CollisionRecord cr = CheckCollision(tmpList[tmpList.Count - 1], lObj2);
 						//if (cr != null)
 							//collisionsList.Add(cr);
@@ -305,7 +309,7 @@ public class QuadTreeEternal
 				    unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
 			}
 			// check ally bodies only
-			if (unit1.owner == unit2.owner)
+			if (unit1.owner.playerNumber == unit2.owner.playerNumber)
             {
                 // check to apply cohesion
                 if (distance < unit1.mover.cohesion.desired * unit1.mover.cohesion.desired)
@@ -317,32 +321,32 @@ public class QuadTreeEternal
                 }
             }
 		}
-        // do not check different components of one gameobject
-		//if (unit1.GameObject != unit2.GameObject)
-		//{
-  //          Vector2 subtraction = unit1.Point - unit2.Point;
-  //          float dist = subtraction.sqrMagnitude;
-  //          if (dist < (unit1.Radius + unit2.Radius) * (unit1.Radius + unit2.Radius))
-  //              return new CollisionRecord(unit1, unit2, subtraction, dist);
-  //          else
-  //              return null;
-		//}
-        //if (unit1.Type == CollisionType.Radar && unit2.Type == CollisionType.Drone)
-        //{
-        //	if (dist < (unit1.Radius + unit2.Radius) * (unit1.Radius + unit2.Radius))
-        //		return new CollisionRecord(unit1, unit2, vectorsSubtraction, dist, CollisionRecord.Type.RU);
-        //	else
-        //		return null;
-        //}
-        //if (unit1.Type == CollisionType.Drone && unit2.Type == CollisionType.Radar)
-        //{
-        //	if (dist < (unit1.Radius + unit2.Radius) * (unit1.Radius + unit2.Radius))
-        //		return new CollisionRecord(unit1, unit2, vectorsSubtraction, dist, CollisionRecord.Type.UR);
-        //	else
-        //		return null;
-        //}
 	}
 
+	void CheckRadar(CollisionCircle unit1, CollisionCircle unit2)
+	{
+		if (unit1.trans.gameObject.GetInstanceID() == unit2.trans.gameObject.GetInstanceID())
+			return;
+		if (unit1.owner.playerNumber == unit2.owner.playerNumber)
+			return;
+		if (unit1.collisionType == CollisionCircle.CollisionType.Weapon || unit2.collisionType == CollisionCircle.CollisionType.Weapon)
+			return;
+		if (unit1.collisionType == CollisionCircle.CollisionType.Radar && unit2.collisionType == CollisionCircle.CollisionType.Radar)
+			return;
+		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
+		if (distance > 0)
+		{
+			float radiuses = unit1.GetRadius() + unit2.GetRadius();
+			if (distance < radiuses * radiuses)
+			{
+				if (unit1.collisionType == CollisionCircle.CollisionType.Radar)
+					Debug.Log("unit1 enters combat with target=unit2");
+				else if (unit2.collisionType == CollisionCircle.CollisionType.Radar)
+					Debug.Log("unit2 enters combat with target=unit1");
+			}
+		}
+	}
+	
 	public bool RectContainsCircle(Rect rect, CollisionCircle obj)
 	{
         

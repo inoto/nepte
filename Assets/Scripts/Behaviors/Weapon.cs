@@ -4,10 +4,15 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
 	public bool showRadius = false;
-    public int collidedCount = 0;
 
     public float radius = 3.5f;
+	public float attackSpeed = 1;
+	public int damage = 40;
+	public ITargetable target;
 
+	[SerializeField] private GameObject missilePrefab;
+	
+	[Header("Components")]
     public Transform trans;
     public Owner owner;
     public Mover mover;
@@ -26,6 +31,24 @@ public class Weapon : MonoBehaviour
         collision = new CollisionCircle(this, trans, mover, owner);
 		CollisionManager.Instance.AddCollidable(collision);
 	}
+	
+	public void ReleaseLaserMissile(Vector3 newDestinationVector)
+	{
+//		GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, trans.position, trans.rotation);
+		GameObject laserMissileObject = Instantiate(missilePrefab, trans.position, trans.rotation);
+		laserMissileObject.transform.parent = GameController.Instance.transform;
+		LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
+		laserMissile.destinationVector = newDestinationVector;
+		//laserMissile.owner = owner;
+		laserMissile.damage = damage;
+		laserMissile.target = target;
+	}
+
+	public void Activate(ITargetable newTarget)
+	{
+		target = newTarget;
+		showRadius = true;
+	}
 
 	public void OnDrawGizmos()
 	{
@@ -37,33 +60,4 @@ public class Weapon : MonoBehaviour
 			Gizmos.DrawWireSphere(trans.position, radius);
 		}
 	}
-	public Vector2 Point
-	{
-		get { return trans.position; }
-	}
-	public float Radius
-	{
-		get { return radius; }
-	}
-	public float RadiusHard
-	{
-		get { return radius; }
-	}
-	public GameObject GameObject
-	{
-		get { return gameObject; }
-	}
-	public bool Active
-	{
-		get { return this.enabled; }
-	}
-	public Owner Owner
-	{
-		get { if (owner != null) return owner; return null; }
-	}
-	public Mover Mover
-	{
-		get { if (mover != null) return mover; return null; }
-	}
-
 }

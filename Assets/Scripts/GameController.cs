@@ -297,7 +297,7 @@ public class GameController : MonoBehaviour
         int counter = 0;
         foreach (Base b in bases)
         {
-            if (b.isStartPosition)
+            if (b.useAsStartPosition)
             {
                 //playerStartPosition[counter] = b.trans.position;
                 b.SetOwner(counter, playerControllerObject[counter].GetComponent<PlayerController>());
