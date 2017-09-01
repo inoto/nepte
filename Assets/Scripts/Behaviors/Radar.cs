@@ -11,6 +11,7 @@ public class Radar : MonoBehaviour
 	public Transform trans;
     public Owner owner;
     public Mover mover;
+	public Weapon weapon;
     public CollisionCircle collision;
 
 	// Use this for initialization
@@ -19,7 +20,8 @@ public class Radar : MonoBehaviour
 		trans = GetComponent<Transform>();
         owner = GetComponent<Owner>();
         mover = GetComponent<Mover>();
-	}
+	    weapon = GetComponent<Weapon>();
+    }
 
 	private void Start()
 	{

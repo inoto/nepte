@@ -10,7 +10,7 @@ using UnityEngine;
 
 public interface ITargetable
 {
-	void Damage(int damage);
+	void Damage(Weapon weapon);
 	GameObject GameObj { get; }
     bool IsDied { get; }
 //    TargetType targetableType { get; }

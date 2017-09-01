@@ -4,6 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class FollowRally
 {
+	public bool enabled = true;
 	public bool followingRally = false;
 	
     public bool arrived = false;
@@ -57,8 +58,8 @@ public class FollowRally
     void UpdateRallyPoint()
     {
         arrived = false;
-		if (forceMultiplierOriginal > 0)
-			forceMultiplier = forceMultiplierOriginal;
+//		if (forceMultiplierOriginal > 0)
+//			forceMultiplier = forceMultiplierOriginal;
         rallyPoint = mover.owner.playerController.rallyPoint.trans.position;
     }
 
@@ -92,8 +93,8 @@ public class FollowRally
 	public void EndArrive(bool successfully)
 	{
 		arrived = true;
-		forceMultiplierOriginal = forceMultiplier;
-		forceMultiplier = 0.5f;
+//		forceMultiplierOriginal = forceMultiplier;
+//		forceMultiplier = 0.5f;
 	}
 
     public void Arrive()

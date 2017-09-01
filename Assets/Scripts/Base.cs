@@ -46,7 +46,6 @@ public class Base : MonoBehaviour
         body = GetComponent<Body>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (health.current <= 0)

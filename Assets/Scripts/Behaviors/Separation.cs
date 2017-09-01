@@ -4,7 +4,9 @@ using System.Collections;
 [System.Serializable]
 public class Separation
 {
-public int count;
+	public bool enabled = true;
+	
+	public int count;
     public Vector2 sum;
 	public float desired;
 
@@ -48,7 +50,6 @@ public int count;
 		if (count > 0)
 		{
             //Debug.Log("separation works");
- 
 			sum /= count;
 			//sum.Normalize();
 			sum *= maxSpeed;

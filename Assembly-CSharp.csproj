@@ -207,6 +207,7 @@
     <Compile Include="Assets\Scripts\Behaviors\Cohesion.cs" />
     <Compile Include="Assets\Scripts\Behaviors\DroneLinks.cs" />
     <Compile Include="Assets\Scripts\Behaviors\FollowRally.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\FollowTarget.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Health.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Mover.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Owner.cs" />

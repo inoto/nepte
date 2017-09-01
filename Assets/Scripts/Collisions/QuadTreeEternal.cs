@@ -303,9 +303,9 @@ public class QuadTreeEternal
             // check all bodies to apply separation
 			if (distance < unit1.mover.separation.desired * unit1.mover.separation.desired)
 			{
-                if (unit1.mover.enableSeparation)
+                if (unit1.mover.separation.enabled)
 				    unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
-                if (unit2.mover.enableSeparation)
+                if (unit2.mover.separation.enabled)
 				    unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
 			}
 			// check ally bodies only
@@ -314,9 +314,9 @@ public class QuadTreeEternal
                 // check to apply cohesion
                 if (distance < unit1.mover.cohesion.desired * unit1.mover.cohesion.desired)
                 {
-					if (unit1.mover.enableCohesion)
+					if (unit1.mover.cohesion.enabled)
 						unit1.mover.cohesion.AddCohesion(unit2.trans.position);
-					if (unit2.mover.enableCohesion)
+					if (unit2.mover.cohesion.enabled)
 						unit2.mover.cohesion.AddCohesion(unit1.trans.position);
                 }
             }
@@ -339,10 +339,10 @@ public class QuadTreeEternal
 			float radiuses = unit1.GetRadius() + unit2.GetRadius();
 			if (distance < radiuses * radiuses)
 			{
-				if (unit1.collisionType == CollisionCircle.CollisionType.Radar)
-					Debug.Log("unit1 enters combat with target=unit2");
-				else if (unit2.collisionType == CollisionCircle.CollisionType.Radar)
-					Debug.Log("unit2 enters combat with target=unit1");
+				if (unit1.collisionType == CollisionCircle.CollisionType.Radar && unit1.mover.weapon.target == null)
+					unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
+				else if (unit2.collisionType == CollisionCircle.CollisionType.Radar && unit2.mover.weapon.target == null)
+					unit2.mover.weapon.NewTarget(unit1.trans.GetComponent<ITargetable>());
 			}
 		}
 	}

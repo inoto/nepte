@@ -4,7 +4,9 @@ using System.Collections;
 [System.Serializable]
 public class Cohesion
 {
-public int count;
+	public bool enabled = true;
+	
+	public int count;
 	public Vector2 sum;
 	public float desired;
 

@@ -9,19 +9,12 @@ public class Mover : MonoBehaviour
     {
         None,
         Rally,
-        Drone,
-        Base
+        Target
     }
 
 	public MoveType moveType;
 
-	public bool isMoving;
-
-    [Header("Enablers")]
-    public bool enableFollowRally = true;
-    public bool enableSeparation = true;
-    public bool enableCohesion = true;
-    public bool enableAlignment = true;
+	public bool isMoving = false;
 
     [Header("Main")]
     public Vector2 velocity;
@@ -46,14 +39,11 @@ public class Mover : MonoBehaviour
 	public int numSamplesForSmoothing = 5;
 	private Queue<Vector2> velocitySamples = new Queue<Vector2>();
 
-    public bool isActive = false;
-
-    bool isInitialized = false;
-
     [Header("Modules")]
     public FollowRally followRally;
     public Separation separation;
     public Cohesion cohesion;
+	public FollowTarget followTarget;
 
     [Header("Components")]
     public Transform trans;
@@ -76,15 +66,21 @@ public class Mover : MonoBehaviour
 		followRally = new FollowRally(this);
 		separation = new Separation(this);
 		cohesion = new Cohesion(this);
+	    followTarget = new FollowTarget(this);
 	    StartCoroutine("Move");
     }
+
+	public void Stop()
+	{
+		isMoving = false;
+	}
 
 	IEnumerator Move()
 	{
 		isMoving = true;
 		while (isMoving)
 		{
-			if (enableFollowRally)
+			if (followRally.enabled)
 			{
 				
 				followRally.Arrive();
@@ -93,13 +89,21 @@ public class Mover : MonoBehaviour
 					LookWhereYoureGoing();
 				}
 			}
-			if (enableSeparation)
+			if (separation.enabled)
 			{
 				separation.Separate();
 			}
-			if (enableCohesion)
+			if (cohesion.enabled)
 			{
 				cohesion.Cohesie();
+			}
+			if (followTarget.enabled)
+			{
+				if (followTarget.weapon.target != null)
+				{
+					followTarget.Seek();
+					followTarget.LookAtTarget();
+				}
 			}
 			velocity += acceleration * Time.deltaTime;
 			velocity *= maxSpeed;
@@ -109,13 +113,10 @@ public class Mover : MonoBehaviour
 		}
 	}
 
-    public void Update()
-    {
-        if (isInitialized)
-        {
-            
-        }
-    }
+	public void CombatMode()
+	{
+		
+	}
 
 	/* Updates the velocity of the current game object by the given linear acceleration */
 	public void AddForce(Vector2 _force)
@@ -293,30 +294,4 @@ public class Mover : MonoBehaviour
 
 		return Vector2.Dot(facing, directionToTarget) >= cosineValue;
 	}
-
-    private void OnDrawGizmos()
-    {
-        Color newColor = Color.cyan;
-
-		//if (showCurrentNode)
-  //      { 
-  //          if (node != null)
-  //          {
-  //              newColor.a = 0.5f;
-  //              Gizmos.color = newColor;
-  //              Gizmos.DrawCube(node.worldPosition, Vector2.one * (1 - 0.05f));
-  //          }
-  //      }
-		//if (showPath)
-		//{
-		//	if (path != null)
-		//	{
-		//		if (path.waypoints[0] != null)
-		//		{
-		//			Gizmos.DrawLine(node.worldPosition, path.waypoints[0].worldPosition);
-		//		}
-  //              path.DrawPath();
-		//	}
-		//}
-    }
 }

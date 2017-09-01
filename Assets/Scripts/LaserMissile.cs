@@ -18,6 +18,7 @@ public class LaserMissile : MonoBehaviour
     [Header("Attack")]
     public int damage;
     public ITargetable target;
+	public Weapon weapon;
 
     void Start ()
     {
@@ -41,7 +42,7 @@ public class LaserMissile : MonoBehaviour
 		{
             if (!target.IsDied)
             {
-                target.Damage(damage);
+                target.Damage(weapon);
             }
 			ObjectPool.Recycle(gameObject);
 		}

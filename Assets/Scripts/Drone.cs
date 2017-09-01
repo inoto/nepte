@@ -14,6 +14,8 @@ public class Drone : MonoBehaviour, ITargetable
 
 	public Mode mode;
 
+	public GameObject explosionPrefab;
+
     [Header("Modules")]
     public Health health = new Health(100);
 
@@ -51,9 +53,16 @@ public class Drone : MonoBehaviour, ITargetable
 	void Die()
 	{
 		mode = Mode.Dead;
+		MakeExplosion();
 		owner.playerController.playerUnitCount -= 1;
 		PlayerController.unitCount -= 1;
 		ObjectPool.Recycle(gameObject);
+	}
+
+	void MakeExplosion()
+	{
+		GameObject explosion = Instantiate(explosionPrefab, trans.position, trans.rotation);
+		explosion.transform.parent = GameController.Instance.transform;
 	}
 
 	void SetOwnerAsInParent()
@@ -71,11 +80,14 @@ public class Drone : MonoBehaviour, ITargetable
 			Debug.LogError("Cannot assign material.");
 	}
 
-	public void Damage(int damage)
+	public void Damage(Weapon weapon)
 	{
-		health.current -= damage;
+		health.current -= weapon.damage;
 		if (health.current <= 0)
+		{
 			Die();
+			weapon.EndCombat();
+		}
 	}
 
 	public GameObject GameObj

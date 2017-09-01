@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
 	public bool showRadius = false;
 
+	public bool isAttacking = false;
+	
     public float radius = 3.5f;
 	public float attackSpeed = 1;
 	public int damage = 40;
@@ -31,6 +34,28 @@ public class Weapon : MonoBehaviour
         collision = new CollisionCircle(this, trans, mover, owner);
 		CollisionManager.Instance.AddCollidable(collision);
 	}
+
+	public void StopAttacking()
+	{
+		isAttacking = false;
+	}
+
+	public void AttackTarget()
+	{
+		if (target != null)
+			//if (mover.IsFacing(target.GameObj.transform.position, 120))
+			StartCoroutine(ReleaseMissileToTarget());
+		
+	}
+
+	IEnumerator ReleaseMissileToTarget()
+	{
+		isAttacking = true;
+		if (target != null)
+			ReleaseLaserMissile(target.GameObj.transform.position);
+		yield return new WaitForSeconds(attackSpeed);
+		isAttacking = false;
+	}
 	
 	public void ReleaseLaserMissile(Vector3 newDestinationVector)
 	{
@@ -40,14 +65,25 @@ public class Weapon : MonoBehaviour
 		LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;
 		//laserMissile.owner = owner;
-		laserMissile.damage = damage;
+		laserMissile.weapon = this;
 		laserMissile.target = target;
 	}
 
-	public void Activate(ITargetable newTarget)
+	public void NewTarget(ITargetable newTarget)
 	{
 		target = newTarget;
 		showRadius = true;
+		mover.followRally.enabled = false;
+		mover.followTarget.enabled = true;
+	}
+
+	public void EndCombat()
+	{
+		isAttacking = false;
+		target = null;
+		showRadius = false;
+		mover.followRally.enabled = true;
+		mover.followTarget.enabled = false;
 	}
 
 	public void OnDrawGizmos()
