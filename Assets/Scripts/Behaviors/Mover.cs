@@ -105,9 +105,9 @@ public class Mover : MonoBehaviour
 					followTarget.LookAtTarget();
 				}
 			}
-			velocity += acceleration * Time.deltaTime;
+			velocity += acceleration;// * Time.deltaTime;
 			velocity *= maxSpeed;
-			trans.position += (Vector3) velocity * 0.05f;
+			trans.position += (Vector3) velocity * Time.deltaTime*3;
 			acceleration *= 0;
 			yield return new WaitForSeconds(0.01f);
 		}
@@ -123,7 +123,7 @@ public class Mover : MonoBehaviour
 	{
         //Vector2 f = _force/mass;
         //acceleration += f;
-        acceleration += _force;
+        acceleration += _force * Time.deltaTime;
 	}
 
 	//public void steer(Vector2 linearAcceleration)

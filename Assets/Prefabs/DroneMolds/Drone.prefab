@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 114507272362157692}
   - component: {fileID: 114903286341286124}
   - component: {fileID: 114997923597211442}
+  - component: {fileID: 114974211722959918}
   m_Layer: 0
   m_Name: Drone
   m_TagString: drone
@@ -97,10 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51d70a6ae8db14d5080040b869c98986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableFollowRally: 1
-  enableSeparation: 1
-  enableCohesion: 1
-  enableAlignment: 0
+  moveType: 0
+  isMoving: 0
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
   currentSpeed: 0
@@ -108,7 +107,7 @@ MonoBehaviour:
   mass: 1
   maxForce: 2
   maxSpeed: 1
-  maxAcceleration: 1
+  maxAcceleration: 2
   accelerationStep: 0.1
   targetRadius: 1
   slowDownRadius: 3
@@ -116,28 +115,37 @@ MonoBehaviour:
   turnSpeed: 3
   smoothing: 1
   numSamplesForSmoothing: 5
-  isActive: 0
   followRally:
+    enabled: 1
+    followingRally: 0
     arrived: 0
     rallyPointMass: 0
     rallyPointG: 0
     stopRadius: 1
     slowDownRadius: 3
   separation:
+    enabled: 1
     count: 0
     sum: {x: 0, y: 0}
     desired: 0
-    forceMultiplier: 1
+    forceMultiplier: 2
     maxSpeed: 2
     maxAcceleration: 1
     distanceAddition: 0
   cohesion:
+    enabled: 1
     count: 0
     sum: {x: 0, y: 0}
     desired: 0
     maxSpeed: 2
     maxAcceleration: 1
     distanceAddition: 0
+  followTarget:
+    enabled: 0
+    followingTarget: 0
+    weapon: {fileID: 0}
+    attackRadius: 0
+    slowDownRadius: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
   body: {fileID: 0}
@@ -167,6 +175,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mode: 0
+  explosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
+    type: 2}
   health:
     max: 100
     current: 100
@@ -204,13 +215,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showRadius: 1
-  collidedCount: 0
-  trans: {fileID: 0}
-  owner: {fileID: 0}
-  mover: {fileID: 0}
   radius: 1
   radiusHard: 0.5
   strength: 0
+  trans: {fileID: 0}
+  owner: {fileID: 0}
+  mover: {fileID: 0}
+--- !u!114 &114974211722959918
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96d0839dd24647be940a0c25c7a7063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showRadius: 0
+  isAttacking: 0
+  radius: 3.5
+  attackSpeed: 1
+  damage: 40
+  missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
+    type: 2}
+  trans: {fileID: 0}
+  owner: {fileID: 0}
+  mover: {fileID: 0}
 --- !u!114 &114997923597211442
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -223,8 +254,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showRadius: 1
-  collidedCount: 0
   radius: 5
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}
+  weapon: {fileID: 0}

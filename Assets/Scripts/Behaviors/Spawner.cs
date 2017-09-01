@@ -41,7 +41,7 @@ public class Spawner : MonoBehaviour
 
     IEnumerator Spawn()
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(delay * Time.deltaTime*(delay*10));
         isActive = true;
         //Debug.Log("Spawn started");
         while (isActive)
@@ -59,7 +59,7 @@ public class Spawner : MonoBehaviour
                 interval = Random.Range(intervalMin, intervalMax);
             else
                 interval = intervalMin;
-            yield return new WaitForSeconds(interval);
+            yield return new WaitForSeconds(interval * Time.deltaTime*(interval*10));
         }
         //Debug.Log("Spawn stopped");
     }

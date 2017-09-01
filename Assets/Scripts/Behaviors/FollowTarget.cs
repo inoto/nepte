@@ -81,8 +81,10 @@ public class FollowTarget
 					followingTarget = false;
 					weapon.AttackTarget();
 				}
-				mover.velocity *= 0.5f;
-				//mover.AddForce(friction);
+				Vector2 friction = mover.velocity * (-1);
+				friction.Normalize();
+				friction *= 10;
+				mover.AddForce(friction);
 				return;
 			}
 		}

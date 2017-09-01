@@ -32,7 +32,7 @@ public class Weapon : MonoBehaviour
 	private void Start()
 	{
         collision = new CollisionCircle(this, trans, mover, owner);
-		CollisionManager.Instance.AddCollidable(collision);
+		//CollisionManager.Instance.AddCollidable(collision);
 	}
 
 	public void StopAttacking()
