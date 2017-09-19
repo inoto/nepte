@@ -11,7 +11,7 @@ public class Capture : MonoBehaviour
 	public Body body;
 	
 	public float[] counter;
-	private float counterStep = 0.02f;
+	private float counterStep = 0.01f;
 	public int[] capturerCount;
 	public int leadIndex = -1;
 	
@@ -89,8 +89,8 @@ public class Capture : MonoBehaviour
 
 				if (leadIndex == player)
 				{
-					assignedCircleTimer.fillAmount += 0.02f * capturerCount[player];
-					counter[player] += 0.02f * capturerCount[player];
+					assignedCircleTimer.fillAmount += counterStep * capturerCount[player];
+					counter[player] += counterStep * capturerCount[player];
 					if (assignedCircleTimer.fillAmount >= 1)
 					{
 						isCapturing = false;
@@ -107,13 +107,13 @@ public class Capture : MonoBehaviour
 				}
 				else
 				{
-					assignedCircleTimer.fillAmount -= 0.02f * capturerCount[player];
-					counter[leadIndex] -= 0.02f * capturerCount[player];
+					assignedCircleTimer.fillAmount -= counterStep * capturerCount[player];
+					counter[leadIndex] -= counterStep * capturerCount[player];
 					if (assignedCircleTimer.fillAmount <= 0)
 						SetLead(player);
 				}
 			}
-			yield return new WaitForSeconds(0.2f);
+			yield return new WaitForSeconds(0.4f);
 			if (body.collision.collidedCount <= 0)
 			{
 				isCapturing = false;

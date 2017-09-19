@@ -305,12 +305,12 @@ public class QuadTreeEternal
             // check all bodies to apply separation
 			if (distance < unit1.mover.separation.desired * unit1.mover.separation.desired)
 			{
-				if (unit1.mover.separation.enabled && !unit2.trans.gameObject.isStatic)
+				if (unit1.mover.separation.enabled && unit2.trans.GetComponent<Base>() == null)
 					unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
-				if (unit2.mover.separation.enabled && !unit1.trans.gameObject.isStatic)
+				if (unit2.mover.separation.enabled && unit1.trans.GetComponent<Base>() == null)
 					unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
 				// if gameobject is static then it's a base
-				if (unit1.trans.gameObject.isStatic && unit1.body.owner.playerNumber == -1)
+				if (unit1.trans.GetComponent<Base>() != null && unit1.body.owner.playerNumber == -1)
 				{
 					if (unit2.collidedCircle == null)
 					{
@@ -319,7 +319,7 @@ public class QuadTreeEternal
 						unit1.collidedCount++;
 					}
 				}
-				if (unit2.trans.gameObject.isStatic && unit1.body.owner.playerNumber == -1)
+				if (unit2.trans.GetComponent<Base>() != null && unit1.body.owner.playerNumber == -1)
 				{
 					if (unit1.collidedCircle == null)
 					{
@@ -331,14 +331,14 @@ public class QuadTreeEternal
 			}
 			else
 			{
-				if (unit1.trans.gameObject.isStatic && unit1.body.owner.playerNumber == -1
+				if (unit1.trans.GetComponent<Base>() != null && unit1.body.owner.playerNumber == -1
 				    && unit2.collidedCircle == unit1)
 				{
 					   unit2.collidedCircle = null;
 					   unit1.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit2.owner.playerNumber);
 					   unit1.collidedCount--;
 				}
-				if (unit2.trans.gameObject.isStatic && unit2.body.owner.playerNumber == -1
+				if (unit2.trans.GetComponent<Base>() != null && unit2.body.owner.playerNumber == -1
 				    && unit1.collidedCircle == unit2)
 				{
 					   unit1.collidedCircle = null;
@@ -352,9 +352,9 @@ public class QuadTreeEternal
                 // check to apply cohesion
                 if (distance < unit1.mover.cohesion.desired * unit1.mover.cohesion.desired)
                 {
-					if (unit1.mover.cohesion.enabled && !unit2.trans.gameObject.isStatic)
+					if (unit1.mover.cohesion.enabled && unit2.trans.GetComponent<Base>() == null)
 						unit1.mover.cohesion.AddCohesion(unit2.trans.position);
-					if (unit2.mover.cohesion.enabled && !unit1.trans.gameObject.isStatic)
+					if (unit2.mover.cohesion.enabled && unit1.trans.GetComponent<Base>() == null)
 						unit2.mover.cohesion.AddCohesion(unit1.trans.position);
                 }
             }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Base : MonoBehaviour
+public class Base : MonoBehaviour, ITargetable
 {
     public bool useAsStartPosition = false;
 
@@ -71,14 +71,17 @@ public class Base : MonoBehaviour
 		owner.playerNumber = _playerNumber;
 		owner.playerController = _playerController;
 
-        owner.playerController.rallyPoint.DelayedStart();
+		if (owner.playerController != null)
+		{
+        	owner.playerController.rallyPoint.DelayedStart();
 
-        AssignMaterial();
-		AddHPBar();
+			AddHPBar();
 
-        spawner.enabled = true;
-        spawner.DelayedStart();
-        spawner.StartSpawn(trans.position);
+			spawner.enabled = true;
+			spawner.DelayedStart();
+			spawner.StartSpawn(trans.position);
+		}
+		AssignMaterial();
 	}
 
     void AddHPBar()
@@ -126,13 +129,16 @@ public class Base : MonoBehaviour
     void Die()
     {
         CancelInvoke();
+	    spawner.StopSpawn();
         isDead = true;
         GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
 		//tmpObject.transform.localScale = trans.localScale;
         Destroy(assignedHPbarSlider.gameObject);
         //Destroy(gameObject);
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+	    SetOwner(-1, null);
+	    health.current = health.max;
     }
 
 	public void OnDrawGizmos()
@@ -144,5 +150,25 @@ public class Base : MonoBehaviour
 		//	Gizmos.color = newColorAgain;
 		//	Gizmos.DrawWireSphere(trans.position, radius);
 		//}
+	}
+	
+	public void Damage(Weapon weapon)
+	{
+		health.current -= weapon.damage;
+		if (health.current <= 0)
+		{
+			Die();
+			weapon.EndCombat();
+		}
+	}
+
+	public GameObject GameObj
+	{
+		get { return gameObject; }
+	}
+
+	public bool IsDied
+	{
+		get { return (isDead); }
 	}
 }

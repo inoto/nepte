@@ -92,7 +92,7 @@ MonoBehaviour:
   bottomType: 1
   topType: 1
   mSprite: {fileID: 21300000, guid: b1232f19b632147609ab5a14f286d9dd, type: 3}
-  mShader: {fileID: 4800000, guid: cf9ebc36d43f657468fecb524763e3bc, type: 3}
+  mShader: {fileID: 4800000, guid: 1682092270f88d04bb434756a984ea87, type: 3}
   mBorder: {x: 0, y: 0, z: 0, w: 0}
   mFixedAspect: 0
   mPixelSize: 1

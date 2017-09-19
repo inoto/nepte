@@ -311,6 +311,7 @@
     <Compile Include="Assets\Scripts\Sounds\MixerContoller.cs" />
     <Compile Include="Assets\Scripts\Sounds\MusicMainTheme.cs" />
     <Compile Include="Assets\Scripts\StarsMover.cs" />
+    <Compile Include="Assets\Scripts\UI\DragDropCard.cs" />
     <Compile Include="Assets\Scripts\UI\FPSCounter.cs" />
     <Compile Include="Assets\Scripts\UI\GameTimer.cs" />
     <Compile Include="Assets\Scripts\UI\LoseWinBlinking.cs" />
