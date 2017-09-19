@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -26,9 +27,21 @@ public class Body : MonoBehaviour
 
     private void Start()
     {
-        collision = new CollisionCircle(this, trans, mover, owner);
-        CollisionManager.Instance.AddCollidable(collision);
+	    if (CollisionManager.Instance.qtree != null)
+	    {
+		    collision = new CollisionCircle(this, trans, mover, owner);
+		    if (collision != null)
+			    CollisionManager.Instance.AddCollidable(collision);
+	    }
+	    else
+		    StartCoroutine(StartAbitLater());
     }
+
+	IEnumerator StartAbitLater()
+	{
+		yield return new WaitForSeconds(1f);
+		Start();
+	}
 
     public void OnDrawGizmos()
 	{

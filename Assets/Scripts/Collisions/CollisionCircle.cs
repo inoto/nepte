@@ -21,6 +21,8 @@ public class CollisionCircle
     public Owner owner;
 
     public bool isCollided = false;
+	public CollisionCircle collidedCircle = null;
+	public int collidedCount = 0;
 
     public CollisionCircle(Body _body, Transform _trans, Mover _mover, Owner _owner)
     {
@@ -30,6 +32,8 @@ public class CollisionCircle
         mover = _mover;
         owner = _owner;
         isCollided = false;
+	    collidedCircle = null;
+	    collidedCount = 0;
     }
 	public CollisionCircle(Radar _radar, Transform _trans, Mover _mover, Owner _owner)
 	{
@@ -39,6 +43,8 @@ public class CollisionCircle
 		mover = _mover;
 		owner = _owner;
 		isCollided = false;
+		collidedCircle = null;
+		collidedCount = 0;
 	}
 	public CollisionCircle(Weapon _weapon, Transform _trans, Mover _mover, Owner _owner)
 	{
@@ -48,6 +54,8 @@ public class CollisionCircle
 		mover = _mover;
 		owner = _owner;
 		isCollided = false;
+		collidedCircle = null;
+		collidedCount = 0;
 	}
 
 	public float GetRadius()

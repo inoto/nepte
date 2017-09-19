@@ -53,6 +53,13 @@ public class Drone : MonoBehaviour, ITargetable
 	void Die()
 	{
 		mode = Mode.Dead;
+		if (body.collision.collidedCircle != null)
+		{
+			Capture capture = body.collision.collidedCircle.trans.GetComponent<Capture>();
+			capture.RemoveCapturerByPlayer(owner.playerNumber);
+			capture.body.collision.collidedCount--;
+			body.collision.collidedCircle = null;
+		}
 		MakeExplosion();
 		owner.playerController.playerUnitCount -= 1;
 		PlayerController.unitCount -= 1;

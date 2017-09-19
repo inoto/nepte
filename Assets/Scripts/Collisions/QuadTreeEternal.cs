@@ -296,17 +296,55 @@ public class QuadTreeEternal
     void CheckBodies(CollisionCircle unit1, CollisionCircle unit2)
 	{
 	    if (unit1.trans.gameObject.GetInstanceID() == unit2.trans.gameObject.GetInstanceID())
-	            return;
+	    	return;
+		if (unit1.trans.gameObject.isStatic && unit2.trans.gameObject.isStatic)
+			return;
 	    float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
 		if (distance > 0)
 		{
             // check all bodies to apply separation
 			if (distance < unit1.mover.separation.desired * unit1.mover.separation.desired)
 			{
-                if (unit1.mover.separation.enabled)
-				    unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
-                if (unit2.mover.separation.enabled)
-				    unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
+				if (unit1.mover.separation.enabled && !unit2.trans.gameObject.isStatic)
+					unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
+				if (unit2.mover.separation.enabled && !unit1.trans.gameObject.isStatic)
+					unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
+				// if gameobject is static then it's a base
+				if (unit1.trans.gameObject.isStatic && unit1.body.owner.playerNumber == -1)
+				{
+					if (unit2.collidedCircle == null)
+					{
+						unit1.trans.GetComponent<Capture>().AddCapturerByPlayer(unit2.owner.playerNumber);
+						unit2.collidedCircle = unit1;
+						unit1.collidedCount++;
+					}
+				}
+				if (unit2.trans.gameObject.isStatic && unit1.body.owner.playerNumber == -1)
+				{
+					if (unit1.collidedCircle == null)
+					{
+						unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
+						unit1.collidedCircle = unit1;
+						unit2.collidedCount++;
+					}
+				}
+			}
+			else
+			{
+				if (unit1.trans.gameObject.isStatic && unit1.body.owner.playerNumber == -1
+				    && unit2.collidedCircle == unit1)
+				{
+					   unit2.collidedCircle = null;
+					   unit1.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit2.owner.playerNumber);
+					   unit1.collidedCount--;
+				}
+				if (unit2.trans.gameObject.isStatic && unit2.body.owner.playerNumber == -1
+				    && unit1.collidedCircle == unit2)
+				{
+					   unit1.collidedCircle = null;
+					   unit2.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit1.owner.playerNumber);
+					   unit2.collidedCount--;
+				}
 			}
 			// check ally bodies only
 			if (unit1.owner.playerNumber == unit2.owner.playerNumber)
@@ -314,9 +352,9 @@ public class QuadTreeEternal
                 // check to apply cohesion
                 if (distance < unit1.mover.cohesion.desired * unit1.mover.cohesion.desired)
                 {
-					if (unit1.mover.cohesion.enabled)
+					if (unit1.mover.cohesion.enabled && !unit2.trans.gameObject.isStatic)
 						unit1.mover.cohesion.AddCohesion(unit2.trans.position);
-					if (unit2.mover.cohesion.enabled)
+					if (unit2.mover.cohesion.enabled && !unit1.trans.gameObject.isStatic)
 						unit2.mover.cohesion.AddCohesion(unit1.trans.position);
                 }
             }
@@ -328,6 +366,8 @@ public class QuadTreeEternal
 		if (unit1.trans.gameObject.GetInstanceID() == unit2.trans.gameObject.GetInstanceID())
 			return;
 		if (unit1.owner.playerNumber == unit2.owner.playerNumber)
+			return;
+		if (unit1.owner.playerNumber == -1 || unit2.owner.playerNumber == -1)
 			return;
 		if (unit1.collisionType == CollisionCircle.CollisionType.Weapon || unit2.collisionType == CollisionCircle.CollisionType.Weapon)
 			return;

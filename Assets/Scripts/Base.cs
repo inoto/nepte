@@ -12,6 +12,7 @@ public class Base : MonoBehaviour
 
     [Header("Cache")]
     public UISlider assignedHPbarSlider;
+	
     public RallyPoint rallyPoint;
     public LaserMissile triggeredLaserMissile;
 	public List<GameObject> attackers = new List<GameObject>();
@@ -24,6 +25,7 @@ public class Base : MonoBehaviour
 	public Owner owner;
 	public Spawner spawner;
     public Body body;
+	public Capture capture;
 	MeshRenderer mesh;
 	MeshFilter mf;
 
@@ -31,6 +33,7 @@ public class Base : MonoBehaviour
     [SerializeField]
     private GameObject explosionPrefab;
     public GameObject HPbarPrefab;
+	
 
     [Header("Colors")]
     [SerializeField] Material materialNeutral;
@@ -44,6 +47,7 @@ public class Base : MonoBehaviour
         spawner = GetComponent<Spawner>();
         owner = GetComponent<Owner>();
         body = GetComponent<Body>();
+	    capture = GetComponent<Capture>();
     }
 
     void Update()
@@ -75,11 +79,6 @@ public class Base : MonoBehaviour
         spawner.enabled = true;
         spawner.DelayedStart();
         spawner.StartSpawn(trans.position);
-	}
-
-	public void SetMold()
-	{
-		
 	}
 
     void AddHPBar()

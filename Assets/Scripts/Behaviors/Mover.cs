@@ -54,6 +54,7 @@ public class Mover : MonoBehaviour
 
     private void Awake()
     {
+	    owner = GetComponent<Owner>();
         trans = GetComponent<Transform>();
         body = GetComponent<Body>();
         radar = GetComponent<Radar>();

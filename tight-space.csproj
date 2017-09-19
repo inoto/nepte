@@ -265,6 +265,7 @@
     <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\Battleground.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Body.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Capture.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Cohesion.cs" />
     <Compile Include="Assets\Scripts\Behaviors\DroneLinks.cs" />
     <Compile Include="Assets\Scripts\Behaviors\FollowRally.cs" />

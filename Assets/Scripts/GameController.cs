@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     public event Game OnGameRestart = delegate { };
 
     public int players = 2;
+	public Color[] playerColors;
 
     public int winPoints = 0;
 
@@ -74,6 +75,8 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+	    //playerColors = new Color[players];
+	    
 		audioMixerChild.SetMusicVolume(0.75f);
 		audioMixerChild.SetSoundsVolume(0.75f);
 
@@ -284,6 +287,7 @@ public class GameController : MonoBehaviour
 			PlayerController playerController = playerObject.GetComponent<PlayerController>();
 			playerController.owner.playerNumber = i;
             playerController.owner.playerController = playerController;
+			//playerController.owner.color = playerColors[i];
             playerController.DelayedStart();
 
             playerControllerObject.Add(playerObject);
