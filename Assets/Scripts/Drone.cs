@@ -96,6 +96,15 @@ public class Drone : MonoBehaviour, ITargetable
 			weapon.EndCombat();
 		}
 	}
+	
+	public void Damage(int damage)
+	{
+		health.current -= damage;
+		if (health.current <= 0)
+		{
+			Die();
+		}
+	}
 
 	public GameObject GameObj
 	{

@@ -63,7 +63,8 @@ public class Base : MonoBehaviour, ITargetable
     public void Damage(int damage)
     {
         health.current -= damage;
-        assignedHPbarSlider.Set((float)health.current / health.max);
+	    if (assignedHPbarSlider != null)
+        	assignedHPbarSlider.Set((float)health.current / health.max);
     }
 
 	public void SetOwner(int _playerNumber, PlayerController _playerController)

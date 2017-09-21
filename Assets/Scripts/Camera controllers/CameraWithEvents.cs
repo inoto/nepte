@@ -22,7 +22,9 @@ public class CameraWithEvents : MonoBehaviour
 		cameraTouch = GetComponent<CameraControlTouch>();
 
         HPCamObject = GameObject.Find("CameraUIBars");
-	}
+
+	    TurnCamera();
+    }
 
     private void Start()
     {

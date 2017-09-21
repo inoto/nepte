@@ -6,55 +6,80 @@ public class DragDropCard : UIDragDropItem
 	
 	GameObject border;
 
+	private UISprite sprite;
+	private UIButton button;
+
+	private Card card;
+
 	private void Awake()
 	{
 		base.Awake();
 		//border = transform.GetChild(0).gameObject;
+		sprite = GetComponent<UISprite>();
+		button = GetComponent<UIButton>();
+		card = GetComponent<Card>();
 	}
+
+//	protected override void OnClone(GameObject original)
+//	{
+//		base.OnClone(original);
+//		sprite.color = Color.red;
+//	}
+	
+//	public override void StartDragging ()
+//	{
+//		realParent = transform.parent;
+//		
+//		base.StartDragging();
+//	}
 
 	protected override void OnDragDropStart()
 	{
-		
 		base.OnDragDropStart();
+
+		sprite.depth += 1;
 		
-		//border.SetActive(false);
+		button.enabled = false;
+		
+//		transform.parent = GameObject.Find("CardsScrollView").transform;
+//		NGUITools.MarkParentAsChanged(gameObject);
+		
+		//sprite.color = Color.red;
 	}
 
 	protected override void OnDragDropEnd()
 	{
-		base.OnDragDropEnd();
-		Instantiate(prefab, GetWorldCoordinate(), transform.rotation);
-	}
-
-	protected override void OnDragDropRelease (GameObject surface)
-	{
-		if (surface != null)
+		Vector2 pos = GetWorldCoordinate();
+		
+		RaycastHit2D hit = Physics2D.Raycast(pos,Vector2.zero);
+		if (hit)
 		{
-			Base dds = surface.GetComponent<Base>();
-			
-			//border.SetActive(true);
-			
-			if (dds != null)
-			{
-				Debug.Log("dds not null");
-				GameObject child = NGUITools.AddChild(dds.gameObject, prefab);
-				child.transform.localScale = dds.transform.localScale;
-
-				Transform trans = child.transform;
-				trans.position = UICamera.lastWorldPosition;
-
-//				if (dds.rotatePlacedObject)
-//				{
-//					trans.rotation = Quaternion.LookRotation(UICamera.lastHit.normal) * Quaternion.Euler(90f, 0f, 0f);
-//				}
-				
-				// Destroy this icon as it's no longer needed
-				NGUITools.Destroy(gameObject);
-				return;
-			}
+			Debug.Log("hitdrag");
+			if (hit.collider.gameObject.CompareTag("SafeZoneFromCardActivation"))
+				Debug.Log("not activated");
 		}
-		base.OnDragDropRelease(surface);
+		else
+		{
+			card.Activate(pos);
+		}
+		
+		
+		base.OnDragDropEnd();
 	}
+	
+//	protected override void OnDragDropMove (Vector2 delta)
+//	{
+//		base.OnDragDropMove(delta);
+//		if (mTrans.position.x > 0)
+//			sprite.color = Color.green;
+//		if (mTrans.position.x < 0)
+//			sprite.color = Color.red;
+//	}
+
+//	protected override void OnDragDropRelease (GameObject surface)
+//	{
+//		base.OnDragDropRelease(surface);
+//	}
 	
 	public Vector2 GetWorldCoordinate()
 	{
