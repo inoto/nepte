@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -15,6 +16,7 @@ public class QuadTreeEternal
 	float halfWidth, halfHeight;
 
 	public List<CollisionCircle> objects;
+	private List<CollisionCircle> movedUnits;
 
 	int maxLifespan = 8;
 	int curLife = -1;
@@ -33,6 +35,7 @@ public class QuadTreeEternal
 		halfWidth = rect.width / 2;
 		halfHeight = rect.height / 2;
 		objects = new List<CollisionCircle>();
+		movedUnits = new List<CollisionCircle>();
 		parent = null;
 		childs = new QuadTreeEternal[4];
 		for (int i = 0; i < 4; i++)
@@ -75,7 +78,8 @@ public class QuadTreeEternal
 			}
 		}
 
-		List<CollisionCircle> movedUnits = new List<CollisionCircle>(objects);
+		movedUnits.Clear();
+		movedUnits.AddRange(objects);
 		//foreach (ICollidable unit in objects)
 		//{
 		//	if (unit.Active)
@@ -83,15 +87,13 @@ public class QuadTreeEternal
 		//}
 
 		// remove died objects
-		int objectsCount = objects.Count;
-		for (int i = 0; i < objectsCount; i++)
+		for (int i = 0; i < objects.Count; i++)
 		{
-            if (!objects[i].trans.gameObject.activeSelf)
+            if (objects[i].trans.GetComponent<ITargetable>().IsDied)
             {
                 if (movedUnits.Contains(objects[i]))
                     movedUnits.Remove(objects[i]);
                 objects.RemoveAt(i--);
-                objectsCount -= 1;
             }
 		}
 
@@ -99,12 +101,12 @@ public class QuadTreeEternal
 			if ((flags & 1) == 1) childs[index].Update();
 
 		// 
-		foreach (CollisionCircle unit in movedUnits)
-		//for (int k = 0; k < movedUnits.Count; k++)
+		//foreach (CollisionCircle unit in movedUnits)
+		for (int k = 0; k < movedUnits.Count; k++)
 		{
 			QuadTreeEternal currentNode = this;
 
-            while (!RectContainsCircle(rect, unit))
+            while (!RectContainsCircle(rect, movedUnits[k]))
             //while (!rect.Contains(unit.GetPoint()))
             {
                 if (currentNode.parent != null) currentNode = currentNode.parent;
@@ -112,8 +114,8 @@ public class QuadTreeEternal
             }
 
             // remove from object and insert to root in EVERY FRAME
-            objects.Remove(unit);
-            currentNode.Insert(unit);
+            objects.Remove(movedUnits[k]);
+            currentNode.Insert(movedUnits[k]);
 		}
 
 		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)

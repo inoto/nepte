@@ -1,23 +1,29 @@
 ﻿using UnityEngine;
 
-public class CardSuperDrone : Card
+public class CardSuperDrone : CardProperty
 {
+	[Header("CardSuperDrone")]
 	public GameObject moldSprite;
 	
 	public GameObject superDronePrefab;
 
-	public override void Activate(Vector2 position)
+	public override bool Activate(Vector2 position)
 	{
 		base.Activate(position);
 		RaycastHit2D hit = Physics2D.Raycast(position,Vector2.zero);
 		if (hit)
 		{
-			Debug.Log("hit");
+			//Debug.Log("hit base");
 			Base bas = hit.collider.gameObject.GetComponent<Base>();
-			bas.spawner.prefab = superDronePrefab;
-			GameObject ms = GameObject.Instantiate(moldSprite, bas.trans.position, bas.trans.rotation);
-			ms.transform.parent = bas.trans;
+			if (bas != null)
+			{
+				bas.spawner.prefab = superDronePrefab;
+				GameObject ms = GameObject.Instantiate(moldSprite, bas.trans.position, bas.trans.rotation);
+				ms.transform.parent = bas.trans;
+				return true;
+			}
 		}
+		return false;
 	}
 	
 }

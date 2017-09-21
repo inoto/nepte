@@ -156,6 +156,8 @@ public class Base : MonoBehaviour, ITargetable
 	public void Damage(Weapon weapon)
 	{
 		health.current -= weapon.damage;
+		if (assignedHPbarSlider != null)
+			assignedHPbarSlider.Set((float)health.current / health.max);
 		if (health.current <= 0)
 		{
 			Die();

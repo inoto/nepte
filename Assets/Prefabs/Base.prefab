@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
-  delay: 2
+  delay: 4
   intervalMin: 4
   intervalMax: 4
   point: {x: 0, y: 0}
@@ -184,9 +184,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCapturing: 0
   body: {fileID: 0}
-  counter:
-  - 0
-  - 0
   capturerCount: 0000000000000000
   leadIndex: -1
   assignedCircleTimer: {fileID: 0}

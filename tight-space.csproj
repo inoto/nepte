@@ -285,6 +285,7 @@
     <Compile Include="Assets\Scripts\Cards\CardManager.cs" />
     <Compile Include="Assets\Scripts\Cards\CardSuperDrone.cs" />
     <Compile Include="Assets\Scripts\Cards\CardUnitCleaner.cs" />
+    <Compile Include="Assets\Scripts\Cards\CardProperty.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionCircle.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionGrid.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionManager.cs" />

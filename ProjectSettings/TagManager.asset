@@ -8,6 +8,8 @@ TagManager:
   - drone
   - base
   - unit
+  - Drag and Drop Root
+  - SafeZoneFromCardActivation
   layers:
   - Default
   - TransparentFX

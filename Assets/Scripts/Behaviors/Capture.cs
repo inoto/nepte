@@ -10,7 +10,7 @@ public class Capture : MonoBehaviour
 	private Transform trans;
 	public Body body;
 	
-	public float[] counter;
+	//public float[] counter;
 	private float counterStep = 0.01f;
 	public int[] capturerCount;
 	public int leadIndex = -1;
@@ -27,7 +27,7 @@ public class Capture : MonoBehaviour
 
 	private void Start()
 	{
-		counter = new float[GameController.Instance.players];
+		//counter = new float[GameController.Instance.players];
 		capturerCount = new int[GameController.Instance.players];
 	}
 
@@ -68,78 +68,106 @@ public class Capture : MonoBehaviour
 	IEnumerator StartCapturing()
 	{
 		isCapturing = true;
-		AddCircleTimer();
+		AddCircularTimer();
 		while (isCapturing)
 		{
 			// in every loop we're trying to find player which has more capturers than others
-			// if multiple players have same maximum value then no one should to win
-			int maxValue = capturerCount.Max();
-			int newCounter = 0;
-			foreach (var value in capturerCount)
+			// if multiple players have same maximum value then no one should be lead
+			if (leadIndex == -1)
 			{
-				if (value == maxValue)
-					newCounter++;
-			}
-			if (newCounter <= 1)
-			{
-				int player = Array.IndexOf(capturerCount, maxValue);
+				leadIndex = FindLead();
 
-				if (leadIndex == -1)
-					SetLead(player);
-
-				if (leadIndex == player)
+				if (leadIndex > -1)
 				{
-					assignedCircleTimer.fillAmount += counterStep * capturerCount[player];
-					counter[player] += counterStep * capturerCount[player];
-					if (assignedCircleTimer.fillAmount >= 1)
-					{
-						isCapturing = false;
-						GetComponent<Base>().SetOwner(player,
-							GameController.Instance.playerControllerObject[player].GetComponent<PlayerController>());
-						for (int i = 0; i < counter.Length; i++)
-						{
-							counter[i] = 0;
-							capturerCount[i] = 0;
-						}
-						Destroy(assignedCircleTimer.gameObject);
-						leadIndex = -1;
-					}
+					//Debug.Log("new lead: " + leadIndex);
+					assignedCircleTimer.color = GameController.Instance.playerColors[leadIndex];
+				}
+			}
+			else
+			{
+				int opponentCapturers = CountLeadOpponents();
+				if (opponentCapturers > 0)
+				{
+					//Debug.Log("lead opponents: " + opponentCapturers);
+					assignedCircleTimer.fillAmount = assignedCircleTimer.fillAmount + counterStep * capturerCount[leadIndex] -
+					                                 counterStep * opponentCapturers;
+					//counter[leadIndex] = counter[leadIndex] + counterStep * capturerCount[leadIndex] - counterStep * opponentCapturers;
 				}
 				else
 				{
-					assignedCircleTimer.fillAmount -= counterStep * capturerCount[player];
-					counter[leadIndex] -= counterStep * capturerCount[player];
+					assignedCircleTimer.fillAmount += counterStep * capturerCount[leadIndex];
+					//counter[leadIndex] += counterStep * capturerCount[leadIndex];
+				}
+				
+				if (assignedCircleTimer.fillAmount >= 1)
+				{
+					isCapturing = false;
+					GetComponent<Base>().SetOwner(leadIndex,
+						GameController.Instance.playerControllerObject[leadIndex].GetComponent<PlayerController>());
+					Clean();
+					Destroy(assignedCircleTimer.gameObject);
+				}
+				
+				if (body.collision.collidedCount <= 0)
+				{
+					assignedCircleTimer.fillAmount -= counterStep * 4;
+					//counter[leadIndex] -= counterStep * 4;
 					if (assignedCircleTimer.fillAmount <= 0)
-						SetLead(player);
+					{
+						isCapturing = false;
+						Destroy(assignedCircleTimer.gameObject);
+						Clean();
+					}
 				}
 			}
 			yield return new WaitForSeconds(0.4f);
-			if (body.collision.collidedCount <= 0)
-			{
-				isCapturing = false;
-				Destroy(assignedCircleTimer.gameObject);
-				Clean();
-			}
 		}
 	}
 
-	void SetLead(int player)
+	int CountLeadOpponents()
 	{
-		leadIndex = player;
-		assignedCircleTimer.color = GameController.Instance.playerColors[player];
+		int count = 0;
+		for (int i = 0; i < capturerCount.Length; i++)
+		{
+			if (i == leadIndex)
+				continue;
+			if (capturerCount[i] > 0)
+				count += capturerCount[i];
+		}
+		return count;
+	}
+
+	int FindLead()
+	{
+		int lead = -1;
+		int max = 0;
+		int enters = 0;
+		for (int i = 0; i < capturerCount.Length; i++)
+		{
+			if (capturerCount[i] > max)
+			{
+				lead = i;
+			}
+			if (capturerCount[i] == max && lead > -1)
+				enters++;
+		}
+		if (enters > 1)
+			return -1;
+		else
+			return lead;
 	}
 
 	void Clean()
 	{
 		leadIndex = -1;
-		for (int i = 0; i < counter.Length; i++)
+		for (int i = 0; i < capturerCount.Length; i++)
 		{
-			counter[i] = 0;
+			//counter[i] = 0;
 			capturerCount[i] = 0;
 		}
 	}
 
-	void AddCircleTimer()
+	void AddCircularTimer()
 	{
 		GameObject assignedCircleTimerObject = Instantiate(circleTimerPrefab, trans.position, trans.rotation);
 		assignedCircleTimerObject.transform.SetParent(GameObject.Find("Timers").transform);
