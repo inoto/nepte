@@ -8,6 +8,11 @@ public class Card : MonoBehaviour
 	public bool inCooldown = false;
 	protected UISprite cooldownTimer;
 
+	public virtual void Drag()
+	{
+		
+	}
+
 	public virtual bool Activate(Vector2 position)
 	{
 		return true;

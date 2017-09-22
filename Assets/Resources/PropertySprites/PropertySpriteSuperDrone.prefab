@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4430248960310798}
   - component: {fileID: 212308540504282142}
   m_Layer: 0
-  m_Name: MoldSpriteA
+  m_Name: PropertySpriteSuperDrone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

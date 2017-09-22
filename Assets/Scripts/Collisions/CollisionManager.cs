@@ -33,6 +33,7 @@ public class CollisionManager : MonoBehaviour
 		rect.max = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.max;
 
 		qtree = new QuadTreeEternal(rect);
+		qtree.root = qtree;
 	}
 
     public void AddCollidable(CollisionCircle obj)

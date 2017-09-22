@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class CollisionCircle
@@ -24,6 +25,8 @@ public class CollisionCircle
 	public CollisionCircle collidedCircle = null;
 	public int collidedCount = 0;
 
+	public bool isStatic = false;
+
     public CollisionCircle(Body _body, Transform _trans, Mover _mover, Owner _owner)
     {
         body = _body;
@@ -34,6 +37,7 @@ public class CollisionCircle
         isCollided = false;
 	    collidedCircle = null;
 	    collidedCount = 0;
+	    isStatic = false;
     }
 	public CollisionCircle(Radar _radar, Transform _trans, Mover _mover, Owner _owner)
 	{
@@ -45,6 +49,7 @@ public class CollisionCircle
 		isCollided = false;
 		collidedCircle = null;
 		collidedCount = 0;
+		isStatic = false;
 	}
 	public CollisionCircle(Weapon _weapon, Transform _trans, Mover _mover, Owner _owner)
 	{
@@ -56,6 +61,7 @@ public class CollisionCircle
 		isCollided = false;
 		collidedCircle = null;
 		collidedCount = 0;
+		isStatic = false;
 	}
 
 	public float GetRadius()
@@ -70,5 +76,10 @@ public class CollisionCircle
 				return weapon.radius;
 		}
 		return 0;
+	}
+
+	public void Collided(CollisionCircle other)
+	{
+		Debug.Log(trans.gameObject);
 	}
 }

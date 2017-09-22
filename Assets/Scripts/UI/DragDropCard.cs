@@ -33,16 +33,21 @@ public class DragDropCard : UIDragDropItem
 
 	protected override void OnDragDropStart()
 	{
+		CardManager.Instance.deniedArea.enabled = true;
 		base.OnDragDropStart();
 		
 		sprite.depth += 1;
 		button.enabled = false;
 
 		
+
+		card.Drag();
 	}
 
 	protected override void OnDragDropEnd()
 	{
+		CardManager.Instance.deniedArea.enabled = false;
+		
 		// check the card is on card activation area
 		if (mTrans.position.y > CardManager.Instance.cardActivationBounds.min.y)
 		{
@@ -51,21 +56,22 @@ public class DragDropCard : UIDragDropItem
 				cardOriginal.StartCooldownTimer();
 		}
 		
+		
 		base.OnDragDropEnd();
 	}
 	
 	protected override void OnDragDropMove (Vector2 delta)
 	{
 		base.OnDragDropMove(delta);
-		if (mTrans.position.y < CardManager.Instance.cardActivationBounds.min.y)
-			sprite.color = Color.red;
-		else
-			sprite.color = Color.white;
+//		if (mTrans.position.y < CardManager.Instance.cardActivationBounds.min.y)
+//			sprite.color = Color.red;
+//		else
+//			sprite.color = Color.white;
 	}
 
 //	protected override void OnDragDropRelease (GameObject surface)
 //	{
-//		base.OnDragDropRelease(surface);
+//		//base.OnDragDropRelease(surface);
 //	}
 	
 	public Vector2 GetWorldCoordinate()

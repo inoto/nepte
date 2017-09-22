@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class CardManager : MonoBehaviour
 {
@@ -6,9 +7,13 @@ public class CardManager : MonoBehaviour
 
     public static CardManager Instance { get { return _instance; } }
 
-    public Bounds cardActivationBounds;
+    [HideInInspector] public Bounds cardActivationBounds;
+    [HideInInspector] public UISprite deniedArea;
+    private GameObject cardContainer;
     
-    private Card[] cards;
+    private List<Card> hand;
+    public int handSize;
+    public List<GameObject> cards;
 
     private void Awake()
     {
@@ -22,7 +27,16 @@ public class CardManager : MonoBehaviour
         }
         
         cardActivationBounds = GameObject.Find("CardActivationArea").GetComponent<BoxCollider>().bounds;
+        if (cardActivationBounds == null)
+            Debug.LogError("card activation area not found");
+        
+        deniedArea = GameObject.Find("DeniedArea").GetComponent<UISprite>();
+        if (deniedArea == null)
+            Debug.LogError("denied area not found");
+        
+        cardContainer = GameObject.Find("ContainerCards");
     }
+    
     
     
 }

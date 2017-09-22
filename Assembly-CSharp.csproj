@@ -221,10 +221,13 @@
     <Compile Include="Assets\Scripts\Camera controllers\TouchController.cs" />
     <Compile Include="Assets\Scripts\Camera controllers\UIBarsCameraSize.cs" />
     <Compile Include="Assets\Scripts\Cards\Card.cs" />
+    <Compile Include="Assets\Scripts\Cards\CardAction.cs" />
     <Compile Include="Assets\Scripts\Cards\CardManager.cs" />
     <Compile Include="Assets\Scripts\Cards\CardProperty.cs" />
+    <Compile Include="Assets\Scripts\Cards\CardSlowEnemies.cs" />
     <Compile Include="Assets\Scripts\Cards\CardSuperDrone.cs" />
     <Compile Include="Assets\Scripts\Cards\CardUnitCleaner.cs" />
+    <Compile Include="Assets\Scripts\Cards\Deck.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionCircle.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionGrid.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionManager.cs" />
