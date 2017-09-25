@@ -76,8 +76,14 @@ public class DragDropCard : UIDragDropItem
 	
 	public Vector2 GetWorldCoordinate()
 	{
-		Vector2 worldPos = UICamera.currentCamera.WorldToViewportPoint(mTrans.position);
+		Vector2 worldPos = UICamera.currentCamera.WorldToViewportPoint(sprite.worldCenter);
 		worldPos = Camera.main.ViewportToWorldPoint(worldPos);
 		return worldPos;
 	}
+
+//	private void OnDrawGizmos()
+//	{
+//		//Gizmos.DrawSphere(mTrans.position, 0.02f);
+//		Gizmos.DrawWireSphere(sprite.worldCenter, 0.1f - 0.02f);
+//	}
 }

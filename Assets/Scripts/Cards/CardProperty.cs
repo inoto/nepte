@@ -4,6 +4,7 @@ public class CardProperty : Card
 {
 	[Header("CardProperty")]
 	public GameObject propertySpritePrefab;
+	protected GameObject icon;
 	protected Base bas;
 
 	public override bool Activate(Vector2 position)
@@ -16,9 +17,9 @@ public class CardProperty : Card
 			bas = hit.collider.gameObject.GetComponent<Base>();
 			if (bas != null)
 			{
-//				bas.spawner.prefab = superDronePrefab;
-				GameObject ms = GameObject.Instantiate(propertySpritePrefab, bas.trans.position, bas.trans.rotation);
-				ms.transform.parent = bas.trans;
+				icon = GameObject.Instantiate(propertySpritePrefab, bas.trans.position, bas.trans.rotation);
+				icon.transform.parent = bas.trans;
+				bas.propertyIcon = icon;
 				return true;
 			}
 		}

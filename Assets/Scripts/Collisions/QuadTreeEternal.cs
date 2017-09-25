@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Cache;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -204,6 +205,8 @@ public class QuadTreeEternal
 		}
 	}
 
+	
+
     private List<CollisionRecord> GetCollisions(List<CollisionCircle> parentObjs)
 	{
 		List<CollisionRecord> collisionsList = new List<CollisionRecord>();
@@ -218,28 +221,10 @@ public class QuadTreeEternal
 					
 
                 if (pObj.collisionType == CollisionCircle.CollisionType.Body && lObj.collisionType == CollisionCircle.CollisionType.Body)
-//                    CheckBodies(pObj, lObj);
-				{
-					float distance = (pObj.trans.position - lObj.trans.position).sqrMagnitude;
-					float radiuses = pObj.GetRadius() + lObj.GetRadius();
-					if (distance < radiuses * radiuses)
-					{
-						pObj.Collided(lObj);
-						lObj.Collided(pObj);
-					}
-				}
+                    CheckBodies(pObj, lObj);
 				else if (pObj.collisionType == CollisionCircle.CollisionType.Radar ||
 				         lObj.collisionType == CollisionCircle.CollisionType.Radar)
-//	                CheckRadar(pObj, lObj);
-                {
-	                float distance = (pObj.trans.position - lObj.trans.position).sqrMagnitude;
-	                float radiuses = pObj.GetRadius() + lObj.GetRadius();
-	                if (distance < radiuses * radiuses)
-	                {
-		                pObj.Collided(lObj);
-		                lObj.Collided(pObj);
-	                }
-                }
+	                CheckRadar(pObj, lObj);
 				
 				//CollisionRecord cr = CheckCollision(pObj, lObj);
 				//if (cr != null)
@@ -250,24 +235,6 @@ public class QuadTreeEternal
 		// Теперь проверяем коллизии всех локальных объектов между собой
 		if (objects.Count > 1)
 		{
-			//#region self-congratulation 
-			/* * Это довольно примечательная часть кода. Обычно используется просто два цикла foreach, примерно так:
-			* foreach(Physical lObj1 in m_objects) 
-			* { 
-			* foreach(Physical lObj2 in m_objects) 
-			* { 
-			* // код проверки пересечения
-			* } 
-			* } 
-			* 
-			* Проблема в том, что они выполняются O(N*N) раз и в том, что проверяются коллизии уже проверенных объектов.
-			* Представьте, что у нас есть множество из четырёх элементов: {1,2,3,4}
-			* Сначала мы проверяем {1} с {1,2,3,4}
-			* Затем проверяем {2} с {1,2,3,4},
-			* но мы уже проверяли {1} с {2}, так что проверка {2} с {1} будет пустой тратой времени. Можно ли пропустить эту проверку, устранив {1}?
-			* Тогда всего мы получим 4+3+2+1 проверок коллизий, что равно времени O(N(N+1)/2). Если N = 10, мы уже делаем вдвое меньшее количество проверок.
-			* Мы не можем просто удалять элемент в конце второго цикла for, потому что прервём итератор первого цикла foreach, поэтому придётся использовать
-			* обычное*/
 			for (int i = 0; i < objects.Count; i++)
 			{
 				List<CollisionCircle> tmpList = new List<CollisionCircle>(objects.Count);
@@ -277,43 +244,10 @@ public class QuadTreeEternal
 				{
 					foreach (CollisionCircle lObj2 in tmpList)
 					{
-                        //if (tmpList[tmpList.Count - 1] == lObj2 || (tmpList[tmpList.Count - 1].IsStatic && lObj2.IsStatic)) continue;
-                        //IntersectionRecord ir = tmpList[tmpList.Count - 1].Intersects(lObj2);
-        //                if (tmpList[tmpList.Count - 1].GameObject != lObj2.GameObject)
-        //                {
-        //                    if (CheckDist(tmpList[tmpList.Count - 1], lObj2))
-        //                    {
-        //                        tmpList[tmpList.Count - 1].AddCollided(lObj2);
-        //                        lObj2.AddCollided(tmpList[tmpList.Count - 1]);
-        //                    }
-        //                    else
-        //                    {
-								//tmpList[tmpList.Count - 1].RemoveCollided(lObj2);
-								//lObj2.RemoveCollided(tmpList[tmpList.Count - 1]);
-                        //    }
-                        //}
                         if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Body && lObj2.collisionType == CollisionCircle.CollisionType.Body)
-//                            CheckBodies(tmpList[tmpList.Count - 1], lObj2);
-						{
-							float distance = (tmpList[tmpList.Count - 1].trans.position - lObj2.trans.position).sqrMagnitude;
-							float radiuses = tmpList[tmpList.Count - 1].GetRadius() + lObj2.GetRadius();
-							if (distance < radiuses * radiuses)
-							{
-								tmpList[tmpList.Count - 1].Collided(lObj2);
-								lObj2.Collided(tmpList[tmpList.Count - 1]);
-							}
-						}
+                            CheckBodies(tmpList[tmpList.Count - 1], lObj2);
 						else if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Radar || lObj2.collisionType == CollisionCircle.CollisionType.Radar)
-//							CheckRadar(tmpList[tmpList.Count - 1], lObj2);
-						{
-							float distance = (tmpList[tmpList.Count - 1].trans.position - lObj2.trans.position).sqrMagnitude;
-							float radiuses = tmpList[tmpList.Count - 1].GetRadius() + lObj2.GetRadius();
-							if (distance < radiuses * radiuses)
-							{
-								tmpList[tmpList.Count - 1].Collided(lObj2);
-								lObj2.Collided(tmpList[tmpList.Count - 1]);
-							}
-						}
+							CheckRadar(tmpList[tmpList.Count - 1], lObj2);
 						//CollisionRecord cr = CheckCollision(tmpList[tmpList.Count - 1], lObj2);
 						//if (cr != null)
 							//collisionsList.Add(cr);
@@ -341,54 +275,56 @@ public class QuadTreeEternal
 	    	return;
 		if (unit1.trans.gameObject.isStatic && unit2.trans.gameObject.isStatic)
 			return;
-	    float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
-		if (distance > 0)
+		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
+		// if no mover then it's a base
+		if (unit1.mover == null && unit1.body.owner.playerNumber == -1)
 		{
-			
-			// if no mover then it's a static, e.g. a base
-			if (unit1.mover == null && unit1.body.owner.playerNumber == -1)
+			float radiuses = unit1.GetRadius() + unit2.GetRadius();
+			if (distance < radiuses * radiuses)
 			{
-				if (distance < unit1.body.radius * unit1.body.radius)
+				if (unit2.collidedCircle == null)
 				{
-					if (unit2.collidedCircle == null)
-					{
-						unit1.trans.GetComponent<Capture>().AddCapturerByPlayer(unit2.owner.playerNumber);
-						unit2.collidedCircle = unit1;
-						unit1.collidedCount++;
-					}
-				}
-				else
-				{
-					if (unit2.collidedCircle == unit1)
-					{
-						unit2.collidedCircle = null;
-						unit1.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit2.owner.playerNumber);
-						unit1.collidedCount--;
-					}
+					unit1.trans.GetComponent<Capture>().AddCapturerByPlayer(unit2.owner.playerNumber);
+					unit2.collidedCircle = unit1;
+					unit1.collidedCount++;
 				}
 			}
-			if (unit2.mover == null && unit2.body.owner.playerNumber == -1)
+			else
 			{
-				if (distance < unit2.body.radius * unit2.body.radius)
+				if (unit2.collidedCircle == unit1)
 				{
-					if (unit1.collidedCircle == null)
-					{
-						unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
-						unit1.collidedCircle = unit1;
-						unit2.collidedCount++;
-					}
-				}
-				else
-				{
-					if (unit1.collidedCircle == unit2)
-					{
-						unit1.collidedCircle = null;
-						unit2.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit1.owner.playerNumber);
-						unit2.collidedCount--;
-					}
+					unit2.collidedCircle = null;
+					unit1.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit2.owner.playerNumber);
+					unit1.collidedCount--;
 				}
 			}
-			if (unit1.mover != null && unit2.mover != null)
+		}
+		// if no mover then it's a base
+		else if (unit2.mover == null && unit2.body.owner.playerNumber == -1)
+		{
+			float radiuses = unit1.GetRadius() + unit2.GetRadius();
+			if (distance < radiuses * radiuses)
+			{
+				if (unit1.collidedCircle == null)
+				{
+					unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
+					unit1.collidedCircle = unit1;
+					unit2.collidedCount++;
+				}
+			}
+			else
+			{
+				if (unit1.collidedCircle == unit2)
+				{
+					unit1.collidedCircle = null;
+					unit2.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit1.owner.playerNumber);
+					unit2.collidedCount--;
+				}
+			}
+		}
+		else if (unit1.mover != null && unit2.mover != null)
+		{
+			if (distance > 0)
 			{
 				// check all dunamic bodies to apply separation
 				if (distance < unit1.mover.separation.desired * unit1.mover.separation.desired)
@@ -410,6 +346,11 @@ public class QuadTreeEternal
 							unit2.mover.cohesion.AddCohesion(unit1.trans.position);
 					}
 				}
+			}
+			else
+			{
+				unit2.trans.Translate(-0.2f, 0, 0);
+				unit1.trans.Translate(0.2f, 0, 0);
 			}
 		}
 	}
@@ -454,6 +395,14 @@ public class QuadTreeEternal
         if ((obj.trans.position.y + obj.GetRadius()) > (rect.y + rect.height))
 				return false;
 		return true;
+	}
+
+	public List<CollisionCircle> GetWholeTreeObjects(List<CollisionCircle> list)
+	{
+		list.AddRange(objects);
+		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
+			if ((flags & 1) == 1) childs[index].GetWholeTreeObjects(list);
+		return list;
 	}
 
 	public void DrawDebug()

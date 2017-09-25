@@ -207,6 +207,10 @@
     <Compile Include="Assets\Scripts\Behaviors\Capture.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Cohesion.cs" />
     <Compile Include="Assets\Scripts\Behaviors\DroneLinks.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\Effect.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\EffectPeriodic.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\EffectPeriodicDamage.cs" />
+    <Compile Include="Assets\Scripts\Behaviors\EffectSlow.cs" />
     <Compile Include="Assets\Scripts\Behaviors\FollowRally.cs" />
     <Compile Include="Assets\Scripts\Behaviors\FollowTarget.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Health.cs" />
@@ -224,6 +228,7 @@
     <Compile Include="Assets\Scripts\Cards\CardAction.cs" />
     <Compile Include="Assets\Scripts\Cards\CardManager.cs" />
     <Compile Include="Assets\Scripts\Cards\CardProperty.cs" />
+    <Compile Include="Assets\Scripts\Cards\CardPropertyPeriodicDamage.cs" />
     <Compile Include="Assets\Scripts\Cards\CardSlowEnemies.cs" />
     <Compile Include="Assets\Scripts\Cards\CardSuperDrone.cs" />
     <Compile Include="Assets\Scripts\Cards\CardUnitCleaner.cs" />

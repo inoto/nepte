@@ -80,6 +80,6 @@ public class CollisionCircle
 
 	public void Collided(CollisionCircle other)
 	{
-		Debug.Log(trans.gameObject);
+		
 	}
 }

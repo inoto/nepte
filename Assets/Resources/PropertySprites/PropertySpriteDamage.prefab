@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4912730768919390}
   - component: {fileID: 212698390356427984}
   m_Layer: 0
-  m_Name: MoldSpriteB
+  m_Name: PropertySpriteDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ Transform:
   m_GameObject: {fileID: 1198191863184306}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 68b193a9f2122455ba2c18215cd3190f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f5a068a842a364a7ab182e82f2337163, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_FlipX: 0
   m_FlipY: 0

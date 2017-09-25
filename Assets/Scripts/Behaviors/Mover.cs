@@ -106,9 +106,9 @@ public class Mover : MonoBehaviour
 					followTarget.LookAtTarget();
 				}
 			}
-			velocity += acceleration;// * Time.deltaTime;
+			velocity += acceleration;
 			velocity *= maxSpeed;
-			trans.position += (Vector3) velocity * Time.deltaTime*3;
+			trans.position += (Vector3) velocity * Time.deltaTime * 3;
 			acceleration *= 0;
 			yield return new WaitForSeconds(0.01f);
 		}

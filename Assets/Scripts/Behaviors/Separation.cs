@@ -59,42 +59,5 @@ public class Separation
 			mover.AddForce(force);
             Clear();
 		}
-		//Vector2 sumAlign = new Vector2();
-		//float desiredAlign = mover.drone.radar.radius * 2;
-        //int countAlign = 0;
-
-    //    foreach (CollisionCircle unit in CollisionManager.Instance.objects)
-    //    {
-    //        if (mover == unit)
-    //            continue;
-    //        float dist = (mover.trans.position - unit.trans.position).magnitude;
-    //        if (dist > 0 && dist < desiredSeparation)
-    //        {
-    //            Vector2 diff = (mover.trans.position - unit.trans.position).normalized;
-    //            diff /= dist;
-    //            sum += diff;
-    //            countSeparation++;
-    //        }
-    ////        if (mover.drone.trans.position == unit.trans.position)
-    ////        {
-    ////            Vector2 direction = new Vector2(0, 0).normalized;
-				////direction /= dist;
-				////sum += direction;
-				////countSeparation++;
-        //    //}
-        //    // align
-        //    //if (mover.drone.owner == unit.owner)
-        //    //{
-        //    //    sumAlign += unit.mover.velocity;
-        //    //    countAlign++;
-        //    //}
-        //}
-
-        // align
-        //sumAlign /= countAlign;
-        ////sumAlign. = maxSpeed;
-        //Vector2 newForce = sumAlign - mover.velocity;
-        //newForce = Mover.LimitVector(newForce, mover.maxForce);
-        //mover.AddForce(newForce);
     }
 }

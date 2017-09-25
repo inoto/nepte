@@ -8,7 +8,7 @@ public class Base : MonoBehaviour, ITargetable
 
     public bool isDead = false;
 
-	public List<Node> node = new List<Node>();
+	public GameObject propertyIcon;
 
     [Header("Cache")]
     public UISlider assignedHPbarSlider;
@@ -58,13 +58,6 @@ public class Base : MonoBehaviour, ITargetable
 		}
 
         //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
-    }
-
-    public void Damage(int damage)
-    {
-        health.current -= damage;
-	    if (assignedHPbarSlider != null)
-        	assignedHPbarSlider.Set((float)health.current / health.max);
     }
 
 	public void SetOwner(int _playerNumber, PlayerController _playerController)
@@ -162,6 +155,17 @@ public class Base : MonoBehaviour, ITargetable
 		{
 			Die();
 			weapon.EndCombat();
+		}
+	}
+	
+	public void Damage(int damage)
+	{
+		health.current -= damage;
+		if (assignedHPbarSlider != null)
+			assignedHPbarSlider.Set((float)health.current / health.max);
+		if (health.current <= 0)
+		{
+			Die();
 		}
 	}
 
