@@ -4,7 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class Cohesion
 {
-	public bool enabled = true;
+	public bool enabled;
 	
 	public int count;
 	public Vector2 sum;
@@ -20,13 +20,10 @@ public class Cohesion
 
 	[System.NonSerialized] public Mover mover;
 
-	public Cohesion(Mover _mover)
+	public void Activate(Mover _mover)
 	{
 		mover = _mover;
-		sum = new Vector2();
 		desired = mover.body.radius * 3;
-//        desired = mover.radar.radius;
-		count = 0;
 	}
 
 	public void Clear()

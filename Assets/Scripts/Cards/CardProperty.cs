@@ -6,6 +6,24 @@ public class CardProperty : Card
 	public GameObject propertySpritePrefab;
 	protected GameObject icon;
 	protected Base bas;
+	
+	public override void Drag()
+	{
+		base.Drag();
+		Destroy(transform.GetChild(0).gameObject);
+
+		if (sprite != null)
+		{
+			sprite.width = 10;
+			
+			Color col = sprite.color;
+			col.a = 0.5f;
+			var button = GetComponent<UIButton>();
+			button.defaultColor = col;
+			
+			sprite.spriteName = "circle_small";
+		}
+	}
 
 	public override bool Activate(Vector2 position)
 	{

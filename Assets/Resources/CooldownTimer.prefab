@@ -35,7 +35,7 @@ Transform:
   m_GameObject: {fileID: 1123261163069946}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99920064, y: 0.99920064, z: 0.99920064}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -68,19 +68,19 @@ MonoBehaviour:
     relative: 1
     absolute: 0
   updateAnchors: 2
-  mColor: {r: 0, g: 0, b: 0, a: 0.703}
+  mColor: {r: 0, g: 0, b: 0, a: 0.784}
   mPivot: 4
-  mWidth: 73
-  mHeight: 72
+  mWidth: 78
+  mHeight: 77
   mDepth: 8
   mMat: {fileID: 0}
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
-  keepAspectRatio: 0
+  keepAspectRatio: 1
   aspectRatio: 1.0138888
   mType: 3
   mFillDirection: 4
-  mFillAmount: 1
+  mFillAmount: 0.816
   mInvert: 0
   mFlip: 0
   mApplyGradient: 0
@@ -92,5 +92,5 @@ MonoBehaviour:
   bottomType: 1
   topType: 1
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
-  mSpriteName: Emoticon - Laugh
+  mSpriteName: Glow - Inner
   mFillCenter: 1

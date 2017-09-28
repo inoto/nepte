@@ -18,7 +18,6 @@ public class CardPropertyPeriodicDamage : CardProperty
 			effect.unit = bas.GetComponent<ITargetable>();
 			effect.tickStep = tickStep;
 			effect.damage = damage;
-			effect.forProperty = true;
 			effect.Activate(duration);
 			return true;
 		}

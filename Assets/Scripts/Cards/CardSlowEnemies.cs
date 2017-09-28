@@ -14,16 +14,19 @@ public class CardSlowEnemies : CardAction
 		base.Drag();
 		if (actionType == ActionType.Area)
 		{
-			var sprite = GetComponent<UISprite>();
-			
-			//sprite.width = (int)areaRadius*2 * 10;
-			sprite.width =(int)((areaRadius)*((Screen.height / 2.0f) / Camera.main.orthographicSize));
-			Color col = sprite.color;
-			col.a = 0.5f;
-			var button = GetComponent<UIButton>();
-			button.defaultColor = col;
-			
-			sprite.spriteName = "circle";
+			Destroy(transform.GetChild(0).gameObject);
+
+			if (sprite != null)
+			{
+				sprite.width = (int) ((areaRadius) * ((Screen.height / 2.0f) / Camera.main.orthographicSize));
+				
+				Color col = sprite.color;
+				col.a = 0.5f;
+				var button = GetComponent<UIButton>();
+				button.defaultColor = col;
+
+				sprite.spriteName = "circle";
+			}
 		}
 //		else if (actionType == ActionType.NoTarget)
 //		{

@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
+[System.Serializable]
 public class CollisionCircle
 {
     public enum CollisionType
@@ -12,6 +12,7 @@ public class CollisionCircle
         Weapon
     }
     public CollisionType collisionType;
+	public int instanceId;
 
     public Body body;
     public Radar radar;
@@ -21,11 +22,10 @@ public class CollisionCircle
     public Mover mover;
     public Owner owner;
 
+	public bool isDead = false;
     public bool isCollided = false;
-	public CollisionCircle collidedCircle = null;
+	public CollisionCircle collidedBaseCircle = null;
 	public int collidedCount = 0;
-
-	public bool isStatic = false;
 
     public CollisionCircle(Body _body, Transform _trans, Mover _mover, Owner _owner)
     {
@@ -35,9 +35,9 @@ public class CollisionCircle
         mover = _mover;
         owner = _owner;
         isCollided = false;
-	    collidedCircle = null;
+	    collidedBaseCircle = null;
 	    collidedCount = 0;
-	    isStatic = false;
+	    instanceId = trans.gameObject.GetInstanceID();
     }
 	public CollisionCircle(Radar _radar, Transform _trans, Mover _mover, Owner _owner)
 	{
@@ -47,9 +47,9 @@ public class CollisionCircle
 		mover = _mover;
 		owner = _owner;
 		isCollided = false;
-		collidedCircle = null;
+		collidedBaseCircle = null;
 		collidedCount = 0;
-		isStatic = false;
+		instanceId = trans.gameObject.GetInstanceID();
 	}
 	public CollisionCircle(Weapon _weapon, Transform _trans, Mover _mover, Owner _owner)
 	{
@@ -59,9 +59,9 @@ public class CollisionCircle
 		mover = _mover;
 		owner = _owner;
 		isCollided = false;
-		collidedCircle = null;
+		collidedBaseCircle = null;
 		collidedCount = 0;
-		isStatic = false;
+		instanceId = trans.gameObject.GetInstanceID();
 	}
 
 	public float GetRadius()

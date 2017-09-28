@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 114358262193089728}
   - component: {fileID: 114258345328721576}
   - component: {fileID: 114910062752346576}
+  - component: {fileID: 58317274819651986}
   m_Layer: 9
   m_Name: Base
   m_TagString: base
@@ -86,6 +87,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771483991996188}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!58 &58317274819651986
+CircleCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1771483991996188}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!114 &114017529968746086
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -99,8 +115,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useAsStartPosition: 0
   isDead: 0
-  node: []
+  lineArrow: {fileID: 0}
+  propertyIcon: {fileID: 0}
+  assignedUIBarObject: {fileID: 0}
   assignedHPbarSlider: {fileID: 0}
+  assignedUnitCountLabel: {fileID: 0}
   rallyPoint: {fileID: 0}
   triggeredLaserMissile: {fileID: 0}
   attackers: []
@@ -115,7 +134,7 @@ MonoBehaviour:
   capture: {fileID: 0}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
     type: 2}
-  HPbarPrefab: {fileID: 1715169125782130, guid: a67e5c7027d85448aa83ab0928ac2ba9,
+  HPbarPrefab: {fileID: 1211159475750974, guid: 047570b75374547bba9d07df774de185,
     type: 2}
   materialNeutral: {fileID: 2100000, guid: 801c837e071a242239e7dbd813b6ad0e, type: 2}
   materials:
@@ -140,6 +159,18 @@ MonoBehaviour:
   trans: {fileID: 4175439061827504}
   owner: {fileID: 0}
   mover: {fileID: 0}
+  collision:
+    collisionType: 0
+    instanceId: 0
+    body: {fileID: 0}
+    radar: {fileID: 0}
+    weapon: {fileID: 0}
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    isDead: 0
+    isCollided: 0
+    collidedCount: 0
 --- !u!114 &114358262193089728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -152,9 +183,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
-  delay: 4
-  intervalMin: 4
-  intervalMax: 4
+  unitCount: 0
+  unitCountLabel: {fileID: 0}
+  delay: 2
+  intervalMin: 2
+  intervalMax: 2
   point: {x: 0, y: 0}
   prefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab, type: 2}
 --- !u!114 &114681370771658558

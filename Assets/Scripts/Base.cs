@@ -7,11 +7,14 @@ public class Base : MonoBehaviour, ITargetable
     public bool useAsStartPosition = false;
 
     public bool isDead = false;
+	public LineRenderer lineArrow;
 
 	public GameObject propertyIcon;
 
-    [Header("Cache")]
+	[Header("Cache")]
+	public GameObject assignedUIBarObject;
     public UISlider assignedHPbarSlider;
+	public UILabel assignedUnitCountLabel;
 	
     public RallyPoint rallyPoint;
     public LaserMissile triggeredLaserMissile;
@@ -56,9 +59,23 @@ public class Base : MonoBehaviour, ITargetable
 		{
 			Die();
 		}
-
+	    if (lineArrow != null)
+	    {
+		    Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		    point.z = trans.position.z;
+		    lineArrow.SetPosition(1, point);
+	    }
         //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
+
+	public void MakeArrow()
+	{
+		lineArrow = gameObject.AddComponent<LineRenderer>();
+		lineArrow.SetPosition(0, trans.position);
+		lineArrow.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+		lineArrow.material = (Material)Resources.Load("Arrow");
+		lineArrow.widthMultiplier = 3f;
+	}
 
 	public void SetOwner(int _playerNumber, PlayerController _playerController)
 	{
@@ -69,7 +86,7 @@ public class Base : MonoBehaviour, ITargetable
 		{
         	owner.playerController.rallyPoint.DelayedStart();
 
-			AddHPBar();
+			AddUIBar();
 
 			spawner.enabled = true;
 			spawner.DelayedStart();
@@ -77,17 +94,34 @@ public class Base : MonoBehaviour, ITargetable
 		}
 		AssignMaterial();
 	}
+	
+	public void PutNearDronesInside()
+	{
+		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(trans.position, body.radius);
+		for (int i = 0; i < list.Count; i++)
+		{
+			Drone drone = list[i].trans.gameObject.GetComponent<Drone>();
+			if (drone != null)
+				drone.PutIntoBase();
+			spawner.unitCount += 1;
+		}
+		spawner.UpdateLabel();
+	}
 
-    void AddHPBar()
+    void AddUIBar()
     {
-		GameObject assignedHPbarObject = Instantiate(HPbarPrefab, trans.position, trans.rotation);
-		assignedHPbarObject.transform.SetParent(GameObject.Find("HPBars").transform);
-		assignedHPbarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+	    Vector2 newPosition = trans.position;
+	    newPosition.y += 1;
+	    assignedUIBarObject = Instantiate(HPbarPrefab, newPosition, trans.rotation);
+	    assignedUIBarObject.transform.SetParent(GameObject.Find("HPBars").transform);
+	    assignedUIBarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-		UISprite assignedHPbarSprite = assignedHPbarObject.GetComponent<UISprite>();
-		assignedHPbarSprite.SetAnchor(gameObject);
+		//UISprite assignedHPbarSprite = assignedUIBarObject.GetComponent<UISprite>();
+		//assignedHPbarSprite.SetAnchor(gameObject);
 
-		assignedHPbarSlider = assignedHPbarObject.GetComponent<UISlider>();
+		assignedHPbarSlider = assignedUIBarObject.transform.GetChild(0).GetComponent<UISlider>();
+	    assignedUnitCountLabel = assignedUIBarObject.transform.GetChild(1).GetChild(0).GetComponent<UILabel>();
+	    //Debug.Log(assignedHPbarSlider);
     }
 
 	void SetOwnerAsInParent()
@@ -124,11 +158,11 @@ public class Base : MonoBehaviour, ITargetable
     {
         CancelInvoke();
 	    spawner.StopSpawn();
-        isDead = true;
+        //isDead = true;
         GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
         tmpObject.transform.SetParent(GameController.Instance.transform);
 		//tmpObject.transform.localScale = trans.localScale;
-        Destroy(assignedHPbarSlider.gameObject);
+        Destroy(assignedUIBarObject);
         //Destroy(gameObject);
         //gameObject.SetActive(false);
 	    SetOwner(-1, null);

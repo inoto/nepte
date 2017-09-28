@@ -252,6 +252,7 @@ MonoBehaviour:
   ZoomEnabled: 1
   DragEnabled: 1
   DoubleClickEnabled: 0
+  selectedObject: {fileID: 0}
 --- !u!114 &114341479791326508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -268,6 +269,7 @@ MonoBehaviour:
   ZoomEnabled: 1
   DragEnabled: 1
   DoubleClickEnabled: 0
+  selectedObject: {fileID: 0}
 --- !u!114 &114626228664207862
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -10,7 +11,6 @@ public class Capture : MonoBehaviour
 	private Transform trans;
 	public Body body;
 	
-	//public float[] counter;
 	private float counterStep = 0.01f;
 	public int[] capturerCount;
 	public int leadIndex = -1;
@@ -104,8 +104,14 @@ public class Capture : MonoBehaviour
 					isCapturing = false;
 					GetComponent<Base>().SetOwner(leadIndex,
 						GameController.Instance.playerControllerObject[leadIndex].GetComponent<PlayerController>());
+					//GetComponent<Base>().PutNearDronesInside();
 					Clean();
 					Destroy(assignedCircleTimer.gameObject);
+				}
+				if (assignedCircleTimer.fillAmount <= 0)
+				{
+					leadIndex = -1;
+					Clean();
 				}
 				
 				if (body.collision.collidedCount <= 0)
@@ -174,7 +180,7 @@ public class Capture : MonoBehaviour
 		assignedCircleTimerObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 		
 		assignedCircleTimer = assignedCircleTimerObject.GetComponent<UI2DSprite>();
-		assignedCircleTimer.SetAnchor(gameObject);
+		//assignedCircleTimer.SetAnchor(gameObject);
 		//assignedCircleTimer.material.SetColor("_Color", body.owner.color);
 		//assignedCircleTimer.material.SetColor("_TintColor", body.owner.color);
 	}

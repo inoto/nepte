@@ -26,7 +26,6 @@ GameObject:
   - component: {fileID: 114835238842844082}
   - component: {fileID: 114507272362157692}
   - component: {fileID: 114903286341286124}
-  - component: {fileID: 114997923597211442}
   - component: {fileID: 114974211722959918}
   m_Layer: 0
   m_Name: Drone
@@ -124,7 +123,7 @@ MonoBehaviour:
     stopRadius: 1
     slowDownRadius: 3
   separation:
-    enabled: 1
+    enabled: 0
     count: 0
     sum: {x: 0, y: 0}
     desired: 0
@@ -133,7 +132,7 @@ MonoBehaviour:
     maxAcceleration: 1
     distanceAddition: 0
   cohesion:
-    enabled: 1
+    enabled: 0
     count: 0
     sum: {x: 0, y: 0}
     desired: 0
@@ -202,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1.2
+  size: 1
 --- !u!114 &114903286341286124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -215,12 +214,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showRadius: 1
-  radius: 1
-  radiusHard: 0.5
+  radius: 0.3
+  radiusHard: 0.15
   strength: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}
+  collision:
+    collisionType: 0
+    instanceId: 0
+    body: {fileID: 0}
+    radar: {fileID: 0}
+    weapon: {fileID: 0}
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    isDead: 0
+    isCollided: 0
+    collidedCount: 0
 --- !u!114 &114974211722959918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -232,9 +243,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d96d0839dd24647be940a0c25c7a7063, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showRadius: 0
+  showRadius: 1
   isAttacking: 0
-  radius: 3.5
+  radius: 4
   attackSpeed: 1
   damage: 40
   missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
@@ -242,20 +253,15 @@ MonoBehaviour:
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}
---- !u!114 &114997923597211442
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1964420292115662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 929e939d8118a4abc8a2e55931f7c32f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  showRadius: 1
-  radius: 5
-  trans: {fileID: 0}
-  owner: {fileID: 0}
-  mover: {fileID: 0}
-  weapon: {fileID: 0}
+  collision:
+    collisionType: 0
+    instanceId: 0
+    body: {fileID: 0}
+    radar: {fileID: 0}
+    weapon: {fileID: 0}
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    isDead: 0
+    isCollided: 0
+    collidedCount: 0

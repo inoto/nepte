@@ -6,31 +6,39 @@ using System.Collections.Generic;
 public class Spawner : MonoBehaviour
 {
     public bool isActive;
+    public int unitCount;
+    public UILabel unitCountLabel;
     public float delay;
     public float intervalMin;
     public float intervalMax;
+    private float interval;
     public Vector2 point;
     public GameObject prefab;
+    private float timeSinceLastSpawn;
+    
 
     Transform trans;
     Owner owner;
-    IEnumerator spawnCoroutine;
+    Coroutine spawnCoroutine;// = null;
 
     private void Awake()
     {
         trans = GetComponent<Transform>();
         //bas = GetComponent<Base>();
+        
     }
 
 	public void DelayedStart()
 	{
         owner = GetComponent<Owner>();
 		//spawnCoroutine = Spawn();
+	    //spawnCoroutine = ReleaseAllUnits(_point);
 	}
 
     public void StartSpawn(Vector2 _point)
     {
         point = _point;
+        unitCountLabel = GetComponent<Base>().assignedUnitCountLabel;
         StartCoroutine("Spawn");
     }
 
@@ -39,27 +47,59 @@ public class Spawner : MonoBehaviour
         isActive = false;
     }
 
-    IEnumerator Spawn()
+    public void ReleaseUnits(Vector2 _point, GameObject obj)
     {
-        yield return new WaitForSeconds(delay * Time.deltaTime*(delay*10));
-        isActive = true;
-        //Debug.Log("Spawn started");
-        while (isActive)
+        if (spawnCoroutine != null)
+            StopCoroutine(spawnCoroutine);
+        if (unitCount > 0)
+            spawnCoroutine = StartCoroutine(ReleaseAllUnits(_point, obj));
+    }
+    
+    IEnumerator ReleaseAllUnits(Vector2 _point, GameObject obj)
+    {
+        int count = unitCount;
+        while (count > 0)
+        //for (int i = 0; i < count; i++)
         {
-            GameObject obj = ObjectPool.Spawn(prefab, owner.playerController.trans, point, trans.rotation);
-            Drone droneSpawned = obj.GetComponent<Drone>();
+            GameObject droneObject = ObjectPool.Spawn(prefab, owner.playerController.trans, point, trans.rotation);
+            Drone droneSpawned = droneObject.GetComponent<Drone>();
             droneSpawned.owner.playerNumber = owner.playerNumber;
             droneSpawned.owner.playerController = owner.playerController;
             //droneSpawned.playerRallyPoint = rallyPoint;
             droneSpawned.DelayedStart();
-			//droneSpawned.ResetRallyPoint();
+            droneSpawned.mover.followRally.UpdateRallyPoint(_point);
+            droneSpawned.mover.followRally.rally = obj;
+            //droneSpawned.ResetRallyPoint();
+            count--;
+            unitCount--;
+            UpdateLabel();
+            //Delay();
+            yield return new WaitForSeconds(0.3f);
+        }
+    }
 
+    public void UpdateLabel()
+    {
+        if (unitCountLabel != null)
+            unitCountLabel.text = unitCount.ToString();
+    }
+
+    IEnumerator Spawn()
+    {
+        yield return new WaitForSeconds(delay);
+        isActive = true;
+        //Debug.Log("Spawn started");
+        while (isActive)
+        {
+            unitCount += 1;
+            UpdateLabel();
+            
 			float interval;
             if (intervalMin != intervalMax)
                 interval = Random.Range(intervalMin, intervalMax);
             else
                 interval = intervalMin;
-            yield return new WaitForSeconds(interval * Time.deltaTime*(interval*10));
+            yield return new WaitForSeconds(interval);
         }
         //Debug.Log("Spawn stopped");
     }

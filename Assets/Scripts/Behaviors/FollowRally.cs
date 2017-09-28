@@ -10,6 +10,7 @@ public class FollowRally
     public bool arrived = false;
 
     Vector2 rallyPoint;
+	public GameObject rally;
 
     //public float maxSpeed = 1;
     //public float maxAcceleration = 1;
@@ -23,11 +24,11 @@ public class FollowRally
 
     [System.NonSerialized] private Mover mover;
 
-    public FollowRally(Mover _mover)
+	public void Activate(Mover _mover)
     {
         mover = _mover;
-        mover.owner.playerController.rallyPoint.OnRallyPointChanged += UpdateRallyPoint;
-        UpdateRallyPoint();
+        //mover.owner.playerController.rallyPoint.OnRallyPointChanged += UpdateRallyPoint;
+        //UpdateRallyPoint();
     }
 
 	//  private void Start()
@@ -55,12 +56,13 @@ public class FollowRally
     }
 
 
-    void UpdateRallyPoint()
+    public void UpdateRallyPoint(Vector2 point)
     {
         arrived = false;
 //		if (forceMultiplierOriginal > 0)
 //			forceMultiplier = forceMultiplierOriginal;
-        rallyPoint = mover.owner.playerController.rallyPoint.trans.position;
+        //rallyPoint = mover.owner.playerController.rallyPoint.trans.position;
+	    rallyPoint = point;
     }
 
 	public void Seek()
@@ -110,16 +112,16 @@ public class FollowRally
         /* Calculate the target speed, full speed at slowRadius distance and 0 speed at 0 distance */
         //float targetSpeed;
         //float currentSpeed = 0;
-        if (dist < slowDownRadius)
+        if (dist < stopRadius)
 		{
-            if (dist > stopRadius)
+//            if (dist > stopRadius)
                 //mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
-                desired *= mover.maxSpeed * ((dist - stopRadius) / (slowDownRadius - stopRadius));
-            else
-            {
+                //desired *= mover.maxSpeed * ((dist - stopRadius) / (slowDownRadius - stopRadius));
+//            else
+//            {
 	            EndArrive(true);
                 return;
-            }
+//            }
 		}
 		else
 		{
@@ -146,6 +148,7 @@ public class FollowRally
 		//}
         force *= 2f;
         force *= forceMultiplier;
+		force = Mover.LimitVector(force, mover.maxForce);
         mover.AddForce(force);
 	}
 }

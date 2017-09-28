@@ -32,7 +32,7 @@ public class Weapon : MonoBehaviour
 	private void Start()
 	{
         collision = new CollisionCircle(this, trans, mover, owner);
-		//CollisionManager.Instance.AddCollidable(collision);
+		CollisionManager.Instance.AddCollidable(collision);
 	}
 
 	public void StopAttacking()
@@ -42,7 +42,7 @@ public class Weapon : MonoBehaviour
 
 	public void AttackTarget()
 	{
-		if (target != null)
+		if (target != null && !isAttacking)
 			//if (mover.IsFacing(target.GameObj.transform.position, 120))
 			StartCoroutine(ReleaseMissileToTarget());
 		

@@ -7,10 +7,16 @@ public class Card : MonoBehaviour
 	public float cooldownSeconds = 1f;
 	public bool inCooldown = false;
 	protected UISprite cooldownTimer;
+	
+	protected UISprite sprite;
 
 	public virtual void Drag()
 	{
-		
+		sprite = GetComponent<UISprite>();
+//		if (sprite != null)
+//		{
+//			sprite.depth += 10;
+//		}
 	}
 
 	public virtual bool Activate(Vector2 position)

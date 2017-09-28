@@ -4,7 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class Separation
 {
-	public bool enabled = true;
+	public bool enabled;
 	
 	public int count;
     public Vector2 sum;
@@ -21,13 +21,10 @@ public class Separation
 
     [System.NonSerialized] public Mover mover;
 
-    public Separation(Mover _mover)
+    public void Activate(Mover _mover)
     {
         mover = _mover;
-        sum = new Vector2();
-		desired = mover.body.radius * 2;
-//        desired = mover.radar.radius;
-		count = 0;
+		desired = mover.body.radius * 3;
     }
 
     public void Clear()
@@ -39,7 +36,9 @@ public class Separation
 
     public void AddSeparation(Vector2 point, float dist)
     {
-        Vector2 diff = ((Vector2)mover.trans.position - point).normalized;
+        Vector2 diff = (Vector2)mover.trans.position - point;
+	    //diff = Mover.LimitVector(diff, mover.maxSpeed);
+	    
         diff /= dist;
         sum += diff;
         count++;
@@ -53,9 +52,10 @@ public class Separation
 			sum /= count;
 			//sum.Normalize();
 			sum *= maxSpeed;
+			
 			Vector2 force = sum - mover.velocity;
-			force = Mover.LimitVector(force, mover.maxForce);
             force *= forceMultiplier;
+			force = Mover.LimitVector(force, mover.maxForce);
 			mover.AddForce(force);
             Clear();
 		}

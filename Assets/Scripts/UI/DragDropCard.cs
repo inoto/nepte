@@ -7,7 +7,7 @@ public class DragDropCard : UIDragDropItem
 	private Card card;
 	private Card cardOriginal;
 
-	private void Awake()
+	protected override void Awake()
 	{
 		base.Awake();
 		
@@ -36,10 +36,8 @@ public class DragDropCard : UIDragDropItem
 		CardManager.Instance.deniedArea.enabled = true;
 		base.OnDragDropStart();
 		
-		sprite.depth += 1;
+		sprite.depth += 10;
 		button.enabled = false;
-
-		
 
 		card.Drag();
 	}

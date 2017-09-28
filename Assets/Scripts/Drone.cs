@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters;
 using UnityEngine;
 
 public class Drone : MonoBehaviour, ITargetable
@@ -26,6 +27,7 @@ public class Drone : MonoBehaviour, ITargetable
     public Body body;
     public Mover mover;
     public Radar radar;
+	public Weapon weapon;
 
 	[Header("Colors")]
 	[SerializeField]
@@ -39,6 +41,7 @@ public class Drone : MonoBehaviour, ITargetable
         body = GetComponent<Body>();
         mover = GetComponent<Mover>();
         radar = GetComponent<Radar>();
+	    weapon = GetComponent<Weapon>();
     }
 
     public void DelayedStart()
@@ -50,16 +53,59 @@ public class Drone : MonoBehaviour, ITargetable
         PlayerController.unitCount += 1;
     }
 
+	private void OnEnable()
+	{
+		mode = Drone.Mode.Idle;
+		body.collision.isDead = false;
+		body.collision.collidedBaseCircle = null;
+		weapon.target = null;
+		weapon.collision.isDead = false;
+//		Debug.Log("on enable");
+	}
+
+	public void PutIntoBase(Base _bas)
+	{
+		_bas.spawner.unitCount += 1;
+		_bas.spawner.UpdateLabel();
+		PutIntoBase();
+	}
+
+	public void PutIntoBase()
+	{
+		mode = Mode.Dead;
+		body.collision.isDead = true;
+		weapon.collision.isDead = true;
+		if (body.collision.collidedBaseCircle != null)
+		{
+//			Debug.Log("unit put into base");
+			CollisionCircle tmpCircle = body.collision.collidedBaseCircle;
+			body.collision.collidedBaseCircle = null;
+			Capture capture = tmpCircle.trans.GetComponent<Capture>();
+			if (capture != null)
+			{
+				//capture.RemoveCapturerByPlayer(owner.playerNumber);
+				capture.body.collision.collidedCount--;
+			}
+			
+		}
+		owner.playerController.playerUnitCount -= 1;
+		PlayerController.unitCount -= 1;
+		ObjectPool.Recycle(gameObject);
+	}
+
 	void Die()
 	{
 		mode = Mode.Dead;
-		if (body.collision.collidedCircle != null)
+		body.collision.isDead = true;
+		GetComponent<Weapon>().collision.isDead = true;
+		if (body.collision.collidedBaseCircle != null)
 		{
-			Capture capture = body.collision.collidedCircle.trans.GetComponent<Capture>();
+			Capture capture = body.collision.collidedBaseCircle.trans.GetComponent<Capture>();
 			capture.RemoveCapturerByPlayer(owner.playerNumber);
 			capture.body.collision.collidedCount--;
-			body.collision.collidedCircle = null;
+			body.collision.collidedBaseCircle = null;
 		}
+		
 		MakeExplosion();
 		owner.playerController.playerUnitCount -= 1;
 		PlayerController.unitCount -= 1;
@@ -87,13 +133,13 @@ public class Drone : MonoBehaviour, ITargetable
 			Debug.LogError("Cannot assign material.");
 	}
 
-	public void Damage(Weapon weapon)
+	public void Damage(Weapon _weapon)
 	{
-		health.current -= weapon.damage;
+		health.current -= _weapon.damage;
 		if (health.current <= 0)
 		{
 			Die();
-			weapon.EndCombat();
+			_weapon.EndCombat();
 		}
 	}
 	

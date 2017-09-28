@@ -40,11 +40,16 @@ public class LaserMissile : MonoBehaviour
 
         if ((Vector2)transform.position == (Vector2)destinationVector)
 		{
-            if (!target.IsDied)
-            {
-                target.Damage(weapon);
-            }
-			ObjectPool.Recycle(gameObject);
+			if (!target.IsDied)
+			{
+				target.Damage(weapon);
+			}
+			else
+			{
+				weapon.target = null;
+			}
+			//ObjectPool.Recycle(gameObject);
+			Destroy(gameObject);
 		}
 
         //if (angle == Vector3.Angle(transform.forward, directionVector))

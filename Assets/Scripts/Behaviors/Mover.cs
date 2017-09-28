@@ -64,10 +64,10 @@ public class Mover : MonoBehaviour
     public void DelayedStart()
     {
         owner = GetComponent<Owner>();
-		followRally = new FollowRally(this);
-		separation = new Separation(this);
-		cohesion = new Cohesion(this);
-	    followTarget = new FollowTarget(this);
+		followRally.Activate(this);
+		separation.Activate(this);
+		cohesion.Activate(this);
+//	    followTarget = new FollowTarget(this);
 	    StartCoroutine("Move");
     }
 
@@ -108,6 +108,7 @@ public class Mover : MonoBehaviour
 			}
 			velocity += acceleration;
 			velocity *= maxSpeed;
+			//velocity = LimitVector(velocity, 5);
 			trans.position += (Vector3) velocity * Time.deltaTime * 3;
 			acceleration *= 0;
 			yield return new WaitForSeconds(0.01f);
@@ -197,13 +198,17 @@ public class Mover : MonoBehaviour
         AddForce(force);
 	}
 
-    public static Vector2 LimitVector(Vector2 _value, float _limit)
+    public static Vector2 LimitVector(Vector2 value, float limit)
     {
-        if (_value.x > _limit)
-            _value.x = _limit;
-		if (_value.y > _limit)
-			_value.y = _limit;
-        return _value;
+        if (value.x > (0 + limit))
+            value.x = limit;
+	    if (value.x < (0 - limit))
+		    value.x = -limit;
+		if (value.y > (0 + limit))
+			value.y = limit;
+	    if (value.y < (0 - limit))
+		    value.y = -limit;
+        return value;
     }
 
 	//public Vector3 Seek(Vector3 targetPosition)
