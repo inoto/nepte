@@ -47,15 +47,15 @@ public class Spawner : MonoBehaviour
         isActive = false;
     }
 
-    public void ReleaseUnits(Vector2 _point, GameObject obj)
+    public void ReleaseUnits(GameObject obj)
     {
         if (spawnCoroutine != null)
             StopCoroutine(spawnCoroutine);
         if (unitCount > 0)
-            spawnCoroutine = StartCoroutine(ReleaseAllUnits(_point, obj));
+            spawnCoroutine = StartCoroutine(ReleaseAllUnits(obj));
     }
     
-    IEnumerator ReleaseAllUnits(Vector2 _point, GameObject obj)
+    IEnumerator ReleaseAllUnits(GameObject obj)
     {
         int count = unitCount;
         while (count > 0)
@@ -67,8 +67,8 @@ public class Spawner : MonoBehaviour
             droneSpawned.owner.playerController = owner.playerController;
             //droneSpawned.playerRallyPoint = rallyPoint;
             droneSpawned.DelayedStart();
-            droneSpawned.mover.followRally.UpdateRallyPoint(_point);
-            droneSpawned.mover.followRally.rally = obj;
+            droneSpawned.mover.followRally.UpdateRallyPoint(obj);
+            //droneSpawned.mover.followRally.rally = obj;
             //droneSpawned.ResetRallyPoint();
             count--;
             unitCount--;

@@ -29,9 +29,9 @@ public class Body : MonoBehaviour
     {
 	    if (CollisionManager.Instance.qtree != null)
 	    {
-		    collision = new CollisionCircle(this, trans, mover, owner);
-		    if (collision != null)
-			    CollisionManager.Instance.AddCollidable(collision);
+//		    collision = new CollisionCircle(this, trans, mover, owner);
+//		    if (collision != null)
+//			    CollisionManager.Instance.AddCollidable(collision);
 	    }
 	    else
 		    StartCoroutine(StartAbitLater());

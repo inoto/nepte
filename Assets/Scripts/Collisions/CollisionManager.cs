@@ -25,6 +25,7 @@ public class CollisionManager : MonoBehaviour
 	public QuadTreeEternal qtree;
 
     public List<ICollidable> objects = new List<ICollidable>();
+	public Queue<CollisionCircle> objectsToInsert = new Queue<CollisionCircle>();
 
 	private void Start()
 	{
@@ -38,12 +39,22 @@ public class CollisionManager : MonoBehaviour
 
     public void AddCollidable(CollisionCircle obj)
 	{
-        qtree.Insert(obj);
+//        qtree.Insert(obj);
+		objectsToInsert.Enqueue(obj);
 	}
 
     // update for QuadTreeEternal
     private void Update()
     {
+	    if (qtree != null && objectsToInsert.Count > 0)
+	    {
+		    //for (int i = 0; i < objectsToInsert.Count; i++)
+		    //foreach (var obj in objectsToInsert)
+		    while (objectsToInsert.Count > 0)
+		    {
+			    qtree.Insert(objectsToInsert.Dequeue());
+		    }
+	    }
         qtree.Update();
     }
 
@@ -55,8 +66,8 @@ public class CollisionManager : MonoBehaviour
 		List<CollisionCircle> catched = new List<CollisionCircle>();
 		foreach (var unit in units)
 		{
-			if (unit.collisionType != CollisionCircle.CollisionType.Body)
-				continue;
+//			if (unit.collisionType != CollisionCircle.CollisionType.Body)
+//				continue;
 			float dx = unit.trans.position.x - center.x;
 			float dy = unit.trans.position.y - center.y;
 			if (dx * dx + dy * dy < radius * radius)

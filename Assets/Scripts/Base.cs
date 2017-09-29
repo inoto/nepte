@@ -22,15 +22,17 @@ public class Base : MonoBehaviour, ITargetable
 
     [Header("Modules")]
     public Health health = new Health(4000);
+	public CollisionCircle collision;
 
     [Header("Components")]
 	public Transform trans;
 	public Owner owner;
 	public Spawner spawner;
-    public Body body;
+//    public Body body;
 	public Capture capture;
 	MeshRenderer mesh;
 	MeshFilter mf;
+	public Weapon weapon;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -49,11 +51,20 @@ public class Base : MonoBehaviour, ITargetable
 		mf = GetComponent<MeshFilter>();
         spawner = GetComponent<Spawner>();
         owner = GetComponent<Owner>();
-        body = GetComponent<Body>();
+//        body = GetComponent<Body>();
 	    capture = GetComponent<Capture>();
+	    weapon = GetComponent<Weapon>();
     }
 
-    void Update()
+	private void Start()
+	{
+		trans.localScale = Vector3.one;
+		
+		collision = new CollisionCircle(trans, null, owner, weapon);
+		CollisionManager.Instance.AddCollidable(collision);
+	}
+
+	void Update()
     {
         if (health.current <= 0)
 		{
@@ -97,7 +108,7 @@ public class Base : MonoBehaviour, ITargetable
 	
 	public void PutNearDronesInside()
 	{
-		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(trans.position, body.radius);
+		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(trans.position, weapon.radius);
 		for (int i = 0; i < list.Count; i++)
 		{
 			Drone drone = list[i].trans.gameObject.GetComponent<Drone>();

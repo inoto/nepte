@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Runtime.Serialization.Formatters;
 
 [System.Serializable]
 public class FollowRally
@@ -9,7 +10,9 @@ public class FollowRally
 	
     public bool arrived = false;
 
-    Vector2 rallyPoint;
+	public float angle;
+
+    public Vector2 rallyPoint;
 	public GameObject rally;
 
     //public float maxSpeed = 1;
@@ -18,6 +21,8 @@ public class FollowRally
     public float rallyPointG = 0.3f;
     public float stopRadius = 1;
     public float slowDownRadius = 3;
+
+	public float mag;
 
     float forceMultiplier = 1;
     float forceMultiplierOriginal = 0;
@@ -46,7 +51,7 @@ public class FollowRally
     {
 		float mass = 10;
 	    float G = 0.3f;
-        Vector2 force = rallyPoint - (Vector2)mover.trans.position;
+        Vector2 force = rally.transform.position - mover.trans.position;
         float dist = force.magnitude;
         dist = Mathf.Clamp(dist, 1, 3);
         force.Normalize();
@@ -56,13 +61,13 @@ public class FollowRally
     }
 
 
-    public void UpdateRallyPoint(Vector2 point)
+    public void UpdateRallyPoint(GameObject obj)
     {
         arrived = false;
 //		if (forceMultiplierOriginal > 0)
 //			forceMultiplier = forceMultiplierOriginal;
         //rallyPoint = mover.owner.playerController.rallyPoint.trans.position;
-	    rallyPoint = point;
+	    rally = obj;
     }
 
 	public void Seek()
@@ -79,17 +84,28 @@ public class FollowRally
 		mover.AddForce(force);
 	}
 
-    public Vector2 BeAround()
+	public void BeAround2()
 	{
-        Vector2 centerOfMass = new Vector2();
-        //Vector2 force = rallyPoint - targetPosition;
-        if (mover.IsFacing(rallyPoint, Mathf.Cos(120f * Mathf.Deg2Rad)))
-        {
-            centerOfMass += rallyPoint;
-        }
 
-		//mover.LookWhereYoureGoing();
-        return mover.Arrive(centerOfMass);
+		Vector2 desire = rally.transform.position - mover.trans.position;
+		desire.Normalize();
+		
+		float angle = 1.5f;
+		Vector2 force = new Vector2(stopRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)), stopRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
+		//force *= -1;
+		force = Mover.LimitVector(force, mover.maxForce);
+		
+//		mover.velocity += force * Time.deltaTime;
+		mover.AddForce(force);
+	}
+	
+	public void BeAround()
+	{
+		angle += Time.deltaTime / mover.turnSpeed; // меняется плавно значение угла
+
+		var x = Mathf.Cos (angle) * stopRadius;
+		var y = Mathf.Sin (angle) * stopRadius;
+		mover.trans.position = new Vector2(x, y) + (Vector2)rally.transform.position;
 	}
 
 	public void EndArrive(bool successfully)
@@ -102,7 +118,7 @@ public class FollowRally
     public void Arrive()
 	{
 		/* Get the right direction for the linear acceleration */
-		Vector2 desired = rallyPoint - (Vector2)mover.trans.position;
+		Vector2 desired = rally.transform.position - mover.trans.position;
 
 		/* Get the distance to the target */
 		float dist = desired.magnitude;
@@ -112,16 +128,22 @@ public class FollowRally
         /* Calculate the target speed, full speed at slowRadius distance and 0 speed at 0 distance */
         //float targetSpeed;
         //float currentSpeed = 0;
-        if (dist < stopRadius)
+        if (dist < slowDownRadius)
 		{
-//            if (dist > stopRadius)
+            if (dist > stopRadius)
                 //mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
-                //desired *= mover.maxSpeed * ((dist - stopRadius) / (slowDownRadius - stopRadius));
-//            else
-//            {
-	            EndArrive(true);
+                desired *= mover.maxSpeed * ((dist - stopRadius) / (slowDownRadius - stopRadius));
+            else
+            {
+	            //mover.velocity = Vector2.zero;
+	            arrived = true;
+	            mag = (rally.transform.position - mover.trans.position).magnitude;
+	            //BeAround();
+	            
+//	            EndArrive(true);
+	            //BeAround();
                 return;
-//            }
+            }
 		}
 		else
 		{

@@ -25,7 +25,7 @@ public class Mover : MonoBehaviour
     public float currentAcceleration = 0;
 
     [Header("Control")]
-    public float mass = 1;
+    public float mass = 10;
     public float maxForce = 1;
     public float maxSpeed = 1;
     public float maxAcceleration = 1;
@@ -81,14 +81,16 @@ public class Mover : MonoBehaviour
 		isMoving = true;
 		while (isMoving)
 		{
-			if (followRally.enabled)
+			if (followRally.enabled && followRally.rally != null)
 			{
-				
-				followRally.Arrive();
 				if (!followRally.arrived)
-				{
-					LookWhereYoureGoing();
-				}
+					followRally.Arrive();
+				else
+					followRally.BeAround();
+//				if (!followRally.arrived)
+				LookWhereYoureGoing();
+//				else
+//					LookAtDirection(followRally.rally.transform.position);
 			}
 			if (separation.enabled)
 			{
@@ -127,11 +129,6 @@ public class Mover : MonoBehaviour
         //acceleration += f;
         acceleration += _force * Time.deltaTime;
 	}
-
-	//public void steer(Vector2 linearAcceleration)
-	//{
-	//	this.steer(new Vector3(linearAcceleration.x, linearAcceleration.y, 0));
-	//}
 
 	/* Returns the steering for a character so it arrives at the target */
     public Vector2 Arrive(Vector2 targetPosition)

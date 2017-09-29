@@ -9,7 +9,8 @@ public class Capture : MonoBehaviour
 	public bool isCapturing = false;
 	
 	private Transform trans;
-	public Body body;
+	public Owner owner;
+	public CollisionCircle collision;
 	
 	private float counterStep = 0.01f;
 	public int[] capturerCount;
@@ -22,7 +23,9 @@ public class Capture : MonoBehaviour
 	private void Awake()
 	{
 		trans = GetComponent<Transform>();
-		body = GetComponent<Body>();
+		owner = GetComponent<Owner>();
+		collision = GetComponent<Base>().collision;
+//		body = GetComponent<Body>();
 	}
 
 	private void Start()
@@ -34,7 +37,7 @@ public class Capture : MonoBehaviour
 	public void Tick(int side)
 	{
 		//Debug.Log("tick side: " + side);
-		if (body.owner.playerNumber != -1)
+		if (owner.playerNumber != -1)
 			return;
 		if (!isCapturing)
 		{
@@ -45,7 +48,7 @@ public class Capture : MonoBehaviour
 	
 	public void UnTick(int side)
 	{
-		if (body.owner.playerNumber != -1)
+		if (owner.playerNumber != -1)
 			return;
 		capturerCount[side]--;
 	}
@@ -55,6 +58,7 @@ public class Capture : MonoBehaviour
 		//Debug.Log("tick side: " + side);
 		if (!isCapturing)
 		{
+//			Debug.Log("start capture");
 			StartCoroutine(StartCapturing());
 		}
 		capturerCount[player]++;
@@ -67,6 +71,7 @@ public class Capture : MonoBehaviour
 
 	IEnumerator StartCapturing()
 	{
+//		Debug.Log("start capture coroutine");
 		isCapturing = true;
 		AddCircularTimer();
 		while (isCapturing)
@@ -114,7 +119,7 @@ public class Capture : MonoBehaviour
 					Clean();
 				}
 				
-				if (body.collision.collidedCount <= 0)
+				if (collision.collidedCount <= 0)
 				{
 					assignedCircleTimer.fillAmount -= counterStep * 4;
 					//counter[leadIndex] -= counterStep * 4;

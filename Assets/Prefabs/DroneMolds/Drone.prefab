@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 23790409747704556}
   - component: {fileID: 114835238842844082}
   - component: {fileID: 114507272362157692}
-  - component: {fileID: 114903286341286124}
   - component: {fileID: 114974211722959918}
   m_Layer: 0
   m_Name: Drone
@@ -118,24 +117,28 @@ MonoBehaviour:
     enabled: 1
     followingRally: 0
     arrived: 0
+    angle: 0
+    rallyPoint: {x: 0, y: 0}
+    rally: {fileID: 0}
     rallyPointMass: 0
     rallyPointG: 0
-    stopRadius: 1
-    slowDownRadius: 3
+    stopRadius: 1.5
+    slowDownRadius: 4
+    mag: 0
   separation:
-    enabled: 0
+    enabled: 1
     count: 0
     sum: {x: 0, y: 0}
-    desired: 0
+    desired: 1
     forceMultiplier: 2
     maxSpeed: 2
     maxAcceleration: 1
     distanceAddition: 0
   cohesion:
-    enabled: 0
+    enabled: 1
     count: 0
     sum: {x: 0, y: 0}
-    desired: 0
+    desired: 1
     maxSpeed: 2
     maxAcceleration: 1
     distanceAddition: 0
@@ -181,11 +184,20 @@ MonoBehaviour:
     max: 100
     current: 100
     percent: 1
+  collision:
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    collidedCount: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
-  body: {fileID: 0}
   mover: {fileID: 0}
-  radar: {fileID: 0}
+  weapon: {fileID: 0}
   materials:
   - {fileID: 2100000, guid: dd1135459b9084bd18b6ad32a1af18ef, type: 2}
   - {fileID: 2100000, guid: c6e88d3c5145b4a079954b5a773aa640, type: 2}
@@ -202,36 +214,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 1
---- !u!114 &114903286341286124
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1964420292115662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3448215bd05c14e00863b307f5e9bc40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  showRadius: 1
-  radius: 0.3
-  radiusHard: 0.15
-  strength: 0
-  trans: {fileID: 0}
-  owner: {fileID: 0}
-  mover: {fileID: 0}
-  collision:
-    collisionType: 0
-    instanceId: 0
-    body: {fileID: 0}
-    radar: {fileID: 0}
-    weapon: {fileID: 0}
-    trans: {fileID: 0}
-    mover: {fileID: 0}
-    owner: {fileID: 0}
-    isDead: 0
-    isCollided: 0
-    collidedCount: 0
 --- !u!114 &114974211722959918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -248,20 +230,9 @@ MonoBehaviour:
   radius: 4
   attackSpeed: 1
   damage: 40
+  hasTarget: 0
   missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}
-  collision:
-    collisionType: 0
-    instanceId: 0
-    body: {fileID: 0}
-    radar: {fileID: 0}
-    weapon: {fileID: 0}
-    trans: {fileID: 0}
-    mover: {fileID: 0}
-    owner: {fileID: 0}
-    isDead: 0
-    isCollided: 0
-    collidedCount: 0

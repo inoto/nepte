@@ -12,6 +12,7 @@ public class Weapon : MonoBehaviour
 	public float attackSpeed = 1;
 	public int damage = 40;
 	public ITargetable target;
+	public bool hasTarget;
 
 	[SerializeField] private GameObject missilePrefab;
 	
@@ -19,7 +20,7 @@ public class Weapon : MonoBehaviour
     public Transform trans;
     public Owner owner;
     public Mover mover;
-    public CollisionCircle collision;
+//    public CollisionCircle collision;
 
 	// Use this for initialization
 	void Awake()
@@ -29,11 +30,11 @@ public class Weapon : MonoBehaviour
         mover = GetComponent<Mover>();
 	}
 
-	private void Start()
-	{
-        collision = new CollisionCircle(this, trans, mover, owner);
-		CollisionManager.Instance.AddCollidable(collision);
-	}
+//	private void Start()
+//	{
+//        collision = new CollisionCircle(this, trans, mover, owner);
+//		CollisionManager.Instance.AddCollidable(collision);
+//	}
 
 	public void StopAttacking()
 	{
@@ -81,6 +82,7 @@ public class Weapon : MonoBehaviour
 	{
 		isAttacking = false;
 		target = null;
+		hasTarget = false;
 		showRadius = false;
 		mover.followRally.enabled = true;
 		mover.followTarget.enabled = false;

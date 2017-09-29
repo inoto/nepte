@@ -118,10 +118,14 @@ MonoBehaviour:
     enabled: 1
     followingRally: 0
     arrived: 0
+    angle: 0
+    rallyPoint: {x: 0, y: 0}
+    rally: {fileID: 0}
     rallyPointMass: 0
     rallyPointG: 0
     stopRadius: 1
     slowDownRadius: 3
+    mag: 0
   separation:
     enabled: 1
     count: 0
@@ -181,11 +185,20 @@ MonoBehaviour:
     max: 100
     current: 100
     percent: 1
+  collision:
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    collidedCount: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
-  body: {fileID: 0}
   mover: {fileID: 0}
-  radar: {fileID: 0}
+  weapon: {fileID: 0}
   materials:
   - {fileID: 2100000, guid: dd1135459b9084bd18b6ad32a1af18ef, type: 2}
   - {fileID: 2100000, guid: c6e88d3c5145b4a079954b5a773aa640, type: 2}
@@ -221,16 +234,14 @@ MonoBehaviour:
   owner: {fileID: 0}
   mover: {fileID: 0}
   collision:
-    collisionType: 0
     instanceId: 0
-    body: {fileID: 0}
-    radar: {fileID: 0}
-    weapon: {fileID: 0}
     trans: {fileID: 0}
     mover: {fileID: 0}
     owner: {fileID: 0}
+    weapon: {fileID: 0}
     isDead: 0
-    isCollided: 0
+    isCollidedWithBase: 0
+    isStatic: 0
     collidedCount: 0
 --- !u!114 &114974211722959918
 MonoBehaviour:
@@ -248,20 +259,9 @@ MonoBehaviour:
   radius: 4
   attackSpeed: 1
   damage: 100
+  hasTarget: 0
   missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}
-  collision:
-    collisionType: 0
-    instanceId: 0
-    body: {fileID: 0}
-    radar: {fileID: 0}
-    weapon: {fileID: 0}
-    trans: {fileID: 0}
-    mover: {fileID: 0}
-    owner: {fileID: 0}
-    isDead: 0
-    isCollided: 0
-    collidedCount: 0

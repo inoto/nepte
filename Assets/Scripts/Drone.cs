@@ -19,14 +19,15 @@ public class Drone : MonoBehaviour, ITargetable
 
     [Header("Modules")]
     public Health health = new Health(100);
+	public CollisionCircle collision;
 
     [Header("Components")]
     public Transform trans;
     MeshRenderer mesh;
     public Owner owner;
-    public Body body;
+//    public Body body;
     public Mover mover;
-    public Radar radar;
+//    public Radar radar;
 	public Weapon weapon;
 
 	[Header("Colors")]
@@ -38,13 +39,19 @@ public class Drone : MonoBehaviour, ITargetable
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
         owner = GetComponent<Owner>();
-        body = GetComponent<Body>();
+//        body = GetComponent<Body>();
         mover = GetComponent<Mover>();
-        radar = GetComponent<Radar>();
+//        radar = GetComponent<Radar>();
 	    weapon = GetComponent<Weapon>();
     }
 
-    public void DelayedStart()
+	private void Start()
+	{
+		collision = new CollisionCircle(trans, mover, owner, weapon);
+		CollisionManager.Instance.AddCollidable(collision);
+	}
+
+	public void DelayedStart()
     {
         //SetOwnerAsInParent();
         AssignMaterial();
@@ -56,10 +63,9 @@ public class Drone : MonoBehaviour, ITargetable
 	private void OnEnable()
 	{
 		mode = Drone.Mode.Idle;
-		body.collision.isDead = false;
-		body.collision.collidedBaseCircle = null;
+		collision.isDead = false;
+		collision.collidedBaseCircle = null;
 		weapon.target = null;
-		weapon.collision.isDead = false;
 //		Debug.Log("on enable");
 	}
 
@@ -73,18 +79,17 @@ public class Drone : MonoBehaviour, ITargetable
 	public void PutIntoBase()
 	{
 		mode = Mode.Dead;
-		body.collision.isDead = true;
-		weapon.collision.isDead = true;
-		if (body.collision.collidedBaseCircle != null)
+		collision.isDead = true;
+		if (collision.collidedBaseCircle != null)
 		{
 //			Debug.Log("unit put into base");
-			CollisionCircle tmpCircle = body.collision.collidedBaseCircle;
-			body.collision.collidedBaseCircle = null;
+			CollisionCircle tmpCircle = collision.collidedBaseCircle;
+			collision.collidedBaseCircle = null;
 			Capture capture = tmpCircle.trans.GetComponent<Capture>();
 			if (capture != null)
 			{
 				//capture.RemoveCapturerByPlayer(owner.playerNumber);
-				capture.body.collision.collidedCount--;
+				capture.collision.collidedCount--;
 			}
 			
 		}
@@ -96,14 +101,13 @@ public class Drone : MonoBehaviour, ITargetable
 	void Die()
 	{
 		mode = Mode.Dead;
-		body.collision.isDead = true;
-		GetComponent<Weapon>().collision.isDead = true;
-		if (body.collision.collidedBaseCircle != null)
+		collision.isDead = true;
+		if (collision.collidedBaseCircle != null)
 		{
-			Capture capture = body.collision.collidedBaseCircle.trans.GetComponent<Capture>();
+			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
 			capture.RemoveCapturerByPlayer(owner.playerNumber);
-			capture.body.collision.collidedCount--;
-			body.collision.collidedBaseCircle = null;
+			capture.collision.collidedCount--;
+			collision.collidedBaseCircle = null;
 		}
 		
 		MakeExplosion();

@@ -23,7 +23,7 @@ public class Cohesion
 	public void Activate(Mover _mover)
 	{
 		mover = _mover;
-		desired = mover.body.radius * 3;
+		//desired = 1;
 	}
 
 	public void Clear()

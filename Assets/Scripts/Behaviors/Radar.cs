@@ -23,11 +23,11 @@ public class Radar : MonoBehaviour
 	    weapon = GetComponent<Weapon>();
     }
 
-	private void Start()
-	{
-        collision = new CollisionCircle(this, trans, mover, owner);
-		CollisionManager.Instance.AddCollidable(collision);
-	}
+//	private void Start()
+//	{
+//        collision = new CollisionCircle(this, trans, mover, owner);
+//		CollisionManager.Instance.AddCollidable(collision);
+//	}
 
 	public void ActivateCombat()
 	{
