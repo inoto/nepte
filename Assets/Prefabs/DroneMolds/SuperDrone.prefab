@@ -191,9 +191,11 @@ MonoBehaviour:
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
+    bas: {fileID: 0}
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0
+    isWeapon: 0
     collidedCount: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
@@ -239,9 +241,11 @@ MonoBehaviour:
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
+    bas: {fileID: 0}
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0
+    isWeapon: 0
     collidedCount: 0
 --- !u!114 &114974211722959918
 MonoBehaviour:
@@ -265,3 +269,15 @@ MonoBehaviour:
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}
+  collision:
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    bas: {fileID: 0}
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    isWeapon: 0
+    collidedCount: 0

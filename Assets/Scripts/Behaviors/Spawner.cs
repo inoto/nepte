@@ -19,7 +19,7 @@ public class Spawner : MonoBehaviour
 
     Transform trans;
     Owner owner;
-    Coroutine spawnCoroutine;// = null;
+    Coroutine spawnCoroutine;
 
     private void Awake()
     {
@@ -31,8 +31,9 @@ public class Spawner : MonoBehaviour
 	public void DelayedStart()
 	{
         owner = GetComponent<Owner>();
-		//spawnCoroutine = Spawn();
-	    //spawnCoroutine = ReleaseAllUnits(_point);
+	    unitCount = 0;
+	    if (spawnCoroutine != null)
+	        StopCoroutine(spawnCoroutine);
 	}
 
     public void StartSpawn(Vector2 _point)

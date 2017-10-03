@@ -22,12 +22,15 @@ public class CollisionCircle
     public Mover mover;
     public Owner owner;
 	public Weapon weapon;
+	public Base bas;
 
 	public bool isDead = false;
     public bool isCollidedWithBase = false;
 	public bool isStatic;
+	public bool isWeapon;
 	public CollisionCircle collidedBaseCircle = null;
 	public int collidedCount = 0;
+	
 
     public CollisionCircle(Transform _trans, Mover _mover, Owner _owner, Weapon _weapon)
     {
@@ -36,9 +39,16 @@ public class CollisionCircle
         trans = _trans;
 	    mover = _mover;
 	    if (mover == null)
+	    {
 		    isStatic = true;
-        owner = _owner;
+		    bas = trans.GetComponent<Base>();
+	    }
+	    owner = _owner;
 	    weapon = _weapon;
+	    if (weapon != null)
+	    {
+		    isWeapon = true;
+	    }
 	    isCollidedWithBase = false;
 	    collidedBaseCircle = null;
 	    collidedCount = 0;
@@ -71,23 +81,50 @@ public class CollisionCircle
 
 	public float GetRadius()
 	{
-//		switch (collisionType)
-//		{
-//			case CollisionType.Body:
-//				return body.radius;
-//			case CollisionType.Radar:
-//				return radar.radius;
-//			case CollisionType.Weapon:
-//				return weapon.radius;
-//		}
-		if (weapon != null)
+		if (isWeapon)
 			return weapon.radius;
+		else if (isStatic)
+			return bas.collider.radius;
 		else
 			return 0;
 	}
 
 	public void Collided(CollisionCircle other)
 	{
-		
+		if (instanceId == other.instanceId)
+			return;
+		if (owner.playerNumber == other.owner.playerNumber)
+			return;
+		if (isDead)
+			return;
+		if (!isWeapon)
+			return;
+		if (isWeapon && !mover.weapon.hasTarget)
+		{
+			mover.weapon.target = other.trans.GetComponent<ITargetable>();
+			mover.weapon.hasTarget = true;
+			//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
+		}
+		else
+		{
+			mover.weapon.AttackTarget();
+		}
+	}
+
+	public void CollidedEnded(CollisionCircle other)
+	{
+		if (instanceId == other.instanceId)
+			return;
+		if (owner.playerNumber == other.owner.playerNumber)
+			return;
+		if (isDead)
+			return;
+		if (!isWeapon)
+			return;
+		if (mover.weapon.target != null)
+		{
+			if (mover.weapon.target.GameObj == other.trans.gameObject)
+				mover.weapon.target = null;
+		}
 	}
 }

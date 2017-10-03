@@ -40,6 +40,7 @@ public class CardSlowEnemies : CardAction
 
 		var sprite = GetComponent<UISprite>();
 		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(position, areaRadius);
+		Debug.Log("catched units: " + list.Count);
 		foreach (var unit in list)
 		{
 			Mover mover = unit.trans.GetComponent<Mover>();

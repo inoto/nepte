@@ -47,6 +47,7 @@ public class LaserMissile : MonoBehaviour
 			else
 			{
 				weapon.target = null;
+				weapon.hasTarget = false;
 			}
 			//ObjectPool.Recycle(gameObject);
 			Destroy(gameObject);

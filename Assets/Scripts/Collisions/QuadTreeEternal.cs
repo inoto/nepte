@@ -95,16 +95,18 @@ public class QuadTreeEternal
 		//}
 
 		// remove died objects
-		for (int i = 0; i < objects.Count; i++)
+		int listSize = objects.Count;
+		for (int i = 0; i < listSize; i++)
 		{
             //if (objects[i].trans == null || objects[i].isDead)
 	        if (objects[i].isDead)
             {
 //	            if (objects[i].collisionType == CollisionCircle.CollisionType.Body)
-//	            	Debug.Log("new died");
+	            Debug.Log("new died");
                 if (movedUnits.Contains(objects[i]))
                     movedUnits.Remove(objects[i]);
-                objects.RemoveAt(i);
+                objects.RemoveAt(i--);
+	            listSize--;
             }
 		}
 
@@ -149,7 +151,7 @@ public class QuadTreeEternal
 			return;
 		}
 
-		if (rect.size.x < Vector2.one.x*4 && rect.size.y < Vector2.one.y*4)
+		if (rect.size.x < Vector2.one.x && rect.size.y < Vector2.one.y)
 		{
 			objects.Add(obj);
 			return;
@@ -222,10 +224,9 @@ public class QuadTreeEternal
 			//foreach (CollisionCircle lObj in objects)
 			{
 //                if (parentObjs[p].collisionType == CollisionCircle.CollisionType.Body && objects[l].collisionType == CollisionCircle.CollisionType.Body)
-                    CheckBodies(parentObjs[p], objects[l]);
-//				else if (parentObjs[p].collisionType == CollisionCircle.CollisionType.Weapon ||
-//				         objects[l].collisionType == CollisionCircle.CollisionType.Weapon)
-	                CheckWeapon(parentObjs[p], objects[l]);
+				CheckBodies(parentObjs[p], objects[l]);
+				if (parentObjs[p].isWeapon || objects[l].isWeapon)
+					CheckWeapon(parentObjs[p], objects[l]);
 				
 				//CollisionRecord cr = CheckCollision(pObj, lObj);
 				//if (cr != null)
@@ -233,13 +234,23 @@ public class QuadTreeEternal
 			}
 		}
 
+//		foreach (var lObj1 in objects)
+//		{
+//			foreach (var lObj2 in objects)
+//			{
+//				CheckBodies(lObj1, lObj2);
+//				if (lObj1.isWeapon || lObj2.isWeapon)
+//					CheckWeapon(lObj1, lObj2);
+//			}
+//		}
+		
 		// Теперь проверяем коллизии всех локальных объектов между собой
 		if (objects.Count > 1)
 		{
 			for (int i = 0; i < objects.Count; i++)
 			{
-				List<CollisionCircle> tmpList = new List<CollisionCircle>(objects);
-				//tmpList.AddRange(objects);
+				List<CollisionCircle> tmpList = new List<CollisionCircle>(objects.Count);
+				tmpList.AddRange(objects);
 
 				while (tmpList.Count > 0)
 				{
@@ -248,8 +259,8 @@ public class QuadTreeEternal
 					{
 //                        if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Body && tmpList[l].collisionType == CollisionCircle.CollisionType.Body)
                             CheckBodies(tmpList[tmpList.Count - 1], tmpList[l]);
-//						else if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Weapon || tmpList[l].collisionType == CollisionCircle.CollisionType.Weapon)
-						CheckWeapon(tmpList[tmpList.Count - 1], tmpList[l]);
+						if (tmpList[tmpList.Count - 1].isWeapon || tmpList[l].isWeapon)
+							CheckWeapon(tmpList[tmpList.Count - 1], tmpList[l]);
 						//CollisionRecord cr = CheckCollision(tmpList[tmpList.Count - 1], lObj2);
 						//if (cr != null)
 							//collisionsList.Add(cr);
@@ -279,6 +290,8 @@ public class QuadTreeEternal
 	    	return;
 		if (unit1.isDead || unit2.isDead)
 			return;
+		if (unit1.isWeapon || unit2.isWeapon)
+			return;
 		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
 		// if no mover then it's a base
 		if (unit1.isStatic)
@@ -290,7 +303,7 @@ public class QuadTreeEternal
 				{
 					if (unit2.isCollidedWithBase == false)
 					{
-						Debug.Log("unit near base");
+//						Debug.Log("unit near base");
 						unit1.trans.GetComponent<Capture>().AddCapturerByPlayer(unit2.owner.playerNumber);
 						unit2.collidedBaseCircle = unit1;
 						unit2.isCollidedWithBase = true;
@@ -335,7 +348,7 @@ public class QuadTreeEternal
 				{
 					if (unit1.isCollidedWithBase == false)
 					{
-						Debug.Log("unit near base");
+//						Debug.Log("unit near base");
 						unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
 						unit1.collidedBaseCircle = unit1;
 						unit1.isCollidedWithBase = true;
@@ -399,6 +412,25 @@ public class QuadTreeEternal
 			}
 		}
 	}
+	
+	void CheckWeapon2(CollisionCircle unit1, CollisionCircle unit2)
+	{
+		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
+		if (distance > 0)
+		{
+			float radiuses = unit1.GetRadius() + unit2.GetRadius();
+			if (distance < radiuses * radiuses)
+			{
+				unit1.Collided(unit2);
+				unit2.Collided(unit1);
+			}
+			else
+			{
+				unit1.CollidedEnded(unit2);
+				unit2.CollidedEnded(unit1);
+			}
+		}
+	}
 
 	void CheckWeapon(CollisionCircle unit1, CollisionCircle unit2)
 	{
@@ -410,71 +442,75 @@ public class QuadTreeEternal
 			return;
 		if (unit1.isDead || unit2.isDead)
 			return;
-//		if (unit1.collisionType == CollisionCircle.CollisionType.Weapon && unit2.collisionType == CollisionCircle.CollisionType.Weapon)
-//			return;
+		if (unit1.isWeapon && unit2.isWeapon)
+			return;
 		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
 		if (distance > 0)
 		{
-//			if (unit1.collisionType == CollisionCircle.CollisionType.Weapon)
-//			{
-//				float radiuses = unit1.GetRadius() + unit2.GetRadius();
-//				if (distance < radiuses * radiuses)
-//				{
-//					if (unit1.mover.weapon.target == null)
-//					{
-//						unit1.mover.weapon.target = unit2.trans.GetComponent<ITargetable>();
-//						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
-//					}
-//					else
-//					{
-//						unit1.mover.weapon.AttackTarget();
-//					}
-//				}
-//				else
-//				{
-//					
-//					if (unit1.mover.weapon.target != null)
-//					{
-//						if (unit1.mover.weapon.target.GameObj == unit2.trans.gameObject)
-//							unit1.mover.weapon.target = null;
-//					}
-//				}
-//			}
-//			else if (unit2.collisionType == CollisionCircle.CollisionType.Weapon)
-//			{
-//				float radiuses = unit1.GetRadius() + unit2.GetRadius();
-//				if (distance < radiuses * radiuses)
-//				{
-//					if (unit2.mover.weapon.target == null)
-//					{
-//						unit2.mover.weapon.target = unit1.trans.GetComponent<ITargetable>();
-//						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
-//					}
-//					else
-//					{
-//						unit2.mover.weapon.AttackTarget();
-//					}
-//				}
-//				else
-//				{
-//					if (unit2.mover.weapon.target != null)
-//					{
-//						if (unit2.mover.weapon.target.GameObj == unit1.trans.gameObject)
-//							unit2.mover.weapon.target = null;
-//					}
-//				}
-//			}
+			if (unit1.isWeapon)
+			{
+				float radiuses = unit1.GetRadius() + unit2.GetRadius();
+				if (distance < radiuses * radiuses)
+				{
+					if (!unit1.mover.weapon.hasTarget)
+					{
+						unit1.mover.weapon.target = unit2.trans.GetComponent<ITargetable>();
+						unit1.mover.weapon.hasTarget = true;
+						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
+					}
+					else
+					{
+						unit1.mover.weapon.AttackTarget();
+					}
+				}
+				else
+				{
+					
+					if (unit1.mover.weapon.target != null)
+					{
+						if (unit1.mover.weapon.target.GameObj == unit2.trans.gameObject)
+							unit1.mover.weapon.target = null;
+					}
+				}
+			}
+			else if (unit2.isWeapon)
+			{
+				float radiuses = unit1.GetRadius() + unit2.GetRadius();
+				if (distance < radiuses * radiuses)
+				{
+					if (!unit2.mover.weapon.hasTarget)
+					{
+						unit2.mover.weapon.target = unit1.trans.GetComponent<ITargetable>();
+						unit2.mover.weapon.hasTarget = true;
+						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
+					}
+					else
+					{
+						unit2.mover.weapon.AttackTarget();
+					}
+				}
+				else
+				{
+					if (unit2.mover.weapon.target != null)
+					{
+						if (unit2.mover.weapon.target.GameObj == unit1.trans.gameObject)
+							unit2.mover.weapon.target = null;
+					}
+				}
+			}
 			
 		}
 	}
 	
 	public bool RectContainsCircle(Rect rect, CollisionCircle obj)
 	{
-		float radius = 0;
-		if (obj.weapon.hasTarget || obj.isStatic)
-			radius = obj.GetRadius();
         if (!rect.Contains(obj.trans.position))
 			return false;
+		
+		float radius = 0;
+		if (obj.isStatic)
+			radius = obj.GetRadius();
+		
         if ((obj.trans.position.x - radius) < rect.x)
 			return false;
         if ((obj.trans.position.x + radius) > (rect.x + rect.width))

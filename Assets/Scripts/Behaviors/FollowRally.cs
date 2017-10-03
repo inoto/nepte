@@ -47,19 +47,6 @@ public class FollowRally
 	//    if (rallyPoint != null)
 	//        Arrive();
 	//}
-    void Attract()
-    {
-		float mass = 10;
-	    float G = 0.3f;
-        Vector2 force = rally.transform.position - mover.trans.position;
-        float dist = force.magnitude;
-        dist = Mathf.Clamp(dist, 1, 3);
-        force.Normalize();
-        float strength = (G * mass * mover.mass) / (dist * dist);
-        force *= strength;
-        mover.AddForce(force);
-    }
-
 
     public void UpdateRallyPoint(GameObject obj)
     {
@@ -84,28 +71,18 @@ public class FollowRally
 		mover.AddForce(force);
 	}
 
-	public void BeAround2()
-	{
-
-		Vector2 desire = rally.transform.position - mover.trans.position;
-		desire.Normalize();
-		
-		float angle = 1.5f;
-		Vector2 force = new Vector2(stopRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)), stopRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
-		//force *= -1;
-		force = Mover.LimitVector(force, mover.maxForce);
-		
-//		mover.velocity += force * Time.deltaTime;
-		mover.AddForce(force);
-	}
-	
 	public void BeAround()
 	{
-		angle += Time.deltaTime / mover.turnSpeed; // меняется плавно значение угла
-
-		var x = Mathf.Cos (angle) * stopRadius;
-		var y = Mathf.Sin (angle) * stopRadius;
-		mover.trans.position = new Vector2(x, y) + (Vector2)rally.transform.position;
+		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)rally.transform.position - mover.velocity).normalized;
+		desire.Normalize();
+		desire *= stopRadius;
+		desire *= -1;
+		angle = 1.5f;
+		Vector2 force = new Vector2(stopRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)),
+			stopRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
+		force = Mover.LimitVector(force, mover.maxForce);
+		mover.velocity /= 1.2f;
+		mover.AddForce(force);
 	}
 
 	public void EndArrive(bool successfully)
@@ -130,20 +107,22 @@ public class FollowRally
         //float currentSpeed = 0;
         if (dist < slowDownRadius)
 		{
-            if (dist > stopRadius)
-                //mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
-                desired *= mover.maxSpeed * ((dist - stopRadius) / (slowDownRadius - stopRadius));
-            else
-            {
-	            //mover.velocity = Vector2.zero;
-	            arrived = true;
-	            mag = (rally.transform.position - mover.trans.position).magnitude;
-	            //BeAround();
-	            
-//	            EndArrive(true);
-	            //BeAround();
-                return;
-            }
+			if (dist > stopRadius)
+			{
+				float dividedStopRadius = stopRadius / 2;
+				//mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
+				desired *= mover.maxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
+//				BeAround();
+			}
+			else
+			{
+				//mover.velocity = Vector2.zero;
+				arrived = true;
+				mover.velocity *= 0;
+				
+
+				return;
+			}
 		}
 		else
 		{
@@ -173,4 +152,17 @@ public class FollowRally
 		force = Mover.LimitVector(force, mover.maxForce);
         mover.AddForce(force);
 	}
+
+//	public void Giz()
+//	{
+//		if (rally != null)
+//		{
+//			Gizmos.color = Color.green;
+//			Gizmos.DrawSphere(desire + (Vector2)rally.transform.position, 0.3f);
+//			Gizmos.DrawLine(desire + (Vector2)rally.transform.position, mover.trans.position);
+//			Gizmos.color = Color.blue;
+//			Gizmos.DrawSphere(force + (Vector2)mover.trans.position, 0.3f);
+//			Gizmos.DrawLine(force + (Vector2)mover.trans.position, mover.trans.position);
+//		}
+//	}
 }

@@ -20,7 +20,7 @@ public class Weapon : MonoBehaviour
     public Transform trans;
     public Owner owner;
     public Mover mover;
-//    public CollisionCircle collision;
+    public CollisionCircle collision;
 
 	// Use this for initialization
 	void Awake()
@@ -30,11 +30,11 @@ public class Weapon : MonoBehaviour
         mover = GetComponent<Mover>();
 	}
 
-//	private void Start()
-//	{
-//        collision = new CollisionCircle(this, trans, mover, owner);
-//		CollisionManager.Instance.AddCollidable(collision);
-//	}
+	private void Start()
+	{
+        collision = new CollisionCircle(trans, mover, owner, this);
+		CollisionManager.Instance.AddCollidable(collision);
+	}
 
 	public void StopAttacking()
 	{
@@ -73,6 +73,7 @@ public class Weapon : MonoBehaviour
 	public void NewTarget(ITargetable newTarget)
 	{
 		target = newTarget;
+		hasTarget = true;
 		showRadius = true;
 		mover.followRally.enabled = false;
 		mover.followTarget.enabled = true;

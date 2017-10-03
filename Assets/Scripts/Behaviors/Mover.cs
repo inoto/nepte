@@ -61,7 +61,7 @@ public class Mover : MonoBehaviour
         weapon = GetComponent<Weapon>();
     }
 
-    public void DelayedStart()
+	public void DelayedStart()
     {
         owner = GetComponent<Owner>();
 		followRally.Activate(this);
@@ -84,13 +84,22 @@ public class Mover : MonoBehaviour
 			if (followRally.enabled && followRally.rally != null)
 			{
 				if (!followRally.arrived)
+				{
+					
 					followRally.Arrive();
+//					LookWhereYoureGoing();
+				}
 				else
+				{
+					//velocity *= 0;
 					followRally.BeAround();
-//				if (!followRally.arrived)
-				LookWhereYoureGoing();
-//				else
 //					LookAtDirection(followRally.rally.transform.position);
+				}
+				LookWhereYoureGoing();
+//				if (!followRally.arrived)
+				
+//				else
+//					
 			}
 			if (separation.enabled)
 			{
@@ -113,6 +122,8 @@ public class Mover : MonoBehaviour
 			//velocity = LimitVector(velocity, 5);
 			trans.position += (Vector3) velocity * Time.deltaTime * 3;
 			acceleration *= 0;
+			if (velocity.magnitude > 0)
+				velocity /= 1.05f;
 			yield return new WaitForSeconds(0.01f);
 		}
 	}
@@ -127,7 +138,15 @@ public class Mover : MonoBehaviour
 	{
         //Vector2 f = _force/mass;
         //acceleration += f;
-        acceleration += _force * Time.deltaTime;
+		acceleration += _force * Time.deltaTime;
+	}
+	
+	public void AddPureForce(Vector2 _force)
+	{
+		//Vector2 f = _force/mass;
+		//acceleration += f;
+
+		trans.position += (Vector3) _force * Time.deltaTime;
 	}
 
 	/* Returns the steering for a character so it arrives at the target */
@@ -216,7 +235,7 @@ public class Mover : MonoBehaviour
 	/* Makes the current game object look where he is going */
 	public void LookWhereYoureGoing()
 	{
-		Vector2 direction = velocity;
+		Vector2 direction = velocity+acceleration;
 
 		if (smoothing)
 		{
@@ -225,7 +244,7 @@ public class Mover : MonoBehaviour
 				velocitySamples.Dequeue();
 			}
 
-			velocitySamples.Enqueue(velocity);
+			velocitySamples.Enqueue(velocity+acceleration);
 
 			direction = Vector2.zero;
 
@@ -296,5 +315,14 @@ public class Mover : MonoBehaviour
 		directionToTarget.Normalize();
 
 		return Vector2.Dot(facing, directionToTarget) >= cosineValue;
+	}
+
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.green;
+		Gizmos.DrawSphere(velocity + (Vector2)trans.position, 0.1f);
+		Gizmos.DrawLine(velocity + (Vector2)trans.position, trans.position);
+//		if (followRally.enabled)
+//			followRally.Giz();
 	}
 }

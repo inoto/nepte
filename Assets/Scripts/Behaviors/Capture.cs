@@ -10,7 +10,7 @@ public class Capture : MonoBehaviour
 	
 	private Transform trans;
 	public Owner owner;
-	public CollisionCircle collision;
+	public Base bas;
 	
 	private float counterStep = 0.01f;
 	public int[] capturerCount;
@@ -24,7 +24,7 @@ public class Capture : MonoBehaviour
 	{
 		trans = GetComponent<Transform>();
 		owner = GetComponent<Owner>();
-		collision = GetComponent<Base>().collision;
+		bas = GetComponent<Base>();
 //		body = GetComponent<Body>();
 	}
 
@@ -56,17 +56,19 @@ public class Capture : MonoBehaviour
 	public void AddCapturerByPlayer(int player)
 	{
 		//Debug.Log("tick side: " + side);
+		capturerCount[player]++;
 		if (!isCapturing)
 		{
 //			Debug.Log("start capture");
 			StartCoroutine(StartCapturing());
 		}
-		capturerCount[player]++;
+		
 	}
 	
 	public void RemoveCapturerByPlayer(int player)
 	{
-		capturerCount[player]--;
+		if (capturerCount[player] > 0)
+			capturerCount[player]--;
 	}
 
 	IEnumerator StartCapturing()
@@ -119,7 +121,7 @@ public class Capture : MonoBehaviour
 					Clean();
 				}
 				
-				if (collision.collidedCount <= 0)
+				if (bas.collision.collidedCount <= 0)
 				{
 					assignedCircleTimer.fillAmount -= counterStep * 4;
 					//counter[leadIndex] -= counterStep * 4;

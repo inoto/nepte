@@ -122,14 +122,14 @@ MonoBehaviour:
     rally: {fileID: 0}
     rallyPointMass: 0
     rallyPointG: 0
-    stopRadius: 1.5
-    slowDownRadius: 4
+    stopRadius: 0.8
+    slowDownRadius: 2
     mag: 0
   separation:
     enabled: 1
     count: 0
     sum: {x: 0, y: 0}
-    desired: 1
+    desired: 0.5
     forceMultiplier: 2
     maxSpeed: 2
     maxAcceleration: 1
@@ -138,7 +138,7 @@ MonoBehaviour:
     enabled: 1
     count: 0
     sum: {x: 0, y: 0}
-    desired: 1
+    desired: 0.5
     maxSpeed: 2
     maxAcceleration: 1
     distanceAddition: 0
@@ -190,9 +190,11 @@ MonoBehaviour:
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
+    bas: {fileID: 0}
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0
+    isWeapon: 0
     collidedCount: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
@@ -213,7 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1
+  size: 0.5
 --- !u!114 &114974211722959918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -227,12 +229,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showRadius: 1
   isAttacking: 0
-  radius: 4
+  radius: 1.5
   attackSpeed: 1
-  damage: 40
+  damage: 100
   hasTarget: 0
   missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}
+  collision:
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    bas: {fileID: 0}
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    isWeapon: 0
+    collidedCount: 0

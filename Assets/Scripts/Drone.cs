@@ -47,7 +47,7 @@ public class Drone : MonoBehaviour, ITargetable
 
 	private void Start()
 	{
-		collision = new CollisionCircle(trans, mover, owner, weapon);
+		collision = new CollisionCircle(trans, mover, owner, null);
 		CollisionManager.Instance.AddCollidable(collision);
 	}
 
@@ -78,18 +78,19 @@ public class Drone : MonoBehaviour, ITargetable
 
 	public void PutIntoBase()
 	{
+//		Debug.Log("put into base");
 		mode = Mode.Dead;
 		collision.isDead = true;
+		weapon.collision.isDead = true;
 		if (collision.collidedBaseCircle != null)
 		{
 //			Debug.Log("unit put into base");
-			CollisionCircle tmpCircle = collision.collidedBaseCircle;
-			collision.collidedBaseCircle = null;
-			Capture capture = tmpCircle.trans.GetComponent<Capture>();
+			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
 			if (capture != null)
 			{
 				//capture.RemoveCapturerByPlayer(owner.playerNumber);
-				capture.collision.collidedCount--;
+				capture.bas.collision.collidedCount--;
+				collision.collidedBaseCircle = null;
 			}
 			
 		}
@@ -102,11 +103,12 @@ public class Drone : MonoBehaviour, ITargetable
 	{
 		mode = Mode.Dead;
 		collision.isDead = true;
+		weapon.collision.isDead = true;
 		if (collision.collidedBaseCircle != null)
 		{
 			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
 			capture.RemoveCapturerByPlayer(owner.playerNumber);
-			capture.collision.collidedCount--;
+			capture.bas.collision.collidedCount--;
 			collision.collidedBaseCircle = null;
 		}
 		

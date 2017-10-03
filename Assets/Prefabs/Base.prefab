@@ -27,7 +27,6 @@ GameObject:
   - component: {fileID: 114358262193089728}
   - component: {fileID: 114910062752346576}
   - component: {fileID: 58317274819651986}
-  - component: {fileID: 114132870880885766}
   m_Layer: 0
   m_Name: Base
   m_TagString: base
@@ -42,8 +41,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771483991996188}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 0, z: 0.1}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalPosition: {x: 12.2, y: 3.67, z: 0.1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -101,7 +100,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 1.25
 --- !u!114 &114017529968746086
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -133,15 +132,17 @@ MonoBehaviour:
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
+    bas: {fileID: 0}
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0
+    isWeapon: 0
     collidedCount: 0
+  collider: {fileID: 0}
   trans: {fileID: 0}
   owner: {fileID: 0}
   spawner: {fileID: 0}
   capture: {fileID: 0}
-  weapon: {fileID: 0}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
     type: 2}
   HPbarPrefab: {fileID: 1211159475750974, guid: 047570b75374547bba9d07df774de185,
@@ -151,27 +152,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7eaf52c9e38d34b41af62514b874c3ed, type: 2}
   - {fileID: 2100000, guid: 7326301bab270a949945db0a00c87a99, type: 2}
   - {fileID: 2100000, guid: 62deb8efdff8f80408b03b2c60864186, type: 2}
---- !u!114 &114132870880885766
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1771483991996188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d96d0839dd24647be940a0c25c7a7063, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  showRadius: 1
-  isAttacking: 0
-  radius: 1.75
-  attackSpeed: 1
-  damage: 40
-  hasTarget: 0
-  missilePrefab: {fileID: 0}
-  trans: {fileID: 4175439061827504}
-  owner: {fileID: 0}
-  mover: {fileID: 0}
 --- !u!114 &114358262193089728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -217,16 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCapturing: 0
   owner: {fileID: 0}
-  collision:
-    instanceId: 0
-    trans: {fileID: 0}
-    mover: {fileID: 0}
-    owner: {fileID: 0}
-    weapon: {fileID: 0}
-    isDead: 0
-    isCollidedWithBase: 0
-    isStatic: 0
-    collidedCount: 0
+  bas: {fileID: 0}
   capturerCount: 0000000000000000
   leadIndex: -1
   assignedCircleTimer: {fileID: 0}
@@ -243,4 +214,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1.5
+  size: 0.75

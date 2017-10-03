@@ -23,6 +23,7 @@ public class Base : MonoBehaviour, ITargetable
     [Header("Modules")]
     public Health health = new Health(4000);
 	public CollisionCircle collision;
+	public CircleCollider2D collider;
 
     [Header("Components")]
 	public Transform trans;
@@ -32,7 +33,6 @@ public class Base : MonoBehaviour, ITargetable
 	public Capture capture;
 	MeshRenderer mesh;
 	MeshFilter mf;
-	public Weapon weapon;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -53,15 +53,19 @@ public class Base : MonoBehaviour, ITargetable
         owner = GetComponent<Owner>();
 //        body = GetComponent<Body>();
 	    capture = GetComponent<Capture>();
-	    weapon = GetComponent<Weapon>();
+	    collider = GetComponent<CircleCollider2D>();
     }
 
 	private void Start()
 	{
 		trans.localScale = Vector3.one;
 		
-		collision = new CollisionCircle(trans, null, owner, weapon);
+		collision = new CollisionCircle(trans, null, owner, null);
 		CollisionManager.Instance.AddCollidable(collision);
+
+		string s = JsonUtility.ToJson(this, true);
+		Debug.Log(s);
+		
 	}
 
 	void Update()
@@ -108,7 +112,7 @@ public class Base : MonoBehaviour, ITargetable
 	
 	public void PutNearDronesInside()
 	{
-		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(trans.position, weapon.radius);
+		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(trans.position, collider.radius);
 		for (int i = 0; i < list.Count; i++)
 		{
 			Drone drone = list[i].trans.gameObject.GetComponent<Drone>();
