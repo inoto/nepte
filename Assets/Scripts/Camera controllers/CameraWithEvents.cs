@@ -23,24 +23,35 @@ public class CameraWithEvents : MonoBehaviour
 
         HPCamObject = GameObject.Find("CameraUIBars");
 
-	    TurnCamera();
+	    TurnCameraOff();
     }
 
     private void Start()
     {
-        GameController.Instance.OnGamePaused += TurnCamera;
-        GameController.Instance.OnGameContinued += TurnCamera;
+        GameController.Instance.OnGamePaused += TurnCameraOff;
+        GameController.Instance.OnGameContinued += TurnCameraOn;
     }
 
-    public void TurnCamera()
+    public void TurnCameraOn()
     {
-        theCamera.enabled = !theCamera.enabled;
+        theCamera.enabled = true;
 #if UNITY_EDITOR
-		cameraMouse.enabled = !cameraMouse.enabled;
+		cameraMouse.enabled = true;
 #endif
-        cameraTouch.enabled = !cameraTouch.enabled;
+        cameraTouch.enabled = true;
 
         if (HPCamObject != null) HPCamObject.SetActive(!HPCamObject.activeSelf);
     }
+	
+	public void TurnCameraOff()
+	{
+		theCamera.enabled = false;
+#if UNITY_EDITOR
+		cameraMouse.enabled = false;
+#endif
+		cameraTouch.enabled = false;
+
+		if (HPCamObject != null) HPCamObject.SetActive(!HPCamObject.activeSelf);
+	}
 
 }

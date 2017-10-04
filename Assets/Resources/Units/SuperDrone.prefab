@@ -266,6 +266,7 @@ MonoBehaviour:
   hasTarget: 0
   missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}
+  missilePrefabName: 
   trans: {fileID: 0}
   owner: {fileID: 0}
   mover: {fileID: 0}

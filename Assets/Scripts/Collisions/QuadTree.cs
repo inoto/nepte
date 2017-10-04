@@ -15,13 +15,9 @@ public class QuadTreeNode
     public List<ICollidable> objects;
     public int objectsCount = 0;
 
-    int maxLifespan = 8;
-    int curLife = -1;
-
     public QuadTreeNode parent = null;
     public QuadTreeNode[] childs = new QuadTreeNode[4];
     bool hasChilds = false;
-    int activeNodes = 0;
 
     public bool built = false;
 

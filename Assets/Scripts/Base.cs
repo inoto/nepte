@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 public class Base : MonoBehaviour, ITargetable
 {
+	public static ConfigBase config;
+	
     public bool useAsStartPosition = false;
 
     public bool isDead = false;
@@ -17,7 +20,6 @@ public class Base : MonoBehaviour, ITargetable
 	public UILabel assignedUnitCountLabel;
 	
     public RallyPoint rallyPoint;
-    public LaserMissile triggeredLaserMissile;
 	public List<GameObject> attackers = new List<GameObject>();
 
     [Header("Modules")]
@@ -26,13 +28,13 @@ public class Base : MonoBehaviour, ITargetable
 	public CircleCollider2D collider;
 
     [Header("Components")]
+    [SerializeField]
 	public Transform trans;
 	public Owner owner;
 	public Spawner spawner;
 //    public Body body;
 	public Capture capture;
 	MeshRenderer mesh;
-	MeshFilter mf;
 
     [Header("Prefabs")]
     [SerializeField]
@@ -48,7 +50,6 @@ public class Base : MonoBehaviour, ITargetable
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
-		mf = GetComponent<MeshFilter>();
         spawner = GetComponent<Spawner>();
         owner = GetComponent<Owner>();
 //        body = GetComponent<Body>();
@@ -63,9 +64,29 @@ public class Base : MonoBehaviour, ITargetable
 		collision = new CollisionCircle(trans, null, owner, null);
 		CollisionManager.Instance.AddCollidable(collision);
 
-		string s = JsonUtility.ToJson(this, true);
-		Debug.Log(s);
-		
+		ConfigManager.Instance.OnConfigsLoaded += LoadFromConfig;
+	}
+
+	void LoadFromConfig()
+	{
+		config = ConfigManager.Instance.Base;
+		if (config == null)
+			return;
+		if (health != null)
+		{
+			health.max = config.HealthMax;
+			health.current = health.max;
+		}
+		if (collider != null)
+		{
+			collider.radius = config.ColliderRadius;
+		}
+		if (spawner != null)
+		{
+			spawner.intervalMax = config.ProduceUnitInterval;
+			spawner.prefabName = config.SpawnUnitPrefabName;
+			spawner.prefab = Resources.Load<GameObject>("Units/" + spawner.prefabName);
+		}
 	}
 
 	void Update()
@@ -97,15 +118,26 @@ public class Base : MonoBehaviour, ITargetable
 		owner.playerNumber = _playerNumber;
 		owner.playerController = _playerController;
 
+		if (capture != null)
+			capture.Reset();
+
 		if (owner.playerController != null)
 		{
-        	owner.playerController.rallyPoint.DelayedStart();
+			//owner.playerController.rallyPoint.DelayedStart();
 
 			AddUIBar();
 
 			spawner.enabled = true;
 			spawner.DelayedStart();
 			spawner.StartSpawn(trans.position);
+		}
+		else
+		{
+			if (assignedUIBarObject != null)
+				Destroy(assignedUIBarObject);
+			spawner.enabled = false;
+			spawner.StopSpawn();
+			spawner.StopAllCoroutines();
 		}
 		AssignMaterial();
 	}

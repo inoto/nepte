@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Drone : MonoBehaviour, ITargetable
 {
+	public static ConfigDrone config;
+	
     public enum Mode
     {
         Idle,
@@ -43,12 +45,16 @@ public class Drone : MonoBehaviour, ITargetable
         mover = GetComponent<Mover>();
 //        radar = GetComponent<Radar>();
 	    weapon = GetComponent<Weapon>();
+	    
+	    config = ConfigManager.Instance.Drone;
     }
 
 	private void Start()
 	{
 		collision = new CollisionCircle(trans, mover, owner, null);
 		CollisionManager.Instance.AddCollidable(collision);
+		
+		LoadFromConfig();
 	}
 
 	public void DelayedStart()
@@ -67,6 +73,36 @@ public class Drone : MonoBehaviour, ITargetable
 		collision.collidedBaseCircle = null;
 		weapon.target = null;
 //		Debug.Log("on enable");
+	}
+	
+	void LoadFromConfig()
+	{
+		if (config == null)
+			return;
+		if (health != null)
+		{
+			health.max = config.HealthMax;
+			health.current = health.max;
+		}
+		if (mover != null)
+		{
+			mover.maxSpeed = config.SpeedMax;
+			mover.maxForce = config.ForceMax;
+			mover.turnSpeed = config.TurnSpeed;
+			mover.followRally.stopRadius = config.FollowStopRadius;
+			mover.separation.enabled = config.SeparationEnabled;
+			mover.separation.desired = config.SeparationRadius;
+			mover.cohesion.enabled = config.CohesionEnabled;
+			mover.cohesion.desired = config.CohesionRadius;
+		}
+		if (weapon != null)
+		{
+			weapon.attackSpeed = config.AttackSpeed;
+			weapon.damage = config.AttackDamage;
+			weapon.radius = config.AttackRadius;
+			weapon.missilePrefabName = config.AttackMissilePrefabName;
+			weapon.missilePrefab = Resources.Load<GameObject>(weapon.missilePrefabName);
+		}
 	}
 
 	public void PutIntoBase(Base _bas)

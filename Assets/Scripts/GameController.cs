@@ -48,7 +48,7 @@ public class GameController : MonoBehaviour
 	public ObjectPool objectPoolChild;
 
     [Header("Cache")]
-    public List<GameObject> playerControllerObject;
+    public List<PlayerController> playerController;
     public List<Vector3> playerStartPosition;
     public List<Base> bases;
 
@@ -277,63 +277,44 @@ public class GameController : MonoBehaviour
 
 	void CreatePlayers()
 	{
-        playerControllerObject = new List<GameObject>();
+        playerController = new List<PlayerController>();
 
         GameObject playerObject;
 		for (int i = 0; i < players; i++)
 		{
 			playerObject = Instantiate(playerControllerPrefab);
 			playerObject.transform.SetParent(transform);
-			PlayerController playerController = playerObject.GetComponent<PlayerController>();
-			playerController.owner.playerNumber = i;
-            playerController.owner.playerController = playerController;
+			PlayerController tmpPlayerController = playerObject.GetComponent<PlayerController>();
+			tmpPlayerController.owner.playerNumber = i;
+			tmpPlayerController.owner.playerController = tmpPlayerController;
 			//playerController.owner.color = playerColors[i];
-            playerController.DelayedStart();
+			tmpPlayerController.DelayedStart();
 
-            playerControllerObject.Add(playerObject);
+            playerController.Add(tmpPlayerController);
 		}
 	}
 
 	void AssignBases()
 	{
+		bases.Clear();
         bases.AddRange(FindObjectsOfType<Base>());
-
         int counter = 0;
         foreach (Base b in bases)
         {
-            if (b.useAsStartPosition)
-            {
-                //playerStartPosition[counter] = b.trans.position;
-                b.SetOwner(counter, playerControllerObject[counter].GetComponent<PlayerController>());
-                playerControllerObject[counter].GetComponent<PlayerController>().trans.position = b.trans.position;
-                //b.DelayedStart();
-                counter++;
-            }
+	        if (b.useAsStartPosition)
+	        {
+		        //playerStartPosition[counter] = b.trans.position;
+		        b.SetOwner(counter, playerController[counter]);
+		        playerController[counter].trans.position = b.trans.position;
+		        //b.DelayedStart();
+		        counter++;
+	        }
+	        else
+	        {
+		        b.SetOwner(-1, null);
+	        }
+	        
         }
-
-		//GameObject tmpObject;
-		//for (int i = 0; i < players; i++)
-		//{
-		//	switch (i)
-		//	{
-		//		case 0:
-		//			tmpObject = GameObject.Find("StartPlayer");
-  //                  playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-		//			Destroy(tmpObject);
-		//			continue;
-		//		case 1:
-		//			tmpObject = GameObject.Find("StartAIFirst");
-		//			playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-		//			Destroy(tmpObject);
-		//			continue;
-		//		case 2:
-		//			tmpObject = GameObject.Find("StartAISecond");
-		//			playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-		//			Destroy(tmpObject);
-		//			continue;
-		//	}
-
-		//}
 
 	}
 

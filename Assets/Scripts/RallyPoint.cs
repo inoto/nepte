@@ -31,13 +31,13 @@ public class RallyPoint : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (owner.playerNumber == 0)
-        {
-#if UNITY_EDITOR
-            cameraMouse.onClickTap -= SetNew;
-#endif
-            cameraTouch.onClickTap -= SetNew;
-        }
+//        if (owner.playerNumber == 0)
+//        {
+//#if UNITY_EDITOR
+//            cameraMouse.onClickTap -= SetNew;
+//#endif
+//            cameraTouch.onClickTap -= SetNew;
+//        }
     }
 
     public void DelayedStart()
@@ -51,15 +51,15 @@ public class RallyPoint : MonoBehaviour
 #endif
 			cameraTouch = Camera.main.GetComponent<CameraControlTouch>();
 		}
-		if (owner.playerNumber == 0)
-		{
-#if UNITY_EDITOR
-			cameraMouse.Attach();
-			cameraMouse.onClickTap += SetNew;
-#endif
-			cameraTouch.Attach();
-			cameraTouch.onClickTap += SetNew;
-		}
+//		if (owner.playerNumber == 0)
+//		{
+//#if UNITY_EDITOR
+//			cameraMouse.Attach();
+//			cameraMouse.onClickTap += SetNew;
+//#endif
+//			cameraTouch.Attach();
+//			cameraTouch.onClickTap += SetNew;
+//		}
 
 		AssignMeterial();
 

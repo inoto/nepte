@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour
 {
     public bool isActive;
     public int unitCount;
+    public int unitCountMax;
     public UILabel unitCountLabel;
     public float delay;
     public float intervalMin;
@@ -14,6 +15,7 @@ public class Spawner : MonoBehaviour
     private float interval;
     public Vector2 point;
     public GameObject prefab;
+    public string prefabName;
     private float timeSinceLastSpawn;
     
 
@@ -24,6 +26,8 @@ public class Spawner : MonoBehaviour
     private void Awake()
     {
         trans = GetComponent<Transform>();
+        prefab = Resources.Load<GameObject>("Units/" + prefabName);
+//        Debug.Log("Units/" + prefabName);
         //bas = GetComponent<Base>();
         
     }
@@ -92,6 +96,8 @@ public class Spawner : MonoBehaviour
         //Debug.Log("Spawn started");
         while (isActive)
         {
+            if (unitCount >= unitCountMax)
+                yield break;
             unitCount += 1;
             UpdateLabel();
             
@@ -99,7 +105,7 @@ public class Spawner : MonoBehaviour
             if (intervalMin != intervalMax)
                 interval = Random.Range(intervalMin, intervalMax);
             else
-                interval = intervalMin;
+                interval = intervalMax;
             yield return new WaitForSeconds(interval);
         }
         //Debug.Log("Spawn stopped");

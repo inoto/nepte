@@ -120,7 +120,6 @@ MonoBehaviour:
   assignedHPbarSlider: {fileID: 0}
   assignedUnitCountLabel: {fileID: 0}
   rallyPoint: {fileID: 0}
-  triggeredLaserMissile: {fileID: 0}
   attackers: []
   health:
     max: 4000
@@ -165,12 +164,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 0
   unitCount: 0
+  unitCountMax: 50
   unitCountLabel: {fileID: 0}
   delay: 2
   intervalMin: 2
   intervalMax: 2
   point: {x: 0, y: 0}
   prefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab, type: 2}
+  prefabName: Drone
 --- !u!114 &114681370771658558
 MonoBehaviour:
   m_ObjectHideFlags: 1

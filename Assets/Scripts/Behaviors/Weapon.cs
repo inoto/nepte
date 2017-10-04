@@ -14,7 +14,8 @@ public class Weapon : MonoBehaviour
 	public ITargetable target;
 	public bool hasTarget;
 
-	[SerializeField] private GameObject missilePrefab;
+	public GameObject missilePrefab;
+	public string missilePrefabName;
 	
 	[Header("Components")]
     public Transform trans;
@@ -28,6 +29,8 @@ public class Weapon : MonoBehaviour
 		trans = GetComponent<Transform>();
         owner = GetComponent<Owner>();
         mover = GetComponent<Mover>();
+		
+		missilePrefab = Resources.Load<GameObject>(missilePrefabName);
 	}
 
 	private void Start()

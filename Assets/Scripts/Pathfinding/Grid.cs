@@ -26,12 +26,6 @@ public class Grid : MonoBehaviour {
 	public bool showGrid = true;
     public bool showDistances = true;
     public bool showFlowDirection = true;
-    public LayerMask unwalkableMask;
-    
-	public TerrainType[] walkableRegions;
-	public int obstacleProximityPenalty = 10;
-	Dictionary<int,int> walkableRegionsDictionary = new Dictionary<int, int>();
-	LayerMask walkableMask;
 
     private Battleground battlegroundParent;
     private Renderer battlegroundRenderer;

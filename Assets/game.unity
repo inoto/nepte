@@ -1280,7 +1280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &243091191
 Transform:
   m_ObjectHideFlags: 0
@@ -1518,7 +1518,7 @@ Transform:
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &255789601
 GameObject:
@@ -3117,15 +3117,6 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4017350619168168, guid: 047570b75374547bba9d07df774de185, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 99
-      objectReference: {fileID: 0}
-    - target: {fileID: 114692940253679740, guid: 047570b75374547bba9d07df774de185,
-        type: 2}
-      propertyPath: mDepth
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 047570b75374547bba9d07df774de185, type: 2}
   m_IsPrefabParent: 0
@@ -4365,6 +4356,70 @@ MonoBehaviour:
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Emoticon - Laugh
   mFillCenter: 1
+--- !u!1 &733265611
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 733265613}
+  - component: {fileID: 733265612}
+  m_Layer: 0
+  m_Name: ConfigManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &733265612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 733265611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1baca426f2bf406c89bdc30f3e7152f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  savesPath: 
+  configPath: 
+  configFileName: tightspace-config.json
+  Base:
+    HealthMax: 3000
+    ColliderRadius: 2
+    ProduceUnitInterval: 2
+    SpawnUnitPrefabName: Drone
+    CapturingStep: 0.01
+    UnitCountMax: 50
+  Drone:
+    HealthMax: 100
+    SpeedMax: 1
+    ForceMax: 2
+    TurnSpeed: 3
+    FollowStopRadius: 0.8
+    SeparationEnabled: 1
+    SeparationRadius: 0.5
+    CohesionEnabled: 1
+    CohesionRadius: 0.5
+    AttackSpeed: 1
+    AttackDamage: 100
+    AttackRadius: 1.5
+    AttackMissilePrefabName: LaserMissile
+--- !u!4 &733265613
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 733265611}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &734076083 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4430248960310798, guid: 4041c3d68c20642b28b9d35c6174ec48,
@@ -8674,12 +8729,12 @@ Prefab:
     - target: {fileID: 114218313955511522, guid: b08fe88cf94684c4ca1aa6dce9d13af1,
         type: 2}
       propertyPath: mWidth
-      value: 78
+      value: 76
       objectReference: {fileID: 0}
     - target: {fileID: 114218313955511522, guid: b08fe88cf94684c4ca1aa6dce9d13af1,
         type: 2}
       propertyPath: mHeight
-      value: 77
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 114218313955511522, guid: b08fe88cf94684c4ca1aa6dce9d13af1,
         type: 2}
@@ -8949,7 +9004,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1695144650
 AudioSource:
@@ -9100,7 +9155,7 @@ Transform:
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1715446709
 GameObject:
@@ -10282,7 +10337,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1875784636}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 72, z: 0}
+  m_LocalPosition: {x: 0, y: 44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1448666552}
@@ -10330,8 +10385,8 @@ MonoBehaviour:
   updateAnchors: 2
   mColor: {r: 0, g: 1, b: 0.04827571, a: 1}
   mPivot: 4
-  mWidth: 18
-  mHeight: 18
+  mWidth: 776
+  mHeight: 397
   mDepth: 0
   mMat: {fileID: 0}
   autoResizeBoxCollider: 1
@@ -10622,12 +10677,12 @@ Prefab:
     - target: {fileID: 114633567412761720, guid: a9c458b5595bb44cfb0fdd7b3e59b59e,
         type: 2}
       propertyPath: mWidth
-      value: 78
+      value: 76
       objectReference: {fileID: 0}
     - target: {fileID: 114633567412761720, guid: a9c458b5595bb44cfb0fdd7b3e59b59e,
         type: 2}
       propertyPath: mHeight
-      value: 77
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 114633567412761720, guid: a9c458b5595bb44cfb0fdd7b3e59b59e,
         type: 2}
@@ -11399,8 +11454,8 @@ MonoBehaviour:
   updateAnchors: 2
   mColor: {r: 1, g: 0, b: 0, a: 0.409}
   mPivot: 4
-  mWidth: 2
-  mHeight: 2
+  mWidth: 776
+  mHeight: 92
   mDepth: 7
   mMat: {fileID: 0}
   autoResizeBoxCollider: 1
@@ -11542,7 +11597,7 @@ Transform:
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1991446387
 Prefab:

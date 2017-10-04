@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class Capture : MonoBehaviour
@@ -110,7 +111,7 @@ public class Capture : MonoBehaviour
 				{
 					isCapturing = false;
 					GetComponent<Base>().SetOwner(leadIndex,
-						GameController.Instance.playerControllerObject[leadIndex].GetComponent<PlayerController>());
+						GameController.Instance.playerController[leadIndex]);
 					//GetComponent<Base>().PutNearDronesInside();
 					Clean();
 					Destroy(assignedCircleTimer.gameObject);
@@ -178,6 +179,15 @@ public class Capture : MonoBehaviour
 			//counter[i] = 0;
 			capturerCount[i] = 0;
 		}
+	}
+
+	public void Reset()
+	{
+		if (assignedCircleTimer != null)
+			Destroy(assignedCircleTimer);
+		StopAllCoroutines();
+		isCapturing = false;
+		Clean();
 	}
 
 	void AddCircularTimer()

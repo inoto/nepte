@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     {
 		//CreateBase();
 
-		CreateRallyPoint();
+		//CreateRallyPoint();
 
         if (owner.playerNumber != 0)
 			aiPlayer = gameObject.AddComponent<AIPlayer>();
