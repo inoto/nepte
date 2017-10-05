@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class CollisionCircle
 {
+	public bool showGizmos;
 //    public enum CollisionType
 //    {
 //        Body,
@@ -24,6 +25,8 @@ public class CollisionCircle
 	public Weapon weapon;
 	public Base bas;
 
+	
+	public bool isInQT = false;
 	public bool isDead = false;
     public bool isCollidedWithBase = false;
 	public bool isStatic;
@@ -36,6 +39,7 @@ public class CollisionCircle
     {
 //        body = _body;
 //        collisionType = CollisionType.Body;
+	    showGizmos = true;
         trans = _trans;
 	    mover = _mover;
 	    if (mover == null)
@@ -125,6 +129,18 @@ public class CollisionCircle
 		{
 			if (mover.weapon.target.GameObj == other.trans.gameObject)
 				mover.weapon.target = null;
+		}
+	}
+
+	public void DrawGizmos()
+	{
+		if (showGizmos)
+		{
+			if (isInQT)
+				Gizmos.color = Color.green;
+			else
+				Gizmos.color = Color.red;
+			Gizmos.DrawSphere(trans.position, 0.1f);
 		}
 	}
 }

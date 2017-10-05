@@ -24,7 +24,6 @@ public class CollisionManager : MonoBehaviour
 
 	public QuadTreeEternal qtree;
 
-    public List<ICollidable> objects = new List<ICollidable>();
 	public Queue<CollisionCircle> objectsToInsert = new Queue<CollisionCircle>();
 
 	private void Start()

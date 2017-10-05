@@ -77,7 +77,7 @@ public class FollowRally
 		desire.Normalize();
 		desire *= stopRadius;
 		desire *= -1;
-		angle = 1.5f;
+		angle = 1.4f;
 		Vector2 force = new Vector2(stopRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)),
 			stopRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
 		force = Mover.LimitVector(force, mover.maxForce);

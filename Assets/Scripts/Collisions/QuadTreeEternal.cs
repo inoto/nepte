@@ -73,7 +73,7 @@ public class QuadTreeEternal
 				if (curLife == -1)
 					curLife = maxLifespan;
 				else if (curLife > 0)
-					curLife -= 1;
+					curLife--;
 			}
 		}
 		else
@@ -86,8 +86,14 @@ public class QuadTreeEternal
 			}
 		}
 
+//		if (level == 6)
+//			Debug.Log("before clear count: " + movedUnits.Count);
 		movedUnits.Clear();
+//		if (level == 6)
+//			Debug.Log("after clear count: " + movedUnits.Count);
 		movedUnits.AddRange(objects);
+//		if (level == 6)
+//			Debug.Log("after addrange count: " + movedUnits.Count);
 		//foreach (ICollidable unit in objects)
 		//{
 		//	if (unit.Active)
@@ -102,10 +108,19 @@ public class QuadTreeEternal
 	        if (objects[i].isDead)
             {
 //	            if (objects[i].collisionType == CollisionCircle.CollisionType.Body)
-	            Debug.Log("new died");
-                if (movedUnits.Contains(objects[i]))
-                    movedUnits.Remove(objects[i]);
+//	            Debug.Log("new died");
+	            if (movedUnits.Contains(objects[i]))
+	            {
+		            int ind = movedUnits.IndexOf(objects[i]);
+		            movedUnits[ind].isInQT = false;
+		            movedUnits.Remove(objects[i]);
+		            
+	            }
+	            objects[i].isInQT = false;
+//	            Debug.Log(objects[i].instanceId);
+//	            Debug.Log(objects[i--].instanceId);
                 objects.RemoveAt(i--);
+	            
 	            listSize--;
             }
 		}
@@ -123,13 +138,17 @@ public class QuadTreeEternal
 				else break;
 			}
 				// remove from objects and insert to root in EVERY FRAME
+			movedUnits[i].isInQT = false;
 			objects.Remove(movedUnits[i]);
+			
 			currentNode.Insert(movedUnits[i]);
 		}
 
 		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
-			if ((flags & 1) == 1 && childs[index].curLife == 0)
+			if ((flags & 1) == 1 && childs[index].curLife == 0 && childs[index].objects.Count == 0)
 			{
+				if (childs[index].objects.Count > 0)
+					Debug.Log(childs[index].objects.Count);
 				childs[index] = null;
 				activeNodes ^= (byte)(1 << index);
 				if (activeNodes == 0)
@@ -148,12 +167,14 @@ public class QuadTreeEternal
 		if (objects.Count < 1 && activeNodes == 0)
 		{
 			objects.Add(obj);
+			obj.isInQT = true;
 			return;
 		}
 
 		if (rect.size.x < Vector2.one.x && rect.size.y < Vector2.one.y)
 		{
 			objects.Add(obj);
+			obj.isInQT = true;
 			return;
 		}
 
@@ -200,12 +221,16 @@ public class QuadTreeEternal
 				}
 			}
 			if (!found)
+			{
 				objects.Add(obj);
+				obj.isInQT = true;
+			}
 		}
 		else
 		{
             // attach object to root if it's outside of battleground boundaries
-            objects.Add(obj);
+            //objects.Add(obj);
+			obj.isInQT = false;
 		}
 	}
 
@@ -329,10 +354,15 @@ public class QuadTreeEternal
 				{
 					if (unit1.owner.playerNumber == unit2.owner.playerNumber)
 					{
-						if (!unit2.isDead && unit2.mover.followRally.rally == unit1.trans.gameObject)
+						if (!unit2.isDead)
 						{
-							//if (unit2.mover.followRally.arrived || )
-							unit2.trans.GetComponent<Drone>().PutIntoBase(unit1.trans.gameObject.GetComponent<Base>());
+							if (unit2.mover.followRally.rally == unit1.trans.gameObject)
+								unit2.trans.GetComponent<Drone>().PutIntoBase(unit1.trans.gameObject.GetComponent<Base>());
+							else
+							{
+								if (unit2.mover.separation.enabled)
+									unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
+							}
 						}
 					}
 				}
@@ -350,7 +380,7 @@ public class QuadTreeEternal
 					{
 //						Debug.Log("unit near base");
 						unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
-						unit1.collidedBaseCircle = unit1;
+						unit1.collidedBaseCircle = unit2;
 						unit1.isCollidedWithBase = true;
 						unit2.collidedCount++;
 					}
@@ -374,8 +404,16 @@ public class QuadTreeEternal
 				{
 					if (unit2.owner.playerNumber == unit1.owner.playerNumber)
 					{
-						if (!unit1.isDead && unit1.mover.followRally.rally == unit2.trans.gameObject)
-							unit1.trans.GetComponent<Drone>().PutIntoBase(unit2.trans.gameObject.GetComponent<Base>());
+						if (!unit1.isDead)
+						{
+							if (unit1.mover.followRally.rally == unit2.trans.gameObject)
+								unit1.trans.GetComponent<Drone>().PutIntoBase(unit2.trans.gameObject.GetComponent<Base>());
+							else
+							{
+								if (unit1.mover.separation.enabled)
+									unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
+							}
+						}
 					}
 				}
 			}
@@ -511,13 +549,13 @@ public class QuadTreeEternal
 		if (obj.isStatic)
 			radius = obj.GetRadius();
 		
-        if ((obj.trans.position.x - radius) < rect.x)
+        if ((obj.trans.position.x - radius) <= rect.x)
 			return false;
-        if ((obj.trans.position.x + radius) > (rect.x + rect.width))
+        if ((obj.trans.position.x + radius) >= (rect.x + rect.width))
 			return false;
-	    if ((obj.trans.position.y - radius) < rect.y)
+	    if ((obj.trans.position.y - radius) <= rect.y)
 			return false;
-        if ((obj.trans.position.y + radius) > (rect.y + rect.height))
+        if ((obj.trans.position.y + radius) >= (rect.y + rect.height))
 			return false;
 		return true;
 	}
@@ -532,13 +570,14 @@ public class QuadTreeEternal
 
 	public void DrawDebug()
 	{
+	
 		Gizmos.color = Color.cyan;
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y), new Vector3(rect.x, rect.y + rect.height));
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y), new Vector3(rect.x + rect.width, rect.y));
 		Gizmos.DrawLine(new Vector3(rect.x + rect.width, rect.y), new Vector3(rect.x + rect.width, rect.y + rect.height));
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y + rect.height), new Vector3(rect.x + rect.width, rect.y + rect.height));
 #if UNITY_EDITOR
-		Handles.Label(rect.center, objects.Count.ToString());
+		Handles.Label(rect.center, objects.Count.ToString() + ":" + curLife.ToString() + ":" + maxLifespan.ToString());
 #endif
 
 		for (int i = 0; i < childs.Length; i++)

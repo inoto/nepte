@@ -9,7 +9,7 @@ public class SceneLoader: MonoBehaviour
 	[SerializeField]
 	private int scene;
 	[SerializeField]
-	private Text loadingText;
+	private TextMesh loadingText;
 	
 	void Update() {
 
@@ -20,7 +20,7 @@ public class SceneLoader: MonoBehaviour
 			loadScene = true;
 
 			// ...change the instruction text to read "Loading..."
-			//loadingText.text = "Loading...";
+			loadingText.text = "Loading...";
 
 			// ...and start a coroutine that will load the desired scene.
 			StartCoroutine(LoadNewScene());
@@ -31,7 +31,7 @@ public class SceneLoader: MonoBehaviour
 		if (loadScene == true) {
 
 			// ...then pulse the transparency of the loading text to let the player know that the computer is still working.
-			//loadingText.color = new Color(loadingText.color.r, loadingText.color.g, loadingText.color.b, Mathf.PingPong(Time.time, 1));
+			loadingText.color = new Color(loadingText.color.r, loadingText.color.g, loadingText.color.b, Mathf.PingPong(Time.time, 1));
 
 		}
 

@@ -163,8 +163,8 @@ public class Base : MonoBehaviour, ITargetable
 	    assignedUIBarObject.transform.SetParent(GameObject.Find("HPBars").transform);
 	    assignedUIBarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-		//UISprite assignedHPbarSprite = assignedUIBarObject.GetComponent<UISprite>();
-		//assignedHPbarSprite.SetAnchor(gameObject);
+//		UISprite assignedHPbarSprite = assignedUIBarObject.GetComponent<UISprite>();
+//		assignedHPbarSprite.SetAnchor(gameObject);
 
 		assignedHPbarSlider = assignedUIBarObject.transform.GetChild(0).GetComponent<UISlider>();
 	    assignedUnitCountLabel = assignedUIBarObject.transform.GetChild(1).GetChild(0).GetComponent<UILabel>();

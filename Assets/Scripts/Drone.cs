@@ -203,4 +203,10 @@ public class Drone : MonoBehaviour, ITargetable
 	{
 		get { return (mode == Mode.Dead); }
 	}
+
+	private void OnDrawGizmos()
+	{
+		if (collision != null)
+			collision.DrawGizmos();
+	}
 }

@@ -34,8 +34,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1214602673638814}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 21, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -53.20703, y: -16.0625, z: 0}
+  m_LocalScale: {x: 0.5019531, y: 0.5019531, z: 0.5019531}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -54,24 +54,24 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 0}
     relative: 0
-    absolute: -150
+    absolute: -400
   rightAnchor:
     target: {fileID: 0}
     relative: 1
-    absolute: 150
+    absolute: 400
   bottomAnchor:
     target: {fileID: 0}
     relative: 0
-    absolute: -150
+    absolute: -400
   topAnchor:
     target: {fileID: 0}
     relative: 1
-    absolute: 150
+    absolute: 400
   updateAnchors: 2
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 600
-  mHeight: 600
+  mWidth: 800
+  mHeight: 800
   mDepth: 3
   mMat: {fileID: 0}
   autoResizeBoxCollider: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
   bottomType: 1
   topType: 1
   mSprite: {fileID: 21300000, guid: b1232f19b632147609ab5a14f286d9dd, type: 3}
-  mShader: {fileID: 15104, guid: 0000000000000000f000000000000000, type: 0}
+  mShader: {fileID: 4800000, guid: 1682092270f88d04bb434756a984ea87, type: 3}
   mBorder: {x: 0, y: 0, z: 0, w: 0}
   mFixedAspect: 0
   mPixelSize: 1

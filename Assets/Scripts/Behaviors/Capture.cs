@@ -197,7 +197,7 @@ public class Capture : MonoBehaviour
 		assignedCircleTimerObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 		
 		assignedCircleTimer = assignedCircleTimerObject.GetComponent<UI2DSprite>();
-		//assignedCircleTimer.SetAnchor(gameObject);
+//		assignedCircleTimer.SetAnchor(gameObject);
 		//assignedCircleTimer.material.SetColor("_Color", body.owner.color);
 		//assignedCircleTimer.material.SetColor("_TintColor", body.owner.color);
 	}

@@ -320,8 +320,8 @@ public class Mover : MonoBehaviour
 	private void OnDrawGizmos()
 	{
 		Gizmos.color = Color.green;
-		Gizmos.DrawSphere(velocity + (Vector2)trans.position, 0.1f);
-		Gizmos.DrawLine(velocity + (Vector2)trans.position, trans.position);
+		//Gizmos.DrawSphere(velocity + (Vector2)trans.position, 0.1f);
+		//Gizmos.DrawLine(velocity + (Vector2)trans.position, trans.position);
 //		if (followRally.enabled)
 //			followRally.Giz();
 	}

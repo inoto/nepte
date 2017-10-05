@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scene: 1
-  loadingText: {fileID: 0}
+  loadingText: {fileID: 1667566317}
 --- !u!4 &936233578
 Transform:
   m_ObjectHideFlags: 0
