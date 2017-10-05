@@ -57,7 +57,7 @@ public class Base : MonoBehaviour, ITargetable
 	    collider = GetComponent<CircleCollider2D>();
     }
 
-	private void Start()
+	public void Start()
 	{
 		trans.localScale = Vector3.one;
 		
@@ -104,13 +104,37 @@ public class Base : MonoBehaviour, ITargetable
         //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
 
+	public void GlowAdd()
+	{
+		Material newMat = Resources.Load<Material>("BaseGlow");
+		//		newMat.color = newColor;
+		List<Material> listMat = new List<Material>(mesh.materials);
+		listMat.Add(newMat);
+		mesh.materials = listMat.ToArray();
+		if (owner.playerNumber != -1)
+			mesh.materials[1].SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber]);
+	}
+
+	public void GlowRemove()
+	{
+		
+		List<Material> listMat = new List<Material>(mesh.materials);
+		listMat.RemoveAt(1);
+		mesh.materials = listMat.ToArray();
+	}
+
 	public void MakeArrow()
 	{
+		
 		lineArrow = gameObject.AddComponent<LineRenderer>();
 		lineArrow.SetPosition(0, trans.position);
 		lineArrow.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 		lineArrow.material = (Material)Resources.Load("Arrow");
+		lineArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber]);
 		lineArrow.widthMultiplier = 3f;
+
+		foreach (var b in GameController.Instance.bases)
+			b.GlowAdd();
 	}
 
 	public void SetOwner(int _playerNumber, PlayerController _playerController)

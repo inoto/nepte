@@ -568,6 +568,13 @@ public class QuadTreeEternal
 		return list;
 	}
 
+	public void Clear()
+	{
+		objects.Clear();
+		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
+			if ((flags & 1) == 1) childs[index].Clear();
+	}
+
 	public void DrawDebug()
 	{
 	

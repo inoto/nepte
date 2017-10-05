@@ -186,12 +186,14 @@ MonoBehaviour:
     current: 100
     percent: 1
   collision:
+    showGizmos: 0
     instanceId: 0
     trans: {fileID: 0}
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
     bas: {fileID: 0}
+    isInQT: 0
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0
@@ -236,12 +238,14 @@ MonoBehaviour:
   owner: {fileID: 0}
   mover: {fileID: 0}
   collision:
+    showGizmos: 0
     instanceId: 0
     trans: {fileID: 0}
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
     bas: {fileID: 0}
+    isInQT: 0
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0
@@ -271,12 +275,14 @@ MonoBehaviour:
   owner: {fileID: 0}
   mover: {fileID: 0}
   collision:
+    showGizmos: 0
     instanceId: 0
     trans: {fileID: 0}
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
     bas: {fileID: 0}
+    isInQT: 0
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0

@@ -35,7 +35,7 @@ public class Spawner : MonoBehaviour
 	public void DelayedStart()
 	{
         owner = GetComponent<Owner>();
-	    unitCount = 0;
+//	    unitCount = 0;
 	    if (spawnCoroutine != null)
 	        StopCoroutine(spawnCoroutine);
 	}
@@ -44,6 +44,7 @@ public class Spawner : MonoBehaviour
     {
         point = _point;
         unitCountLabel = GetComponent<Base>().assignedUnitCountLabel;
+        UpdateLabel();
         StartCoroutine("Spawn");
     }
 

@@ -34,6 +34,8 @@ public class CollisionManager : MonoBehaviour
 
 		qtree = new QuadTreeEternal(rect);
 		qtree.root = qtree;
+
+		GameController.Instance.OnGameRestart += ClearQuadTree;
 	}
 
     public void AddCollidable(CollisionCircle obj)
@@ -47,16 +49,30 @@ public class CollisionManager : MonoBehaviour
     {
 	    if (qtree != null && objectsToInsert.Count > 0)
 	    {
-		    //for (int i = 0; i < objectsToInsert.Count; i++)
-		    //foreach (var obj in objectsToInsert)
-		    while (objectsToInsert.Count > 0)
-		    {
-			    qtree.Insert(objectsToInsert.Dequeue());
-		    }
+		    MoveFromQueue();
 	    }
         qtree.Update();
     }
 
+	private void MoveFromQueue()
+	{
+		while (objectsToInsert.Count > 0)
+		{
+			qtree.Insert(objectsToInsert.Dequeue());
+		}
+	}
+
+	public void ClearQuadTree()
+	{
+		if (qtree != null)
+		{
+			qtree.Clear();
+			foreach (var b in GameController.Instance.bases)
+			{
+				AddCollidable(b.collision);
+			}
+		}
+	}
     
 	public List<CollisionCircle> FindBodiesInCircleArea(Vector2 center, float radius)
 	{

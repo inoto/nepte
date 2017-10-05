@@ -14,7 +14,6 @@ public class Drone : MonoBehaviour, ITargetable
         Attacking,
         Dead
     }
-
 	public Mode mode;
 
 	public GameObject explosionPrefab;
@@ -158,6 +157,8 @@ public class Drone : MonoBehaviour, ITargetable
 	{
 		GameObject explosion = Instantiate(explosionPrefab, trans.position, trans.rotation);
 		explosion.transform.parent = GameController.Instance.transform;
+		float size = GetComponent<QuadMesh>().size * 1.5f;
+		explosion.transform.localScale = new Vector3(size, size, 1);
 	}
 
 	void SetOwnerAsInParent()

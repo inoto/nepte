@@ -126,12 +126,14 @@ MonoBehaviour:
     current: 4000
     percent: 1
   collision:
+    showGizmos: 0
     instanceId: 0
     trans: {fileID: 0}
     mover: {fileID: 0}
     owner: {fileID: 0}
     weapon: {fileID: 0}
     bas: {fileID: 0}
+    isInQT: 0
     isDead: 0
     isCollidedWithBase: 0
     isStatic: 0
@@ -163,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
-  unitCount: 0
+  unitCount: 10
   unitCountMax: 50
   unitCountLabel: {fileID: 0}
   delay: 2
@@ -215,4 +217,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 0.75
+  size: 1
