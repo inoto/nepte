@@ -8,8 +8,8 @@ public class Base : MonoBehaviour, ITargetable
 	public enum BaseType
 	{
 		Normal,
+		Main,
 		Transit,
-		Aura
 	}
 	public BaseType type;
 	
@@ -75,7 +75,7 @@ public class Base : MonoBehaviour, ITargetable
 
 	void LoadFromConfig()
 	{
-		config = ConfigManager.Instance.Base;
+		config = ConfigManager.Instance.GetBaseConfig(this);
 		if (config == null)
 			return;
 		if (health != null)

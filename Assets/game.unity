@@ -3663,6 +3663,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 114017529968746086, guid: 5b615cf2babbc4691910713f9e7d3337,
+        type: 2}
+      propertyPath: type
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b615cf2babbc4691910713f9e7d3337, type: 2}
   m_IsPrefabParent: 0
@@ -4900,14 +4905,12 @@ MonoBehaviour:
     ColliderRadius: 2
     ProduceUnitInterval: 2
     SpawnUnitPrefabName: Drone
-    CapturingStep: 0.01
     UnitCountMax: 50
   BaseTransit:
     HealthMax: 0
     ColliderRadius: 0
     ProduceUnitInterval: 0
     SpawnUnitPrefabName: 
-    CapturingStep: 0
     UnitCountMax: 0
   Drone:
     HealthMax: 200
@@ -7534,7 +7537,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 3.6447368
+  aspectRatio: 3.0394738
   mType: 1
   mFillDirection: 0
   mFillAmount: 1
@@ -11472,7 +11475,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.1315789
+  aspectRatio: 0.94736844
   mType: 1
   mFillDirection: 4
   mFillAmount: 1
@@ -12797,7 +12800,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 7.2894735
+  aspectRatio: 6.0723686
 --- !u!1 &2080389794
 GameObject:
   m_ObjectHideFlags: 0

@@ -304,6 +304,7 @@ public class GameController : MonoBehaviour
 	        if (b.useAsStartPosition)
 	        {
 		        //playerStartPosition[counter] = b.trans.position;
+		        b.type = Base.BaseType.Main;
 		        b.SetOwner(counter, playerController[counter]);
 		        playerController[counter].trans.position = b.trans.position;
 		        //b.DelayedStart();

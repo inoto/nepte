@@ -178,6 +178,7 @@ MonoBehaviour:
     type: 2}
   health:
     max: 100
+    maxWithBonuses: 0
     current: 100
     percent: 1
   collision:

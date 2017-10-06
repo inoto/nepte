@@ -40,6 +40,21 @@ public class ConfigManager : MonoBehaviour
 	public ConfigBase Base;
 	public ConfigBase BaseTransit;
 	public ConfigDrone Drone;
+
+	public ConfigBase GetBaseConfig(Base bas)
+	{
+		switch (bas.type)
+		{
+			case global::Base.BaseType.Normal:
+				return Base;
+			case global::Base.BaseType.Main:
+				return Base;
+			case global::Base.BaseType.Transit:
+				return BaseTransit;
+			default:
+				return null;
+		}
+	}
 	
 	private void Start()
 	{
@@ -64,6 +79,9 @@ public class ConfigManager : MonoBehaviour
 			Debug.Log("Loaded from cache file");
 			Debug.Log(jsonFile);
 			JsonUtility.FromJsonOverwrite(jsonFile, this);
+//			Base = JsonUtility.FromJson<ConfigBase>(jsonFile);
+//			BaseTransit = JsonUtility.FromJson<ConfigBase>(jsonFile);
+//			Drone = JsonUtility.FromJson<ConfigDrone>(jsonFile);
 			return true;
 		}
 		else
@@ -79,6 +97,9 @@ public class ConfigManager : MonoBehaviour
 		{
 			Debug.Log(text);
 			JsonUtility.FromJsonOverwrite(text, this);
+//			Base = JsonUtility.FromJson<ConfigBase>(text);
+//			BaseTransit = JsonUtility.FromJson<ConfigBase>(text);
+//			Drone = JsonUtility.FromJson<ConfigDrone>(text);
 			return true;
 		}
 		else

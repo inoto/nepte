@@ -8,7 +8,6 @@ public class ConfigBase
 	public float ColliderRadius;
 	public float ProduceUnitInterval;
 	public string SpawnUnitPrefabName;
-	public float CapturingStep;
 	public int UnitCountMax;
 
 }
