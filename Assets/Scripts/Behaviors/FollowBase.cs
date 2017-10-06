@@ -3,26 +3,21 @@ using System.Collections;
 using System.Runtime.Serialization.Formatters;
 
 [System.Serializable]
-public class FollowRally
+public class FollowBase
 {
 	public bool enabled = true;
-	public bool followingRally = false;
+	public bool following = false;
 	
     public bool arrived = false;
 
-	public float angle;
-
-    public Vector2 rallyPoint;
-	public GameObject rally;
+//	public GameObject targetBase;
+	public Base targetBase;
 
     //public float maxSpeed = 1;
     //public float maxAcceleration = 1;
-    public float rallyPointMass = 10;
-    public float rallyPointG = 0.3f;
-    public float stopRadius = 1;
+	public float enterRadius = 1;
+    public float attackRadius = 2;
     public float slowDownRadius = 3;
-
-	public float mag;
 
     float forceMultiplier = 1;
     float forceMultiplierOriginal = 0;
@@ -32,34 +27,19 @@ public class FollowRally
 	public void Activate(Mover _mover)
     {
         mover = _mover;
-        //mover.owner.playerController.rallyPoint.OnRallyPointChanged += UpdateRallyPoint;
-        //UpdateRallyPoint();
     }
 
-	//  private void Start()
-	//  {
-	//mover.drone.owner.playerController.rallyPoint.OnRallyPointChanged += UpdateRallyPoint;
-	//UpdateRallyPoint();
-	//}
-
-	//private void Update()
-	//{
-	//    if (rallyPoint != null)
-	//        Arrive();
-	//}
-
-    public void UpdateRallyPoint(GameObject obj)
+    public void UpdateTarget(Base obj)
     {
         arrived = false;
 //		if (forceMultiplierOriginal > 0)
 //			forceMultiplier = forceMultiplierOriginal;
-        //rallyPoint = mover.owner.playerController.rallyPoint.trans.position;
-	    rally = obj;
+	    targetBase = obj;
     }
 
 	public void Seek()
 	{
-		Vector2 desired = rallyPoint - (Vector2)mover.trans.position;
+		Vector2 desired = (Vector2)targetBase.transform.position - (Vector2)mover.trans.position;
 
 		desired.Normalize();
 
@@ -71,15 +51,20 @@ public class FollowRally
 		mover.AddForce(force);
 	}
 
-	public void BeAround()
+	public void MoveAround()
 	{
-		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)rally.transform.position - mover.velocity).normalized;
+		if (targetBase.owner.playerNumber == mover.owner.playerNumber)
+		{
+			arrived = false;
+			return;
+		}
+		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)targetBase.transform.position - mover.velocity).normalized;
 		desire.Normalize();
-		desire *= stopRadius;
+		desire *= attackRadius;
 		desire *= -1;
-		angle = 1.4f;
-		Vector2 force = new Vector2(stopRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)),
-			stopRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
+		float angle = 1.4f;
+		Vector2 force = new Vector2(attackRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)),
+			attackRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
 		force = Mover.LimitVector(force, mover.maxForce);
 		mover.velocity /= 1.2f;
 		mover.AddForce(force);
@@ -95,7 +80,7 @@ public class FollowRally
     public void Arrive()
 	{
 		/* Get the right direction for the linear acceleration */
-		Vector2 desired = rally.transform.position - mover.trans.position;
+		Vector2 desired = targetBase.transform.position - mover.trans.position;
 
 		/* Get the distance to the target */
 		float dist = desired.magnitude;
@@ -107,21 +92,39 @@ public class FollowRally
         //float currentSpeed = 0;
         if (dist < slowDownRadius)
 		{
-			if (dist > stopRadius)
+			mover.separation.desired = 0.3f;
+			mover.cohesion.desired = 0.3f;
+			if (targetBase.owner.playerNumber == mover.owner.playerNumber || targetBase.owner.playerNumber == -1)
 			{
-				float dividedStopRadius = stopRadius / 2;
-				//mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
-				desired *= mover.maxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
-//				BeAround();
+				if (dist > enterRadius)
+				{
+					float dividedStopRadius = enterRadius / 2;
+					//mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
+					desired *= mover.maxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
+				}
+				else
+				{
+//					mover.GetComponent<Drone>().PutIntoBase(targetBase);
+					targetBase.PutDroneInside(mover.GetComponent<Drone>());
+					arrived = true;
+					mover.velocity *= 0;
+					return;
+				}
 			}
 			else
 			{
-				//mover.velocity = Vector2.zero;
-				arrived = true;
-				mover.velocity *= 0;
-				
-
-				return;
+				if (dist > attackRadius)
+				{
+					float dividedStopRadius = attackRadius / 2;
+					//mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
+					desired *= mover.maxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
+				}
+				else
+				{
+					arrived = true;
+					mover.velocity *= 0;
+					return;
+				}
 			}
 		}
 		else

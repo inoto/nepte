@@ -35,9 +35,12 @@ public class CardProperty : Card
 			bas = hit.collider.gameObject.GetComponent<Base>();
 			if (bas != null)
 			{
-				icon = GameObject.Instantiate(propertySpritePrefab, bas.trans.position, bas.trans.rotation);
-				icon.transform.parent = bas.trans;
-				bas.propertyIcon = icon;
+				if (propertySpritePrefab != null)
+				{
+					icon = GameObject.Instantiate(propertySpritePrefab, bas.trans.position, bas.trans.rotation);
+					icon.transform.parent = bas.trans;
+					bas.propertyIcon = icon;
+				}
 				return true;
 			}
 		}

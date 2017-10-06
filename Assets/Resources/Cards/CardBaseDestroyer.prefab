@@ -40,9 +40,9 @@ GameObject:
   - component: {fileID: 114581589286314766}
   - component: {fileID: 114576726382427212}
   - component: {fileID: 114635112223206470}
-  - component: {fileID: 114026058042723706}
+  - component: {fileID: 114912103768356250}
   m_Layer: 5
-  m_Name: CardSuperDrone
+  m_Name: CardBaseDestroyer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,23 +87,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 73, y: 72, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114026058042723706
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1803779153337324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50f7604bd79047e897dc3c04b7662184, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cooldownSeconds: 3
-  inCooldown: 0
-  propertySpritePrefab: {fileID: 1674343900864110, guid: 4041c3d68c20642b28b9d35c6174ec48,
-    type: 2}
-  superDronePrefab: {fileID: 1964420292115662, guid: b6a08f81c65754a63b6b3f999cf86366,
-    type: 2}
 --- !u!114 &114403401160831872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -145,7 +128,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: ed8f51d7c85724ba48678e1365061d33, type: 3}
   mFont: {fileID: 0}
-  mText: Super Drone (Base)
+  mText: Destroy base (Base)
   mFontSize: 30
   mFontStyle: 0
   mAlignment: 0
@@ -279,3 +262,17 @@ MonoBehaviour:
   cloneOnDrag: 1
   pressAndHoldDelay: 1
   interactable: 1
+--- !u!114 &114912103768356250
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1803779153337324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1a468676935437a8c0fb1c06511fa77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldownSeconds: 5
+  inCooldown: 0
+  propertySpritePrefab: {fileID: 0}

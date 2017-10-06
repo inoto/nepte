@@ -10,7 +10,7 @@ public class ConfigDrone
 	public float SpeedMax;
 	public float ForceMax;
 	public float TurnSpeed;
-	public float FollowStopRadius;
+	public float EnterBaseRadius;
 	public bool SeparationEnabled;
 	public float SeparationRadius;
 	public bool CohesionEnabled;

@@ -5,19 +5,17 @@ using System.Collections.Generic;
 [System.Serializable]
 public class Spawner : MonoBehaviour
 {
+    public bool canProduce;
     public bool isActive;
     public int unitCount;
     public int unitCountMax;
-    public UILabel unitCountLabel;
+    private UILabel unitCountLabel;
     public float delay;
     public float intervalMin;
     public float intervalMax;
-    private float interval;
     public Vector2 point;
     public GameObject prefab;
     public string prefabName;
-    private float timeSinceLastSpawn;
-    
 
     Transform trans;
     Owner owner;
@@ -26,36 +24,39 @@ public class Spawner : MonoBehaviour
     private void Awake()
     {
         trans = GetComponent<Transform>();
+        owner = GetComponent<Owner>();
         prefab = Resources.Load<GameObject>("Units/" + prefabName);
 //        Debug.Log("Units/" + prefabName);
         //bas = GetComponent<Base>();
         
     }
 
-	public void DelayedStart()
+	public void Start()
 	{
-        owner = GetComponent<Owner>();
+	    AddUIUnitCount();
 //	    unitCount = 0;
-	    if (spawnCoroutine != null)
+	    if (canProduce && spawnCoroutine != null)
 	        StopCoroutine(spawnCoroutine);
 	}
 
     public void StartSpawn(Vector2 _point)
     {
+        if (!canProduce)
+            canProduce = true;
         point = _point;
-        unitCountLabel = GetComponent<Base>().assignedUnitCountLabel;
         UpdateLabel();
         StartCoroutine("Spawn");
     }
 
     public void StopSpawn()
     {
+        canProduce = false;
         isActive = false;
     }
 
     public void ReleaseUnits(GameObject obj)
     {
-        if (spawnCoroutine != null)
+        if (canProduce && spawnCoroutine != null)
             StopCoroutine(spawnCoroutine);
         if (unitCount > 0)
             spawnCoroutine = StartCoroutine(ReleaseAllUnits(obj));
@@ -63,6 +64,8 @@ public class Spawner : MonoBehaviour
     
     IEnumerator ReleaseAllUnits(GameObject obj)
     {
+        Base bas = obj.GetComponent<Base>();
+        
         int count = unitCount;
         while (count > 0)
         //for (int i = 0; i < count; i++)
@@ -73,12 +76,18 @@ public class Spawner : MonoBehaviour
             droneSpawned.owner.playerController = owner.playerController;
             //droneSpawned.playerRallyPoint = rallyPoint;
             droneSpawned.DelayedStart();
-            droneSpawned.mover.followRally.UpdateRallyPoint(obj);
+            droneSpawned.mover.followBase.UpdateTarget(bas);
             //droneSpawned.mover.followRally.rally = obj;
             //droneSpawned.ResetRallyPoint();
             count--;
             unitCount--;
             UpdateLabel();
+
+            if (canProduce && unitCount < unitCountMax && !isActive)
+            {
+                StartCoroutine("Spawn");
+            }
+            
             //Delay();
             yield return new WaitForSeconds(0.3f);
         }
@@ -89,16 +98,35 @@ public class Spawner : MonoBehaviour
         if (unitCountLabel != null)
             unitCountLabel.text = unitCount.ToString();
     }
+    
+    void AddUIUnitCount()
+    {
+        Transform HPBars = GameObject.Find("UIBars").transform;
+        GameObject prefab = Resources.Load<GameObject>("UI/BaseUnitCount");
+	    
+        Vector2 newPosition = trans.position;
+        newPosition.y += GetComponent<MeshRenderer>().bounds.extents.y;
+        GameObject assignedUnitCountObject = Instantiate(prefab, newPosition, trans.rotation, HPBars);
+        assignedUnitCountObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
+        unitCountLabel = assignedUnitCountObject.transform.GetChild(0).GetComponent<UILabel>();
+//		UISprite assignedHPbarSprite = assignedUIBarObject.GetComponent<UISprite>();
+//		assignedHPbarSprite.SetAnchor(gameObject);
+    }
 
     IEnumerator Spawn()
     {
-        yield return new WaitForSeconds(delay);
         isActive = true;
-        //Debug.Log("Spawn started");
+        yield return new WaitForSeconds(delay);
+        
+//        Debug.Log("Spawn started");
         while (isActive)
         {
             if (unitCount >= unitCountMax)
+            {
+                isActive = false;
                 yield break;
+            }
             unitCount += 1;
             UpdateLabel();
             

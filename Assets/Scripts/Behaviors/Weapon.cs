@@ -78,7 +78,7 @@ public class Weapon : MonoBehaviour
 		target = newTarget;
 		hasTarget = true;
 		showRadius = true;
-		mover.followRally.enabled = false;
+		mover.followBase.enabled = false;
 		mover.followTarget.enabled = true;
 	}
 
@@ -88,7 +88,7 @@ public class Weapon : MonoBehaviour
 		target = null;
 		hasTarget = false;
 		showRadius = false;
-		mover.followRally.enabled = true;
+		mover.followBase.enabled = true;
 		mover.followTarget.enabled = false;
 	}
 

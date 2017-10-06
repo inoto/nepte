@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class Base : MonoBehaviour, ITargetable
 {
+	public enum BaseType
+	{
+		Normal,
+		Transit,
+		Aura
+	}
+	public BaseType type;
+	
 	public static ConfigBase config;
 	
     public bool useAsStartPosition = false;
@@ -15,9 +23,7 @@ public class Base : MonoBehaviour, ITargetable
 	public GameObject propertyIcon;
 
 	[Header("Cache")]
-	public GameObject assignedUIBarObject;
     public UISlider assignedHPbarSlider;
-	public UILabel assignedUnitCountLabel;
 	
     public RallyPoint rallyPoint;
 	public List<GameObject> attackers = new List<GameObject>();
@@ -41,7 +47,6 @@ public class Base : MonoBehaviour, ITargetable
     private GameObject explosionPrefab;
     public GameObject HPbarPrefab;
 	
-
     [Header("Colors")]
     [SerializeField] Material materialNeutral;
 	[SerializeField] Material[] materials;
@@ -65,6 +70,7 @@ public class Base : MonoBehaviour, ITargetable
 		CollisionManager.Instance.AddCollidable(collision);
 
 		ConfigManager.Instance.OnConfigsLoaded += LoadFromConfig;
+		
 	}
 
 	void LoadFromConfig()
@@ -93,7 +99,7 @@ public class Base : MonoBehaviour, ITargetable
     {
         if (health.current <= 0)
 		{
-			Die();
+			Die(new Owner());
 		}
 	    if (lineArrow != null)
 	    {
@@ -145,71 +151,56 @@ public class Base : MonoBehaviour, ITargetable
 		if (capture != null)
 			capture.Reset();
 
+		// if player is new owner
 		if (owner.playerController != null)
 		{
 			//owner.playerController.rallyPoint.DelayedStart();
 
-			AddUIBar();
+			AddUIHPBar();
 
-			spawner.enabled = true;
-			spawner.DelayedStart();
 			spawner.StartSpawn(trans.position);
 		}
+		// else it's neutral
 		else
 		{
-			if (assignedUIBarObject != null)
-				Destroy(assignedUIBarObject);
-			spawner.enabled = false;
+//			spawner.unitCount = 0;
 			spawner.StopSpawn();
 			spawner.StopAllCoroutines();
 		}
+		spawner.UpdateLabel();
 		AssignMaterial();
 	}
-	
-	public void PutNearDronesInside()
+
+	public void PutDroneInside(Drone drone)
 	{
-		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(trans.position, collider.radius);
-		for (int i = 0; i < list.Count; i++)
+		if (drone.owner.playerNumber == owner.playerNumber)
 		{
-			Drone drone = list[i].trans.gameObject.GetComponent<Drone>();
-			if (drone != null)
-				drone.PutIntoBase();
-			spawner.unitCount += 1;
+			if (spawner.unitCount > 0)
+				spawner.unitCount += 1;
 		}
+		else
+		{
+			if (spawner.unitCount > 0)
+				spawner.unitCount -= 1;
+			else
+				SetOwner(drone.owner.playerNumber, drone.owner.playerController);
+		}
+
 		spawner.UpdateLabel();
+		drone.Die();
 	}
 
-    void AddUIBar()
-    {
-	    Vector2 newPosition = trans.position;
-	    newPosition.y += 1;
-	    assignedUIBarObject = Instantiate(HPbarPrefab, newPosition, trans.rotation);
-	    assignedUIBarObject.transform.SetParent(GameObject.Find("HPBars").transform);
-	    assignedUIBarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-
-//		UISprite assignedHPbarSprite = assignedUIBarObject.GetComponent<UISprite>();
-//		assignedHPbarSprite.SetAnchor(gameObject);
-
-		assignedHPbarSlider = assignedUIBarObject.transform.GetChild(0).GetComponent<UISlider>();
-	    assignedUnitCountLabel = assignedUIBarObject.transform.GetChild(1).GetChild(0).GetComponent<UILabel>();
-	    //Debug.Log(assignedHPbarSlider);
-    }
-
-	void SetOwnerAsInParent()
+	void AddUIHPBar()
 	{
-		var ownerParent = trans.parent.GetComponent<Owner>();
-		owner.playerNumber = ownerParent.playerNumber;
-		owner.playerController = ownerParent.playerController;
-	}
+		Transform HPBars = GameObject.Find("UIBars").transform;
+		GameObject prefab = Resources.Load<GameObject>("UI/BaseHPBar");
+	    
+		Vector2 newPosition = trans.position;
+		newPosition.y += mesh.bounds.extents.y-1;
+		GameObject assignedHPBarObject = Instantiate(prefab, newPosition, trans.rotation, HPBars);
+		assignedHPBarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-	void TakeNodes()
-	{
-		Vector2 tmp = new Vector2(trans.position.x, trans.position.y);
-		List<Node> list = Grid.Instance.FindNodesInRadius(tmp, GetComponent<QuadMesh>().size);
-		foreach (Node n in list)
-		{
-			n.ImprisonObject(gameObject);
-		}
+		assignedHPbarSlider = assignedHPBarObject.GetComponent<UISlider>();
 	}
 
 	void AssignMaterial()
@@ -225,19 +216,18 @@ public class Base : MonoBehaviour, ITargetable
 			Debug.LogError("Cannot assign material.");
 	}
 
-    void Die()
+    void Die(Owner killerOwner)
     {
         CancelInvoke();
 	    spawner.StopSpawn();
         //isDead = true;
-        GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
-        tmpObject.transform.SetParent(GameController.Instance.transform);
+        GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation, GameController.Instance.transform);
 		//tmpObject.transform.localScale = trans.localScale;
-        Destroy(assignedUIBarObject);
-        //Destroy(gameObject);
-        //gameObject.SetActive(false);
-	    SetOwner(-1, null);
-	    health.current = health.max;
+
+		if (assignedHPbarSlider != null)
+			Destroy(assignedHPbarSlider.gameObject);
+		SetOwner(killerOwner.playerNumber, killerOwner.playerController);
+		health.current = health.max;
     }
 
 	public void OnDrawGizmos()
@@ -258,7 +248,7 @@ public class Base : MonoBehaviour, ITargetable
 			assignedHPbarSlider.Set((float)health.current / health.max);
 		if (health.current <= 0)
 		{
-			Die();
+			Die(weapon.owner);
 			weapon.EndCombat();
 		}
 	}
@@ -270,7 +260,7 @@ public class Base : MonoBehaviour, ITargetable
 			assignedHPbarSlider.Set((float)health.current / health.max);
 		if (health.current <= 0)
 		{
-			Die();
+			Die(new Owner());
 		}
 	}
 

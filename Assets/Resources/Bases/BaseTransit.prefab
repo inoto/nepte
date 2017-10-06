@@ -28,7 +28,7 @@ GameObject:
   - component: {fileID: 114910062752346576}
   - component: {fileID: 58317274819651986}
   m_Layer: 0
-  m_Name: Base
+  m_Name: BaseTransit
   m_TagString: base
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ Transform:
   m_GameObject: {fileID: 1771483991996188}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12.2, y: 3.67, z: 0.1}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55587925037df433282650f8c4ef7d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canProduce: 1
+  canProduce: 0
   isActive: 0
   unitCount: 10
   unitCountMax: 50
@@ -216,4 +216,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1
+  size: 0.75

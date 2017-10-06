@@ -40,7 +40,7 @@ public class Mover : MonoBehaviour
 	private Queue<Vector2> velocitySamples = new Queue<Vector2>();
 
     [Header("Modules")]
-    public FollowRally followRally;
+    public FollowBase followBase;
     public Separation separation;
     public Cohesion cohesion;
 	public FollowTarget followTarget;
@@ -64,7 +64,7 @@ public class Mover : MonoBehaviour
 	public void DelayedStart()
     {
         owner = GetComponent<Owner>();
-		followRally.Activate(this);
+	    followBase.Activate(this);
 		separation.Activate(this);
 		cohesion.Activate(this);
 //	    followTarget = new FollowTarget(this);
@@ -81,25 +81,17 @@ public class Mover : MonoBehaviour
 		isMoving = true;
 		while (isMoving)
 		{
-			if (followRally.enabled && followRally.rally != null)
+			if (followBase.enabled && followBase.targetBase != null)
 			{
-				if (!followRally.arrived)
+				if (!followBase.arrived)
 				{
-					
-					followRally.Arrive();
-//					LookWhereYoureGoing();
+					followBase.Arrive();
 				}
 				else
 				{
-					//velocity *= 0;
-					followRally.BeAround();
-//					LookAtDirection(followRally.rally.transform.position);
+					followBase.MoveAround();
 				}
 				LookWhereYoureGoing();
-//				if (!followRally.arrived)
-				
-//				else
-//					
 			}
 			if (separation.enabled)
 			{

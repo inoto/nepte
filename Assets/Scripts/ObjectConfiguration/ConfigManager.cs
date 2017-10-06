@@ -38,6 +38,7 @@ public class ConfigManager : MonoBehaviour
 	public string configFileName = "tightspace-config.json";
 	
 	public ConfigBase Base;
+	public ConfigBase BaseTransit;
 	public ConfigDrone Drone;
 	
 	private void Start()

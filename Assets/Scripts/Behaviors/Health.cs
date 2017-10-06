@@ -5,6 +5,7 @@ using System.Collections;
 public class Health
 {
     public int max;
+    public int maxWithBonuses;
     public int current;
     [Range(0.0f, 1.0f)]
     public float percent;

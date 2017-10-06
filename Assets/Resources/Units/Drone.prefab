@@ -113,18 +113,14 @@ MonoBehaviour:
   turnSpeed: 3
   smoothing: 1
   numSamplesForSmoothing: 5
-  followRally:
+  followBase:
     enabled: 1
-    followingRally: 0
+    following: 0
     arrived: 0
-    angle: 0
-    rallyPoint: {x: 0, y: 0}
-    rally: {fileID: 0}
-    rallyPointMass: 0
-    rallyPointG: 0
-    stopRadius: 0.8
-    slowDownRadius: 2
-    mag: 0
+    targetBase: {fileID: 0}
+    enterRadius: 1
+    attackRadius: 2
+    slowDownRadius: 3
   separation:
     enabled: 1
     count: 0

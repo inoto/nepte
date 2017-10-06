@@ -88,7 +88,8 @@ public class Drone : MonoBehaviour, ITargetable
 			mover.maxSpeed = config.SpeedMax;
 			mover.maxForce = config.ForceMax;
 			mover.turnSpeed = config.TurnSpeed;
-			mover.followRally.stopRadius = config.FollowStopRadius;
+			mover.followBase.attackRadius = ConfigManager.Instance.Base.ColliderRadius;
+			mover.followBase.enterRadius = config.EnterBaseRadius;
 			mover.separation.enabled = config.SeparationEnabled;
 			mover.separation.desired = config.SeparationRadius;
 			mover.cohesion.enabled = config.CohesionEnabled;
@@ -108,46 +109,23 @@ public class Drone : MonoBehaviour, ITargetable
 	{
 		_bas.spawner.unitCount += 1;
 		_bas.spawner.UpdateLabel();
-		PutIntoBase();
+		Die();
 	}
 
-	public void PutIntoBase()
-	{
-//		Debug.Log("put into base");
-		mode = Mode.Dead;
-		collision.isDead = true;
-		weapon.collision.isDead = true;
-		if (collision.collidedBaseCircle != null)
-		{
-//			Debug.Log("unit put into base");
-			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
-			if (capture != null)
-			{
-				//capture.RemoveCapturerByPlayer(owner.playerNumber);
-				capture.bas.collision.collidedCount--;
-				collision.collidedBaseCircle = null;
-			}
-			
-		}
-		owner.playerController.playerUnitCount -= 1;
-		PlayerController.unitCount -= 1;
-		ObjectPool.Recycle(gameObject);
-	}
-
-	void Die()
+	public void Die()
 	{
 		mode = Mode.Dead;
 		collision.isDead = true;
 		weapon.collision.isDead = true;
-		if (collision.collidedBaseCircle != null)
-		{
-			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
-			capture.RemoveCapturerByPlayer(owner.playerNumber);
-			capture.bas.collision.collidedCount--;
-			collision.collidedBaseCircle = null;
-		}
-		
-		MakeExplosion();
+//		if (collision.collidedBaseCircle != null)
+//		{
+//			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
+//			capture.RemoveCapturerByPlayer(owner.playerNumber);
+//			capture.bas.collision.collidedCount--;
+//			collision.collidedBaseCircle = null;
+//		}
+		if (health.current <= 0)
+			MakeExplosion();
 		owner.playerController.playerUnitCount -= 1;
 		PlayerController.unitCount -= 1;
 		ObjectPool.Recycle(gameObject);

@@ -313,6 +313,8 @@ public class QuadTreeEternal
 	{
 	    if (unit1.instanceId == unit2.instanceId)
 	    	return;
+		if (unit1.isStatic && unit2.isStatic)
+			return;
 		if (unit1.isDead || unit2.isDead)
 			return;
 		if (unit1.isWeapon || unit2.isWeapon)
@@ -329,7 +331,7 @@ public class QuadTreeEternal
 					if (unit2.isCollidedWithBase == false)
 					{
 //						Debug.Log("unit near base");
-						unit1.trans.GetComponent<Capture>().AddCapturerByPlayer(unit2.owner.playerNumber);
+//						unit1.trans.GetComponent<Capture>().AddCapturerByPlayer(unit2.owner.playerNumber);
 						unit2.collidedBaseCircle = unit1;
 						unit2.isCollidedWithBase = true;
 						unit1.collidedCount++;
@@ -342,7 +344,7 @@ public class QuadTreeEternal
 //						Debug.Log("unit NOT near base anymore");
 						unit2.collidedBaseCircle = null;
 						unit2.isCollidedWithBase = false;
-						unit1.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit2.owner.playerNumber);
+//						unit1.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit2.owner.playerNumber);
 						unit1.collidedCount--;
 					}
 				}
@@ -356,13 +358,9 @@ public class QuadTreeEternal
 					{
 						if (!unit2.isDead)
 						{
-							if (unit2.mover.followRally.rally == unit1.trans.gameObject)
-								unit2.trans.GetComponent<Drone>().PutIntoBase(unit1.trans.gameObject.GetComponent<Base>());
-							else
-							{
+							if (unit2.mover.followBase.targetBase.gameObject != unit1.trans.gameObject)
 								if (unit2.mover.separation.enabled)
 									unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
-							}
 						}
 					}
 				}
@@ -379,7 +377,7 @@ public class QuadTreeEternal
 					if (unit1.isCollidedWithBase == false)
 					{
 //						Debug.Log("unit near base");
-						unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
+//						unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
 						unit1.collidedBaseCircle = unit2;
 						unit1.isCollidedWithBase = true;
 						unit2.collidedCount++;
@@ -392,7 +390,7 @@ public class QuadTreeEternal
 //						Debug.Log("unit NOT near base anymore");
 						unit1.collidedBaseCircle = null;
 						unit1.isCollidedWithBase = false;
-						unit2.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit1.owner.playerNumber);
+//						unit2.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit1.owner.playerNumber);
 						unit2.collidedCount--;
 					}
 				}
@@ -406,13 +404,9 @@ public class QuadTreeEternal
 					{
 						if (!unit1.isDead)
 						{
-							if (unit1.mover.followRally.rally == unit2.trans.gameObject)
-								unit1.trans.GetComponent<Drone>().PutIntoBase(unit2.trans.gameObject.GetComponent<Base>());
-							else
-							{
+							if (unit1.mover.followBase.targetBase.gameObject != unit2.trans.gameObject)
 								if (unit1.mover.separation.enabled)
 									unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
-							}
 						}
 					}
 				}
@@ -447,25 +441,6 @@ public class QuadTreeEternal
 			{
 				unit2.trans.Translate(-0.2f, 0, 0);
 				unit1.trans.Translate(0.2f, 0, 0);
-			}
-		}
-	}
-	
-	void CheckWeapon2(CollisionCircle unit1, CollisionCircle unit2)
-	{
-		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
-		if (distance > 0)
-		{
-			float radiuses = unit1.GetRadius() + unit2.GetRadius();
-			if (distance < radiuses * radiuses)
-			{
-				unit1.Collided(unit2);
-				unit2.Collided(unit1);
-			}
-			else
-			{
-				unit1.CollidedEnded(unit2);
-				unit2.CollidedEnded(unit1);
 			}
 		}
 	}
