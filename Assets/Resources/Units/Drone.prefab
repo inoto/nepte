@@ -178,7 +178,7 @@ MonoBehaviour:
     type: 2}
   health:
     max: 100
-    maxWithBonuses: 0
+    maxNoBonuses: 0
     current: 100
     percent: 1
   collision:
@@ -227,10 +227,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showRadius: 1
+  isEnabled: 1
   isAttacking: 0
-  radius: 1.5
+  radius: 2
   attackSpeed: 1
-  damage: 100
+  damage: 40
+  damageNoBonuses: 0
   hasTarget: 0
   missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
     type: 2}

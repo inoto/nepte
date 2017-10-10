@@ -39,7 +39,7 @@ public class Base : MonoBehaviour, ITargetable
 	public Owner owner;
 	public Spawner spawner;
 //    public Body body;
-	public Capture capture;
+	public Weapon weapon;
 	MeshRenderer mesh;
 
     [Header("Prefabs")]
@@ -58,7 +58,7 @@ public class Base : MonoBehaviour, ITargetable
         spawner = GetComponent<Spawner>();
         owner = GetComponent<Owner>();
 //        body = GetComponent<Body>();
-	    capture = GetComponent<Capture>();
+	    weapon = GetComponent<Weapon>();
 	    collider = GetComponent<CircleCollider2D>();
     }
 
@@ -81,7 +81,7 @@ public class Base : MonoBehaviour, ITargetable
 		if (health != null)
 		{
 			health.max = config.HealthMax;
-			health.current = health.max;
+			health.Reset();
 		}
 		if (collider != null)
 		{
@@ -92,6 +92,16 @@ public class Base : MonoBehaviour, ITargetable
 			spawner.intervalMax = config.ProduceUnitInterval;
 			spawner.prefabName = config.SpawnUnitPrefabName;
 			spawner.prefab = Resources.Load<GameObject>("Units/" + spawner.prefabName);
+			spawner.maxCapturePoints = config.CaptureUnitCount;
+		}
+		if (weapon != null)
+		{
+			weapon.attackSpeed = config.AttackSpeed;
+			weapon.damage = config.AttackDamage;
+			weapon.damageNoBonuses = weapon.damage;
+			weapon.radius = config.AttackRadius;
+			weapon.missilePrefabName = config.AttackMissilePrefabName;
+			weapon.missilePrefab = Resources.Load<GameObject>(weapon.missilePrefabName);
 		}
 	}
 
@@ -148,8 +158,8 @@ public class Base : MonoBehaviour, ITargetable
 		owner.playerNumber = _playerNumber;
 		owner.playerController = _playerController;
 
-		if (capture != null)
-			capture.Reset();
+		if (health != null)
+			health.Reset();
 
 		// if player is new owner
 		if (owner.playerController != null)
@@ -169,25 +179,6 @@ public class Base : MonoBehaviour, ITargetable
 		}
 		spawner.UpdateLabel();
 		AssignMaterial();
-	}
-
-	public void PutDroneInside(Drone drone)
-	{
-		if (drone.owner.playerNumber == owner.playerNumber)
-		{
-			if (spawner.unitCount > 0)
-				spawner.unitCount += 1;
-		}
-		else
-		{
-			if (spawner.unitCount > 0)
-				spawner.unitCount -= 1;
-			else
-				SetOwner(drone.owner.playerNumber, drone.owner.playerController);
-		}
-
-		spawner.UpdateLabel();
-		drone.Die();
 	}
 
 	void AddUIHPBar()
@@ -226,9 +217,33 @@ public class Base : MonoBehaviour, ITargetable
 
 		if (assignedHPbarSlider != null)
 			Destroy(assignedHPbarSlider.gameObject);
-		SetOwner(killerOwner.playerNumber, killerOwner.playerController);
-		health.current = health.max;
+		SetOwner(-1, null);
+	    health.max = health.maxNoBonuses;
+		health.current = health.maxNoBonuses;
     }
+	
+	public void AddBonusHP(int addition)
+	{
+		health.max += addition;
+		health.current += addition;
+		UpdateHPValue();
+	}
+
+	public void RemoveBonusHP(int addition)
+	{
+		health.max -= addition;
+//		health.current -= addition;
+		UpdateHPValue();
+	}
+
+	public void UpdateHPValue()
+	{
+		if (assignedHPbarSlider != null)
+		{
+			assignedHPbarSlider.Set((float) health.current / health.max);
+			health.percent = assignedHPbarSlider.value;
+		}
+	}
 
 	public void OnDrawGizmos()
 	{
@@ -244,23 +259,53 @@ public class Base : MonoBehaviour, ITargetable
 	public void Damage(Weapon weapon)
 	{
 		health.current -= weapon.damage;
-		if (assignedHPbarSlider != null)
-			assignedHPbarSlider.Set((float)health.current / health.max);
+		UpdateHPValue();
 		if (health.current <= 0)
 		{
 			Die(weapon.owner);
 			weapon.EndCombat();
+		}
+		else
+		{
+			if (Mathf.CeilToInt(spawner.unitCountF) != Mathf.CeilToInt(spawner.unitCount))
+				spawner.unitCountF = spawner.unitCount;
+			spawner.unitCountF *= (1 - (float) weapon.damage / (float) health.current);
+			if (Mathf.CeilToInt(spawner.unitCountF) == spawner.unitCount - 1)
+			{
+				spawner.unitCount -= 1;
+				RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
+				this.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
+			}
+//			int n = Mathf.CeilToInt(spawner.unitCountF);
+//			if (n == spawner.unitCount - 1)
+//				spawner.unitCount = n; 
+			spawner.UpdateLabel();
 		}
 	}
 	
 	public void Damage(int damage)
 	{
 		health.current -= damage;
-		if (assignedHPbarSlider != null)
-			assignedHPbarSlider.Set((float)health.current / health.max);
+		UpdateHPValue();
 		if (health.current <= 0)
 		{
 			Die(new Owner());
+		}
+		else
+		{
+			if (Mathf.CeilToInt(spawner.unitCountF) != Mathf.CeilToInt(spawner.unitCount))
+				spawner.unitCountF = spawner.unitCount;
+			spawner.unitCountF *= (1 - (float) damage / (float) health.current);
+			if (Mathf.CeilToInt(spawner.unitCountF) == spawner.unitCount - 1)
+			{
+				spawner.unitCount -= 1;
+				RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
+				weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
+			}
+//			int n = Mathf.CeilToInt(spawner.unitCountF);
+//			if (n == spawner.unitCount - 1)
+//				spawner.unitCount = n; 
+			spawner.UpdateLabel();
 		}
 	}
 

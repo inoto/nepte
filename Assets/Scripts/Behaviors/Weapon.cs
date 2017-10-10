@@ -5,12 +5,13 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
 	public bool showRadius = false;
-
+	public bool isEnabled = true;
 	public bool isAttacking = false;
 	
     public float radius = 3.5f;
 	public float attackSpeed = 1;
 	public int damage = 40;
+	public int damageNoBonuses = 0;
 	public ITargetable target;
 	public bool hasTarget;
 
@@ -49,7 +50,6 @@ public class Weapon : MonoBehaviour
 		if (target != null && !isAttacking)
 			//if (mover.IsFacing(target.GameObj.transform.position, 120))
 			StartCoroutine(ReleaseMissileToTarget());
-		
 	}
 
 	IEnumerator ReleaseMissileToTarget()
@@ -73,13 +73,20 @@ public class Weapon : MonoBehaviour
 		laserMissile.target = target;
 	}
 
+	public void AddDamage(int additionalDamage)
+	{
+		damage += additionalDamage;
+	}
+	
+	public void RemoveDamage(int additionalDamage)
+	{
+		damage -= additionalDamage;
+	}
+
 	public void NewTarget(ITargetable newTarget)
 	{
 		target = newTarget;
 		hasTarget = true;
-		showRadius = true;
-		mover.followBase.enabled = false;
-		mover.followTarget.enabled = true;
 	}
 
 	public void EndCombat()
@@ -87,9 +94,6 @@ public class Weapon : MonoBehaviour
 		isAttacking = false;
 		target = null;
 		hasTarget = false;
-		showRadius = false;
-		mover.followBase.enabled = true;
-		mover.followTarget.enabled = false;
 	}
 
 	public void OnDrawGizmos()

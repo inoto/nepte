@@ -465,24 +465,24 @@ public class QuadTreeEternal
 				float radiuses = unit1.GetRadius() + unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (!unit1.mover.weapon.hasTarget)
+					if (!unit1.weapon.hasTarget)
 					{
-						unit1.mover.weapon.target = unit2.trans.GetComponent<ITargetable>();
-						unit1.mover.weapon.hasTarget = true;
+						unit1.weapon.target = unit2.trans.GetComponent<ITargetable>();
+						unit1.weapon.hasTarget = true;
 						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
 					}
 					else
 					{
-						unit1.mover.weapon.AttackTarget();
+						unit1.weapon.AttackTarget();
 					}
 				}
 				else
 				{
 					
-					if (unit1.mover.weapon.target != null)
+					if (unit1.weapon.target != null)
 					{
-						if (unit1.mover.weapon.target.GameObj == unit2.trans.gameObject)
-							unit1.mover.weapon.target = null;
+						if (unit1.weapon.target.GameObj == unit2.trans.gameObject)
+							unit1.weapon.target = null;
 					}
 				}
 			}
@@ -491,23 +491,23 @@ public class QuadTreeEternal
 				float radiuses = unit1.GetRadius() + unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (!unit2.mover.weapon.hasTarget)
+					if (!unit2.weapon.hasTarget)
 					{
-						unit2.mover.weapon.target = unit1.trans.GetComponent<ITargetable>();
-						unit2.mover.weapon.hasTarget = true;
+						unit2.weapon.target = unit1.trans.GetComponent<ITargetable>();
+						unit2.weapon.hasTarget = true;
 						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
 					}
 					else
 					{
-						unit2.mover.weapon.AttackTarget();
+						unit2.weapon.AttackTarget();
 					}
 				}
 				else
 				{
-					if (unit2.mover.weapon.target != null)
+					if (unit2.weapon.target != null)
 					{
-						if (unit2.mover.weapon.target.GameObj == unit1.trans.gameObject)
-							unit2.mover.weapon.target = null;
+						if (unit2.weapon.target.GameObj == unit1.trans.gameObject)
+							unit2.weapon.target = null;
 					}
 				}
 			}

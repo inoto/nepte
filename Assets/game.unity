@@ -422,6 +422,11 @@ Prefab:
       propertyPath: size
       value: 1.25
       objectReference: {fileID: 0}
+    - target: {fileID: 114017529968746086, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449,
+        type: 2}
+      propertyPath: type
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
   m_IsPrefabParent: 0
@@ -1226,6 +1231,16 @@ Prefab:
         type: 2}
       propertyPath: size
       value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114017529968746086, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449,
+        type: 2}
+      propertyPath: type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114358262193089728, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449,
+        type: 2}
+      propertyPath: unitCountF
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
@@ -4906,12 +4921,22 @@ MonoBehaviour:
     ProduceUnitInterval: 2
     SpawnUnitPrefabName: Drone
     UnitCountMax: 50
+    CaptureUnitCount: 0
+    AttackSpeed: 0
+    AttackDamage: 0
+    AttackRadius: 0
+    AttackMissilePrefabName: 
   BaseTransit:
     HealthMax: 0
     ColliderRadius: 0
     ProduceUnitInterval: 0
     SpawnUnitPrefabName: 
     UnitCountMax: 0
+    CaptureUnitCount: 0
+    AttackSpeed: 0
+    AttackDamage: 0
+    AttackRadius: 0
+    AttackMissilePrefabName: 
   Drone:
     HealthMax: 200
     SpeedMax: 1

@@ -25,8 +25,8 @@ GameObject:
   - component: {fileID: 23086487595305584}
   - component: {fileID: 114969710160545916}
   - component: {fileID: 114358262193089728}
-  - component: {fileID: 114910062752346576}
   - component: {fileID: 58317274819651986}
+  - component: {fileID: 114673071609516670}
   m_Layer: 0
   m_Name: Base
   m_TagString: base
@@ -122,6 +122,7 @@ MonoBehaviour:
   attackers: []
   health:
     max: 4000
+    maxNoBonuses: 4000
     current: 4000
     percent: 1
   collision:
@@ -142,7 +143,7 @@ MonoBehaviour:
   trans: {fileID: 0}
   owner: {fileID: 0}
   spawner: {fileID: 0}
-  capture: {fileID: 0}
+  weapon: {fileID: 0}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
     type: 2}
   HPbarPrefab: {fileID: 1211159475750974, guid: 047570b75374547bba9d07df774de185,
@@ -165,14 +166,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canProduce: 1
   isActive: 0
+  unitCountF: 0
   unitCount: 10
   unitCountMax: 50
+  isCapturing: 0
+  maxCapturePoints: 5
+  captureLead: -1
   delay: 2
   intervalMin: 2
   intervalMax: 2
   point: {x: 0, y: 0}
   prefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab, type: 2}
   prefabName: Drone
+--- !u!114 &114673071609516670
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1771483991996188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96d0839dd24647be940a0c25c7a7063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showRadius: 1
+  isEnabled: 1
+  isAttacking: 0
+  radius: 4
+  attackSpeed: 2
+  damage: 100
+  damageNoBonuses: 100
+  hasTarget: 0
+  missilePrefab: {fileID: 0}
+  missilePrefabName: LaserMissile
+  trans: {fileID: 4175439061827504}
+  owner: {fileID: 0}
+  mover: {fileID: 0}
+  collision:
+    showGizmos: 0
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    bas: {fileID: 0}
+    isInQT: 0
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    isWeapon: 0
+    collidedCount: 0
 --- !u!114 &114681370771658558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -186,25 +229,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerNumber: -1
   playerController: {fileID: 0}
---- !u!114 &114910062752346576
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1771483991996188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bda2384664e49d999609892b6052a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isCapturing: 0
-  owner: {fileID: 0}
-  bas: {fileID: 0}
-  capturerCount: 0000000000000000
-  leadIndex: -1
-  assignedCircleTimer: {fileID: 0}
-  circleTimerPrefab: {fileID: 1214602673638814, guid: 16918998a47c646d881c91eefeb65c70,
-    type: 2}
 --- !u!114 &114969710160545916
 MonoBehaviour:
   m_ObjectHideFlags: 1

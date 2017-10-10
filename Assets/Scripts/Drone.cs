@@ -99,6 +99,7 @@ public class Drone : MonoBehaviour, ITargetable
 		{
 			weapon.attackSpeed = config.AttackSpeed;
 			weapon.damage = config.AttackDamage;
+			weapon.damageNoBonuses = weapon.damage;
 			weapon.radius = config.AttackRadius;
 			weapon.missilePrefabName = config.AttackMissilePrefabName;
 			weapon.missilePrefab = Resources.Load<GameObject>(weapon.missilePrefabName);

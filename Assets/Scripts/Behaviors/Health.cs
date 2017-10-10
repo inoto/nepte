@@ -5,7 +5,7 @@ using System.Collections;
 public class Health
 {
     public int max;
-    public int maxWithBonuses;
+    public int maxNoBonuses;
     public int current;
     [Range(0.0f, 1.0f)]
     public float percent;
@@ -13,9 +13,18 @@ public class Health
     public Health(int _max)
     {
         max = _max;
+        maxNoBonuses = max;
         current = max;
         percent = 1;
     }
 
+    public void Reset()
+    {
+        if (max == current)
+            return;
+        max = maxNoBonuses;
+        current = max;
+        percent = 1;
+    }
     
 }

@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 23086487595305584}
   - component: {fileID: 114969710160545916}
   - component: {fileID: 114358262193089728}
-  - component: {fileID: 114910062752346576}
   - component: {fileID: 58317274819651986}
   m_Layer: 0
   m_Name: BaseTransit
@@ -122,6 +121,7 @@ MonoBehaviour:
   attackers: []
   health:
     max: 4000
+    maxNoBonuses: 4000
     current: 4000
     percent: 1
   collision:
@@ -142,7 +142,7 @@ MonoBehaviour:
   trans: {fileID: 0}
   owner: {fileID: 0}
   spawner: {fileID: 0}
-  capture: {fileID: 0}
+  weapon: {fileID: 0}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
     type: 2}
   HPbarPrefab: {fileID: 1211159475750974, guid: 047570b75374547bba9d07df774de185,
@@ -166,7 +166,11 @@ MonoBehaviour:
   canProduce: 0
   isActive: 0
   unitCount: 10
+  unitCountF: 0
   unitCountMax: 50
+  isCapturing: 0
+  maxCapturePoints: 0
+  captureLead: 0
   delay: 2
   intervalMin: 2
   intervalMax: 2
@@ -186,25 +190,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerNumber: -1
   playerController: {fileID: 0}
---- !u!114 &114910062752346576
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1771483991996188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bda2384664e49d999609892b6052a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isCapturing: 0
-  owner: {fileID: 0}
-  bas: {fileID: 0}
-  capturerCount: 0000000000000000
-  leadIndex: -1
-  assignedCircleTimer: {fileID: 0}
-  circleTimerPrefab: {fileID: 1214602673638814, guid: 16918998a47c646d881c91eefeb65c70,
-    type: 2}
 --- !u!114 &114969710160545916
 MonoBehaviour:
   m_ObjectHideFlags: 1

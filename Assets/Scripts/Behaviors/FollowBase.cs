@@ -53,7 +53,7 @@ public class FollowBase
 
 	public void MoveAround()
 	{
-		if (targetBase.owner.playerNumber == mover.owner.playerNumber)
+		if (targetBase.owner.playerNumber == -1)
 		{
 			arrived = false;
 			return;
@@ -104,10 +104,9 @@ public class FollowBase
 				}
 				else
 				{
-//					mover.GetComponent<Drone>().PutIntoBase(targetBase);
-					targetBase.PutDroneInside(mover.GetComponent<Drone>());
+					targetBase.spawner.PutDroneInside(mover.GetComponent<Drone>());
 					arrived = true;
-					mover.velocity *= 0;
+					//mover.velocity *= 0;
 					return;
 				}
 			}
