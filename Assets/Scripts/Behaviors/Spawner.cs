@@ -52,9 +52,6 @@ public class Spawner : MonoBehaviour
         point = _point;
         UpdateLabel();
 
-//        var bas = GetComponent<Base>();
-        AddBonusFromDrone((int)unitCount);
-        
         StartCoroutine(Spawn());
     }
 
@@ -66,6 +63,8 @@ public class Spawner : MonoBehaviour
 
     public void ReleaseUnits(GameObject obj)
     {
+        if (obj.GetInstanceID() == gameObject.GetInstanceID())
+            return;
         if (canProduce && releaseCoroutine != null)
             StopCoroutine(releaseCoroutine);
         if (unitCount > 0)
@@ -91,6 +90,7 @@ public class Spawner : MonoBehaviour
             count--;
             unitCount--;
             RemoveBonusFromDrone();
+            bas.RemoveBonusHPCurrent(ConfigManager.Instance.Drone.HealthMax);
             
             UpdateLabel();
 
@@ -130,6 +130,11 @@ public class Spawner : MonoBehaviour
                 unitCountLabel.text = unitCount + "/" + maxCapturePoints;
         }
     }
+
+    public void AddBonusInitial()
+    {
+        AddBonusFromDrone((int)unitCount);
+    }
     
     public void AddBonusFromDrone()
     {
@@ -139,7 +144,8 @@ public class Spawner : MonoBehaviour
     void AddBonusFromDrone(int multiplier)
     {
         bas.AddBonusHP(ConfigManager.Instance.Drone.HealthMax * multiplier);
-        bas.weapon.AddDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
+        if (bas.weapon != null)
+            bas.weapon.AddDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
     }
     
     public void RemoveBonusFromDrone()
@@ -150,7 +156,8 @@ public class Spawner : MonoBehaviour
     void RemoveBonusFromDrone(int multiplier)
     {
         bas.RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax * multiplier);
-        bas.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
+        if (bas.weapon != null)
+            bas.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
     }
     
     public void PutDroneInside(Drone drone)
@@ -169,6 +176,7 @@ public class Spawner : MonoBehaviour
                 {
                     unitCount -= 1;
                     RemoveBonusFromDrone();
+                    bas.RemoveBonusHPCurrent(ConfigManager.Instance.Drone.HealthMax);
                 }
                 else if (unitCount == 0)
                 {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Boo.Lang;
+using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public static int unitCount = 0;
     public bool isInitialized = false;
     public bool isDefeated = false;
+	
 
 	[Header("Cache")]
 	public Transform trans;
@@ -16,6 +18,8 @@ public class PlayerController : MonoBehaviour
     public RallyPoint rallyPoint;
     public Base bas;
     public AIPlayer aiPlayer;
+	
+	public List<Base> bases = new List<Base>();
 
     [Header("Prefabs")]
     [SerializeField]
@@ -40,7 +44,7 @@ public class PlayerController : MonoBehaviour
 
 		//CreateRallyPoint();
 
-        if (owner.playerNumber != 0)
+        if (owner.playerNumber > 0)
 			aiPlayer = gameObject.AddComponent<AIPlayer>();
         isInitialized = true;
     }

@@ -51,6 +51,7 @@ public class GameController : MonoBehaviour
     public List<PlayerController> playerController;
     public List<Vector3> playerStartPosition;
     public List<Base> bases;
+	public Dictionary<Base, int> dictBasesOwners = new Dictionary<Base, int>();
 
     [Header("Prefabs")]
     [SerializeField]
@@ -280,7 +281,7 @@ public class GameController : MonoBehaviour
         playerController = new List<PlayerController>();
 
         GameObject playerObject;
-		for (int i = 0; i < players; i++)
+		for (int i = -1; i < players; i++)
 		{
 			playerObject = Instantiate(playerControllerPrefab);
 			playerObject.transform.SetParent(transform);
@@ -299,22 +300,24 @@ public class GameController : MonoBehaviour
 		bases.Clear();
         bases.AddRange(FindObjectsOfType<Base>());
         int counter = 0;
+		int counterFull = -1;
         foreach (Base b in bases)
         {
 	        if (b.useAsStartPosition)
 	        {
 		        //playerStartPosition[counter] = b.trans.position;
 		        b.type = Base.BaseType.Main;
-		        b.SetOwner(counter, playerController[counter]);
-		        playerController[counter].trans.position = b.trans.position;
+		        b.SetOwner(counter, playerController[counter+1]);
+		        playerController[counter+1].trans.position = b.trans.position;
 		        //b.DelayedStart();
 		        counter++;
 	        }
 	        else
 	        {
-		        b.SetOwner(-1, null);
+		        b.SetOwner(-1, playerController[0]);
 	        }
-	        
+//	        dictBasesOwners.Add(b,counterFull);
+	        counterFull++;
         }
 
 	}

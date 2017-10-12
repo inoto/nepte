@@ -261,7 +261,9 @@
     <Compile Include="Assets\NGUI\Scripts\UI\UITexture.cs" />
     <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
     <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
+    <Compile Include="Assets\Scripts\AI\AIDecision.cs" />
     <Compile Include="Assets\Scripts\AI\AIPlayer.cs" />
+    <Compile Include="Assets\Scripts\AI\AITurn.cs" />
     <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\Battleground.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Body.cs" />

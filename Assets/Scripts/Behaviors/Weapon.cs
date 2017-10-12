@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+	private bool isStarted = false;
 	public bool showRadius = false;
 	public bool isEnabled = true;
 	public bool isAttacking = false;
@@ -36,8 +37,29 @@ public class Weapon : MonoBehaviour
 
 	private void Start()
 	{
-        collision = new CollisionCircle(trans, mover, owner, this);
+		collision = new CollisionCircle(trans, mover, owner, this);
 		CollisionManager.Instance.AddCollidable(collision);
+		isAttacking = false;
+		collision.isDead = false;
+		collision.collidedBaseCircle = null;
+		target = null;
+		hasTarget = false;
+		isStarted = true;
+//		Debug.Log("start");
+	}
+	
+	private void OnEnable()
+	{
+		if (isStarted)
+		{
+			CollisionManager.Instance.AddCollidable(collision);
+			isAttacking = false;
+			collision.isDead = false;
+			collision.collidedBaseCircle = null;
+			target = null;
+			hasTarget = false;
+		}
+//		Debug.Log("on enable");
 	}
 
 	public void StopAttacking()
@@ -48,7 +70,6 @@ public class Weapon : MonoBehaviour
 	public void AttackTarget()
 	{
 		if (target != null && !isAttacking)
-			//if (mover.IsFacing(target.GameObj.transform.position, 120))
 			StartCoroutine(ReleaseMissileToTarget());
 	}
 
@@ -91,7 +112,6 @@ public class Weapon : MonoBehaviour
 
 	public void EndCombat()
 	{
-		isAttacking = false;
 		target = null;
 		hasTarget = false;
 	}

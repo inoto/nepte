@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Channels;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -19,6 +20,8 @@ public class Base : MonoBehaviour, ITargetable
 
     public bool isDead = false;
 	public LineRenderer lineArrow;
+	public Dictionary<Base,Vector2> dictDistances = new Dictionary<Base, Vector2>();
+	public Dictionary<Base,int> dictOwners = new Dictionary<Base, int>();
 
 	public GameObject propertyIcon;
 
@@ -70,14 +73,16 @@ public class Base : MonoBehaviour, ITargetable
 		CollisionManager.Instance.AddCollidable(collision);
 
 		ConfigManager.Instance.OnConfigsLoaded += LoadFromConfig;
-		
 	}
 
 	void LoadFromConfig()
 	{
 		config = ConfigManager.Instance.GetBaseConfig(this);
 		if (config == null)
+		{
+			Debug.LogError("Base config was not found");
 			return;
+		}
 		if (health != null)
 		{
 			health.max = config.HealthMax;
@@ -155,28 +160,35 @@ public class Base : MonoBehaviour, ITargetable
 
 	public void SetOwner(int _playerNumber, PlayerController _playerController)
 	{
-		owner.playerNumber = _playerNumber;
-		owner.playerController = _playerController;
-
-		if (health != null)
-			health.Reset();
-
-		// if player is new owner
 		if (owner.playerController != null)
 		{
-			//owner.playerController.rallyPoint.DelayedStart();
+			if (owner.playerController.bases.Contains(this))
+				owner.playerController.bases.Remove(this);
+		}
+		
+		owner.playerNumber = _playerNumber;
+		owner.playerController = _playerController;
+		
+		owner.playerController.bases.Add(this);
+		GameController.Instance.dictBasesOwners[this] = owner.playerNumber;
+//		Debug.Log("bases count of player " + owner.playerNumber + " is " + owner.playerController.bases.Count);
 
+		if (health.percent < 1)
+			LoadFromConfig();
+
+		// if player is new owner
+		if (owner.playerNumber != -1)
+		{
 			AddUIHPBar();
-
 			spawner.StartSpawn(trans.position);
 		}
 		// else it's neutral
 		else
 		{
-//			spawner.unitCount = 0;
 			spawner.StopSpawn();
 			spawner.StopAllCoroutines();
 		}
+		spawner.AddBonusInitial();
 		spawner.UpdateLabel();
 		AssignMaterial();
 	}
@@ -217,7 +229,7 @@ public class Base : MonoBehaviour, ITargetable
 
 		if (assignedHPbarSlider != null)
 			Destroy(assignedHPbarSlider.gameObject);
-		SetOwner(-1, null);
+		SetOwner(-1, GameController.Instance.playerController[0]);
 	    health.max = health.maxNoBonuses;
 		health.current = health.maxNoBonuses;
     }
@@ -233,6 +245,12 @@ public class Base : MonoBehaviour, ITargetable
 	{
 		health.max -= addition;
 //		health.current -= addition;
+		UpdateHPValue();
+	}
+	
+	public void RemoveBonusHPCurrent(int addition)
+	{
+		health.current -= addition;
 		UpdateHPValue();
 	}
 
@@ -274,7 +292,8 @@ public class Base : MonoBehaviour, ITargetable
 			{
 				spawner.unitCount -= 1;
 				RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
-				this.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
+				if (this.weapon != null)
+					this.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
 			}
 //			int n = Mathf.CeilToInt(spawner.unitCountF);
 //			if (n == spawner.unitCount - 1)
@@ -300,7 +319,8 @@ public class Base : MonoBehaviour, ITargetable
 			{
 				spawner.unitCount -= 1;
 				RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
-				weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
+				if (weapon != null)
+					weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
 			}
 //			int n = Mathf.CeilToInt(spawner.unitCountF);
 //			if (n == spawner.unitCount - 1)

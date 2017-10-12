@@ -28,14 +28,11 @@ public class ConfigManager : MonoBehaviour
 		LoadConfigs();
 	}
 
-//	[System.NonSerialized]
-//	public string savesPath;
-
-	public string configURL = "https://raw.githubusercontent.com/Jester1454/jester1454.github.io/master/";
-//	[System.NonSerialized]
-	public string configPath;
-//	[System.NonSerialized]
 	public string configFileName = "tightspace-config.json";
+	public string configURL = "https://raw.githubusercontent.com/Jester1454/jester1454.github.io/master/";
+	public string configPath;
+
+	public string jsonData;
 	
 	public ConfigBase Base;
 	public ConfigBase BaseTransit;
@@ -76,11 +73,12 @@ public class ConfigManager : MonoBehaviour
 		string jsonFile = File.ReadAllText(configPath + configFileName);
 		if (jsonFile != null)
 		{
-			Debug.Log("Loaded from cache file");
-			Debug.Log(jsonFile);
+//			Debug.Log("Loaded from cache file");
+//			Debug.Log(jsonFile);
 			JsonUtility.FromJsonOverwrite(jsonFile, this);
+			jsonData = jsonFile;
 //			Base = JsonUtility.FromJson<ConfigBase>(jsonFile);
-//			BaseTransit = JsonUtility.FromJson<ConfigBase>(jsonFile);
+//			BaseTransit = JsonUtility.FromJsonOverwrite(jsonFile);
 //			Drone = JsonUtility.FromJson<ConfigDrone>(jsonFile);
 			return true;
 		}
@@ -95,8 +93,9 @@ public class ConfigManager : MonoBehaviour
 	{
 		if (text != null)
 		{
-			Debug.Log(text);
+//			Debug.Log(text);
 			JsonUtility.FromJsonOverwrite(text, this);
+			jsonData = text;
 //			Base = JsonUtility.FromJson<ConfigBase>(text);
 //			BaseTransit = JsonUtility.FromJson<ConfigBase>(text);
 //			Drone = JsonUtility.FromJson<ConfigDrone>(text);
@@ -117,18 +116,18 @@ public class ConfigManager : MonoBehaviour
 		if (string.IsNullOrEmpty(www.error))
 		{
 			// www.text to config
-			Debug.Log("Loaded from WWW");
+			Debug.Log("Config has overwritten from WWW");
 			LoadConfigsFromString(www.text);
 			// save downloaded file as cache
 			if (!Directory.Exists(configPath))
 				Directory.CreateDirectory(configPath);
 			File.WriteAllText(configPath + configFileName, www.text);
-			Debug.Log("Config cache has overwritten");
 		}
 		else
 		{
 			Debug.LogError(www.error);
 		}
 		OnConfigsLoaded();
+		Debug.Log(jsonData);
 	}
 }

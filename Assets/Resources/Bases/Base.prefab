@@ -121,9 +121,9 @@ MonoBehaviour:
   rallyPoint: {fileID: 0}
   attackers: []
   health:
-    max: 4000
-    maxNoBonuses: 4000
-    current: 4000
+    max: 100
+    maxNoBonuses: 100
+    current: 100
     percent: 1
   collision:
     showGizmos: 0
@@ -193,7 +193,7 @@ MonoBehaviour:
   isEnabled: 1
   isAttacking: 0
   radius: 4
-  attackSpeed: 2
+  attackSpeed: 4
   damage: 100
   damageNoBonuses: 100
   hasTarget: 0

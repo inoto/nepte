@@ -92,8 +92,8 @@ public class FollowBase
         //float currentSpeed = 0;
         if (dist < slowDownRadius)
 		{
-			mover.separation.desired = 0.3f;
-			mover.cohesion.desired = 0.3f;
+//			mover.separation.desired = 0.3f;
+//			mover.cohesion.desired = 0.3f;
 			if (targetBase.owner.playerNumber == mover.owner.playerNumber || targetBase.owner.playerNumber == -1)
 			{
 				if (dist > enterRadius)

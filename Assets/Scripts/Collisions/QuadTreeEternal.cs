@@ -469,6 +469,7 @@ public class QuadTreeEternal
 					{
 						unit1.weapon.target = unit2.trans.GetComponent<ITargetable>();
 						unit1.weapon.hasTarget = true;
+						unit1.weapon.AttackTarget();
 						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
 					}
 					else
@@ -495,6 +496,7 @@ public class QuadTreeEternal
 					{
 						unit2.weapon.target = unit1.trans.GetComponent<ITargetable>();
 						unit2.weapon.hasTarget = true;
+						unit2.weapon.AttackTarget();
 						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
 					}
 					else

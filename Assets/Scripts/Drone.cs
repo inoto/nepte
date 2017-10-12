@@ -16,6 +16,7 @@ public class Drone : MonoBehaviour, ITargetable
     }
 	public Mode mode;
 
+	private bool isStarted = false;
 	public GameObject explosionPrefab;
 
     [Header("Modules")]
@@ -48,13 +49,10 @@ public class Drone : MonoBehaviour, ITargetable
 	    config = ConfigManager.Instance.Drone;
     }
 
-	private void Start()
-	{
-		collision = new CollisionCircle(trans, mover, owner, null);
-		CollisionManager.Instance.AddCollidable(collision);
-		
-		LoadFromConfig();
-	}
+//	private void Start()
+//	{
+//		Debug.Log("start");
+//	}
 
 	public void DelayedStart()
     {
@@ -68,9 +66,12 @@ public class Drone : MonoBehaviour, ITargetable
 	private void OnEnable()
 	{
 		mode = Drone.Mode.Idle;
+		collision = new CollisionCircle(trans, mover, owner, null);
+		CollisionManager.Instance.AddCollidable(collision);
 		collision.isDead = false;
 		collision.collidedBaseCircle = null;
-		weapon.target = null;
+		
+		LoadFromConfig();
 //		Debug.Log("on enable");
 	}
 	
