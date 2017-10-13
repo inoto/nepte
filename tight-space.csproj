@@ -311,6 +311,7 @@
     <Compile Include="Assets\Scripts\LaserMissile.cs" />
     <Compile Include="Assets\Scripts\Meshes\QuadMesh.cs" />
     <Compile Include="Assets\Scripts\Meshes\RectangleMesh.cs" />
+    <Compile Include="Assets\Scripts\Mothership.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\ConfigManager.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigBase.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigDrone.cs" />
