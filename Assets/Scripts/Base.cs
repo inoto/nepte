@@ -54,6 +54,10 @@ public class Base : MonoBehaviour, ITargetable
     [SerializeField] Material materialNeutral;
 	[SerializeField] Material[] materials;
 
+	[Header("AIPlayer")]
+	public int unitCountNearBasSelf = 0;
+	public int unitCountNearBasEnemies = 0;
+
     private void Awake()
     {
 		trans = GetComponent<Transform>();
@@ -72,11 +76,14 @@ public class Base : MonoBehaviour, ITargetable
 		collision = new CollisionCircle(trans, null, owner, null);
 		CollisionManager.Instance.AddCollidable(collision);
 
-		ConfigManager.Instance.OnConfigsLoaded += LoadFromConfig;
+		ConfigManager.Instance.OnConfigsLoaded += Reset;
+		GameController.Instance.OnGameStart += Reset;
+		GameController.Instance.OnGameStart += Initialize;
 	}
 
-	void LoadFromConfig()
+	void Reset()
 	{
+		
 		config = ConfigManager.Instance.GetBaseConfig(this);
 		if (config == null)
 		{
@@ -94,6 +101,8 @@ public class Base : MonoBehaviour, ITargetable
 		}
 		if (spawner != null)
 		{
+			spawner.StopSpawn();
+			
 			spawner.intervalMax = config.ProduceUnitInterval;
 			spawner.prefabName = config.SpawnUnitPrefabName;
 			spawner.prefab = Resources.Load<GameObject>("Units/" + spawner.prefabName);
@@ -108,6 +117,7 @@ public class Base : MonoBehaviour, ITargetable
 			weapon.missilePrefabName = config.AttackMissilePrefabName;
 			weapon.missilePrefab = Resources.Load<GameObject>(weapon.missilePrefabName);
 		}
+//		Initialize();
 	}
 
 	void Update()
@@ -124,6 +134,30 @@ public class Base : MonoBehaviour, ITargetable
 	    }
         //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
+
+	void Initialize()
+	{
+		if (spawner != null)
+		{
+			spawner.unitCount = spawner.unitCountInitial;
+			spawner.UpdateLabel();
+		}
+		if (GameController.Instance.playersWithUnassignedBases.Count > 0 && useAsStartPosition)
+		{
+			int player = GameController.Instance.playersWithUnassignedBases.Dequeue();
+			PlayerController playerController = GameController.Instance.playerController[player + 1];
+			SetOwner(player, playerController);
+			type = Base.BaseType.Main;
+			playerController.trans.position = trans.position;
+		}
+		else
+		{
+			int player = -1;
+			PlayerController playerController = GameController.Instance.playerController[player + 1];
+			SetOwner(player, playerController);
+		}
+		
+	}
 
 	public void GlowAdd()
 	{
@@ -174,8 +208,10 @@ public class Base : MonoBehaviour, ITargetable
 //		Debug.Log("bases count of player " + owner.playerNumber + " is " + owner.playerController.bases.Count);
 
 		if (health.percent < 1)
-			LoadFromConfig();
+			Reset();
 
+		if (assignedHPbarSlider != null)
+			Destroy(assignedHPbarSlider.gameObject);
 		// if player is new owner
 		if (owner.playerNumber != -1)
 		{
@@ -195,12 +231,12 @@ public class Base : MonoBehaviour, ITargetable
 
 	void AddUIHPBar()
 	{
-		Transform HPBars = GameObject.Find("UIBars").transform;
+		Transform UIBars = GameObject.Find("UIBars").transform;
 		GameObject prefab = Resources.Load<GameObject>("UI/BaseHPBar");
 	    
 		Vector2 newPosition = trans.position;
 		newPosition.y += mesh.bounds.extents.y-1;
-		GameObject assignedHPBarObject = Instantiate(prefab, newPosition, trans.rotation, HPBars);
+		GameObject assignedHPBarObject = Instantiate(prefab, newPosition, trans.rotation, UIBars);
 		assignedHPBarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
 		assignedHPbarSlider = assignedHPBarObject.GetComponent<UISlider>();
@@ -226,12 +262,18 @@ public class Base : MonoBehaviour, ITargetable
         //isDead = true;
         GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation, GameController.Instance.transform);
 		//tmpObject.transform.localScale = trans.localScale;
-
-		if (assignedHPbarSlider != null)
-			Destroy(assignedHPbarSlider.gameObject);
+	    PlayerController oldPlayerController = owner.playerController;
+	    int oldPlayerNumber = owner.playerNumber;
 		SetOwner(-1, GameController.Instance.playerController[0]);
 	    health.max = health.maxNoBonuses;
 		health.current = health.maxNoBonuses;
+	    if (oldPlayerController.bases.Count <= 0 && oldPlayerController.playerUnitCount <= 0)
+	    {
+		    if (oldPlayerNumber == 0)
+			    GameController.Instance.Lose();
+		    else if (oldPlayerNumber > 0)
+			    GameController.Instance.Win();
+	    }
     }
 	
 	public void AddBonusHP(int addition)
@@ -263,6 +305,24 @@ public class Base : MonoBehaviour, ITargetable
 		}
 	}
 
+	void CalculateUnitCountFromDamage(int damage)
+	{
+		if (spawner.unitCount <= 0)
+			return;
+		float oneUnitHealth = health.current / spawner.unitCount;
+		spawner.unitCountF -= (float) damage / oneUnitHealth;
+		
+		if (spawner.unitCountF <= 0 && spawner.unitCount > 0)
+		{
+			spawner.unitCount -= 1;
+			spawner.unitCountF = 1;
+			RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
+			if (this.weapon != null)
+				this.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
+		}
+		spawner.UpdateLabel();
+	}
+
 	public void OnDrawGizmos()
 	{
 		//if (showRadius)
@@ -274,31 +334,17 @@ public class Base : MonoBehaviour, ITargetable
 		//}
 	}
 	
-	public void Damage(Weapon weapon)
+	public void Damage(Weapon fromWeapon)
 	{
-		health.current -= weapon.damage;
+		health.current -= fromWeapon.damage;
 		UpdateHPValue();
+		CalculateUnitCountFromDamage(fromWeapon.damage);
 		if (health.current <= 0)
 		{
-			Die(weapon.owner);
-			weapon.EndCombat();
-		}
-		else
-		{
-			if (Mathf.CeilToInt(spawner.unitCountF) != Mathf.CeilToInt(spawner.unitCount))
-				spawner.unitCountF = spawner.unitCount;
-			spawner.unitCountF *= (1 - (float) weapon.damage / (float) health.current);
-			if (Mathf.CeilToInt(spawner.unitCountF) == spawner.unitCount - 1)
-			{
-				spawner.unitCount -= 1;
-				RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
-				if (this.weapon != null)
-					this.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
-			}
-//			int n = Mathf.CeilToInt(spawner.unitCountF);
-//			if (n == spawner.unitCount - 1)
-//				spawner.unitCount = n; 
-			spawner.UpdateLabel();
+			Die(fromWeapon.owner);
+			fromWeapon.EndCombat();
+			if (health.current < 0)
+				health.current = 0;
 		}
 	}
 	
@@ -306,26 +352,12 @@ public class Base : MonoBehaviour, ITargetable
 	{
 		health.current -= damage;
 		UpdateHPValue();
+		CalculateUnitCountFromDamage(damage);
 		if (health.current <= 0)
 		{
 			Die(new Owner());
-		}
-		else
-		{
-			if (Mathf.CeilToInt(spawner.unitCountF) != Mathf.CeilToInt(spawner.unitCount))
-				spawner.unitCountF = spawner.unitCount;
-			spawner.unitCountF *= (1 - (float) damage / (float) health.current);
-			if (Mathf.CeilToInt(spawner.unitCountF) == spawner.unitCount - 1)
-			{
-				spawner.unitCount -= 1;
-				RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
-				if (weapon != null)
-					weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
-			}
-//			int n = Mathf.CeilToInt(spawner.unitCountF);
-//			if (n == spawner.unitCount - 1)
-//				spawner.unitCount = n; 
-			spawner.UpdateLabel();
+			if (health.current < 0)
+				health.current = 0;
 		}
 	}
 

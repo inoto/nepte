@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
 	public event Game OnGamePaused = delegate { };
     public event Game OnGameContinued = delegate { };
     public event Game OnGameRestart = delegate { };
+	public event Game OnGameStart = delegate { };
 
     public int players = 2;
 	public Color[] playerColors;
@@ -52,6 +53,7 @@ public class GameController : MonoBehaviour
     public List<Vector3> playerStartPosition;
     public List<Base> bases;
 	public Dictionary<Base, int> dictBasesOwners = new Dictionary<Base, int>();
+	public Queue<int> playersWithUnassignedBases = new Queue<int>();
 
     [Header("Prefabs")]
     [SerializeField]
@@ -209,7 +211,7 @@ public class GameController : MonoBehaviour
 
     public void RestartGame()
     {
-        RemoveAllHPBars();
+//        RemoveAllHPBars();
         RemoveAllPlayerUnits();
 		pausePanel.SetActive(false);
 		losePanel.SetActive(false);
@@ -230,18 +232,19 @@ public class GameController : MonoBehaviour
             audioMixerChild.StopMainTheme();
         }
         OnGameContinued();
+		
 		//Camera.main.orthographicSize = 10;
         //GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
 		//Vector3 vec = playerStartPosition[0];
 		//vec.z = -10;
 		//Camera.main.transform.position = vec;
-
-
+		
 		CreatePlayers();
-        AssignBases();
-		state = States.Game;
+//        AssignBases();
 		ingamePanel.SetActive(true);
-
+		state = States.Game;
+		OnGameStart();
+		
 	}
 
     public void RemoveStartScene()
@@ -269,8 +272,8 @@ public class GameController : MonoBehaviour
 
 	public void RemoveAllHPBars()
 	{
-        Transform HPbars = GameObject.Find("HPBars").transform;
-		foreach (Transform child in HPbars)
+        Transform UIbars = GameObject.Find("UIBars").transform;
+		foreach (Transform child in UIbars)
 		{
 			Destroy(child.gameObject);
 		}
@@ -292,7 +295,11 @@ public class GameController : MonoBehaviour
 			tmpPlayerController.DelayedStart();
 
             playerController.Add(tmpPlayerController);
+			if (i != -1)
+				playersWithUnassignedBases.Enqueue(i);
 		}
+		bases.Clear();
+		bases.AddRange(FindObjectsOfType<Base>());
 	}
 
 	void AssignBases()

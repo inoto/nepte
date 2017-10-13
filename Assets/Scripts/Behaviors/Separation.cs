@@ -24,6 +24,7 @@ public class Separation
     public void Activate(Mover _mover)
     {
         mover = _mover;
+	    Clear();
 		//desired = 1;
     }
 

@@ -81,8 +81,10 @@ public class CollisionManager : MonoBehaviour
 		List<CollisionCircle> catched = new List<CollisionCircle>();
 		foreach (var unit in units)
 		{
-//			if (unit.collisionType != CollisionCircle.CollisionType.Body)
-//				continue;
+			if (unit.isWeapon)
+				continue;
+			if (unit.isStatic)
+				continue;
 			float dx = unit.trans.position.x - center.x;
 			float dy = unit.trans.position.y - center.y;
 			if (dx * dx + dy * dy < radius * radius)

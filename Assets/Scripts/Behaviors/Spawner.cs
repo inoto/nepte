@@ -8,6 +8,7 @@ public class Spawner : MonoBehaviour
 {
     public bool canProduce;
     public bool isActive;
+    public float unitCountInitial;
     public float unitCountF;
     public float unitCount;
     public int unitCountMax;
@@ -26,6 +27,7 @@ public class Spawner : MonoBehaviour
     Owner owner;
     Base bas;
     Coroutine releaseCoroutine;
+    Coroutine spawnCoroutine;
 
     private void Awake()
     {
@@ -33,8 +35,6 @@ public class Spawner : MonoBehaviour
         owner = GetComponent<Owner>();
         bas = GetComponent<Base>();
         prefab = Resources.Load<GameObject>("Units/" + prefabName);
-//        Debug.Log("Units/" + prefabName);
-        //bas = GetComponent<Base>();
     }
 
 	public void Start()
@@ -47,12 +47,14 @@ public class Spawner : MonoBehaviour
 
     public void StartSpawn(Vector2 _point)
     {
+        if (bas.type == Base.BaseType.Transit)
+            return;
         if (!canProduce)
             canProduce = true;
         point = _point;
         UpdateLabel();
 
-        StartCoroutine(Spawn());
+        spawnCoroutine = StartCoroutine(Spawn());
     }
 
     public void StopSpawn()
@@ -65,7 +67,7 @@ public class Spawner : MonoBehaviour
     {
         if (obj.GetInstanceID() == gameObject.GetInstanceID())
             return;
-        if (canProduce && releaseCoroutine != null)
+        if (releaseCoroutine != null)
             StopCoroutine(releaseCoroutine);
         if (unitCount > 0)
             releaseCoroutine = StartCoroutine(ReleaseAllUnits(obj));
@@ -90,13 +92,14 @@ public class Spawner : MonoBehaviour
             count--;
             unitCount--;
             RemoveBonusFromDrone();
-            bas.RemoveBonusHPCurrent(ConfigManager.Instance.Drone.HealthMax);
+            if (bas.health.current > bas.health.max)
+                bas.RemoveBonusHPCurrent(ConfigManager.Instance.Drone.HealthMax);
             
             UpdateLabel();
 
             if (canProduce && unitCount < unitCountMax && !isActive)
             {
-                StartCoroutine("Spawn");
+                StartCoroutine(Spawn());
             }
             
             //Delay();
@@ -183,6 +186,11 @@ public class Spawner : MonoBehaviour
                     EnableCapturing(drone.owner.playerNumber);
                     unitCount += 1;
                 }
+                else
+                {
+                    EnableCapturing(drone.owner.playerNumber);
+                    unitCount = 1;
+                }
             }
             else
             {
@@ -197,7 +205,7 @@ public class Spawner : MonoBehaviour
                         DisableCapturing();
                         bas.SetOwner(drone.owner.playerNumber, drone.owner.playerController);
                         unitCount = maxCapturePoints;
-                        AddBonusFromDrone(maxCapturePoints);
+//                        AddBonusFromDrone((int)unitCount);
                     }
                 }
                 else
@@ -235,6 +243,8 @@ public class Spawner : MonoBehaviour
 
     IEnumerator Spawn()
     {
+        if (spawnCoroutine != null)
+            StopCoroutine(spawnCoroutine);
         isActive = true;
         yield return new WaitForSeconds(delay);
         

@@ -1,4 +1,5 @@
-﻿using Boo.Lang;
+﻿using System.Collections;
+using Boo.Lang;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -36,7 +37,23 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         owner.playerController = this;
+	    unitCount = 0;
     }
+
+	IEnumerator LoseChecker()
+	{
+		while (true)
+		{
+			yield return new WaitForSeconds(2.0f);
+			if (bases.Count <= 0 && playerUnitCount <= 0)
+			{
+				if (owner.playerNumber == 0)
+					GameController.Instance.Lose();
+				else if (owner.playerNumber > 0)
+					GameController.Instance.Win();
+			}
+		}
+	}
 
     public void DelayedStart()
     {
@@ -47,6 +64,7 @@ public class PlayerController : MonoBehaviour
         if (owner.playerNumber > 0)
 			aiPlayer = gameObject.AddComponent<AIPlayer>();
         isInitialized = true;
+//	    StartCoroutine(LoseChecker());
     }
 
     void Update()
@@ -71,22 +89,6 @@ public class PlayerController : MonoBehaviour
             //}
         }
     }
-
-    //private void OnDisable()
-    //{
-    //    unitCount = 0;
-    //}
-
-  //  void CreateBase()
-  //  {
-  //      Vector3 point = trans.position;
-		//point.z = 0.1f;
-		//GameObject baseObject = Instantiate(basePrefab, point, trans.rotation);
-  //      baseObject.transform.SetParent(trans);
-		//bas = baseObject.GetComponent<Base>();
-    //    //bas.owner = owner;
-    //    bas.DelayedStart();
-    //}
 
     public void CreateRallyPoint()
     {

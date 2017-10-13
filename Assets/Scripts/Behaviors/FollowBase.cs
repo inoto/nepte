@@ -27,6 +27,7 @@ public class FollowBase
 	public void Activate(Mover _mover)
     {
         mover = _mover;
+	    arrived = false;
     }
 
     public void UpdateTarget(Base obj)
@@ -58,9 +59,11 @@ public class FollowBase
 			arrived = false;
 			return;
 		}
-		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)targetBase.transform.position - mover.velocity).normalized;
+		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)targetBase.transform.position).normalized;
 		desire.Normalize();
 		desire *= attackRadius;
+		if (desire.magnitude > attackRadius)
+			arrived = false;
 		desire *= -1;
 		float angle = 1.4f;
 		Vector2 force = new Vector2(attackRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)),
@@ -92,8 +95,8 @@ public class FollowBase
         //float currentSpeed = 0;
         if (dist < slowDownRadius)
 		{
-//			mover.separation.desired = 0.3f;
-//			mover.cohesion.desired = 0.3f;
+			mover.separation.desired = 0.3f;
+			mover.cohesion.desired = 0.3f;
 			if (targetBase.owner.playerNumber == mover.owner.playerNumber || targetBase.owner.playerNumber == -1)
 			{
 				if (dist > enterRadius)

@@ -562,6 +562,7 @@ public class QuadTreeEternal
 		Gizmos.DrawLine(new Vector3(rect.x, rect.y + rect.height), new Vector3(rect.x + rect.width, rect.y + rect.height));
 #if UNITY_EDITOR
 		Handles.Label(rect.center, objects.Count.ToString() + ":" + curLife.ToString() + ":" + maxLifespan.ToString());
+		Handles.Label(rect.center, objects.Count.ToString());
 #endif
 
 		for (int i = 0; i < childs.Length; i++)

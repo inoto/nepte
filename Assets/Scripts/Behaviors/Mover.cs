@@ -68,7 +68,9 @@ public class Mover : MonoBehaviour
 		separation.Activate(this);
 		cohesion.Activate(this);
 //	    followTarget = new FollowTarget(this);
-	    StartCoroutine("Move");
+	    velocity *= 0;
+	    acceleration *= 0;
+	    StartCoroutine(Move());
     }
 
 	public void Stop()
@@ -101,14 +103,14 @@ public class Mover : MonoBehaviour
 			{
 				cohesion.Cohesie();
 			}
-			if (followTarget.enabled)
-			{
-				if (followTarget.weapon.target != null)
-				{
-					followTarget.Seek();
-					followTarget.LookAtTarget();
-				}
-			}
+//			if (followTarget.enabled)
+//			{
+//				if (followTarget.weapon.target != null)
+//				{
+//					followTarget.Seek();
+//					followTarget.LookAtTarget();
+//				}
+//			}
 			velocity += acceleration;
 			velocity *= maxSpeed;
 			//velocity = LimitVector(velocity, 5);

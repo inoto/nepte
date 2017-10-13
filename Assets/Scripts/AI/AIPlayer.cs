@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 public class AIPlayer : MonoBehaviour
@@ -16,13 +19,17 @@ public class AIPlayer : MonoBehaviour
     public List<Base> basesNeutral = new List<Base>();
     public List<Base> basesToBeCaptured = new List<Base>();
     public List<Base> basesToAttack = new List<Base>();
+    public List<Base> basesInFrontLine = new List<Base>();
     public Vector2 frontLinePoint;
     public Vector2 empireCenterPoint;
-    Base basMain;
+    public Base basMain;
     
     public List<AIDecision> decisions = new List<AIDecision>();
     public AIDecision decisionBest = null;
     public List<AIDecision> almostDecisions = new List<AIDecision>();
+    public float distToFar;
+    public Dictionary<Base,int> unitCountNearBeginBas = new Dictionary<Base, int>();
+    public Dictionary<Base,int> unitCountNearTargetBas = new Dictionary<Base, int>();
 
     private void Awake()
     {
@@ -38,6 +45,15 @@ public class AIPlayer : MonoBehaviour
     IEnumerator TakeDecision()
     {
         yield return new WaitForSeconds(decisionInterval);
+        foreach (var b in GameController.Instance.bases)
+        {
+            if (b.owner.playerNumber == owner.playerNumber)
+            {
+                basMain = b;
+                distToFar = basMain.trans.position.sqrMagnitude * 0.75f;
+                break;
+            }
+        }
         while (true)
         {
             DefineEnemies();
@@ -50,7 +66,7 @@ public class AIPlayer : MonoBehaviour
             yield return new WaitForSeconds(decisionInterval);
         }
     }
-
+    
     void ChooseBestDecision()
     {
         decisionBest = null;
@@ -59,23 +75,29 @@ public class AIPlayer : MonoBehaviour
 //        Debug.Log("decisions count: " + decisions.Count);
         foreach (var decision in decisions)
         {
-            Debug.LogFormat(decision.weight.ToString());
+//            Debug.LogFormat(decision.weight.ToString());
             if (decision.weight > weightMax)
             {
-                Debug.Log("decision weight: " + decision.weight);
+                
                 weightMax = decision.weight;
                 decisionBest = decision;
             }
             if (decision.weight > 0 && decision.weight < weightMax)
+            {
+                Debug.Log("almost best decision weight: " + decision.weight);
                 almostDecisions.Add(decision);
+            }
         }
         if (decisionBest != null)
         {
             if (decisionBest.beginBas == decisionBest.targetBas)
-                Debug.Log("fuck");
+                Debug.Log("same base!");
+            Debug.Log("best decision weight: " + decisionBest.weight);
+            Debug.Log("best decision type: " + decisionBest.type.ToString());
             // проверяем можем ли мы запустить юнитов сразу из нескольких баз
-            if (decisionBest.beginBases != null)
+            if (decisionBest.beginBases != null && decisionBest.beginBases.Count > 1)
             {
+//                Debug.Log("releasing from multiple");
                 foreach (var b in decisionBest.beginBases)
                 {
                     b.spawner.ReleaseUnits(decisionBest.targetBas.gameObject);
@@ -83,14 +105,15 @@ public class AIPlayer : MonoBehaviour
             }
             else
             {
+//                Debug.Log("releasing from one");
                 decisionBest.beginBas.spawner.ReleaseUnits(decisionBest.targetBas.gameObject);
             }
             // базы, на которые мы уже отправили юнитов, помечаем, чтобы не отправить снова туда
             if (decisionBest.targetBas.owner.playerNumber == -1)
                 basesToBeCaptured.Add(decisionBest.targetBas);
         }
-        else
-            Debug.Log("no best decision");
+//        else
+//            Debug.Log("no best decision");
     }
 
     void FillDecisions()
@@ -114,45 +137,9 @@ public class AIPlayer : MonoBehaviour
             {
                 decisions.Add(new AIDecision(bas, basToAttack, this));
             }
-            
-//            // move to neutral base first if present
-//            if (basesNeutral.Count > 0)
-//            {
-//                if (b.spawner.unitCount > 15)
-//                {
-//                    Base targetBas = FindSuitableBaseToGo(b, basesNeutral);
-//                    if (targetBas != null)
-//                    {
-//                        b.spawner.ReleaseUnits(targetBas.gameObject);
-//                        basesToBeCaptured.Add(targetBas);
-//                    }
-//                }
-//            }
-//            // else move units to front line or go attack
-//            else
-//            {
-//                Base targetBas = FindSuitableBaseToAttack(b);
-//                if (targetBas != null)
-//                {
-//                    b.spawner.ReleaseUnits(targetBas.gameObject);
-////                        basesToBeCaptured.Add(targetBas);
-//                }
-//                else
-//                {
-//                    if (b.spawner.unitCount > 5)
-//                    {
-//                        targetBas = FindSuitableBaseToMove(frontLinePoint, bases);
-//                        if (targetBas != null)
-//                        {
-//                            b.spawner.ReleaseUnits(targetBas.gameObject);
-////                                basesToBeCaptured.Add(targetBas);
-//                        }
-//                    }
-//                }
-//            }
         }
     }
-
+    
     void FillDistances()
     {
         foreach (var basX in GameController.Instance.bases)
@@ -210,9 +197,70 @@ public class AIPlayer : MonoBehaviour
                 if (basesToBeCaptured.Contains(b))
                     basesToBeCaptured.Remove(b);
             }
+            // считаем кол-во юнитов рядом с базой
+            FillUnitCountNearBase(b);
         }
+        DefineBasesInFrontLine();
         if (count > 0)
             empireCenterPoint = sum / count;
+    }
+    
+    void FillUnitCountNearBase(Base bas)
+    {
+        // кол-во юнитов считается через коллизии и кешируется прямо в базе
+        // размер круга, где ищутся юниты, зависит от размера коллайдера и коэффициента 'multiplier'
+        float multiplier = 1.5f;
+        List<CollisionCircle> unitsNearBas =
+            CollisionManager.Instance.FindBodiesInCircleArea(bas.trans.position, bas.collider.radius * multiplier);
+        int unitsNearBasSelf = 0;
+        int unitsNearBasEnemies = 0;
+        for (int i = 0; i < unitsNearBas.Count; i++)
+        {
+            if (unitsNearBas[i].owner.playerNumber == bas.owner.playerNumber)
+                unitsNearBasSelf++;
+            else
+                unitsNearBasEnemies++;
+        }
+        bas.unitCountNearBasSelf = unitsNearBasSelf;
+        bas.unitCountNearBasEnemies = unitsNearBasEnemies;
+    }
+    
+    void DefineBasesInFrontLine()
+    {
+        basesInFrontLine.Clear();
+        foreach (var basToAttack in basesToAttack)
+        {
+            // сначала найдём ближайшую к противнику базу
+            Base closestToEnemy = null;
+            float distMin = 99999;
+            foreach (var basSelf in owner.playerController.bases)
+            {
+                float dist = (basSelf.trans.position - basToAttack.trans.position).sqrMagnitude;
+                // если расстояние слишком большое, то пропускаем
+                if (dist > distToFar)
+                    continue;
+                if (dist < distMin)
+                {
+                    distMin = dist;
+                    closestToEnemy = basSelf;
+                }
+            }
+            if (closestToEnemy != null)
+            {
+                // затем проверим есть ли рядом дружественные базы, если есть, то считаем что они расположены на линии фронта
+                float distNeeded = (closestToEnemy.trans.position - basToAttack.trans.position).sqrMagnitude * 1.4f;
+                foreach (var basSelf in owner.playerController.bases)
+                {
+                    float dist = (basSelf.trans.position - basToAttack.trans.position).sqrMagnitude;
+                    // 
+                    if (dist < distNeeded)
+                    {
+                        if (!basesInFrontLine.Contains(basSelf))
+                            basesInFrontLine.Add(basSelf);
+                    }
+                }
+            }
+        }
     }
 
     void DefineFrontLinePoint()
@@ -233,128 +281,13 @@ public class AIPlayer : MonoBehaviour
             frontLinePoint = (Vector2)suitable.trans.position + empireCenterPoint;
     }
 
-    Base FindSuitableBaseToGo(Base basFrom, List<Base> whichList)
-    {
-        Base suitable = null;
-        float distMin = 9999;
-        foreach (var b in whichList)
-        {
-            if (basesToBeCaptured.Contains(b))
-                continue;
-            float dist = (basFrom.trans.position - b.trans.position).sqrMagnitude;
-            if (dist < distMin * distMin)
-            {
-                distMin = dist;
-                suitable = b;
-            }
-        }
-        return suitable;
-    }
-    
-    Base FindSuitableBaseToMove(Vector2 point, List<Base> whichList)
-    {
-        Base suitable = null;
-        float distMin = 9999;
-        foreach (var b in whichList)
-        {
-            if (basesToBeCaptured.Contains(b))
-                continue;
-            float dist = (point - (Vector2)b.trans.position).sqrMagnitude;
-            if (dist < distMin * distMin)
-            {
-                distMin = dist;
-                suitable = b;
-            }
-        }
-        return suitable;
-    }
-    
-    Base FindSuitableBaseToAttack(Base basFrom)
-    {
-        Base suitable = null;
-        float distMin = 9999;
-        foreach (var b in basesToAttack)
-        {
-            if (basFrom.spawner.unitCount < b.spawner.unitCount * 0.9)
-                continue;
-            float dist = (empireCenterPoint - (Vector2)b.trans.position).sqrMagnitude;
-            if (dist < distMin * distMin)
-            {
-                distMin = dist;
-                suitable = b;
-            }
-        }
-        return suitable;
-    }
-
-    IEnumerator TakeDecision2()
-    {
-        yield return new WaitForSeconds(decisionInterval);
-        foreach (var b in GameController.Instance.bases)
-        {
-            if (b.owner.playerNumber == owner.playerNumber)
-            {
-                basMain = b;
-                break;
-            }
-        }
-        while(true)
-        {
-//            Debug.Log("take decision iteration");
-            DefineEnemies();
-            DefineBases();
-            DefineFrontLinePoint();
-            
-            foreach (var b in bases)
-            {
-                // move to neutral base first if present
-                if (basesNeutral.Count > 0)
-                {
-                    if (b.spawner.unitCount > 15)
-                    {
-                        Base targetBas = FindSuitableBaseToGo(b, basesNeutral);
-                        if (targetBas != null)
-                        {
-                            b.spawner.ReleaseUnits(targetBas.gameObject);
-                            basesToBeCaptured.Add(targetBas);
-                        }
-                    }
-                }
-                // else move units to front line or go attack
-                else
-                {
-                    Base targetBas = FindSuitableBaseToAttack(b);
-                    if (targetBas != null)
-                    {
-                        b.spawner.ReleaseUnits(targetBas.gameObject);
-//                        basesToBeCaptured.Add(targetBas);
-                    }
-                    else
-                    {
-                        if (b.spawner.unitCount > 5)
-                        {
-                            targetBas = FindSuitableBaseToMove(frontLinePoint, bases);
-                            if (targetBas != null)
-                            {
-                                b.spawner.ReleaseUnits(targetBas.gameObject);
-//                                basesToBeCaptured.Add(targetBas);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            yield return new WaitForSeconds(decisionInterval);
-        }
-    }
-
     private void OnDrawGizmos()
     {
 //        Gizmos.color = Color.blue;
 //        Gizmos.DrawSphere(empireCenterPoint, 0.3f);
 //        Gizmos.color = Color.red;
 //        Gizmos.DrawSphere(frontLinePoint, 0.3f);
-        if (decisionBest != null)
+        if (decisionBest != null && decisionBest.targetBas != null)
         {
             Gizmos.color = Color.white;
             if (decisionBest.beginBases != null)
@@ -365,11 +298,14 @@ public class AIPlayer : MonoBehaviour
                     Gizmos.DrawSphere(decisionBest.targetBas.trans.position, 0.5f);
                 }
             }
-            else
+            else if (decisionBest.beginBas != null)
             {
                 Gizmos.DrawLine(decisionBest.beginBas.trans.position, decisionBest.targetBas.trans.position);
                 Gizmos.DrawSphere(decisionBest.targetBas.trans.position, 0.5f);
             }
+#if UNITY_EDITOR
+            Handles.Label(decisionBest.targetBas.trans.position, decisionBest.weight.ToString());
+#endif
         }
         if (almostDecisions.Count > 0)
         {
@@ -378,6 +314,10 @@ public class AIPlayer : MonoBehaviour
             {
                 Gizmos.DrawLine(decision.beginBas.trans.position, decision.targetBas.trans.position);
                 Gizmos.DrawSphere(decision.targetBas.trans.position, 0.5f);
+                
+#if UNITY_EDITOR
+                Handles.Label(decision.targetBas.trans.position, decision.weight.ToString());
+#endif
             }
         }
     }

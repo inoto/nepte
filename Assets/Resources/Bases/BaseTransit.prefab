@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 114969710160545916}
   - component: {fileID: 114358262193089728}
   - component: {fileID: 58317274819651986}
+  - component: {fileID: 114807933076965178}
   m_Layer: 0
   m_Name: BaseTransit
   m_TagString: base
@@ -120,9 +121,9 @@ MonoBehaviour:
   rallyPoint: {fileID: 0}
   attackers: []
   health:
-    max: 4000
-    maxNoBonuses: 4000
-    current: 4000
+    max: 1000
+    maxNoBonuses: 1000
+    current: 1000
     percent: 1
   collision:
     showGizmos: 0
@@ -152,6 +153,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7eaf52c9e38d34b41af62514b874c3ed, type: 2}
   - {fileID: 2100000, guid: 7326301bab270a949945db0a00c87a99, type: 2}
   - {fileID: 2100000, guid: 62deb8efdff8f80408b03b2c60864186, type: 2}
+  unitCountNearBasSelf: 0
+  unitCountNearBasEnemies: 0
 --- !u!114 &114358262193089728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -165,8 +168,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canProduce: 0
   isActive: 0
-  unitCount: 10
-  unitCountF: 0
+  unitCountInitial: 10
+  unitCountF: 1
+  unitCount: 0
   unitCountMax: 50
   isCapturing: 0
   maxCapturePoints: 0
@@ -190,6 +194,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerNumber: -1
   playerController: {fileID: 0}
+--- !u!114 &114807933076965178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1771483991996188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96d0839dd24647be940a0c25c7a7063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showRadius: 1
+  isEnabled: 1
+  isAttacking: 0
+  radius: 3
+  attackSpeed: 1
+  damage: 40
+  damageNoBonuses: 0
+  hasTarget: 0
+  missilePrefab: {fileID: 0}
+  missilePrefabName: 
+  trans: {fileID: 4175439061827504}
+  owner: {fileID: 0}
+  mover: {fileID: 0}
+  collision:
+    showGizmos: 0
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    bas: {fileID: 0}
+    isInQT: 0
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    isWeapon: 0
+    collidedCount: 0
 --- !u!114 &114969710160545916
 MonoBehaviour:
   m_ObjectHideFlags: 1
