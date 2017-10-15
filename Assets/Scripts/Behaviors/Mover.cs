@@ -114,7 +114,7 @@ public class Mover : MonoBehaviour
 			velocity += acceleration;
 			velocity *= maxSpeed;
 			//velocity = LimitVector(velocity, 5);
-			trans.position += (Vector3) velocity * Time.deltaTime * 3;
+			trans.position += (Vector3) velocity * Time.deltaTime * 6;
 			acceleration *= 0;
 			if (velocity.magnitude > 0)
 				velocity /= 1.05f;

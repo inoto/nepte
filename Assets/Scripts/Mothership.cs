@@ -10,7 +10,8 @@ public class Mothership : MonoBehaviour, ITargetable
     public enum Mode
     {
         Idle,
-        Moving,
+        MovingAround,
+	    MovingNewBase,
         Attacking,
         Dead
     }
@@ -36,6 +37,7 @@ public class Mothership : MonoBehaviour, ITargetable
 	public float angle = 0;
 	public float speed = 0.3f;
 	public float radius = 2.5f;
+	public Vector2 velocity = Vector2.zero;
 
 	[Header("Colors")]
 	[SerializeField]
@@ -68,7 +70,7 @@ public class Mothership : MonoBehaviour, ITargetable
 
 	private void OnEnable()
 	{
-		mode = Mode.Idle;
+		//mode = Mode.Idle;
 		collision = new CollisionCircle(trans, null, owner, null);
 		CollisionManager.Instance.AddCollidable(collision);
 		collision.isDead = false;
@@ -80,11 +82,36 @@ public class Mothership : MonoBehaviour, ITargetable
 
 	private void Update()
 	{
-		angle += Time.deltaTime;
+		if (mode == Mode.MovingAround)
+		{
+			angle += Time.deltaTime;
+			var x = Mathf.Cos(angle * speed) * radius;
+			var y = Mathf.Sin(angle * speed) * radius;
+			transform.position = new Vector3(x, y, 0) + bas.transform.position;
+		}
+		else if (mode == Mode.MovingNewBase)
+		{
+			Vector2 desired = bas.transform.position - trans.position;
 
-		var x = Mathf.Cos (angle * speed) * radius;
-		var y = Mathf.Sin (angle * speed) * radius;
-		transform.position = new Vector2(x, y);
+			/* Get the distance to the target */
+			float dist = desired.magnitude;
+
+			desired.Normalize();
+
+			/* Calculate the target speed, full speed at slowRadius distance and 0 speed at 0 distance */
+			//float targetSpeed;
+			//float currentSpeed = 0;
+			if (dist < bas.collider.radius)
+			{
+				mode = Mode.MovingAround;
+			}
+			else
+			{
+				Vector2 force = desired - velocity;
+				force = Mover.LimitVector(force, 2);
+				transform.position += (Vector3)force * Time.deltaTime;
+			}
+		}
 	}
 
 	void LoadFromConfig()
@@ -130,8 +157,11 @@ public class Mothership : MonoBehaviour, ITargetable
 	{
 		GameObject explosion = Instantiate(explosionPrefab, trans.position, trans.rotation);
 		explosion.transform.parent = GameController.Instance.transform;
-		float size = GetComponent<QuadMesh>().size * 1.5f;
-		explosion.transform.localScale = new Vector3(size, size, 1);
+		if (GetComponent<QuadMesh>() != null)
+		{
+			float size = GetComponent<QuadMesh>().size * 1.5f;
+			explosion.transform.localScale = new Vector3(size, size, 1);
+		}
 	}
 
 	void SetOwnerAsInParent()

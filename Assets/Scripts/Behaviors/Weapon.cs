@@ -84,6 +84,8 @@ public class Weapon : MonoBehaviour
 	
 	public void ReleaseLaserMissile(Vector3 newDestinationVector)
 	{
+		if (missilePrefab == null)
+			return;
 //		GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, trans.position, trans.rotation);
 		GameObject laserMissileObject = Instantiate(missilePrefab, trans.position, trans.rotation);
 		laserMissileObject.transform.parent = GameController.Instance.transform;

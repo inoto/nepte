@@ -49,6 +49,7 @@ public class Base : MonoBehaviour, ITargetable
     [SerializeField]
     private GameObject explosionPrefab;
     public GameObject HPbarPrefab;
+	public GameObject mothershipOrbitPrefab;
 	
     [Header("Colors")]
     [SerializeField] Material materialNeutral;
@@ -67,6 +68,7 @@ public class Base : MonoBehaviour, ITargetable
 //        body = GetComponent<Body>();
 	    weapon = GetComponent<Weapon>();
 	    collider = GetComponent<CircleCollider2D>();
+	    mothershipOrbitPrefab = Resources.Load<GameObject>("MothershipOrbit");
     }
 
 	public void Start()
@@ -148,7 +150,17 @@ public class Base : MonoBehaviour, ITargetable
 			PlayerController playerController = GameController.Instance.playerController[player + 1];
 			SetOwner(player, playerController);
 			type = Base.BaseType.Main;
+			
 			playerController.trans.position = trans.position;
+			Vector3 pos = trans.position;
+			pos.z += 0.1f;
+			MothershipOrbit newMothershipOrbit =
+				Instantiate(mothershipOrbitPrefab, trans.position, trans.rotation, trans).GetComponent<MothershipOrbit>();
+			newMothershipOrbit.transform.position = pos;
+			newMothershipOrbit.owner.playerController = owner.playerController;
+			newMothershipOrbit.owner.playerNumber = owner.playerNumber;
+			newMothershipOrbit.DelayedStart();
+			newMothershipOrbit.bas = this;
 		}
 		else
 		{
