@@ -14,7 +14,6 @@ public class Radar : MonoBehaviour
 	public Weapon weapon;
     public CollisionCircle collision;
 
-	// Use this for initialization
 	void Awake ()
     {
 		trans = GetComponent<Transform>();
@@ -22,12 +21,6 @@ public class Radar : MonoBehaviour
         mover = GetComponent<Mover>();
 	    weapon = GetComponent<Weapon>();
     }
-
-//	private void Start()
-//	{
-//        collision = new CollisionCircle(this, trans, mover, owner);
-//		CollisionManager.Instance.AddCollidable(collision);
-//	}
 
 	public void ActivateCombat()
 	{

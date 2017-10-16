@@ -8,14 +8,17 @@ public class Spawner : MonoBehaviour
 {
     public bool canProduce;
     public bool isActive;
+    [Header("Unit count")]
     public float unitCountInitial;
     public float unitCountF;
     public float unitCount;
     public int unitCountMax;
     private UILabel unitCountLabel;
+    [Header("Capture")]
     public bool isCapturing;
     public int maxCapturePoints;
     public int captureLead;
+    [Header("Spawn")]
     public float delay;
     public float intervalMin;
     public float intervalMax;
@@ -40,7 +43,6 @@ public class Spawner : MonoBehaviour
 	public void Start()
 	{
 	    AddUIUnitCount();
-//	    unitCount = 0;
 	    if (canProduce && releaseCoroutine != null)
 	        StopCoroutine(releaseCoroutine);
 	}
@@ -79,13 +81,11 @@ public class Spawner : MonoBehaviour
         
         int count = Mathf.FloorToInt(unitCount);
         while (count > 0)
-        //for (int i = 0; i < count; i++)
         {
             GameObject droneObject = ObjectPool.Spawn(prefab, owner.playerController.trans, point, trans.rotation);
             Drone droneSpawned = droneObject.GetComponent<Drone>();
             droneSpawned.owner.playerNumber = owner.playerNumber;
             droneSpawned.owner.playerController = owner.playerController;
-            //droneSpawned.playerRallyPoint = rallyPoint;
             droneSpawned.DelayedStart();
             droneSpawned.mover.followBase.UpdateTarget(targetBas);
 
@@ -102,7 +102,6 @@ public class Spawner : MonoBehaviour
                 StartCoroutine(Spawn());
             }
             
-            //Delay();
             yield return new WaitForSeconds(0.3f);
         }
     }
@@ -248,7 +247,6 @@ public class Spawner : MonoBehaviour
         isActive = true;
         yield return new WaitForSeconds(delay);
         
-//        Debug.Log("Spawn started");
         while (isActive)
         {
             if (unitCount >= unitCountMax)
@@ -267,6 +265,5 @@ public class Spawner : MonoBehaviour
                 interval = intervalMax;
             yield return new WaitForSeconds(interval);
         }
-        //Debug.Log("Spawn stopped");
     }
 }

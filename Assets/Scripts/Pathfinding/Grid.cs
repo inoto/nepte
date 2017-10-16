@@ -135,7 +135,6 @@ public class Grid : MonoBehaviour {
 			if (n != null)
 			{
 				return n;
-
 			}
 		}
 		return null;

@@ -52,7 +52,6 @@ public class GameController : MonoBehaviour
     public List<PlayerController> playerController;
     public List<Vector3> playerStartPosition;
     public List<Base> bases;
-	public Dictionary<Base, int> dictBasesOwners = new Dictionary<Base, int>();
 	public Queue<int> playersWithUnassignedBases = new Queue<int>();
 
     [Header("Prefabs")]
@@ -78,15 +77,12 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-	    //playerColors = new Color[players];
-	    
 		audioMixerChild.SetMusicVolume(0.75f);
 		audioMixerChild.SetSoundsVolume(0.75f);
 
         BeforeGameMenu();
     }
 
-    // Update is called once per frame
     void Update ()
     {
         if (IsGame)
@@ -211,7 +207,6 @@ public class GameController : MonoBehaviour
 
     public void RestartGame()
     {
-//        RemoveAllHPBars();
         RemoveAllPlayerUnits();
 		pausePanel.SetActive(false);
 		losePanel.SetActive(false);
@@ -250,7 +245,6 @@ public class GameController : MonoBehaviour
     public void RemoveStartScene()
     {
         Destroy(startScene);
-        //RemoveAllHPBars();
     }
 
     public void RemoveAllPlayerUnits()

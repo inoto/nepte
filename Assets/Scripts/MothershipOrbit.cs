@@ -2,15 +2,17 @@
 
 public class MothershipOrbit : MonoBehaviour
 {
-    
-    
     public Owner owner;
-    public GameObject UICirclePrefab;
+    
+    [Header("Cache")]
     public UISprite assignedUICircle;
     public Base bas;
-    public GameObject mothershipPrefab;
     public Mothership mothership;
     public LineRenderer lineArrow;
+    
+    [Header("Prefabs")]
+    public GameObject UICirclePrefab;
+    public GameObject mothershipPrefab;
 
     private void Awake()
     {

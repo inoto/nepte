@@ -41,7 +41,6 @@ public class Base : MonoBehaviour, ITargetable
 	public Transform trans;
 	public Owner owner;
 	public Spawner spawner;
-//    public Body body;
 	public Weapon weapon;
 	MeshRenderer mesh;
 
@@ -65,7 +64,6 @@ public class Base : MonoBehaviour, ITargetable
 		mesh = GetComponent<MeshRenderer>();
         spawner = GetComponent<Spawner>();
         owner = GetComponent<Owner>();
-//        body = GetComponent<Body>();
 	    weapon = GetComponent<Weapon>();
 	    collider = GetComponent<CircleCollider2D>();
 	    mothershipOrbitPrefab = Resources.Load<GameObject>("MothershipOrbit");
@@ -119,7 +117,6 @@ public class Base : MonoBehaviour, ITargetable
 			weapon.missilePrefabName = config.AttackMissilePrefabName;
 			weapon.missilePrefab = Resources.Load<GameObject>(weapon.missilePrefabName);
 		}
-//		Initialize();
 	}
 
 	void Update()
@@ -134,7 +131,6 @@ public class Base : MonoBehaviour, ITargetable
 		    point.z = trans.position.z;
 		    lineArrow.SetPosition(1, point);
 	    }
-        //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
     }
 
 	void Initialize()
@@ -216,7 +212,6 @@ public class Base : MonoBehaviour, ITargetable
 		owner.playerController = _playerController;
 		
 		owner.playerController.bases.Add(this);
-		GameController.Instance.dictBasesOwners[this] = owner.playerNumber;
 //		Debug.Log("bases count of player " + owner.playerNumber + " is " + owner.playerController.bases.Count);
 
 		if (health.percent < 1)

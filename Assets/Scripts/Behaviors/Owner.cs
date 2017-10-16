@@ -17,6 +17,4 @@ public class Owner : MonoBehaviour
     {
         playerController = _playerController;
     }
-
-
 }

@@ -20,7 +20,7 @@ public class Drone : MonoBehaviour, ITargetable
 	public GameObject explosionPrefab;
 
     [Header("Modules")]
-    public Health health = new Health(100);
+    public Health health;
 	public CollisionCircle collision;
 
     [Header("Components")]

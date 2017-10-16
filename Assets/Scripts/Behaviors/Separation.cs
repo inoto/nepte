@@ -25,13 +25,11 @@ public class Separation
     {
         mover = _mover;
 	    Clear();
-		//desired = 1;
     }
 
     public void Clear()
     {
         sum = Vector2.zero;
-		//desired = mover.body.radius * 2;
 		count = 0;
     }
 
@@ -49,7 +47,6 @@ public class Separation
 	{
 		if (count > 0)
 		{
-            //Debug.Log("separation works");
 			sum /= count;
 			//sum.Normalize();
 			sum *= maxSpeed;

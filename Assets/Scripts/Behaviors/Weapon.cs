@@ -25,7 +25,6 @@ public class Weapon : MonoBehaviour
     public Mover mover;
     public CollisionCircle collision;
 
-	// Use this for initialization
 	void Awake()
 	{
 		trans = GetComponent<Transform>();
@@ -45,7 +44,6 @@ public class Weapon : MonoBehaviour
 		target = null;
 		hasTarget = false;
 		isStarted = true;
-//		Debug.Log("start");
 	}
 	
 	private void OnEnable()
@@ -59,7 +57,6 @@ public class Weapon : MonoBehaviour
 			target = null;
 			hasTarget = false;
 		}
-//		Debug.Log("on enable");
 	}
 
 	public void StopAttacking()

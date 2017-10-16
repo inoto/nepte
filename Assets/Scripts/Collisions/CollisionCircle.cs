@@ -6,18 +6,8 @@ using UnityEngine;
 public class CollisionCircle
 {
 	public bool showGizmos;
-//    public enum CollisionType
-//    {
-//        Body,
-//        Radar,
-//        Weapon
-//    }
-//    public CollisionType collisionType;
-	public int instanceId;
 
-//    public Body body;
-//    public Radar radar;
-//    public Weapon weapon;
+	public int instanceId;
 
     public Transform trans;
     public Mover mover;
@@ -37,8 +27,6 @@ public class CollisionCircle
 
     public CollisionCircle(Transform _trans, Mover _mover, Owner _owner, Weapon _weapon)
     {
-//        body = _body;
-//        collisionType = CollisionType.Body;
 	    showGizmos = true;
         trans = _trans;
 	    mover = _mover;
@@ -60,8 +48,6 @@ public class CollisionCircle
     }
 	public CollisionCircle(Radar _radar, Transform _trans, Mover _mover, Owner _owner)
 	{
-//		radar = _radar;
-//        collisionType = CollisionType.Radar;
 		trans = _trans;
 		mover = _mover;
 		owner = _owner;
@@ -72,8 +58,6 @@ public class CollisionCircle
 	}
 	public CollisionCircle(Weapon _weapon, Transform _trans, Mover _mover, Owner _owner)
 	{
-//		weapon = _weapon;
-//        collisionType = CollisionType.Weapon;
 		trans = _trans;
 		mover = _mover;
 		owner = _owner;
@@ -107,7 +91,6 @@ public class CollisionCircle
 		{
 			mover.weapon.target = other.trans.GetComponent<ITargetable>();
 			mover.weapon.hasTarget = true;
-			//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
 		}
 		else
 		{

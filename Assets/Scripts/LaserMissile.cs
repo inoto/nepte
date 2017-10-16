@@ -49,29 +49,15 @@ public class LaserMissile : MonoBehaviour
 				weapon.target = null;
 				weapon.hasTarget = false;
 			}
-			//ObjectPool.Recycle(gameObject);
 			Destroy(gameObject);
 		}
-
-        //if (angle == Vector3.Angle(transform.forward, directionVector))
-            Move();
-        //else
-        //{
-        //    directionVector = destinationVector - transform.position;
-        //    Rotate();
-        //}
+        Move();
     }
 
     void Rotate()
     {
-        //transform.Rotate(Vector3.zero);
         angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg - 90;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        //directionVector.x = 0;
-        //directionVector.y = 0;
-        ////directionVector.z -= 90;
-        //transform.LookAt(directionVector);
-        //transform.Rotate(Vector3.forward);
     }
 
     void Move()
@@ -85,6 +71,6 @@ public class LaserMissile : MonoBehaviour
 	//	Color newColorAgain = Color.red;
 	//	newColorAgain.a = 0.5f;
 	//	Gizmos.color = newColorAgain;
- //       Gizmos.DrawSphere(directionVector, 0.3f);
+    //  Gizmos.DrawSphere(directionVector, 0.3f);
 	//}
 }

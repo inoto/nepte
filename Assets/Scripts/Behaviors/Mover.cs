@@ -5,15 +5,6 @@ using System.Collections.Generic;
 [System.Serializable]
 public class Mover : MonoBehaviour
 {
-    public enum MoveType
-    {
-        None,
-        Rally,
-        Target
-    }
-
-	public MoveType moveType;
-
 	public bool isMoving = false;
 
     [Header("Main")]
@@ -43,7 +34,6 @@ public class Mover : MonoBehaviour
     public FollowBase followBase;
     public Separation separation;
     public Cohesion cohesion;
-	public FollowTarget followTarget;
 
     [Header("Components")]
     public Transform trans;
@@ -67,7 +57,6 @@ public class Mover : MonoBehaviour
 	    followBase.Activate(this);
 		separation.Activate(this);
 		cohesion.Activate(this);
-//	    followTarget = new FollowTarget(this);
 	    velocity *= 0;
 	    acceleration *= 0;
 	    StartCoroutine(Move());
@@ -103,14 +92,6 @@ public class Mover : MonoBehaviour
 			{
 				cohesion.Cohesie();
 			}
-//			if (followTarget.enabled)
-//			{
-//				if (followTarget.weapon.target != null)
-//				{
-//					followTarget.Seek();
-//					followTarget.LookAtTarget();
-//				}
-//			}
 			velocity += acceleration;
 			velocity *= maxSpeed;
 			//velocity = LimitVector(velocity, 5);

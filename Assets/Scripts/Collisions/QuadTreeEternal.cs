@@ -9,8 +9,6 @@ using UnityEditor;
 
 public class QuadTreeEternal
 {
-	public static List<CollisionRecord> crList = new List<CollisionRecord>();
-
 	public int level = 0;
 
 	public Rect rect;
@@ -53,13 +51,7 @@ public class QuadTreeEternal
 		halfWidth = rect.width / 2;
 		halfHeight = rect.height / 2;
 		objects = units;
-		//childs = new QuadTreeNode[4];
 	}
-
-//	public List<CollisionCircle> FindObjectsInCircle()
-//	{
-//		crList = GetCollisions(new List<CollisionCircle>());
-//	}
 
 	public void Update()
 	{
@@ -86,14 +78,8 @@ public class QuadTreeEternal
 			}
 		}
 
-//		if (level == 6)
-//			Debug.Log("before clear count: " + movedUnits.Count);
 		movedUnits.Clear();
-//		if (level == 6)
-//			Debug.Log("after clear count: " + movedUnits.Count);
 		movedUnits.AddRange(objects);
-//		if (level == 6)
-//			Debug.Log("after addrange count: " + movedUnits.Count);
 		//foreach (ICollidable unit in objects)
 		//{
 		//	if (unit.Active)
@@ -107,8 +93,6 @@ public class QuadTreeEternal
             //if (objects[i].trans == null || objects[i].isDead)
 	        if (objects[i].isDead)
             {
-//	            if (objects[i].collisionType == CollisionCircle.CollisionType.Body)
-//	            Debug.Log("new died");
 	            if (movedUnits.Contains(objects[i]))
 	            {
 		            int ind = movedUnits.IndexOf(objects[i]);
@@ -117,8 +101,6 @@ public class QuadTreeEternal
 		            
 	            }
 	            objects[i].isInQT = false;
-//	            Debug.Log(objects[i].instanceId);
-//	            Debug.Log(objects[i--].instanceId);
                 objects.RemoveAt(i--);
 	            
 	            listSize--;
@@ -137,7 +119,7 @@ public class QuadTreeEternal
 				if (currentNode.parent != null) currentNode = currentNode.parent;
 				else break;
 			}
-				// remove from objects and insert to root in EVERY FRAME
+			// remove from objects and insert to root in EVERY FRAME
 			movedUnits[i].isInQT = false;
 			objects.Remove(movedUnits[i]);
 			
@@ -192,9 +174,6 @@ public class QuadTreeEternal
 				if (RectContainsCircle(quadrant[i], obj))
 				//if (quadrant[i].Contains(obj.GetPoint()))
 				{
-                    //Debug.Log("point.x: " + obj.Point.x + " point.y: " + obj.Point.y + " radius: " + obj.Radius
-                    //          + " inserted to " + "rect.x: " + quadrant[i].x + " rect.y: " + quadrant[i].y + " rect.w: " + quadrant[i].width + " rect.h: " + quadrant[i].height);
-					
 					// using existing child
 					if (childs[i] != null)
 					{
@@ -211,12 +190,6 @@ public class QuadTreeEternal
 						hasChilds = true;
 						activeNodes |= (byte)(1 << i);
 					}
-					//Reallocate units here into its child
-					//for (int k = 0; k < objects.Count; k++)
-					//{
-					//	childs[i].Insert(objects[k]);
-					//	objects.RemoveAt(k);
-					//}
 					found = true;
 				}
 			}
@@ -330,8 +303,6 @@ public class QuadTreeEternal
 				{
 					if (unit2.isCollidedWithBase == false)
 					{
-//						Debug.Log("unit near base");
-//						unit1.trans.GetComponent<Capture>().AddCapturerByPlayer(unit2.owner.playerNumber);
 						unit2.collidedBaseCircle = unit1;
 						unit2.isCollidedWithBase = true;
 						unit1.collidedCount++;
@@ -341,10 +312,8 @@ public class QuadTreeEternal
 				{
 					if (unit2.collidedBaseCircle == unit1)
 					{
-//						Debug.Log("unit NOT near base anymore");
 						unit2.collidedBaseCircle = null;
 						unit2.isCollidedWithBase = false;
-//						unit1.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit2.owner.playerNumber);
 						unit1.collidedCount--;
 					}
 				}
@@ -376,8 +345,6 @@ public class QuadTreeEternal
 				{
 					if (unit1.isCollidedWithBase == false)
 					{
-//						Debug.Log("unit near base");
-//						unit2.trans.GetComponent<Capture>().AddCapturerByPlayer(unit1.owner.playerNumber);
 						unit1.collidedBaseCircle = unit2;
 						unit1.isCollidedWithBase = true;
 						unit2.collidedCount++;
@@ -387,10 +354,8 @@ public class QuadTreeEternal
 				{
 					if (unit1.collidedBaseCircle == unit2)
 					{
-//						Debug.Log("unit NOT near base anymore");
 						unit1.collidedBaseCircle = null;
 						unit1.isCollidedWithBase = false;
-//						unit2.trans.GetComponent<Capture>().RemoveCapturerByPlayer(unit1.owner.playerNumber);
 						unit2.collidedCount--;
 					}
 				}
@@ -416,7 +381,7 @@ public class QuadTreeEternal
 		{
 			if (distance > 0)
 			{
-				// check all dunamic bodies to apply separation
+				// check all dynamic bodies to apply separation
 				if (distance < unit1.mover.separation.desired * unit1.mover.separation.desired)
 				{
 					if (unit1.mover.separation.enabled)
@@ -470,7 +435,6 @@ public class QuadTreeEternal
 						unit1.weapon.target = unit2.trans.GetComponent<ITargetable>();
 						unit1.weapon.hasTarget = true;
 						unit1.weapon.AttackTarget();
-						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
 					}
 					else
 					{
@@ -497,7 +461,6 @@ public class QuadTreeEternal
 						unit2.weapon.target = unit1.trans.GetComponent<ITargetable>();
 						unit2.weapon.hasTarget = true;
 						unit2.weapon.AttackTarget();
-						//unit1.mover.weapon.NewTarget(unit2.trans.GetComponent<ITargetable>());
 					}
 					else
 					{
