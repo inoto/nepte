@@ -280,8 +280,10 @@
     <Compile Include="Assets\Scripts\Behaviors\Separation.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Spawner.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Weapon.cs" />
-    <Compile Include="Assets\Scripts\Camera controllers\CameraWithEvents.cs" />
-    <Compile Include="Assets\Scripts\Camera controllers\UIBarsCameraSize.cs" />
+    <Compile Include="Assets\Scripts\Input\InputMouse.cs" />
+    <Compile Include="Assets\Scripts\Input\InputTouch.cs" />
+    <Compile Include="Assets\Scripts\Input\CameraWithEvents.cs" />
+    <Compile Include="Assets\Scripts\Input\UIBarsCameraSize.cs" />
     <Compile Include="Assets\Scripts\Cards\Card.cs" />
     <Compile Include="Assets\Scripts\Cards\CardAction.cs" />
     <Compile Include="Assets\Scripts\Cards\CardManager.cs" />

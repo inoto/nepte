@@ -96,7 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51d70a6ae8db14d5080040b869c98986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveType: 0
   isMoving: 0
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
@@ -138,12 +137,6 @@ MonoBehaviour:
     maxSpeed: 2
     maxAcceleration: 1
     distanceAddition: 0
-  followTarget:
-    enabled: 0
-    followingTarget: 0
-    weapon: {fileID: 0}
-    attackRadius: 0
-    slowDownRadius: 0
   trans: {fileID: 0}
   owner: {fileID: 0}
   body: {fileID: 0}
