@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Mothership : MonoBehaviour, ITargetable
 {
-	public static ConfigDrone config;
+	public static ConfigMothership config;
 	
     public enum Mode
     {
@@ -48,21 +48,13 @@ public class Mothership : MonoBehaviour, ITargetable
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
         owner = GetComponent<Owner>();
-//        body = GetComponent<Body>();
-//        radar = GetComponent<Radar>();
 	    weapon = GetComponent<Weapon>();
 	    assignedCircle = GameObject.Find("MothershipCircle");
-	    //config = ConfigManager.Instance.Drone;
+	    config = ConfigManager.Instance.Mothership;
     }
-
-//	private void Start()
-//	{
-//		Debug.Log("start");
-//	}
 
 	public void DelayedStart()
     {
-        //SetOwnerAsInParent();
         AssignMaterial();
         owner.playerController.playerUnitCount += 1;
         PlayerController.unitCount += 1;
@@ -76,8 +68,7 @@ public class Mothership : MonoBehaviour, ITargetable
 		collision.isDead = false;
 		collision.collidedBaseCircle = null;
 		
-//		LoadFromConfig();
-//		Debug.Log("on enable");
+		LoadFromConfig();
 	}
 
 	private void Update()
@@ -92,15 +83,9 @@ public class Mothership : MonoBehaviour, ITargetable
 		else if (mode == Mode.MovingNewBase)
 		{
 			Vector2 desired = bas.transform.position - trans.position;
-
-			/* Get the distance to the target */
 			float dist = desired.magnitude;
-
 			desired.Normalize();
 
-			/* Calculate the target speed, full speed at slowRadius distance and 0 speed at 0 distance */
-			//float targetSpeed;
-			//float currentSpeed = 0;
 			if (dist < bas.collider.radius)
 			{
 				mode = Mode.MovingAround;
@@ -109,7 +94,7 @@ public class Mothership : MonoBehaviour, ITargetable
 			{
 				Vector2 force = desired - velocity;
 				force = Mover.LimitVector(force, 2);
-				transform.position += (Vector3)force * Time.deltaTime;
+				transform.position += (Vector3)force * Time.deltaTime * speed;
 			}
 		}
 	}
@@ -123,6 +108,8 @@ public class Mothership : MonoBehaviour, ITargetable
 			health.max = config.HealthMax;
 			health.current = health.max;
 		}
+		speed = config.SpeedMax;
+		radius = config.MovingAroundRadius;
 		if (weapon != null)
 		{
 			weapon.attackSpeed = config.AttackSpeed;
@@ -139,13 +126,7 @@ public class Mothership : MonoBehaviour, ITargetable
 		mode = Mode.Dead;
 		collision.isDead = true;
 		weapon.collision.isDead = true;
-//		if (collision.collidedBaseCircle != null)
-//		{
-//			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
-//			capture.RemoveCapturerByPlayer(owner.playerNumber);
-//			capture.bas.collision.collidedCount--;
-//			collision.collidedBaseCircle = null;
-//		}
+
 		if (health.current <= 0)
 			MakeExplosion();
 		owner.playerController.playerUnitCount -= 1;
@@ -157,18 +138,12 @@ public class Mothership : MonoBehaviour, ITargetable
 	{
 		GameObject explosion = Instantiate(explosionPrefab, trans.position, trans.rotation);
 		explosion.transform.parent = GameController.Instance.transform;
-		if (GetComponent<QuadMesh>() != null)
+		QuadMesh qm = GetComponent<QuadMesh>();
+		if (qm != null)
 		{
-			float size = GetComponent<QuadMesh>().size * 1.5f;
+			float size = qm.size * 1.5f;
 			explosion.transform.localScale = new Vector3(size, size, 1);
 		}
-	}
-
-	void SetOwnerAsInParent()
-	{
-		var ownerParent = trans.parent.GetComponent<Owner>();
-		owner.playerNumber = ownerParent.playerNumber;
-		owner.playerController = ownerParent.playerController;
 	}
 
 	void AssignMaterial()
@@ -176,7 +151,7 @@ public class Mothership : MonoBehaviour, ITargetable
 		if (mesh != null && owner != null)
 			mesh.sharedMaterial = materials[owner.playerNumber];
 		else
-			Debug.LogError("Cannot assign material.");
+			Debug.LogError("Cannot assign material");
 	}
 
 	public void Damage(Weapon _weapon)

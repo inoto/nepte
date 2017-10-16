@@ -88,7 +88,7 @@ public class CollisionCircle
 		if (isWeapon)
 			return weapon.radius;
 		else if (isStatic)
-			return bas.collider.radius;
+			return bas != null ? bas.collider.radius : 0;
 		else
 			return 0;
 	}

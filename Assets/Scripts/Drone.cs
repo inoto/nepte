@@ -27,9 +27,7 @@ public class Drone : MonoBehaviour, ITargetable
     public Transform trans;
     MeshRenderer mesh;
     public Owner owner;
-//    public Body body;
     public Mover mover;
-//    public Radar radar;
 	public Weapon weapon;
 
 	[Header("Colors")]
@@ -41,22 +39,14 @@ public class Drone : MonoBehaviour, ITargetable
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
         owner = GetComponent<Owner>();
-//        body = GetComponent<Body>();
         mover = GetComponent<Mover>();
-//        radar = GetComponent<Radar>();
 	    weapon = GetComponent<Weapon>();
 	    
 	    config = ConfigManager.Instance.Drone;
     }
 
-//	private void Start()
-//	{
-//		Debug.Log("start");
-//	}
-
 	public void DelayedStart()
     {
-        //SetOwnerAsInParent();
         AssignMaterial();
         mover.DelayedStart();
         owner.playerController.playerUnitCount += 1;
@@ -72,7 +62,6 @@ public class Drone : MonoBehaviour, ITargetable
 		collision.collidedBaseCircle = null;
 		
 		LoadFromConfig();
-//		Debug.Log("on enable");
 	}
 	
 	void LoadFromConfig()
@@ -119,13 +108,7 @@ public class Drone : MonoBehaviour, ITargetable
 		mode = Mode.Dead;
 		collision.isDead = true;
 		weapon.collision.isDead = true;
-//		if (collision.collidedBaseCircle != null)
-//		{
-//			Capture capture = collision.collidedBaseCircle.trans.GetComponent<Capture>();
-//			capture.RemoveCapturerByPlayer(owner.playerNumber);
-//			capture.bas.collision.collidedCount--;
-//			collision.collidedBaseCircle = null;
-//		}
+
 		if (health.current <= 0)
 			MakeExplosion();
 		owner.playerController.playerUnitCount -= 1;
@@ -139,13 +122,6 @@ public class Drone : MonoBehaviour, ITargetable
 		explosion.transform.parent = GameController.Instance.transform;
 		float size = GetComponent<QuadMesh>().size * 1.5f;
 		explosion.transform.localScale = new Vector3(size, size, 1);
-	}
-
-	void SetOwnerAsInParent()
-	{
-		var ownerParent = trans.parent.GetComponent<Owner>();
-		owner.playerNumber = ownerParent.playerNumber;
-		owner.playerController = ownerParent.playerController;
 	}
 
 	void AssignMaterial()

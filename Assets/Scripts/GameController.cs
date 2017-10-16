@@ -268,6 +268,10 @@ public class GameController : MonoBehaviour
 				continue;
 			Destroy(child.gameObject);
 		}
+	    foreach (var b in bases)
+	    {
+		    b.trans.DestroyChildren();
+	    }
     }
 
 	public void RemoveAllHPBars()

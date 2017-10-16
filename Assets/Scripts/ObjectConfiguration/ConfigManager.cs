@@ -37,6 +37,7 @@ public class ConfigManager : MonoBehaviour
 	public ConfigBase Base;
 	public ConfigBase BaseTransit;
 	public ConfigDrone Drone;
+	public ConfigMothership Mothership;
 
 	public ConfigBase GetBaseConfig(Base bas)
 	{
@@ -65,16 +66,11 @@ public class ConfigManager : MonoBehaviour
 	
 	public bool LoadConfigsFromCacheFile(string fileName)
 	{
-//		Debug.Log("Trying to load from resource file");
-//		string newFileName = fileName.Replace(".json", "");
-//		TextAsset jsonFile = Resources.Load<TextAsset>(newFileName);
 		if (!File.Exists(configPath + configFileName))
 			return false;
 		string jsonFile = File.ReadAllText(configPath + configFileName);
 		if (jsonFile != null)
 		{
-//			Debug.Log("Loaded from cache file");
-//			Debug.Log(jsonFile);
 			JsonUtility.FromJsonOverwrite(jsonFile, this);
 			jsonData = jsonFile;
 //			Base = JsonUtility.FromJson<ConfigBase>(jsonFile);
@@ -110,7 +106,6 @@ public class ConfigManager : MonoBehaviour
 
 	private IEnumerator DownloadConfigFromWWW()
 	{
-//		Debug.Log("Trying to download from " + configURL);
 		WWW www = new WWW(configURL + configFileName);
 		yield return www;
 		if (string.IsNullOrEmpty(www.error))

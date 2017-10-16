@@ -251,10 +251,12 @@
     <Compile Include="Assets\Scripts\Meshes\QuadMesh.cs" />
     <Compile Include="Assets\Scripts\Meshes\RectangleMesh.cs" />
     <Compile Include="Assets\Scripts\Mothership.cs" />
+    <Compile Include="Assets\Scripts\MothershipOrbit.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\ConfigManager.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigBase.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigDrone.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigMap.cs" />
+    <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigMothership.cs" />
     <Compile Include="Assets\Scripts\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\Grid.cs" />
     <Compile Include="Assets\Scripts\Pathfinding\Heap.cs" />

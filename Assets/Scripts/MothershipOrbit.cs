@@ -2,6 +2,8 @@
 
 public class MothershipOrbit : MonoBehaviour
 {
+    
+    
     public Owner owner;
     public GameObject UICirclePrefab;
     public UISprite assignedUICircle;
@@ -46,13 +48,21 @@ public class MothershipOrbit : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (assignedUICircle != null)
+            Destroy(assignedUICircle.gameObject);
+    }
+
     public void AssignToBase(Base newBas)
     {
         if (mothership.mode == Mothership.Mode.MovingNewBase)
             return;
         bas = newBas;
         transform.parent = bas.trans;
-        transform.position = bas.trans.position;
+        Vector3 newPos = bas.trans.position;
+        newPos.z += 0.1f;
+        transform.position = newPos;
         assignedUICircle.transform.position = transform.position;
         mothership.mode = Mothership.Mode.MovingNewBase;
         mothership.bas = bas;

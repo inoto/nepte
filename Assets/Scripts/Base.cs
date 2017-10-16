@@ -149,7 +149,7 @@ public class Base : MonoBehaviour, ITargetable
 			int player = GameController.Instance.playersWithUnassignedBases.Dequeue();
 			PlayerController playerController = GameController.Instance.playerController[player + 1];
 			SetOwner(player, playerController);
-			type = Base.BaseType.Main;
+			type = BaseType.Main;
 			
 			playerController.trans.position = trans.position;
 			Vector3 pos = trans.position;
