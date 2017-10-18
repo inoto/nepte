@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIBarsCameraSize : MonoBehaviour
+public class UIBarsCameraSize2 : MonoBehaviour
 {
     Camera theCamera;
-    ControllableCamera controlCamera;
+    Camera2DController controlCamera;
+    
 
     private void Awake()
     {
         theCamera = GetComponent<Camera>();
-        controlCamera = Camera.main.GetComponent<ControllableCamera>();
+        controlCamera = Camera.main.GetComponent<Camera2DController>();
     }
 
     // Use this for initialization

@@ -29,7 +29,7 @@ public class ConfigManager : MonoBehaviour
 	}
 
 	public string configFileName = "tightspace-config.json";
-	public string configURL = "https://raw.githubusercontent.com/Jester1454/jester1454.github.io/master/";
+	public string configURL = "https://raw.githubusercontent.com/inoto/inoto.github.io/master/";
 	public string configPath;
 
 	public string jsonData;

@@ -3,50 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputMouse : CameraControlMouse
+public class InputMouse : AbstractCamera2DInputMouse
 {
-	private float dragTreshold = 10f;
+	[Header("InputMouse")]
 	public Base selectedBas;
 	public MothershipOrbit selectedMothershipOrbit;
 
-	void Awake () {
-		Attach ();
-	}
-
-	#if UNITY_EDITOR
-	void Update () {
-		if (attached) {
-			if (Input.GetMouseButtonDown (0)) {
-				onMouseBtnDown ();
-			}
-			if (Input.GetMouseButton (0)) {
-				onMouseHold ();
-				onMouseBtnHold ();
-			}
-			if (Input.GetMouseButtonUp (0)) {
-				onMouseBtnUp ();
-				onMouseClick ();
-			}
-			if (ZoomEnabled && Input.mouseScrollDelta.y != 0) {
-				onMouseScroll ();
-			}
-		}
-	}
-	#endif
-
-	void onMouseHold () {
-		Vector2 clickPosition = Input.mousePosition;
-
-		// Длинный жест пальцем - перетаскивание
-		if ((clickPosition - initialClick).magnitude > dragTreshold) {
-			//ActiveCamera.TranslateScreen(lastClickPosition, clickPosition);
-            isInteractionStatic = false;
-		}
-	}
-
 	protected override void onMouseBtnDown()
 	{
-		RaycastHit2D hit = ActiveCamera.Raycast2DScreen(Input.mousePosition);
+		base.onMouseBtnDown();
+		
+		RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 		if (hit && selectedBas == null)
 		{
 			Base bas = hit.transform.gameObject.GetComponent<Base>();
@@ -64,25 +31,16 @@ public class InputMouse : CameraControlMouse
 		}
 	}
 
-	void onMouseClick () {
-		if (isInteractionStatic)
-		{
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaiseClickTap(ray.origin + (ray.direction));
-
-//			RaycastHit2D hit = ActiveCamera.Raycast2DScreen (Input.mousePosition);
-//			if (hit)
-//			{
-//				hit.transform.gameObject.GetComponent<Base>().isSelected = true;
-//			}
-		}
+	protected override void onMouseBtnUp()
+	{
+		base.onMouseBtnUp();
 		
 		if (selectedBas != null)
 		{
 			DestroyObject(selectedBas.lineArrow);
 			foreach (var b in GameController.Instance.bases)
 				b.GlowRemove();
-			RaycastHit2D hit = ActiveCamera.Raycast2DScreen(Input.mousePosition);
+			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Base bas = hit.transform.gameObject.GetComponent<Base>();
@@ -97,7 +55,7 @@ public class InputMouse : CameraControlMouse
 		if (selectedMothershipOrbit != null)
 		{
 			DestroyObject(selectedMothershipOrbit.lineArrow);
-			RaycastHit2D hit = ActiveCamera.Raycast2DScreen(Input.mousePosition);
+			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Base bas = hit.transform.GetComponent<Base>();
@@ -109,10 +67,6 @@ public class InputMouse : CameraControlMouse
 			selectedMothershipOrbit = null;
 		}
 		
-	}
-
-	void onMouseScroll () {
-		ActiveCamera.ZoomScreen (Input.mousePosition, ZoomSpeed*Input.mouseScrollDelta.y);
 	}
 	
 //	void OnDrawGizmos() {

@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraWithEvents : MonoBehaviour
+public class CameraWithEvents2 : MonoBehaviour
 {
-    ControllableCamera theCamera;
+	Camera2DController theCamera;
 #if UNITY_EDITOR
-	CameraControlMouse cameraMouse;
+	Camera2DController cameraMouse;
 #endif
-	CameraControlTouch cameraTouch;
+	Camera2DController cameraTouch;
 
     GameObject HPCamObject;
 
 	// Use this for initialization
 	void Awake ()
     {
-        theCamera = GetComponent<ControllableCamera>();
+        theCamera = GetComponent<Camera2DController>();
 #if UNITY_EDITOR
-		cameraMouse = GetComponent<CameraControlMouse>();
+		cameraMouse = GetComponent<Camera2DController>();
 #endif
-		cameraTouch = GetComponent<CameraControlTouch>();
+		cameraTouch = GetComponent<Camera2DController>();
 
         HPCamObject = GameObject.Find("CameraUIBars");
 

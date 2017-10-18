@@ -333,6 +333,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c36d3075c4284500b17befdefc710c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  theCamera: {fileID: 0}
+  controlCamera: {fileID: 0}
 --- !u!114 &114860006426992238
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -344,6 +346,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 002e6256312024db490c8c4cb2fdd211, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  theCamera: {fileID: 0}
+  cameraMouse: {fileID: 0}
+  cameraTouch: {fileID: 0}
+  HPCamObject: {fileID: 0}
 --- !u!114 &114975479870053194
 MonoBehaviour:
   m_ObjectHideFlags: 1

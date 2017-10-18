@@ -5,9 +5,9 @@ public class RallyPoint : MonoBehaviour
     Rect rect;
 
 #if UNITY_EDITOR
-	public CameraControlMouse cameraMouse;
+	public Camera2DController cameraMouse;
 #endif
-	public CameraControlTouch cameraTouch;
+	public Camera2DController cameraTouch;
 
 	public delegate void UpdateRallyPoint();
     public event UpdateRallyPoint OnRallyPointChanged = delegate { };
@@ -47,9 +47,9 @@ public class RallyPoint : MonoBehaviour
 		if (owner.playerNumber == 0)
 		{
 #if UNITY_EDITOR
-			cameraMouse = Camera.main.GetComponent<CameraControlMouse>();
+			cameraMouse = Camera.main.GetComponent<Camera2DController>();
 #endif
-			cameraTouch = Camera.main.GetComponent<CameraControlTouch>();
+			cameraTouch = Camera.main.GetComponent<Camera2DController>();
 		}
 //		if (owner.playerNumber == 0)
 //		{

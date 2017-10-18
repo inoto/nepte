@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class AIPlayer : MonoBehaviour
 {
+    public bool verboseDecisionsInfo = true;
     public int difficulty;
 
     public Owner owner;
@@ -84,7 +85,8 @@ public class AIPlayer : MonoBehaviour
             }
             if (decision.weight > 0 && decision.weight < weightMax)
             {
-                Debug.Log("almost best decision weight: " + decision.weight);
+                if (verboseDecisionsInfo)
+                    Debug.Log("player " + owner.playerNumber + " almost best decision weight: " + decision.weight);
                 almostDecisions.Add(decision);
             }
         }
@@ -92,8 +94,11 @@ public class AIPlayer : MonoBehaviour
         {
             if (decisionBest.beginBas == decisionBest.targetBas)
                 Debug.Log("same base!");
-            Debug.Log("best decision weight: " + decisionBest.weight);
-            Debug.Log("best decision type: " + decisionBest.type.ToString());
+            if (verboseDecisionsInfo)
+            {
+                Debug.Log("player " + owner.playerNumber + " best decision weight: " + decisionBest.weight);
+                Debug.Log("player " + owner.playerNumber + " best decision type: " + decisionBest.type.ToString());
+            }
             // проверяем можем ли мы запустить юнитов сразу из нескольких баз
             if (decisionBest.beginBases != null && decisionBest.beginBases.Count > 1)
             {
