@@ -226,10 +226,10 @@
     <Compile Include="Assets\Scripts\Collisions\QuadTreeEternal.cs" />
     <Compile Include="Assets\Scripts\Drone.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
-    <Compile Include="Assets\Scripts\Input\Camera2DController.cs" />
     <Compile Include="Assets\Scripts\Input\CameraController\AbstractCamera2DInput.cs" />
     <Compile Include="Assets\Scripts\Input\CameraController\AbstractCamera2DInputMouse.cs" />
     <Compile Include="Assets\Scripts\Input\CameraController\AbstractCamera2DInputTouch.cs" />
+    <Compile Include="Assets\Scripts\Input\CameraController\Camera2DController.cs" />
     <Compile Include="Assets\Scripts\Input\CameraWithEvents.cs" />
     <Compile Include="Assets\Scripts\Input\InputMouse.cs" />
     <Compile Include="Assets\Scripts\Input\InputTouch.cs" />

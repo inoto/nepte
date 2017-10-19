@@ -110,7 +110,8 @@ public class Spawner : MonoBehaviour
     {
         isCapturing = true;
         var sprite = unitCountLabel.transform.parent.GetComponent<UISprite>();
-        sprite.color = GameController.Instance.playerColors[side];
+        if (side >= 0)
+            sprite.color = GameController.Instance.playerColors[side+1];
         captureLead = side;
     }
     

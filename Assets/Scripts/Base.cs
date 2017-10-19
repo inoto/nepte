@@ -175,7 +175,7 @@ public class Base : MonoBehaviour, ITargetable
 		listMat.Add(newMat);
 		mesh.materials = listMat.ToArray();
 		if (owner.playerNumber != -1)
-			mesh.materials[1].SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber]);
+			mesh.materials[1].SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber+1]);
 	}
 
 	public void GlowRemove()
@@ -193,7 +193,10 @@ public class Base : MonoBehaviour, ITargetable
 		lineArrow.SetPosition(0, trans.position);
 		lineArrow.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 		lineArrow.material = (Material)Resources.Load("Arrow");
-		lineArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber]);
+		if (owner.playerNumber < 0)
+			lineArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[0]);
+		else
+			lineArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber+1]);
 		lineArrow.widthMultiplier = 3f;
 
 		foreach (var b in GameController.Instance.bases)
@@ -222,7 +225,7 @@ public class Base : MonoBehaviour, ITargetable
 		// if player is new owner
 		if (owner.playerNumber != -1)
 		{
-			AddUIHPBar();
+			//AddUIHPBar();
 			spawner.StartSpawn(trans.position);
 		}
 		// else it's neutral
@@ -251,15 +254,21 @@ public class Base : MonoBehaviour, ITargetable
 
 	void AssignMaterial()
 	{
-        if (mesh != null && owner != null)
+		
+        if (mesh != null)
         {
-            if (owner.playerNumber < 0)
-                mesh.sharedMaterial = materialNeutral;
-            else
-                mesh.sharedMaterial = materials[owner.playerNumber];
+	        if (owner.playerNumber < 0)
+				mesh.material.SetColor("_TintColor", GameController.Instance.playerColors[0]);
+	        else
+		        mesh.material.SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber+1]);
+//            if (owner.playerNumber < 0)
+//                mesh.sharedMaterial = materialNeutral;
+//            else
+//                mesh.sharedMaterial = materials[owner.playerNumber];
         }
 		else
 			Debug.LogError("Cannot assign material.");
+		
 	}
 
     void Die(Owner killerOwner)

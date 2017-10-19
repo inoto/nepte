@@ -102,7 +102,8 @@ AnimationClip:
   - time: 1
     functionName: DestroyExplosion
     data: 
-    objectReferenceParameter: {fileID: 0}
+    objectReferenceParameter: {fileID: 2800000, guid: 31f8a90027150442cbf4f48fdc764112,
+      type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0

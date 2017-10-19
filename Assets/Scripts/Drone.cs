@@ -126,10 +126,13 @@ public class Drone : MonoBehaviour, ITargetable
 
 	void AssignMaterial()
 	{
-		if (mesh != null && owner != null)
-			mesh.sharedMaterial = materials[owner.playerNumber];
-		else
-			Debug.LogError("Cannot assign material.");
+		if (mesh != null)
+		{
+			if (owner.playerNumber < 0)
+				mesh.material.SetColor("_Color", GameController.Instance.playerColors[0]);
+			else
+				mesh.material.SetColor("_Color", GameController.Instance.playerColors[owner.playerNumber + 1]);
+		}
 	}
 
 	public void Damage(Weapon _weapon)
