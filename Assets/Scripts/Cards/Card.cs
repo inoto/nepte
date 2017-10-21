@@ -34,7 +34,8 @@ public class Card : MonoBehaviour
 			cooldownTimer.SetAnchor(transform);
 			GetComponent<UIButton>().enabled = false;
 		}
-		StartCoroutine(CooldownTimer());
+		if (GameController.Instance.IsGame)
+			this.StartCoroutine(CooldownTimer());
 	}
 
 	IEnumerator CooldownTimer()

@@ -36,7 +36,19 @@ public class CardManager : MonoBehaviour
         
         cardContainer = GameObject.Find("ContainerCards");
     }
-    
-    
-    
+
+    private void Start()
+    {
+        GameController.Instance.OnGameRestart += ResetCooldowns;
+    }
+
+    void ResetCooldowns()
+    {
+        for (int i = 0; i < cardContainer.transform.childCount; i++)
+        {
+            Card tmpCard = cardContainer.transform.GetChild(i).GetComponent<Card>();
+            if (tmpCard != null)
+                tmpCard.inCooldown = false;
+        }
+    }
 }

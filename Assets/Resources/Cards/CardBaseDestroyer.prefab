@@ -26,7 +26,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1803779153337324
 GameObject:
   m_ObjectHideFlags: 0
@@ -55,7 +55,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1803779153337324}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -37, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4721672015753164}
@@ -85,7 +85,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 73, y: 72, z: 0}
+  m_Size: {x: 67, y: 66, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114403401160831872
 MonoBehaviour:
@@ -100,11 +100,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftAnchor:
     target: {fileID: 4400762519713882}
-    relative: 0.1
+    relative: 0.05
     absolute: 0
   rightAnchor:
     target: {fileID: 4400762519713882}
-    relative: 0.9
+    relative: 0.95
     absolute: 0
   bottomAnchor:
     target: {fileID: 4400762519713882}
@@ -117,21 +117,21 @@ MonoBehaviour:
   updateAnchors: 2
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 64
-  mHeight: 79
+  mWidth: 60
+  mHeight: 66
   mDepth: 4
   mMat: {fileID: 0}
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 0.8101266
+  aspectRatio: 0.90909094
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: ed8f51d7c85724ba48678e1365061d33, type: 3}
   mFont: {fileID: 0}
-  mText: Destroy base (Base)
+  mText: Destroy planet
   mFontSize: 30
   mFontStyle: 0
-  mAlignment: 0
+  mAlignment: 2
   mEncoding: 1
   mMaxLineCount: 0
   mEffectStyle: 0
@@ -221,17 +221,17 @@ MonoBehaviour:
     relative: 1
     absolute: 0
   updateAnchors: 2
-  mColor: {r: 1, g: 1, b: 1, a: 1}
+  mColor: {r: 0.1910683, g: 0.7311179, b: 0.83823526, a: 1}
   mPivot: 4
-  mWidth: 73
-  mHeight: 72
+  mWidth: 67
+  mHeight: 66
   mDepth: 3
   mMat: {fileID: 0}
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 1
   aspectRatio: 1.009434
-  mType: 0
+  mType: 1
   mFillDirection: 4
   mFillAmount: 1
   mInvert: 0
@@ -244,8 +244,8 @@ MonoBehaviour:
   rightType: 1
   bottomType: 1
   topType: 1
-  mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
-  mSpriteName: Button A
+  mAtlas: {fileID: 11400000, guid: f95e07e3d350bf748b0c42b453a69d2e, type: 2}
+  mSpriteName: Smooth
   mFillCenter: 1
 --- !u!114 &114635112223206470
 MonoBehaviour:

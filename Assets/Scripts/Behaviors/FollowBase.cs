@@ -104,6 +104,8 @@ public class FollowBase
 					float dividedStopRadius = enterRadius / 2;
 					//mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
 					desired *= mover.maxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
+//					if (mover.trans.localScale.x > 0.6f)
+//						mover.trans.localScale *= 0.9975f;
 				}
 				else
 				{

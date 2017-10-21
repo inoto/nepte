@@ -25,11 +25,10 @@ public abstract class AbstractCamera2DInputTouch : AbstractCamera2DInput {
 			// Одно касание - перетаскивание камеры или поиск столкновений
 			if (Input.touchCount == 1)
 			{
-//				if (Input.GetTouch(0).phase == TouchPhase.Ended)
-//				{
-//					Debug.Log("touch with 1 ended");
-//					onTouchEnded();
-//				}
+				if (Input.GetTouch(0).phase == TouchPhase.Ended)
+				{
+					onTouchEnded();
+				}
 				onOneTouch ();
 			}
 
