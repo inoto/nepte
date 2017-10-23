@@ -12,7 +12,7 @@ public abstract class AbstractCamera2DInputMouse : AbstractCamera2DInput
 	}
 
 #if UNITY_EDITOR
-	void Update()
+	protected virtual void Update()
 	{
 		if (attached)
 		{

@@ -34,7 +34,7 @@ public class InputTouch : AbstractCamera2DInputTouch
 		
 		if (selectedBas != null)
 		{
-			DestroyObject(selectedBas.lineArrow);
+//			DestroyObject(selectedBas.lineArrow);
 			foreach (var b in GameController.Instance.bases)
 				b.GlowRemove();
 			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);

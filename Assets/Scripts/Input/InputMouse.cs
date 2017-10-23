@@ -12,7 +12,6 @@ public class InputMouse : AbstractCamera2DInputMouse
 	protected override void onMouseBtnDown()
 	{
 		base.onMouseBtnDown();
-		
 		RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 		if (hit && selectedBas == null)
 		{
@@ -22,6 +21,7 @@ public class InputMouse : AbstractCamera2DInputMouse
 			{
 				selectedBas = bas;
 				bas.MakeArrow();
+				
 			}
 			else if (mothershipOrbit != null && mothershipOrbit.mothership.owner.playerNumber == 0)
 			{

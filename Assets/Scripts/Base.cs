@@ -30,6 +30,7 @@ public class Base : MonoBehaviour, ITargetable
 	
     public RallyPoint rallyPoint;
 	public List<GameObject> attackers = new List<GameObject>();
+	private float arrowOffset = 0;
 
     [Header("Modules")]
     public Health health = new Health(4000);
@@ -198,6 +199,7 @@ public class Base : MonoBehaviour, ITargetable
 		else
 			lineArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber+1]);
 		lineArrow.widthMultiplier = 3f;
+		lineArrow.material.SetTextureOffset("_MainTex", new Vector2(0.1f, 0));
 
 		foreach (var b in GameController.Instance.bases)
 			b.GlowAdd();
