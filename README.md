@@ -10,6 +10,6 @@ Points I've done here:
 - Config system to work with Type Object pattern
 - ObjectPool
 - Basic card system
-- Profiling to use the game on legacy mobile devices
+- Profiling to use the game on legacy mobile devices (Android for now)
 
 Attention! The game could be similar to Mushroom Wars.
