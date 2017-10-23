@@ -59,7 +59,7 @@ public class InputMouse : AbstractCamera2DInputMouse
 			if (hit)
 			{
 				Base bas = hit.transform.GetComponent<Base>();
-				if (bas != null && bas != selectedMothershipOrbit.bas && bas.owner.playerNumber == 0)
+				if (bas != null && bas != selectedMothershipOrbit.bas)// && bas.owner.playerNumber == 0)
 				{
 					selectedMothershipOrbit.AssignToBase(bas);
 				}

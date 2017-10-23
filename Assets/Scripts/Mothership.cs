@@ -34,8 +34,7 @@ public class Mothership : MonoBehaviour, ITargetable
 	public Base bas;
 	public Base basTarget;
 	public GameObject assignedCircle;
-	public float angle = 0;
-	public float speed = 0.3f;
+	public float speed = 3f;
 	public float radius = 2.5f;
 	public Vector2 velocity = Vector2.zero;
 
@@ -71,14 +70,18 @@ public class Mothership : MonoBehaviour, ITargetable
 		LoadFromConfig();
 	}
 
+	private void Start()
+	{
+		trans.position += Vector3.right * radius;
+	}
+
 	private void Update()
 	{
 		if (mode == Mode.MovingAround)
 		{
-			angle += Time.deltaTime;
-			var x = Mathf.Cos(angle * speed) * radius;
-			var y = Mathf.Sin(angle * speed) * radius;
-			transform.position = new Vector3(x, y, 0) + bas.transform.position;
+			var q = trans.rotation;
+			transform.RotateAround(bas.transform.position, Vector3.forward, 20 * speed * Time.deltaTime);
+			transform.rotation = q;
 		}
 		else if (mode == Mode.MovingNewBase)
 		{
@@ -86,9 +89,12 @@ public class Mothership : MonoBehaviour, ITargetable
 			float dist = desired.magnitude;
 			desired.Normalize();
 
-			if (dist < bas.collider.radius)
+			if (dist < radius)
 			{
 				mode = Mode.MovingAround;
+				var q = trans.rotation;
+				transform.RotateAround(bas.transform.position, Vector3.forward, 20 *speed * Time.deltaTime);
+				transform.rotation = q;
 			}
 			else
 			{

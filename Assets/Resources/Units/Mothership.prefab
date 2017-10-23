@@ -82,8 +82,7 @@ MonoBehaviour:
   bas: {fileID: 0}
   basTarget: {fileID: 0}
   assignedCircle: {fileID: 0}
-  angle: 0
-  speed: 0.3
+  speed: 3
   radius: 2.4
   velocity: {x: 0, y: 0}
   materials: []
