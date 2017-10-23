@@ -8,7 +8,7 @@ public class Battleground : MonoBehaviour
     Rect rect;
 
     Transform trans;
-    CameraControlMouse cameraControl;
+	Camera2DController cameraControl;
 
     Vector3 direction;
     Vector3 targetPosition;
@@ -25,7 +25,7 @@ public class Battleground : MonoBehaviour
 
     void MoveBackground()
     {
-        direction = cameraControl.ActiveCamera.transform.position;
+        direction = cameraControl.Camera.transform.position;
 
 		targetPosition = direction + trans.position;
 		targetPosition = new Vector3(

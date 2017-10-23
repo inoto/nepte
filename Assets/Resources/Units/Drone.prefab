@@ -1,0 +1,249 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1964420292115662}
+  m_IsPrefabParent: 1
+--- !u!1 &1964420292115662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4589345348294930}
+  - component: {fileID: 114783534892546512}
+  - component: {fileID: 114829070162426570}
+  - component: {fileID: 33425899918793512}
+  - component: {fileID: 23790409747704556}
+  - component: {fileID: 114835238842844082}
+  - component: {fileID: 114507272362157692}
+  - component: {fileID: 114974211722959918}
+  m_Layer: 0
+  m_Name: Drone
+  m_TagString: drone
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4589345348294930
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23790409747704556
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: e9804ee1d4276fa41b5aa0ba4de610e5, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &33425899918793512
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Mesh: {fileID: 0}
+--- !u!114 &114507272362157692
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d70a6ae8db14d5080040b869c98986, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMoving: 0
+  velocity: {x: 0, y: 0}
+  acceleration: {x: 0, y: 0}
+  currentSpeed: 0
+  currentAcceleration: 0
+  mass: 1
+  maxForce: 2
+  maxSpeed: 1
+  maxAcceleration: 2
+  accelerationStep: 0.1
+  targetRadius: 1
+  slowDownRadius: 3
+  timeToTarget: 0.1
+  turnSpeed: 3
+  smoothing: 1
+  numSamplesForSmoothing: 5
+  followBase:
+    enabled: 1
+    following: 0
+    arrived: 0
+    targetBase: {fileID: 0}
+    enterRadius: 1
+    attackRadius: 2
+    slowDownRadius: 3
+  separation:
+    enabled: 1
+    count: 0
+    sum: {x: 0, y: 0}
+    desired: 0.5
+    forceMultiplier: 2
+    maxSpeed: 2
+    maxAcceleration: 1
+    distanceAddition: 0
+  cohesion:
+    enabled: 1
+    count: 0
+    sum: {x: 0, y: 0}
+    desired: 0.5
+    maxSpeed: 2
+    maxAcceleration: 1
+    distanceAddition: 0
+  trans: {fileID: 0}
+  owner: {fileID: 0}
+  body: {fileID: 0}
+  radar: {fileID: 0}
+  weapon: {fileID: 0}
+--- !u!114 &114783534892546512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: 0
+  playerController: {fileID: 0}
+--- !u!114 &114829070162426570
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 0
+  explosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
+    type: 2}
+  health:
+    max: 100
+    maxNoBonuses: 0
+    current: 100
+    percent: 1
+  collision:
+    showGizmos: 1
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    bas: {fileID: 0}
+    isInQT: 0
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    isWeapon: 0
+    collidedCount: 0
+  trans: {fileID: 0}
+  owner: {fileID: 0}
+  mover: {fileID: 0}
+  weapon: {fileID: 0}
+  materials:
+  - {fileID: 2100000, guid: dd1135459b9084bd18b6ad32a1af18ef, type: 2}
+  - {fileID: 2100000, guid: c6e88d3c5145b4a079954b5a773aa640, type: 2}
+  - {fileID: 2100000, guid: 48e89b4ffcef743e4adf04855a700f2b, type: 2}
+--- !u!114 &114835238842844082
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: 0.5
+--- !u!114 &114974211722959918
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1964420292115662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96d0839dd24647be940a0c25c7a7063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showRadius: 1
+  isEnabled: 1
+  isAttacking: 0
+  radius: 2
+  attackSpeed: 1
+  damage: 40
+  damageNoBonuses: 0
+  hasTarget: 0
+  missilePrefab: {fileID: 1599353025881746, guid: e4023616b4ba755438c8831ca2b85b43,
+    type: 2}
+  missilePrefabName: 
+  trans: {fileID: 0}
+  owner: {fileID: 0}
+  mover: {fileID: 0}
+  collision:
+    showGizmos: 0
+    instanceId: 0
+    trans: {fileID: 0}
+    mover: {fileID: 0}
+    owner: {fileID: 0}
+    weapon: {fileID: 0}
+    bas: {fileID: 0}
+    isInQT: 0
+    isDead: 0
+    isCollidedWithBase: 0
+    isStatic: 0
+    isWeapon: 0
+    collidedCount: 0

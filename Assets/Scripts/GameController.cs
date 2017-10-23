@@ -12,8 +12,10 @@ public class GameController : MonoBehaviour
 	public event Game OnGamePaused = delegate { };
     public event Game OnGameContinued = delegate { };
     public event Game OnGameRestart = delegate { };
+	public event Game OnGameStart = delegate { };
 
-    public int players = 3;
+    public int players = 2;
+	public Color[] playerColors;
 
     public int winPoints = 0;
 
@@ -47,8 +49,10 @@ public class GameController : MonoBehaviour
 	public ObjectPool objectPoolChild;
 
     [Header("Cache")]
-    public List<GameObject> playerControllerObject;
+    public List<PlayerController> playerController;
     public List<Vector3> playerStartPosition;
+    public List<Base> bases;
+	public Queue<int> playersWithUnassignedBases = new Queue<int>();
 
     [Header("Prefabs")]
     [SerializeField]
@@ -79,7 +83,6 @@ public class GameController : MonoBehaviour
         BeforeGameMenu();
     }
 
-    // Update is called once per frame
     void Update ()
     {
         if (IsGame)
@@ -204,7 +207,6 @@ public class GameController : MonoBehaviour
 
     public void RestartGame()
     {
-        RemoveAllHPBars();
         RemoveAllPlayerUnits();
 		pausePanel.SetActive(false);
 		losePanel.SetActive(false);
@@ -220,29 +222,29 @@ public class GameController : MonoBehaviour
 	{
         if (IsState(States.BeforeGame))
         {
-            AssignStartPositions();
             beforegamePanel.SetActive(false);
             RemoveStartScene();
             audioMixerChild.StopMainTheme();
         }
         OnGameContinued();
-		Camera.main.orthographicSize = 10;
+		
+		//Camera.main.orthographicSize = 10;
         //GameObject.Find("CameraUIBars").GetComponent<Camera>().orthographicSize = 10;
-		Vector3 vec = playerStartPosition[0];
-		vec.z = -10;
-		Camera.main.transform.position = vec;
-
-
+		//Vector3 vec = playerStartPosition[0];
+		//vec.z = -10;
+		//Camera.main.transform.position = vec;
+		
 		CreatePlayers();
-		state = States.Game;
+//        AssignBases();
 		ingamePanel.SetActive(true);
-
+		state = States.Game;
+		OnGameStart();
+		
 	}
 
     public void RemoveStartScene()
     {
         Destroy(startScene);
-        //RemoveAllHPBars();
     }
 
     public void RemoveAllPlayerUnits()
@@ -256,14 +258,20 @@ public class GameController : MonoBehaviour
 				continue;
             if (child.gameObject == objectPoolChild.gameObject)
 				continue;
+            if (child.gameObject == GameObject.Find("Bases"))
+				continue;
 			Destroy(child.gameObject);
 		}
+	    foreach (var b in bases)
+	    {
+		    b.trans.DestroyChildren();
+	    }
     }
 
 	public void RemoveAllHPBars()
 	{
-        Transform HPbars = GameObject.Find("HPBars").transform;
-		foreach (Transform child in HPbars)
+        Transform UIbars = GameObject.Find("UIBars").transform;
+		foreach (Transform child in UIbars)
 		{
 			Destroy(child.gameObject);
 		}
@@ -271,49 +279,52 @@ public class GameController : MonoBehaviour
 
 	void CreatePlayers()
 	{
-        playerControllerObject = new List<GameObject>();
+        playerController = new List<PlayerController>();
 
         GameObject playerObject;
-		for (int i = 0; i < players; i++)
+		for (int i = -1; i < players; i++)
 		{
 			playerObject = Instantiate(playerControllerPrefab);
 			playerObject.transform.SetParent(transform);
-			PlayerController playerController = playerObject.GetComponent<PlayerController>();
-			playerController.owner = i;
-            playerController.ActionsWithOwner();
-			playerController.transform.position = playerStartPosition[i];
+			PlayerController tmpPlayerController = playerObject.GetComponent<PlayerController>();
+			tmpPlayerController.owner.playerNumber = i;
+			tmpPlayerController.owner.playerController = tmpPlayerController;
+			//playerController.owner.color = playerColors[i];
+			tmpPlayerController.DelayedStart();
 
-            playerControllerObject.Add(playerObject);
+            playerController.Add(tmpPlayerController);
+			if (i != -1)
+				playersWithUnassignedBases.Enqueue(i);
 		}
+		bases.Clear();
+		bases.AddRange(FindObjectsOfType<Base>());
 	}
 
-	void AssignStartPositions()
+	void AssignBases()
 	{
-        playerStartPosition = new List<Vector3>();
+		bases.Clear();
+        bases.AddRange(FindObjectsOfType<Base>());
+        int counter = 0;
+		int counterFull = -1;
+        foreach (Base b in bases)
+        {
+	        if (b.useAsStartPosition)
+	        {
+		        //playerStartPosition[counter] = b.trans.position;
+		        b.type = Base.BaseType.Main;
+		        b.SetOwner(counter, playerController[counter+1]);
+		        playerController[counter+1].trans.position = b.trans.position;
+		        //b.DelayedStart();
+		        counter++;
+	        }
+	        else
+	        {
+		        b.SetOwner(-1, playerController[0]);
+	        }
+//	        dictBasesOwners.Add(b,counterFull);
+	        counterFull++;
+        }
 
-		GameObject tmpObject;
-		for (int i = 0; i < players; i++)
-		{
-			switch (i)
-			{
-				case 0:
-					tmpObject = GameObject.Find("StartPlayer");
-                    playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-					Destroy(tmpObject);
-					continue;
-				case 1:
-					tmpObject = GameObject.Find("StartAIFirst");
-					playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-					Destroy(tmpObject);
-					continue;
-				case 2:
-					tmpObject = GameObject.Find("StartAISecond");
-					playerStartPosition.Add(Grid.Instance.NodeFromWorldPoint(tmpObject.transform.position).worldPosition);
-					Destroy(tmpObject);
-					continue;
-			}
-
-		}
 	}
 
     public void SettingsMenu()

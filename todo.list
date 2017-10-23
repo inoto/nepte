@@ -6,4 +6,4 @@ todo.list
 - remove random to use slow ratation and attack after ration is completed
 - initialization queue to remove most actions from start
 - restruct scripts folder
-- 
+- gizmos to another class and use delegates

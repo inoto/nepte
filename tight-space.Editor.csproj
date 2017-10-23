@@ -11,13 +11,16 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Editor:5</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>2017.1.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
     <NoConfig>true</NoConfig>
     <NoStdLib>true</NoStdLib>
@@ -57,7 +60,7 @@
     <Reference Include="System">
       <HintPath>/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.dll</HintPath>
     </Reference>
-    <Reference Include="System.XML">
+    <Reference Include="System.Xml">
       <HintPath>/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.XML.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
@@ -77,6 +80,9 @@
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>Library/ScriptAssemblies/Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-Editor-firstpass">
+      <HintPath>Library/ScriptAssemblies/Assembly-CSharp-Editor-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
       <HintPath>/Applications/Unity/Unity.app/Contents/Managed/UnityEditor.dll</HintPath>
@@ -161,6 +167,10 @@
     <ProjectReference Include="tight-space.csproj">
       <Project>{61C26825-5648-5EE4-984F-59B873DE76F4}</Project>
       <Name>tight-space</Name>
+    </ProjectReference>
+    <ProjectReference Include="tight-space.Editor.Plugins.csproj">
+      <Project>{461A095D-E696-9229-B17A-306CDEC624DB}</Project>
+      <Name>tight-space.Editor.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4352747870054206}
+  - component: {fileID: 114311425871562664}
   - component: {fileID: 114941429271116004}
   m_Layer: 0
   m_Name: PlayerController
@@ -40,6 +41,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114311425871562664
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1471363904131076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: 0
+  playerController: {fileID: 0}
 --- !u!114 &114941429271116004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -51,20 +65,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4042b551e32244fb28acc8e4810f4d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
+  playerUnitCount: 0
   isInitialized: 0
   isDefeated: 0
-  gameControllerObjectParent: {fileID: 0}
+  trans: {fileID: 0}
+  owner: {fileID: 0}
   rallyPoint: {fileID: 0}
-  baseControl: {fileID: 0}
+  bas: {fileID: 0}
+  aiPlayer: {fileID: 0}
   basePrefab: {fileID: 1771483991996188, guid: 7b625b8bf3bf34ce79c1b9ccd35f1449, type: 2}
   rallyPointPrefab: {fileID: 1423985708805676, guid: 7c1fa91a287c346ccb62bce83c08930a,
     type: 2}
-  spriteSetBases:
-  - {fileID: 21300000, guid: e35b214c82a4547ffb7b8351539f81e7, type: 3}
-  - {fileID: 21300000, guid: 09e353473910043b38e3c6eddf01b35b, type: 3}
-  - {fileID: 21300000, guid: 5d0f8a21d6e9a4b168e95c36675ac06a, type: 3}
-  spriteSetRallyPoints:
-  - {fileID: 21300000, guid: 23f7ab4e1c1c44ffc9c7f05ea9ef640c, type: 3}
-  - {fileID: 21300000, guid: 41332bf8b711a415494f58c50e6526ec, type: 3}
-  - {fileID: 21300000, guid: 8087cedbce8584b94b95671d9a0ed9df, type: 3}

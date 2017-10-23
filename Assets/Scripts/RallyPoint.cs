@@ -2,21 +2,22 @@
 
 public class RallyPoint : MonoBehaviour
 {
-    public int owner;
-
     Rect rect;
 
 #if UNITY_EDITOR
-	public CameraControlMouse cameraMouse;
+	public Camera2DController cameraMouse;
 #endif
-	public CameraControlTouch cameraTouch;
+	public Camera2DController cameraTouch;
 
-	public delegate void ResetRallyPoint();
-    public event ResetRallyPoint OnRallyPointChanged = delegate { };
+	public delegate void UpdateRallyPoint();
+    public event UpdateRallyPoint OnRallyPointChanged = delegate { };
 
 	[Header("Cache")]
 	public Transform trans;
+    public Owner owner;
 	public MeshRenderer mesh;
+    public Node node;
+    public Body body;
 
 	[Header("Colors")]
 	public Material[] materials;
@@ -25,81 +26,82 @@ public class RallyPoint : MonoBehaviour
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
+        owner = GetComponent<Owner>();
     }
 
     private void OnDestroy()
     {
-        if (owner == 0)
-        {
-#if UNITY_EDITOR
-            cameraMouse.onClickTap -= SetNew;
-#endif
-            cameraTouch.onClickTap -= SetNew;
-        }
+//        if (owner.playerNumber == 0)
+//        {
+//#if UNITY_EDITOR
+//            cameraMouse.onClickTap -= SetNew;
+//#endif
+//            cameraTouch.onClickTap -= SetNew;
+//        }
     }
 
-    public void StartWithOwner()
+    public void DelayedStart()
     {
-		if (owner == 0)
+        SetOwnerAsInParent();
+
+		if (owner.playerNumber == 0)
 		{
 #if UNITY_EDITOR
-			cameraMouse = Camera.main.GetComponent<CameraControlMouse>();
+			cameraMouse = Camera.main.GetComponent<Camera2DController>();
 #endif
-			cameraTouch = Camera.main.GetComponent<CameraControlTouch>();
+			cameraTouch = Camera.main.GetComponent<Camera2DController>();
 		}
-		if (owner == 0)
-		{
-#if UNITY_EDITOR
-			cameraMouse.Attach();
-			cameraMouse.onClickTap += SetNew;
-#endif
-			cameraTouch.Attach();
-			cameraTouch.onClickTap += SetNew;
-		}
+//		if (owner.playerNumber == 0)
+//		{
+//#if UNITY_EDITOR
+//			cameraMouse.Attach();
+//			cameraMouse.onClickTap += SetNew;
+//#endif
+//			cameraTouch.Attach();
+//			cameraTouch.onClickTap += SetNew;
+//		}
 
 		AssignMeterial();
 
-        Pathfinding.Instance.FillDistances(trans.position, owner);
-    }
+        SetNew(owner.playerController.trans.position);
+
+        //Pathfinding.Instance.FillDistances(trans.position, owner.playerNumber);
+
+        //node = Grid.Instance.NodeFromWorldPoint(trans.position);
+	}
+
+	void SetOwnerAsInParent()
+	{
+		var ownerParent = trans.parent.GetComponent<Owner>();
+		owner.playerNumber = ownerParent.playerNumber;
+		owner.playerController = ownerParent.playerController;
+	}
 
 	public void SetNew(Vector2 position)
 	{
-
-		Vector3 tmp = position;
-		if (trans.position != tmp)
+        Node tmpNode = Grid.Instance.NodeFromWorldPoint(position);
+		if (node != tmpNode)
 		{
             //.Log("new pos: " + position);
-            Node node = Grid.Instance.NodeFromWorldPoint(position);
+            node = tmpNode;
             //Debug.Log("node pos: " + node.worldPosition);
             //Debug.Log("node center: " + node.rect.center);
 			rect = node.rect;
-            trans.position = node.rect.center;
+            Vector3 tmp = node.worldPosition;
+            tmp.z = -0.1f;
+            trans.position = tmp;
 		}
 
-		Pathfinding.Instance.FillDistances(trans.position, owner);
+		Pathfinding.Instance.FillDistances(trans.position, owner.playerNumber);
 
         OnRallyPointChanged();
 	}
 
 	void AssignMeterial()
 	{
-        //if (mesh == null)
-        //    mesh = GetComponent<MeshRenderer>();
-		mesh.material = materials[owner];
-	}
-
-	public int GetOwner()
-	{
-		return owner;
-	}
-
-	public void SetOwner(int newOwner)
-	{
-		owner = newOwner;
-	}
-
-	public GameObject GetGameObject()
-	{
-		return gameObject;
+        if (mesh != null && owner != null)
+            mesh.sharedMaterial = materials[owner.playerNumber];
+        else
+            Debug.LogError("Cannot assign material.");
 	}
 }

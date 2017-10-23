@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StarsMover : MonoBehaviour
 {
-    ControllableCamera controlCamera;
+	Camera2DController controlCamera;
 
     Transform transStars1;
     Transform transStars2;
@@ -12,7 +12,7 @@ public class StarsMover : MonoBehaviour
 
 	void Awake ()
     {
-		controlCamera = Camera.main.GetComponent<ControllableCamera>();
+		controlCamera = Camera.main.GetComponent<Camera2DController>();
 	}
 
 	void Start()

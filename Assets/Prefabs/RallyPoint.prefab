@@ -19,6 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4879466063372570}
+  - component: {fileID: 114977246943891414}
   - component: {fileID: 114022914769628784}
   - component: {fileID: 33719258018012756}
   - component: {fileID: 23997306405202888}
@@ -37,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1423985708805676}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.2}
+  m_LocalPosition: {x: 0, y: 0, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -93,11 +94,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1417484075c8e4c04860d8fe4148045f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: 0
   cameraMouse: {fileID: 0}
   cameraTouch: {fileID: 0}
   trans: {fileID: 0}
+  owner: {fileID: 0}
   mesh: {fileID: 0}
+  node:
+    walkable: 0
+    worldPosition: {x: 0, y: 0}
+    gridX: 0
+    gridY: 0
+    prisoner: {fileID: 0}
+    movementPenalty: 0
+    isNeigboursFilled: 0
+    gCost: 0
+    hCost: 0
+  body: {fileID: 0}
   materials:
   - {fileID: 2100000, guid: 52aca482341f9264082fa58d78f17c29, type: 2}
   - {fileID: 2100000, guid: 2e28ae6f4fc641d46bbfc0a8576a720c, type: 2}
@@ -114,3 +126,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 0.5
+--- !u!114 &114977246943891414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1423985708805676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: 0
+  playerController: {fileID: 0}

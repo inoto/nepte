@@ -1,205 +1,391 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Serialization;
 using UnityEngine;
 
-public class Base : MonoBehaviour, ITargetable, ICollidable
+public class Base : MonoBehaviour, ITargetable
 {
-    public bool showRadius;
-
-    public int owner;
-
-    public int health = 4000;
-    public float radius;
-    public CollisionType cType = CollisionType.Base;
-    public TargetType tType = TargetType.Base;
+	public enum BaseType
+	{
+		Normal,
+		Main,
+		Transit,
+	}
+	public BaseType type;
+	
+	public static ConfigBase config;
+	
+    public bool useAsStartPosition = false;
 
     public bool isDead = false;
+	public LineRenderer lineArrow;
+	public Dictionary<Base,Vector2> dictDistances = new Dictionary<Base, Vector2>();
+	public Dictionary<Base,int> dictOwners = new Dictionary<Base, int>();
 
-	public List<Node> node = new List<Node>();
+	public GameObject propertyIcon;
 
-    [Header("Cache")]
-    public Transform trans;
-	private MeshRenderer mesh;
-	private MeshFilter mf;
-    private GameObject playerControllerParent;
+	[Header("Cache")]
     public UISlider assignedHPbarSlider;
+	
     public RallyPoint rallyPoint;
-    public LaserMissile triggeredLaserMissile;
 	public List<GameObject> attackers = new List<GameObject>();
+	private float arrowOffset = 0;
 
-    [Header("Spawn")]
-    public float spawnTime = 3f;
-    public GameObject dronePrefab;
+    [Header("Modules")]
+    public Health health = new Health(4000);
+	public CollisionCircle collision;
+	public CircleCollider2D collider;
+
+    [Header("Components")]
+    [SerializeField]
+	public Transform trans;
+	public Owner owner;
+	public Spawner spawner;
+	public Weapon weapon;
+	MeshRenderer mesh;
 
     [Header("Prefabs")]
     [SerializeField]
     private GameObject explosionPrefab;
     public GameObject HPbarPrefab;
+	public GameObject mothershipOrbitPrefab;
+	
+    [Header("Colors")]
+    [SerializeField] Material materialNeutral;
+	[SerializeField] Material[] materials;
 
-	[Header("Colors")]
-	[SerializeField]
-	private Material[] materials;
+	[Header("AIPlayer")]
+	public int unitCountNearBasSelf = 0;
+	public int unitCountNearBasEnemies = 0;
 
     private void Awake()
     {
 		trans = GetComponent<Transform>();
 		mesh = GetComponent<MeshRenderer>();
-		mf = GetComponent<MeshFilter>();
+        spawner = GetComponent<Spawner>();
+        owner = GetComponent<Owner>();
+	    weapon = GetComponent<Weapon>();
+	    collider = GetComponent<CircleCollider2D>();
+	    mothershipOrbitPrefab = Resources.Load<GameObject>("MothershipOrbit");
     }
 
-    private void Start()
-    {
-        radius = GetComponent<Quad>().size;
-		playerControllerParent = transform.parent.gameObject;
-
-		GameObject assignedHPbarObject = Instantiate(HPbarPrefab, trans.position, trans.rotation);
-		assignedHPbarObject.transform.SetParent(GameObject.Find("HPBars").transform);
-        assignedHPbarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-
-        UISprite assignedHPbarSprite = assignedHPbarObject.GetComponent<UISprite>();
-		assignedHPbarSprite.SetAnchor(gameObject);
-		
-        assignedHPbarSlider = assignedHPbarObject.GetComponent<UISlider>();
-
-		InvokeRepeating("SpawnDrone", spawnTime, spawnTime);
-
-		TakeNodes();
-        CollisionManager.Instance.AddCollidable(this);
-    }
-
-    public void StartWithOwner()
-    {
-        AssignMaterial();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-		if (health <= 0)
-		{
-			Die();
-		}
-
-        //trans.Rotate(Vector3.back * ((trans.localScale.x * 10.0f) * Time.deltaTime));
-    }
-
-    public void Damage(int damage)
-    {
-		health -= damage;
-        assignedHPbarSlider.Set((float)health / 4000);
-    }
-
-	void TakeNodes()
+	public void Start()
 	{
-		Vector2 tmp = new Vector2(trans.position.x, trans.position.y);
-		List<Node> list = Grid.Instance.FindNodesInRadius(tmp, GetComponent<Quad>().size);
-		foreach (Node n in list)
+		trans.localScale = Vector3.one;
+		
+		collision = new CollisionCircle(trans, null, owner, null);
+		CollisionManager.Instance.AddCollidable(collision);
+
+		ConfigManager.Instance.OnConfigsLoaded += Reset;
+		GameController.Instance.OnGameStart += Reset;
+		GameController.Instance.OnGameStart += Initialize;
+	}
+
+	void Reset()
+	{
+		
+		config = ConfigManager.Instance.GetBaseConfig(this);
+		if (config == null)
 		{
-			n.ImprisonObject(gameObject);
+			Debug.LogError("Base config was not found");
+			return;
 		}
+		if (health != null)
+		{
+			health.max = config.HealthMax;
+			health.Reset();
+		}
+		if (collider != null)
+		{
+			collider.radius = config.ColliderRadius;
+		}
+		if (spawner != null)
+		{
+			spawner.StopSpawn();
+			
+			spawner.intervalMax = config.ProduceUnitInterval;
+			spawner.prefabName = config.SpawnUnitPrefabName;
+			spawner.prefab = Resources.Load<GameObject>("Units/" + spawner.prefabName);
+			spawner.maxCapturePoints = config.CaptureUnitCount;
+		}
+		if (weapon != null)
+		{
+			weapon.attackSpeed = config.AttackSpeed;
+			weapon.damage = config.AttackDamage;
+			weapon.damageNoBonuses = weapon.damage;
+			weapon.radius = config.AttackRadius;
+			weapon.missilePrefabName = config.AttackMissilePrefabName;
+			weapon.missilePrefab = Resources.Load<GameObject>(weapon.missilePrefabName);
+		}
+	}
+
+	void Update()
+    {
+        if (health.current <= 0)
+		{
+			Die(new Owner());
+		}
+	    if (lineArrow != null)
+	    {
+		    Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		    point.z = trans.position.z;
+		    lineArrow.SetPosition(1, point);
+	    }
+    }
+
+	void Initialize()
+	{
+		if (spawner != null)
+		{
+			spawner.unitCount = spawner.unitCountInitial;
+			spawner.UpdateLabel();
+		}
+		if (GameController.Instance.playersWithUnassignedBases.Count > 0 && useAsStartPosition)
+		{
+			int player = GameController.Instance.playersWithUnassignedBases.Dequeue();
+			PlayerController playerController = GameController.Instance.playerController[player + 1];
+			SetOwner(player, playerController);
+			type = BaseType.Main;
+			
+			playerController.trans.position = trans.position;
+			Vector3 pos = trans.position;
+			pos.z += 0.1f;
+			MothershipOrbit newMothershipOrbit =
+				Instantiate(mothershipOrbitPrefab, trans.position, trans.rotation, trans).GetComponent<MothershipOrbit>();
+			newMothershipOrbit.transform.position = pos;
+			newMothershipOrbit.owner.playerController = owner.playerController;
+			newMothershipOrbit.owner.playerNumber = owner.playerNumber;
+			newMothershipOrbit.DelayedStart();
+			newMothershipOrbit.bas = this;
+		}
+		else
+		{
+			int player = -1;
+			PlayerController playerController = GameController.Instance.playerController[player + 1];
+			SetOwner(player, playerController);
+		}
+		
+	}
+
+	public void GlowAdd()
+	{
+		Material newMat = Resources.Load<Material>("BaseGlow");
+		//		newMat.color = newColor;
+		List<Material> listMat = new List<Material>(mesh.materials);
+		listMat.Add(newMat);
+		mesh.materials = listMat.ToArray();
+		if (owner.playerNumber != -1)
+			mesh.materials[1].SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber+1]);
+	}
+
+	public void GlowRemove()
+	{
+		
+		List<Material> listMat = new List<Material>(mesh.materials);
+		listMat.RemoveAt(1);
+		mesh.materials = listMat.ToArray();
+	}
+
+	public void MakeArrow()
+	{
+		
+		lineArrow = gameObject.AddComponent<LineRenderer>();
+		lineArrow.SetPosition(0, trans.position);
+		lineArrow.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+		lineArrow.material = (Material)Resources.Load("Arrow");
+		if (owner.playerNumber < 0)
+			lineArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[0]);
+		else
+			lineArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber+1]);
+		lineArrow.widthMultiplier = 3f;
+		lineArrow.material.SetTextureOffset("_MainTex", new Vector2(0.1f, 0));
+
+		foreach (var b in GameController.Instance.bases)
+			b.GlowAdd();
+	}
+
+	public void SetOwner(int _playerNumber, PlayerController _playerController)
+	{
+		if (owner.playerController != null)
+		{
+			if (owner.playerController.bases.Contains(this))
+				owner.playerController.bases.Remove(this);
+		}
+		
+		owner.playerNumber = _playerNumber;
+		owner.playerController = _playerController;
+		
+		owner.playerController.bases.Add(this);
+//		Debug.Log("bases count of player " + owner.playerNumber + " is " + owner.playerController.bases.Count);
+
+		if (health.percent < 1)
+			Reset();
+
+		if (assignedHPbarSlider != null)
+			Destroy(assignedHPbarSlider.gameObject);
+		// if player is new owner
+		if (owner.playerNumber != -1)
+		{
+			//AddUIHPBar();
+			spawner.StartSpawn(trans.position);
+		}
+		// else it's neutral
+		else
+		{
+			spawner.StopSpawn();
+			spawner.StopAllCoroutines();
+		}
+		spawner.AddBonusInitial();
+		spawner.UpdateLabel();
+		AssignMaterial();
+	}
+
+	void AddUIHPBar()
+	{
+		Transform UIBars = GameObject.Find("UIBars").transform;
+		GameObject prefab = Resources.Load<GameObject>("UI/BaseHPBar");
+	    
+		Vector2 newPosition = trans.position;
+		newPosition.y += mesh.bounds.extents.y-1;
+		GameObject assignedHPBarObject = Instantiate(prefab, newPosition, trans.rotation, UIBars);
+		assignedHPBarObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
+		assignedHPbarSlider = assignedHPBarObject.GetComponent<UISlider>();
 	}
 
 	void AssignMaterial()
 	{
-		mesh.material = materials[owner];
+		
+        if (mesh != null)
+        {
+	        if (owner.playerNumber < 0)
+				mesh.material.SetColor("_TintColor", GameController.Instance.playerColors[0]);
+	        else
+		        mesh.material.SetColor("_TintColor", GameController.Instance.playerColors[owner.playerNumber+1]);
+//            if (owner.playerNumber < 0)
+//                mesh.sharedMaterial = materialNeutral;
+//            else
+//                mesh.sharedMaterial = materials[owner.playerNumber];
+        }
+		else
+			Debug.LogError("Cannot assign material.");
+		
 	}
 
-    private void OnDestroy()
-    {
-        CollisionManager.Instance.RemoveCollidable(this);
-    }
-
-    void Die()
+    void Die(Owner killerOwner)
     {
         CancelInvoke();
-        isDead = true;
-        GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation);
-        tmpObject.transform.SetParent(GameController.Instance.transform);
+	    spawner.StopSpawn();
+        //isDead = true;
+        GameObject tmpObject = Instantiate(explosionPrefab, trans.position, trans.rotation, GameController.Instance.transform);
 		//tmpObject.transform.localScale = trans.localScale;
-		CollisionManager.Instance.RemoveCollidable(this);
-        Destroy(assignedHPbarSlider.gameObject);
-        //Destroy(gameObject);
-        gameObject.SetActive(false);
+	    PlayerController oldPlayerController = owner.playerController;
+	    int oldPlayerNumber = owner.playerNumber;
+		SetOwner(-1, GameController.Instance.playerController[0]);
+	    health.max = health.maxNoBonuses;
+		health.current = health.maxNoBonuses;
+	    if (oldPlayerController.bases.Count <= 0 && oldPlayerController.playerUnitCount <= 0)
+	    {
+		    if (oldPlayerNumber == 0)
+			    GameController.Instance.Lose();
+		    else if (oldPlayerNumber > 0)
+			    GameController.Instance.Win();
+	    }
     }
-
-    void SpawnDrone()
-    {
-		
-        GameObject droneObject = ObjectPool.Spawn(dronePrefab, trans.parent, GameController.Instance.playerStartPosition[owner], trans.rotation);
-		Drone droneSpawned = droneObject.GetComponent<Drone>();
-        droneSpawned.owner = owner;
-        droneSpawned.playerRallyPoint = rallyPoint;
-		droneSpawned.ActivateWithOwner();
-        //droneSpawned.ResetRallyPoint();
-    }
-
-	public void OnDrawGizmos()
+	
+	public void AddBonusHP(int addition)
 	{
-		if (showRadius)
+		health.max += addition;
+		health.current += addition;
+		UpdateHPValue();
+	}
+
+	public void RemoveBonusHP(int addition)
+	{
+		health.max -= addition;
+//		health.current -= addition;
+		UpdateHPValue();
+	}
+	
+	public void RemoveBonusHPCurrent(int addition)
+	{
+		health.current -= addition;
+		UpdateHPValue();
+	}
+
+	public void UpdateHPValue()
+	{
+		if (assignedHPbarSlider != null)
 		{
-			Color newColorAgain = Color.green;
-			newColorAgain.a = 0.5f;
-			Gizmos.color = newColorAgain;
-			Gizmos.DrawWireSphere(trans.position, radius);
+			assignedHPbarSlider.Set((float) health.current / health.max);
+			health.percent = assignedHPbarSlider.value;
 		}
 	}
 
-	public int InstanceId
+	void CalculateUnitCountFromDamage(int damage)
 	{
-		get { return gameObject.GetInstanceID(); }
-	}
-	public Vector2 Point
-	{
-		get { return trans.position; }
-		set { trans.position = value; }
-	}
-	public float Radius
-	{
-        get { return radius; }
-	}
-	public float RadiusHard
-	{
-		get { return radius; }
-	}
-	public CollisionType collisionType
-	{
-		get { return cType; }
-	}
-	public bool Active
-	{
-		get { return gameObject.activeSelf; }
-	}
-	public GameObject GameObject
-	{
-		get { return gameObject; }
-	}
-	public Drone drone
-	{
-		get { return null; }
-	}
-	public Base bas
-	{
-		get { return this; }
+		if (spawner.unitCount <= 0)
+			return;
+		float oneUnitHealth = health.current / spawner.unitCount;
+		spawner.unitCountF -= (float) damage / oneUnitHealth;
+		
+		if (spawner.unitCountF <= 0 && spawner.unitCount > 0)
+		{
+			spawner.unitCount -= 1;
+			spawner.unitCountF = 1;
+			RemoveBonusHP(ConfigManager.Instance.Drone.HealthMax);
+			if (this.weapon != null)
+				this.weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage);
+		}
+		spawner.UpdateLabel();
 	}
 
-	public Drone DroneObj
+	public void OnDrawGizmos()
 	{
-		get { return null; }
+		//if (showRadius)
+		//{
+		//	Color newColorAgain = Color.green;
+		//	newColorAgain.a = 0.5f;
+		//	Gizmos.color = newColorAgain;
+		//	Gizmos.DrawWireSphere(trans.position, radius);
+		//}
 	}
-	public Base BaseObj
+	
+	public void Damage(Weapon fromWeapon)
 	{
-		get { return this; }
+		health.current -= fromWeapon.damage;
+		UpdateHPValue();
+		CalculateUnitCountFromDamage(fromWeapon.damage);
+		if (health.current <= 0)
+		{
+			Die(fromWeapon.owner);
+			fromWeapon.EndCombat();
+			if (health.current < 0)
+				health.current = 0;
+		}
 	}
+	
+	public void Damage(int damage)
+	{
+		health.current -= damage;
+		UpdateHPValue();
+		CalculateUnitCountFromDamage(damage);
+		if (health.current <= 0)
+		{
+			Die(new Owner());
+			if (health.current < 0)
+				health.current = 0;
+		}
+	}
+
 	public GameObject GameObj
 	{
 		get { return gameObject; }
 	}
-	public TargetType targetableType
+
+	public bool IsDied
 	{
-		get { return tType; }
+		get { return (isDead); }
 	}
-    public bool IsDied
-    {
-        get { return isDead; }
-    }
 }
