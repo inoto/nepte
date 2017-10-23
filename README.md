@@ -1,4 +1,4 @@
-This is my incomplete space RTS should be on mobile devices.
+This is my incomplete space RTS should be on mobile devices. Although it's more mine playground then a complete game.
 
 Points I've done here:
 - nGUI experience
