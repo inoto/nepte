@@ -16,11 +16,11 @@ public class EffectPeriodicDamage: EffectPeriodic
 	protected override void Reset()
 	{
 		Tick();
-		Base bas = unit.GameObj.GetComponent<Base>();
+		Planet bas = unit.GameObj.GetComponent<Planet>();
 		if (bas != null)
 		{
-			Destroy(bas.propertyIcon);
-			bas.propertyIcon = null;
+			Destroy(bas.PropertyIcon);
+			bas.PropertyIcon = null;
 		}
 		base.Reset();
 	}

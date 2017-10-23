@@ -11,7 +11,7 @@ public class Capture : MonoBehaviour
 	
 	private Transform trans;
 	public Owner owner;
-	public Base bas;
+	public Planet bas;
 	
 	private float counterStep = 0.01f;
 	public int[] capturerCount;
@@ -25,7 +25,7 @@ public class Capture : MonoBehaviour
 	{
 		trans = GetComponent<Transform>();
 		owner = GetComponent<Owner>();
-		bas = GetComponent<Base>();
+		bas = GetComponent<Planet>();
 //		body = GetComponent<Body>();
 	}
 
@@ -110,7 +110,7 @@ public class Capture : MonoBehaviour
 				if (assignedCircleTimer.fillAmount >= 1)
 				{
 					isCapturing = false;
-					GetComponent<Base>().SetOwner(leadIndex,
+					GetComponent<Planet>().SetOwner(leadIndex,
 						GameController.Instance.playerController[leadIndex]);
 					//GetComponent<Base>().PutNearDronesInside();
 					Clean();
@@ -122,7 +122,7 @@ public class Capture : MonoBehaviour
 					Clean();
 				}
 				
-				if (bas.collision.collidedCount <= 0)
+				if (bas.Collision.collidedCount <= 0)
 				{
 					assignedCircleTimer.fillAmount -= counterStep * 4;
 					//counter[leadIndex] -= counterStep * 4;

@@ -16,10 +16,10 @@ public class PlayerController : MonoBehaviour
 	[Header("Cache")]
 	public Transform trans;
     public Owner owner;
-    public Base bas;
+    public Planet bas;
     public AIPlayer aiPlayer;
 	
-	public List<Base> bases = new List<Base>();
+	public List<Planet> bases = new List<Planet>();
 
     [Header("Prefabs")]
     [SerializeField]

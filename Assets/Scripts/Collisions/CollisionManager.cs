@@ -69,7 +69,7 @@ public class CollisionManager : MonoBehaviour
 			qtree.Clear();
 			foreach (var b in GameController.Instance.bases)
 			{
-				AddCollidable(b.collision);
+				AddCollidable(b.Collision);
 			}
 		}
 	}

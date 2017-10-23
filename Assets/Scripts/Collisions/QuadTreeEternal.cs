@@ -327,7 +327,7 @@ public class QuadTreeEternal
 					{
 						if (!unit2.isDead)
 						{
-							if (unit2.mover.followBase.targetBase.gameObject != unit1.trans.gameObject)
+							if (unit2.mover.followBase.TargetPlanet.gameObject != unit1.trans.gameObject)
 								if (unit2.mover.separation.enabled)
 									unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
 						}
@@ -369,7 +369,7 @@ public class QuadTreeEternal
 					{
 						if (!unit1.isDead)
 						{
-							if (unit1.mover.followBase.targetBase.gameObject != unit2.trans.gameObject)
+							if (unit1.mover.followBase.TargetPlanet.gameObject != unit2.trans.gameObject)
 								if (unit1.mover.separation.enabled)
 									unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
 						}

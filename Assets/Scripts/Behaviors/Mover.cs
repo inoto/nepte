@@ -72,7 +72,7 @@ public class Mover : MonoBehaviour
 		isMoving = true;
 		while (isMoving)
 		{
-			if (followBase.enabled && followBase.targetBase != null)
+			if (followBase.enabled && followBase.TargetPlanet != null)
 			{
 				if (!followBase.arrived)
 				{

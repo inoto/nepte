@@ -195,7 +195,6 @@
     <Compile Include="Assets\Scripts\AI\AIDecision.cs" />
     <Compile Include="Assets\Scripts\AI\AIPlayer.cs" />
     <Compile Include="Assets\Scripts\AnimationDestroyer.cs" />
-    <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\Battleground.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Body.cs" />
     <Compile Include="Assets\Scripts\Behaviors\Capture.cs" />
@@ -225,7 +224,6 @@
     <Compile Include="Assets\Scripts\Collisions\CollisionCircle.cs" />
     <Compile Include="Assets\Scripts\Collisions\CollisionManager.cs" />
     <Compile Include="Assets\Scripts\Collisions\QuadTreeEternal.cs" />
-    <Compile Include="Assets\Scripts\Drone.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\Input\CameraController\AbstractCamera2DInput.cs" />
     <Compile Include="Assets\Scripts\Input\CameraController\AbstractCamera2DInputMouse.cs" />
@@ -236,11 +234,9 @@
     <Compile Include="Assets\Scripts\Input\InputTouch.cs" />
     <Compile Include="Assets\Scripts\Input\UIBarsCameraSize.cs" />
     <Compile Include="Assets\Scripts\ITargetable.cs" />
-    <Compile Include="Assets\Scripts\LaserMissile.cs" />
     <Compile Include="Assets\Scripts\Meshes\QuadMesh.cs" />
     <Compile Include="Assets\Scripts\Meshes\RectangleMesh.cs" />
-    <Compile Include="Assets\Scripts\Mothership.cs" />
-    <Compile Include="Assets\Scripts\MothershipOrbit.cs" />
+    <Compile Include="Assets\Scripts\Missiles\LaserMissile.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\ConfigManager.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigBase.cs" />
     <Compile Include="Assets\Scripts\ObjectConfiguration\Configs\ConfigDrone.cs" />
@@ -268,6 +264,10 @@
     <Compile Include="Assets\Scripts\UI\GameTimer.cs" />
     <Compile Include="Assets\Scripts\UI\LoseWinBlinking.cs" />
     <Compile Include="Assets\Scripts\UI\ObjectCounter.cs" />
+    <Compile Include="Assets\Scripts\Units\Drone.cs" />
+    <Compile Include="Assets\Scripts\Units\Mothership.cs" />
+    <Compile Include="Assets\Scripts\Units\MothershipOrbit.cs" />
+    <Compile Include="Assets\Scripts\Units\Planet.cs" />
     <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
     <None Include="Assets\NGUI\ReadMe - 3.11.4.txt" />
     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />

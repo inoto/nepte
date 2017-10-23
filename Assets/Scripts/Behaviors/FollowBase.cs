@@ -11,7 +11,7 @@ public class FollowBase
     public bool arrived = false;
 
 //	public GameObject targetBase;
-	public Base targetBase;
+	public Planet TargetPlanet;
 
     //public float maxSpeed = 1;
     //public float maxAcceleration = 1;
@@ -30,17 +30,17 @@ public class FollowBase
 	    arrived = false;
     }
 
-    public void UpdateTarget(Base obj)
+    public void UpdateTarget(Planet obj)
     {
         arrived = false;
 //		if (forceMultiplierOriginal > 0)
 //			forceMultiplier = forceMultiplierOriginal;
-	    targetBase = obj;
+	    TargetPlanet = obj;
     }
 
 	public void Seek()
 	{
-		Vector2 desired = (Vector2)targetBase.transform.position - (Vector2)mover.trans.position;
+		Vector2 desired = (Vector2)TargetPlanet.transform.position - (Vector2)mover.trans.position;
 
 		desired.Normalize();
 
@@ -54,12 +54,12 @@ public class FollowBase
 
 	public void MoveAround()
 	{
-		if (targetBase.owner.playerNumber == -1)
+		if (TargetPlanet.Owner.playerNumber == -1)
 		{
 			arrived = false;
 			return;
 		}
-		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)targetBase.transform.position).normalized;
+		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)TargetPlanet.transform.position).normalized;
 		desire.Normalize();
 		desire *= attackRadius;
 		if (desire.magnitude > attackRadius)
@@ -83,7 +83,7 @@ public class FollowBase
     public void Arrive()
 	{
 		/* Get the right direction for the linear acceleration */
-		Vector2 desired = targetBase.transform.position - mover.trans.position;
+		Vector2 desired = TargetPlanet.transform.position - mover.trans.position;
 
 		/* Get the distance to the target */
 		float dist = desired.magnitude;
@@ -97,7 +97,7 @@ public class FollowBase
 		{
 			mover.separation.desired = 0.3f;
 			mover.cohesion.desired = 0.3f;
-			if (targetBase.owner.playerNumber == mover.owner.playerNumber || targetBase.owner.playerNumber == -1)
+			if (TargetPlanet.Owner.playerNumber == mover.owner.playerNumber || TargetPlanet.Owner.playerNumber == -1)
 			{
 				if (dist > enterRadius)
 				{
@@ -109,7 +109,7 @@ public class FollowBase
 				}
 				else
 				{
-					targetBase.spawner.PutDroneInside(mover.GetComponent<Drone>());
+					TargetPlanet.Spawner.PutDroneInside(mover.GetComponent<Drone>());
 					arrived = true;
 					//mover.velocity *= 0;
 					return;

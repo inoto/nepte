@@ -17,9 +17,9 @@ public class AIDecision
 	}
 	public Type type;
 
-	public Base beginBas;
-	public List<Base> beginBases;
-	public Base targetBas;
+	public Planet beginBas;
+	public List<Planet> beginBases;
+	public Planet targetBas;
 	
 	public float weight = 0;
 	public float distance = 0;
@@ -29,16 +29,16 @@ public class AIDecision
 	private float sum = 0;
 	private bool willBeCaptured = false;
 
-	public AIDecision(Base newBeginBas, Base newTargetBas, AIPlayer newAIPlayer)
+	public AIDecision(Planet newBeginBas, Planet newTargetBas, AIPlayer newAIPlayer)
 	{
 		aiPlayer = newAIPlayer;
 		
 		beginBas = newBeginBas;
-		beginBases = new List<Base>();
+		beginBases = new List<Planet>();
 		targetBas = newTargetBas;
 
-		sumUnitsPerSecondSelf = 1 / beginBas.spawner.intervalMax;
-		sumUnitCountSelf = beginBas.spawner.unitCount + beginBas.owner.playerController.playerUnitCount;
+		sumUnitsPerSecondSelf = 1 / beginBas.Spawner.intervalMax;
+		sumUnitCountSelf = beginBas.Spawner.unitCount + beginBas.Owner.playerController.playerUnitCount;
 		
 		CountWeight();
 	}
@@ -46,21 +46,21 @@ public class AIDecision
 	public void CountWeight()
 	{
 		beginBases.Clear();
-		if (beginBas.owner.playerNumber == aiPlayer.owner.playerNumber && targetBas.owner.playerNumber == -1)
+		if (beginBas.Owner.playerNumber == aiPlayer.owner.playerNumber && targetBas.Owner.playerNumber == -1)
 		{
 			CheckUnitCount();
 			CheckDistances();
 			type = Type.OccupyNeutral;
 		}
-		else if (targetBas.owner.playerNumber == beginBas.owner.playerNumber && beginBas.owner.playerNumber == aiPlayer.owner.playerNumber)
+		else if (targetBas.Owner.playerNumber == beginBas.Owner.playerNumber && beginBas.Owner.playerNumber == aiPlayer.owner.playerNumber)
 		{
 			CheckToMove();
 			CheckToDefend();
 		}
-		else if (beginBas.owner.playerNumber == aiPlayer.owner.playerNumber && targetBas.owner.playerNumber != aiPlayer.owner.playerNumber)
+		else if (beginBas.Owner.playerNumber == aiPlayer.owner.playerNumber && targetBas.Owner.playerNumber != aiPlayer.owner.playerNumber)
 		{
-			float sumUnitsPerSecond = 1 / targetBas.spawner.intervalMax;
-			float sumUnitCount = targetBas.spawner.unitCount + targetBas.owner.playerController.playerUnitCount;
+			float sumUnitsPerSecond = 1 / targetBas.Spawner.intervalMax;
+			float sumUnitCount = targetBas.Spawner.unitCount + targetBas.Owner.playerController.playerUnitCount;
 			CheckToAttackFromFrontLine();
 			CheckToAttack();
 		}
@@ -69,11 +69,11 @@ public class AIDecision
 //			weight -= 5;
 		
 		// если текущая база под атакой, то никого выпускать не надо, дефим
-		if (beginBas.unitCountNearBasEnemies > 2)
+		if (beginBas.UnitCountNearBasEnemies > 2)
 			weight -= 10;
 		
 		// нам немного меньше интересна целевая база которая не может производить юниты
-		if (targetBas.type == Base.BaseType.Transit)
+		if (targetBas.Type == Planet.PlanetType.Transit)
 			weight -= 1;
 
 		if (beginBas == targetBas)
@@ -91,11 +91,11 @@ public class AIDecision
 			return;
 		weight += 3;
 
-		Base closestToAttack = null;
+		Planet closestToAttack = null;
 		float distMin = 99999;
 		foreach (var basToAttack in aiPlayer.basesToAttack)
 		{
-			float dist = (beginBas.trans.position - basToAttack.trans.position).sqrMagnitude;
+			float dist = (beginBas.Trans.position - basToAttack.Trans.position).sqrMagnitude;
 			if (dist < distMin)
 			{
 				distMin = dist;
@@ -108,22 +108,22 @@ public class AIDecision
 		float sumUnitCountSelf = 0;
 		foreach (var basInFrontLine in aiPlayer.basesInFrontLine)
 		{
-			if ((basInFrontLine.trans.position - targetBas.trans.position).sqrMagnitude < aiPlayer.distToFar)
+			if ((basInFrontLine.Trans.position - targetBas.Trans.position).sqrMagnitude < aiPlayer.distToFar)
 			{
-				sumUnitCountSelf += basInFrontLine.spawner.unitCount;
+				sumUnitCountSelf += basInFrontLine.Spawner.unitCount;
 				beginBases.Add(basInFrontLine);
 			}
 		}
-		if (sumUnitCountSelf * 0.9f < targetBas.spawner.unitCount)
+		if (sumUnitCountSelf * 0.9f < targetBas.Spawner.unitCount)
 		{
 			weight -= 3;
 			beginBases.Clear();
 		}
 		// если у целевой базы есть свои, то повышаем вес, чтобы выслать подкрепление
-		if (targetBas.unitCountNearBasEnemies > 3)
+		if (targetBas.UnitCountNearBasEnemies > 3)
 			weight += 1;
 		// если у целевой базы скопление врагов, то отменяем операцию
-		if (targetBas.unitCountNearBasSelf > 5)
+		if (targetBas.UnitCountNearBasSelf > 5)
 		{
 			weight -= 3;
 			beginBases.Clear();
@@ -139,16 +139,16 @@ public class AIDecision
 	void CheckToDefend()
 	{
 		// если дружественная база под атакой множества юнитов, то повышаем вес
-		if (targetBas.unitCountNearBasEnemies > 1)
+		if (targetBas.UnitCountNearBasEnemies > 1)
 		{
 			weight += 3;
 			float unitCount = 0;
 			// ищем ближайшие дружественные базы для дефа
 			foreach (var basSelf in aiPlayer.bases)
 			{
-				if ((basSelf.trans.position - targetBas.trans.position).sqrMagnitude < aiPlayer.distToFar)
+				if ((basSelf.Trans.position - targetBas.Trans.position).sqrMagnitude < aiPlayer.distToFar)
 				{
-					unitCount += basSelf.spawner.unitCount;
+					unitCount += basSelf.Spawner.unitCount;
 					beginBases.Add(basSelf);
 				}
 			}
@@ -156,7 +156,7 @@ public class AIDecision
 //			if (targetBas.type == Base.BaseType.Transit)
 //				weight += 3;
 			// если кол-во юнитов во всех дружественных базах меньше чем кол-во атакующих, то понижаем вес (отдаём базу)
-			if (unitCount < targetBas.unitCountNearBasEnemies)
+			if (unitCount < targetBas.UnitCountNearBasEnemies)
 			{
 				weight -= 3;
 				beginBases.Clear();
@@ -173,14 +173,14 @@ public class AIDecision
 			weight += 3;
 		}
 		// не выпускаем юнитов на линию фронта если их мало
-		if (beginBas.spawner.unitCount < 10)
+		if (beginBas.Spawner.unitCount < 10)
 		{
 			weight -= 1;
 		}
 		// балансируем кол-во юнитов в базах на линии фронта
 		foreach (var basInFrontLine in aiPlayer.basesInFrontLine)
 		{
-			if (targetBas.spawner.unitCount > basInFrontLine.spawner.unitCount)
+			if (targetBas.Spawner.unitCount > basInFrontLine.Spawner.unitCount)
 				weight -= 1;
 		}
 		type = Type.Allocation;
@@ -188,7 +188,7 @@ public class AIDecision
 
 	void CheckDistances()
 	{
-		Base closestNeutral = null;
+		Planet closestNeutral = null;
 		foreach (var basNeutral in aiPlayer.basesNeutral)
 		{
 			float distMin = 99999;
@@ -198,12 +198,12 @@ public class AIDecision
 			{
 				foreach (var basBegin in beginBases)
 				{
-					distSum += ((Vector2) basBegin.trans.position - (Vector2) basNeutral.trans.position).sqrMagnitude;
+					distSum += ((Vector2) basBegin.Trans.position - (Vector2) basNeutral.Trans.position).sqrMagnitude;
 				}
 			}
 			else
 			{
-				distSum += ((Vector2) beginBas.trans.position - (Vector2) basNeutral.trans.position).sqrMagnitude;
+				distSum += ((Vector2) beginBas.Trans.position - (Vector2) basNeutral.Trans.position).sqrMagnitude;
 			}
 			if (distSum < distMin)
 			{
@@ -217,25 +217,25 @@ public class AIDecision
 		// если целевая база не самая ближайшая нейтральная, то понижаем вес
 		if (closestNeutral != targetBas)
 			weight -= 1;
-		if ((beginBas.trans.position - targetBas.trans.position).sqrMagnitude > aiPlayer.distToFar)
+		if ((beginBas.Trans.position - targetBas.Trans.position).sqrMagnitude > aiPlayer.distToFar)
 			weight -= 3;
 	}
 
 	void CheckUnitCount()
 	{
 		// необходимое кол-во юнитов чтобы полностью захватить нейтральную базу
-		float targetUnitsNeeded = targetBas.spawner.unitCount + targetBas.spawner.maxCapturePoints;
+		float targetUnitsNeeded = targetBas.Spawner.unitCount + targetBas.Spawner.maxCapturePoints;
 		// опрашиваем соседние дружественные базы для кооперации
 		float basesSelfUnitCount = 0;
-		if (beginBas.owner.playerController.bases.Count > 1)
+		if (beginBas.Owner.playerController.bases.Count > 1)
 		{
 			// ищем суммарное кол-во юнитов в своих базах
-			foreach (var basSelf in beginBas.owner.playerController.bases)
+			foreach (var basSelf in beginBas.Owner.playerController.bases)
 			{
 				// если сосед воюет, то пропускает его
-				if (basSelf.unitCountNearBasEnemies > basSelf.spawner.unitCount)
+				if (basSelf.UnitCountNearBasEnemies > basSelf.Spawner.unitCount)
 					continue;
-				basesSelfUnitCount += basSelf.spawner.unitCount;
+				basesSelfUnitCount += basSelf.Spawner.unitCount;
 				beginBases.Add(basSelf);
 				// если набрали нужное кол-во, то дальше считать не нужно
 //				if (basesSelfUnitCount >= targetUnitsNeeded + targetBas.unitCountNearBasEnemies)
@@ -252,19 +252,19 @@ public class AIDecision
 		else
 		{
 //			beginBases = null;
-			if (beginBas.spawner.unitCount >= targetUnitsNeeded)
+			if (beginBas.Spawner.unitCount >= targetUnitsNeeded)
 			{
 				weight += 3;
 			}
 		}
 
 		// если уже есть захватчики
-		if (targetBas.unitCountNearBasEnemies > targetBas.spawner.maxCapturePoints)
+		if (targetBas.UnitCountNearBasEnemies > targetBas.Spawner.maxCapturePoints)
 			weight -= 1;
 		// если база захватывается врагом, то есть шанс перехватить её
-		if (targetBas.spawner.isCapturing && targetBas.spawner.captureLead != aiPlayer.owner.playerNumber)
+		if (targetBas.Spawner.isCapturing && targetBas.Spawner.captureLead != aiPlayer.owner.playerNumber)
 		{
-			if (targetBas.unitCountNearBasEnemies + targetBas.spawner.unitCount < basesSelfUnitCount &&
+			if (targetBas.UnitCountNearBasEnemies + targetBas.Spawner.unitCount < basesSelfUnitCount &&
 			    beginBases.Count > 1)
 			{
 				weight += 1;

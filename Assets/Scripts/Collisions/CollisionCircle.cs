@@ -13,7 +13,7 @@ public class CollisionCircle
     public Mover mover;
     public Owner owner;
 	public Weapon weapon;
-	public Base bas;
+	public Planet bas;
 
 	
 	public bool isInQT = false;
@@ -33,7 +33,7 @@ public class CollisionCircle
 	    if (mover == null)
 	    {
 		    isStatic = true;
-		    bas = trans.GetComponent<Base>();
+		    bas = trans.GetComponent<Planet>();
 	    }
 	    owner = _owner;
 	    weapon = _weapon;
@@ -72,7 +72,7 @@ public class CollisionCircle
 		if (isWeapon)
 			return weapon.radius;
 		else if (isStatic)
-			return bas != null ? bas.collider.radius : 0;
+			return bas != null ? bas.Collider.radius : 0;
 		else
 			return 0;
 	}

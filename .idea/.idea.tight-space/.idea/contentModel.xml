@@ -339,7 +339,6 @@
             <e p="AIPlayer.cs" t="Include" />
           </e>
           <e p="AnimationDestroyer.cs" t="Include" />
-          <e p="Base.cs" t="Include" />
           <e p="Battleground.cs" t="Include" />
           <e p="Behaviors" t="Include">
             <e p="Body.cs" t="Include" />
@@ -375,7 +374,6 @@
             <e p="CollisionManager.cs" t="Include" />
             <e p="QuadTreeEternal.cs" t="Include" />
           </e>
-          <e p="Drone.cs" t="Include" />
           <e p="GameController.cs" t="Include" />
           <e p="Input" t="Include">
             <e p="CameraController" t="Include">
@@ -390,13 +388,13 @@
             <e p="UIBarsCameraSize.cs" t="Include" />
           </e>
           <e p="ITargetable.cs" t="Include" />
-          <e p="LaserMissile.cs" t="Include" />
           <e p="Meshes" t="Include">
             <e p="QuadMesh.cs" t="Include" />
             <e p="RectangleMesh.cs" t="Include" />
           </e>
-          <e p="Mothership.cs" t="Include" />
-          <e p="MothershipOrbit.cs" t="Include" />
+          <e p="Missiles" t="Include">
+            <e p="LaserMissile.cs" t="Include" />
+          </e>
           <e p="ObjectConfiguration" t="Include">
             <e p="ConfigManager.cs" t="Include" />
             <e p="Configs" t="Include">
@@ -433,6 +431,12 @@
             <e p="GameTimer.cs" t="Include" />
             <e p="LoseWinBlinking.cs" t="Include" />
             <e p="ObjectCounter.cs" t="Include" />
+          </e>
+          <e p="Units" t="Include">
+            <e p="Drone.cs" t="Include" />
+            <e p="Mothership.cs" t="Include" />
+            <e p="MothershipOrbit.cs" t="Include" />
+            <e p="Planet.cs" t="Include" />
           </e>
         </e>
         <e p="Shaders" t="Include">

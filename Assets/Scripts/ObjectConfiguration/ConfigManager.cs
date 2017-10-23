@@ -39,15 +39,15 @@ public class ConfigManager : MonoBehaviour
 	public ConfigDrone Drone;
 	public ConfigMothership Mothership;
 
-	public ConfigBase GetBaseConfig(Base bas)
+	public ConfigBase GetBaseConfig(Planet bas)
 	{
-		switch (bas.type)
+		switch (bas.Type)
 		{
-			case global::Base.BaseType.Normal:
+			case global::Planet.PlanetType.Normal:
 				return Base;
-			case global::Base.BaseType.Main:
+			case global::Planet.PlanetType.Main:
 				return Base;
-			case global::Base.BaseType.Transit:
+			case global::Planet.PlanetType.Transit:
 				return BaseTransit;
 			default:
 				return null;

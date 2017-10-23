@@ -5,7 +5,7 @@ public class CardProperty : Card
 	[Header("CardProperty")]
 	public GameObject propertySpritePrefab;
 	protected GameObject icon;
-	protected Base bas;
+	protected Planet bas;
 	
 	public override void Drag()
 	{
@@ -32,14 +32,14 @@ public class CardProperty : Card
 		if (hit)
 		{
 			//Debug.Log("hit base");
-			bas = hit.collider.gameObject.GetComponent<Base>();
+			bas = hit.collider.gameObject.GetComponent<Planet>();
 			if (bas != null)
 			{
 				if (propertySpritePrefab != null)
 				{
-					icon = GameObject.Instantiate(propertySpritePrefab, bas.trans.position, bas.trans.rotation);
-					icon.transform.parent = bas.trans;
-					bas.propertyIcon = icon;
+					icon = GameObject.Instantiate(propertySpritePrefab, bas.Trans.position, bas.Trans.rotation);
+					icon.transform.parent = bas.Trans;
+					bas.PropertyIcon = icon;
 				}
 				return true;
 			}

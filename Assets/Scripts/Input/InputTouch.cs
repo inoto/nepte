@@ -3,7 +3,7 @@
 public class InputTouch : AbstractCamera2DInputTouch
 {
 	[Header("InputTouch")]
-	public Base selectedBas;
+	public Planet selectedBas;
 	public MothershipOrbit selectedMothershipOrbit;
 
 	protected override void onTouchStart ()
@@ -13,14 +13,14 @@ public class InputTouch : AbstractCamera2DInputTouch
 		RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 		if (hit && selectedBas == null)
 		{
-			Base bas = hit.transform.gameObject.GetComponent<Base>();
+			Planet bas = hit.transform.gameObject.GetComponent<Planet>();
 			MothershipOrbit mothershipOrbit = hit.transform.GetComponent<MothershipOrbit>();
-			if (bas != null && bas.owner.playerNumber == 0)
+			if (bas != null && bas.Owner.playerNumber == 0)
 			{
 				selectedBas = bas;
 				bas.MakeArrow();
 			}
-			else if (mothershipOrbit != null && mothershipOrbit.mothership.owner.playerNumber == 0)
+			else if (mothershipOrbit != null && mothershipOrbit.Mothership.Owner.playerNumber == 0)
 			{
 				selectedMothershipOrbit = mothershipOrbit;
 				mothershipOrbit.MakeArrow();
@@ -34,16 +34,16 @@ public class InputTouch : AbstractCamera2DInputTouch
 		
 		if (selectedBas != null)
 		{
-//			DestroyObject(selectedBas.lineArrow);
+			DestroyObject(selectedBas.LineRendererArrow);
 			foreach (var b in GameController.Instance.bases)
 				b.GlowRemove();
 			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
-				Base bas = hit.transform.gameObject.GetComponent<Base>();
+				Planet bas = hit.transform.gameObject.GetComponent<Planet>();
 				if (bas != null && bas != selectedBas)
 				{
-					selectedBas.spawner.ReleaseUnits(bas.gameObject);
+					selectedBas.Spawner.ReleaseUnits(bas.gameObject);
 				}
 			}
 			selectedBas = null;
@@ -51,12 +51,12 @@ public class InputTouch : AbstractCamera2DInputTouch
 		}
 		if (selectedMothershipOrbit != null)
 		{
-			DestroyObject(selectedMothershipOrbit.lineArrow);
+			DestroyObject(selectedMothershipOrbit.LineRendererArrow);
 			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
-				Base bas = hit.transform.GetComponent<Base>();
-				if (bas != null && bas != selectedMothershipOrbit.bas && bas.owner.playerNumber == 0)
+				Planet bas = hit.transform.GetComponent<Planet>();
+				if (bas != null && bas != selectedMothershipOrbit.Planet && bas.Owner.playerNumber == 0)
 				{
 					selectedMothershipOrbit.AssignToBase(bas);
 				}

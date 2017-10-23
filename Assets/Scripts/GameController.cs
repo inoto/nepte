@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
     [Header("Cache")]
     public List<PlayerController> playerController;
     public List<Vector3> playerStartPosition;
-    public List<Base> bases;
+    public List<Planet> bases;
 	public Queue<int> playersWithUnassignedBases = new Queue<int>();
 
     [Header("Prefabs")]
@@ -264,7 +264,7 @@ public class GameController : MonoBehaviour
 		}
 	    foreach (var b in bases)
 	    {
-		    b.trans.DestroyChildren();
+		    b.Trans.DestroyChildren();
 	    }
     }
 
@@ -297,23 +297,23 @@ public class GameController : MonoBehaviour
 				playersWithUnassignedBases.Enqueue(i);
 		}
 		bases.Clear();
-		bases.AddRange(FindObjectsOfType<Base>());
+		bases.AddRange(FindObjectsOfType<Planet>());
 	}
 
 	void AssignBases()
 	{
 		bases.Clear();
-        bases.AddRange(FindObjectsOfType<Base>());
+        bases.AddRange(FindObjectsOfType<Planet>());
         int counter = 0;
 		int counterFull = -1;
-        foreach (Base b in bases)
+        foreach (Planet b in bases)
         {
-	        if (b.useAsStartPosition)
+	        if (b.UseAsStartPosition)
 	        {
 		        //playerStartPosition[counter] = b.trans.position;
-		        b.type = Base.BaseType.Main;
+		        b.Type = Planet.PlanetType.Main;
 		        b.SetOwner(counter, playerController[counter+1]);
-		        playerController[counter+1].trans.position = b.trans.position;
+		        playerController[counter+1].trans.position = b.Trans.position;
 		        //b.DelayedStart();
 		        counter++;
 	        }
