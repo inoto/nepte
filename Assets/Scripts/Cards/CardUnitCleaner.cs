@@ -7,7 +7,7 @@ public class CardUnitCleaner : CardAction
 	public override bool Activate(Vector2 position)
 	{
 		base.Activate(position);
-		foreach (var unit in GameController.FindObjectsOfType<Drone>())
+		foreach (var unit in GameManager.FindObjectsOfType<Drone>())
 		{
 			unit.Damage(damage);
 		}

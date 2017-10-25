@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class StarsMover : MonoBehaviour
 {
-	Camera2DController controlCamera;
+	private Camera2DController controlCamera;
 
-    Transform transStars1;
-    Transform transStars2;
-    Transform transStars3;
+    private Transform transStars1;
+	private Transform transStars2;
+	private Transform transStars3;
 
-	void Awake ()
+	private void Awake ()
     {
 		controlCamera = Camera.main.GetComponent<Camera2DController>();
 	}
 
-	void Start()
+	private void Start()
 	{
 		transStars1 = transform.GetChild(0).transform;
 		transStars2 = transform.GetChild(1).transform;
@@ -27,24 +27,24 @@ public class StarsMover : MonoBehaviour
         controlCamera.onTranslate += MoveStars;
 	}
 	
-    void MoveStars1()
+	private void MoveStars1()
     {
         //transStars1.Translate((Vector2)Input.mousePosition * 0.002f);
         //transStars1.position = Vector2.MoveTowards(transStars1.position, Camera.main.transform.position, 1);
         transStars1.position = (Vector2)Camera.main.transform.position * 0.2f;
     }
 
-	void MoveStars2()
+	private void MoveStars2()
 	{
 		transStars2.position = (Vector2)Camera.main.transform.position * 0.3f;
 	}
 
-	void MoveStars3()
+	private void MoveStars3()
 	{
 		transStars3.position = (Vector2)Camera.main.transform.position * 0.4f;
 	}
 
-    void MoveStars()
+	private void MoveStars()
     {
         Vector3 vec = Camera.main.transform.position;
         vec.z = 1;

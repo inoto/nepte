@@ -116,7 +116,7 @@ MonoBehaviour:
     enabled: 1
     following: 0
     arrived: 0
-    targetBase: {fileID: 0}
+    TargetPlanet: {fileID: 0}
     enterRadius: 1
     attackRadius: 2
     slowDownRadius: 3
@@ -166,16 +166,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd46aa7cf720549e3b4f1a5a8ee54d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 0
+  Mode: 0
   explosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
     type: 2}
-  health:
-    max: 100
+  Health:
+    max: 0
     maxNoBonuses: 0
-    current: 100
-    percent: 1
-  collision:
-    showGizmos: 1
+    current: 0
+    percent: 0
+  Collision:
+    showGizmos: 0
     instanceId: 0
     trans: {fileID: 0}
     mover: {fileID: 0}
@@ -188,10 +188,10 @@ MonoBehaviour:
     isStatic: 0
     isWeapon: 0
     collidedCount: 0
-  trans: {fileID: 0}
-  owner: {fileID: 0}
-  mover: {fileID: 0}
-  weapon: {fileID: 0}
+  Trans: {fileID: 0}
+  Owner: {fileID: 0}
+  Mover: {fileID: 0}
+  Weapon: {fileID: 0}
   materials:
   - {fileID: 2100000, guid: dd1135459b9084bd18b6ad32a1af18ef, type: 2}
   - {fileID: 2100000, guid: c6e88d3c5145b4a079954b5a773aa640, type: 2}

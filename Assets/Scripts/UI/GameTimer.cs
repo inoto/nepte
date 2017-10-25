@@ -16,8 +16,8 @@ public class GameTimer : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        int minutes = Mathf.FloorToInt(GameController.Instance.gameTimer / 60F);
-        int seconds = Mathf.FloorToInt(GameController.Instance.gameTimer - minutes * 60);
+        int minutes = Mathf.FloorToInt(GameManager.Instance.GameTimer / 60F);
+        int seconds = Mathf.FloorToInt(GameManager.Instance.GameTimer - minutes * 60);
         string formattedTime = string.Format("{0:0}:{1:00}", minutes, seconds);
 
         label.text = formattedTime;

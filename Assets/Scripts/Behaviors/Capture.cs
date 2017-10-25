@@ -32,7 +32,7 @@ public class Capture : MonoBehaviour
 	private void Start()
 	{
 		//counter = new float[GameController.Instance.players];
-		capturerCount = new int[GameController.Instance.players];
+		capturerCount = new int[GameManager.Instance.Players];
 	}
 
 	public void Tick(int side)
@@ -88,7 +88,7 @@ public class Capture : MonoBehaviour
 				if (leadIndex > -1)
 				{
 					//Debug.Log("new lead: " + leadIndex);
-					assignedCircleTimer.color = GameController.Instance.playerColors[leadIndex];
+					assignedCircleTimer.color = GameManager.Instance.PlayerColors[leadIndex];
 				}
 			}
 			else
@@ -111,7 +111,7 @@ public class Capture : MonoBehaviour
 				{
 					isCapturing = false;
 					GetComponent<Planet>().SetOwner(leadIndex,
-						GameController.Instance.playerController[leadIndex]);
+						GameManager.Instance.PlayerController[leadIndex]);
 					//GetComponent<Base>().PutNearDronesInside();
 					Clean();
 					Destroy(assignedCircleTimer.gameObject);

@@ -85,7 +85,7 @@ public class Weapon : MonoBehaviour
 			return;
 //		GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, trans.position, trans.rotation);
 		GameObject laserMissileObject = Instantiate(missilePrefab, trans.position, trans.rotation);
-		laserMissileObject.transform.parent = GameController.Instance.transform;
+		laserMissileObject.transform.parent = GameManager.Instance.transform;
 		LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;
 		//laserMissile.owner = owner;

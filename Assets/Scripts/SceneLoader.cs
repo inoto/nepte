@@ -1,43 +1,37 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class SceneLoader: MonoBehaviour
 {
 	private bool loadScene = false;
 
-	[SerializeField]
-	private int scene;
-	[SerializeField]
-	private TextMesh loadingText;
+	[SerializeField] private int scene;
+	[SerializeField] private TextMesh loadingText;
 	
-	void Update() {
+	private void Update()
+	{
 
-		if (loadScene == false) {
-
+		if (loadScene == false)
+		{
 			loadScene = true;
-
 			loadingText.text = "Loading...";
-
 			StartCoroutine(LoadNewScene());
 
 		}
-
-		if (loadScene == true) {
-
+		else
+		{
 			loadingText.color = new Color(loadingText.color.r, loadingText.color.g, loadingText.color.b, Mathf.PingPong(Time.time, 1));
-
 		}
 
 	}
 	
-	IEnumerator LoadNewScene() {
-
+	private IEnumerator LoadNewScene()
+	{
 		yield return new WaitForSeconds(3);
-
-		AsyncOperation async = Application.LoadLevelAsync(scene);
-
-		while (!async.isDone) {
+		AsyncOperation async = SceneManager.LoadSceneAsync(scene);
+		while (!async.isDone)
+		{
 			yield return null;
 		}
 

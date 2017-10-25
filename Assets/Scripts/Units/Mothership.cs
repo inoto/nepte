@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Mothership : MonoBehaviour, ITargetable
 {
@@ -54,8 +51,8 @@ public class Mothership : MonoBehaviour, ITargetable
 	public void DelayedStart()
     {
         AssignMaterial();
-        Owner.playerController.playerUnitCount += 1;
-        PlayerController.unitCount += 1;
+        Owner.playerController.PlayerUnitCount += 1;
+        PlayerController.UnitCount += 1;
     }
 
 	private void OnEnable()
@@ -136,15 +133,15 @@ public class Mothership : MonoBehaviour, ITargetable
 		{
 			MakeExplosion();
 		}
-		Owner.playerController.playerUnitCount -= 1;
-		PlayerController.unitCount -= 1;
+		Owner.playerController.PlayerUnitCount -= 1;
+		PlayerController.UnitCount -= 1;
 		ObjectPool.Recycle(gameObject);
 	}
 
 	private void MakeExplosion()
 	{
 		GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation);
-		explosion.transform.parent = GameController.Instance.transform;
+		explosion.transform.parent = GameManager.Instance.transform;
 		QuadMesh qm = GetComponent<QuadMesh>();
 		if (qm != null)
 		{

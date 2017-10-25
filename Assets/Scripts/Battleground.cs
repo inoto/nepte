@@ -2,28 +2,28 @@
 
 public class Battleground : MonoBehaviour
 {
-    public Vector3 size;
+    public Vector3 Size;
+    public float Width, Height;
+	
+	private Rect rect;
 
-    public float width, height;
-    Rect rect;
+	private Transform trans;
+	private Camera2DController cameraControl;
 
-    Transform trans;
-	Camera2DController cameraControl;
-
-    Vector3 direction;
-    Vector3 targetPosition;
+	private Vector3 direction;
+	private  Vector3 targetPosition;
 
 	// Use this for initialization
-	void Start ()
+	private void Start ()
     {
         rect.min = GetComponent<MeshRenderer>().bounds.min;
         rect.max = GetComponent<MeshRenderer>().bounds.max;
-        size = GetComponent<MeshRenderer>().bounds.size;
+        Size = GetComponent<MeshRenderer>().bounds.size;
         trans = GetComponent<Transform>();
         //cameraControl.ActiveCamera.onTranslate += MoveBackground;
 	}
 
-    void MoveBackground()
+	private void MoveBackground()
     {
         direction = cameraControl.Camera.transform.position;
 

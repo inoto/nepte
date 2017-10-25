@@ -4,20 +4,15 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-	public int dronePoolSize;
-    public int laserMissilePoolSize;
+	public List<GameObject> Objects = new List<GameObject>();
+	public List<int> ObjectCount = new List<int>();
 
     private static ObjectPool _instance;
 
     public static ObjectPool Instance { get { return _instance; } }
 
-    Dictionary<GameObject, List<GameObject>> pooledObjects = new Dictionary<GameObject, List<GameObject>>();
-    Dictionary<GameObject, GameObject> spawnedObjects = new Dictionary<GameObject, GameObject>();
-
-    [Header("Prefabs")]
-    public GameObject dronePrefab;
-    public GameObject laserMissilePrefab;
-    public GameObject droneExplosionPrefab;
+    private Dictionary<GameObject, List<GameObject>> pooledObjects = new Dictionary<GameObject, List<GameObject>>();
+	private Dictionary<GameObject, GameObject> spawnedObjects = new Dictionary<GameObject, GameObject>();
 
 	private void Awake()
 	{
@@ -36,14 +31,19 @@ public class ObjectPool : MonoBehaviour
         CreateStartupPools();
     }
 
-    void CreateStartupPools()
+    private void CreateStartupPools()
     {
-        CreatePool(dronePrefab, dronePoolSize);
-        CreatePool(laserMissilePrefab, laserMissilePoolSize);
-        //CreatePool(droneExplosionPrefab, dronePoolSize);
+	    for (int i = 0; i < Objects.Count; i++)
+	    {
+		    if (ObjectCount[i] < 10)
+		    {
+			    ObjectCount[i] = 10;
+		    }
+		    CreatePool(Objects[i], ObjectCount[i]);
+	    }
     }
 
-    void CreatePool(GameObject prefab, int newSize)
+    private void CreatePool(GameObject prefab, int newSize)
     {
 		if (prefab != null && !_instance.pooledObjects.ContainsKey(prefab))
 		{

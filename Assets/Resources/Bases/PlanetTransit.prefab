@@ -26,9 +26,9 @@ GameObject:
   - component: {fileID: 114969710160545916}
   - component: {fileID: 114358262193089728}
   - component: {fileID: 58317274819651986}
-  - component: {fileID: 114673071609516670}
+  - component: {fileID: 114807933076965178}
   m_Layer: 0
-  m_Name: Base
+  m_Name: PlanetTransit
   m_TagString: base
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ Transform:
   m_GameObject: {fileID: 1771483991996188}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12.2, y: 3.67, z: 0.1}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -112,20 +112,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58262da786bcb4ce1a40a48a9c7dc123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
-  useAsStartPosition: 0
-  isDead: 0
-  lineArrow: {fileID: 0}
-  propertyIcon: {fileID: 0}
-  assignedHPbarSlider: {fileID: 0}
-  rallyPoint: {fileID: 0}
-  attackers: []
-  health:
-    max: 1000
-    maxNoBonuses: 1000
-    current: 1000
+  Type: 0
+  UseAsStartPosition: 0
+  IsDead: 0
+  LineRendererArrow: {fileID: 0}
+  PropertyIcon: {fileID: 0}
+  AssignedHpBarSlider: {fileID: 0}
+  Health:
+    max: 4000
+    maxNoBonuses: 4000
+    current: 4000
     percent: 1
-  collision:
+  Collision:
     showGizmos: 0
     instanceId: 0
     trans: {fileID: 0}
@@ -139,23 +137,20 @@ MonoBehaviour:
     isStatic: 0
     isWeapon: 0
     collidedCount: 0
-  collider: {fileID: 0}
-  trans: {fileID: 0}
-  owner: {fileID: 0}
-  spawner: {fileID: 0}
-  weapon: {fileID: 0}
+  Collider: {fileID: 0}
+  Trans: {fileID: 0}
+  Owner: {fileID: 0}
+  Spawner: {fileID: 0}
+  Weapon: {fileID: 0}
   explosionPrefab: {fileID: 1907091548332196, guid: 3f875c2e8a08c4ca0a6bf1ee238c1de5,
     type: 2}
-  HPbarPrefab: {fileID: 1211159475750974, guid: 047570b75374547bba9d07df774de185,
-    type: 2}
-  mothershipOrbitPrefab: {fileID: 0}
   materialNeutral: {fileID: 2100000, guid: 801c837e071a242239e7dbd813b6ad0e, type: 2}
   materials:
   - {fileID: 2100000, guid: 7eaf52c9e38d34b41af62514b874c3ed, type: 2}
   - {fileID: 2100000, guid: 7326301bab270a949945db0a00c87a99, type: 2}
   - {fileID: 2100000, guid: 62deb8efdff8f80408b03b2c60864186, type: 2}
-  unitCountNearBasSelf: 0
-  unitCountNearBasEnemies: 0
+  UnitCountNearBasSelf: 0
+  UnitCountNearBasEnemies: 0
 --- !u!114 &114358262193089728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -167,22 +162,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55587925037df433282650f8c4ef7d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canProduce: 1
+  canProduce: 0
   isActive: 0
   unitCountInitial: 10
   unitCountF: 1
   unitCount: 0
   unitCountMax: 50
   isCapturing: 0
-  maxCapturePoints: 5
-  captureLead: -1
+  maxCapturePoints: 0
+  captureLead: 0
   delay: 2
   intervalMin: 2
   intervalMax: 2
   point: {x: 0, y: 0}
   prefab: {fileID: 1964420292115662, guid: bd3f5396855ef4acb87bac449548f2ab, type: 2}
   prefabName: Drone
---- !u!114 &114673071609516670
+--- !u!114 &114681370771658558
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1771483991996188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: -1
+  playerController: {fileID: 0}
+--- !u!114 &114807933076965178
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -196,13 +204,13 @@ MonoBehaviour:
   showRadius: 1
   isEnabled: 1
   isAttacking: 0
-  radius: 4
-  attackSpeed: 4
-  damage: 100
-  damageNoBonuses: 100
+  radius: 3
+  attackSpeed: 1
+  damage: 40
+  damageNoBonuses: 0
   hasTarget: 0
   missilePrefab: {fileID: 0}
-  missilePrefabName: LaserMissile
+  missilePrefabName: 
   trans: {fileID: 4175439061827504}
   owner: {fileID: 0}
   mover: {fileID: 0}
@@ -220,19 +228,6 @@ MonoBehaviour:
     isStatic: 0
     isWeapon: 0
     collidedCount: 0
---- !u!114 &114681370771658558
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1771483991996188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcafb59a2642b4d93b908c651ad4d116, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerNumber: -1
-  playerController: {fileID: 0}
 --- !u!114 &114969710160545916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -244,4 +239,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14d628d98a2a4855af6bd3d68840f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1
+  size: 0.75

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Drone : MonoBehaviour, ITargetable
 {
@@ -49,8 +46,8 @@ public class Drone : MonoBehaviour, ITargetable
     {
         AssignMaterial();
         Mover.DelayedStart();
-        Owner.playerController.playerUnitCount += 1;
-        PlayerController.unitCount += 1;
+        Owner.playerController.PlayerUnitCount += 1;
+        PlayerController.UnitCount += 1;
     }
 
 	private void OnEnable()
@@ -115,15 +112,15 @@ public class Drone : MonoBehaviour, ITargetable
 		{
 			MakeExplosion();
 		}
-		Owner.playerController.playerUnitCount -= 1;
-		PlayerController.unitCount -= 1;
+		Owner.playerController.PlayerUnitCount -= 1;
+		PlayerController.UnitCount -= 1;
 		ObjectPool.Recycle(gameObject);
 	}
 
 	private void MakeExplosion()
 	{
 		GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation);
-		explosion.transform.parent = GameController.Instance.transform;
+		explosion.transform.parent = GameManager.Instance.transform;
 		float size = GetComponent<QuadMesh>().size * 1.5f;
 		explosion.transform.localScale = new Vector3(size, size, 1);
 	}
@@ -133,9 +130,9 @@ public class Drone : MonoBehaviour, ITargetable
 		if (mesh != null)
 		{
 			if (Owner.playerNumber < 0)
-				mesh.material.SetColor("_Color", GameController.Instance.playerColors[0]);
+				mesh.material.SetColor("_Color", GameManager.Instance.PlayerColors[0]);
 			else
-				mesh.material.SetColor("_Color", GameController.Instance.playerColors[Owner.playerNumber + 1]);
+				mesh.material.SetColor("_Color", GameManager.Instance.PlayerColors[Owner.playerNumber + 1]);
 		}
 	}
 

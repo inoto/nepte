@@ -82,7 +82,7 @@ public class Spawner : MonoBehaviour
         int count = Mathf.FloorToInt(unitCount);
         while (count > 0)
         {
-            GameObject droneObject = ObjectPool.Spawn(prefab, owner.playerController.trans, point, trans.rotation);
+            GameObject droneObject = ObjectPool.Spawn(prefab, owner.playerController.Trans, point, trans.rotation);
             Drone droneSpawned = droneObject.GetComponent<Drone>();
             droneSpawned.Owner.playerNumber = owner.playerNumber;
             droneSpawned.Owner.playerController = owner.playerController;
@@ -111,7 +111,7 @@ public class Spawner : MonoBehaviour
         isCapturing = true;
         var sprite = unitCountLabel.transform.parent.GetComponent<UISprite>();
         if (side >= 0)
-            sprite.color = GameController.Instance.playerColors[side+1];
+            sprite.color = GameManager.Instance.PlayerColors[side+1];
         captureLead = side;
     }
     

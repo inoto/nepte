@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Planet : MonoBehaviour, ITargetable
@@ -72,8 +69,8 @@ public class Planet : MonoBehaviour, ITargetable
 		CollisionManager.Instance.AddCollidable(Collision);
 
 		ConfigManager.Instance.OnConfigsLoaded += Reset;
-		GameController.Instance.OnGameStart += Reset;
-		GameController.Instance.OnGameStart += Initialize;
+		GameManager.Instance.OnGameStart += Reset;
+		GameManager.Instance.OnGameStart += Initialize;
 	}
 
 	private void Reset()
@@ -135,14 +132,14 @@ public class Planet : MonoBehaviour, ITargetable
 			Spawner.unitCount = Spawner.unitCountInitial;
 			Spawner.UpdateLabel();
 		}
-		if (GameController.Instance.playersWithUnassignedBases.Count > 0 && UseAsStartPosition)
+		if (GameManager.Instance.PlayersWithUnassignedPlanets.Count > 0 && UseAsStartPosition)
 		{
-			int player = GameController.Instance.playersWithUnassignedBases.Dequeue();
-			PlayerController playerController = GameController.Instance.playerController[player + 1];
+			int player = GameManager.Instance.PlayersWithUnassignedPlanets.Dequeue();
+			PlayerController playerController = GameManager.Instance.PlayerController[player + 1];
 			SetOwner(player, playerController);
 			Type = PlanetType.Main;
 			
-			playerController.trans.position = Trans.position;
+			playerController.Trans.position = Trans.position;
 			Vector3 pos = Trans.position;
 			pos.z += 0.1f;
 			MothershipOrbit newMothershipOrbit =
@@ -156,7 +153,7 @@ public class Planet : MonoBehaviour, ITargetable
 		else
 		{
 			int player = -1;
-			PlayerController playerController = GameController.Instance.playerController[player + 1];
+			PlayerController playerController = GameManager.Instance.PlayerController[player + 1];
 			SetOwner(player, playerController);
 		}
 		
@@ -171,7 +168,7 @@ public class Planet : MonoBehaviour, ITargetable
 		mesh.materials = listMat.ToArray();
 		if (Owner.playerNumber != -1)
 		{
-			mesh.materials[1].SetColor("_TintColor", GameController.Instance.playerColors[Owner.playerNumber + 1]);
+			mesh.materials[1].SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.playerNumber + 1]);
 		}
 	}
 
@@ -190,16 +187,16 @@ public class Planet : MonoBehaviour, ITargetable
 		LineRendererArrow.material = (Material)Resources.Load("Arrow");
 		if (Owner.playerNumber < 0)
 		{
-			LineRendererArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[0]);
+			LineRendererArrow.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[0]);
 		}
 		else
 		{
-			LineRendererArrow.material.SetColor("_TintColor", GameController.Instance.playerColors[Owner.playerNumber+1]);
+			LineRendererArrow.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.playerNumber+1]);
 		}
 		LineRendererArrow.widthMultiplier = 3f;
 		LineRendererArrow.material.SetTextureOffset("_MainTex", new Vector2(0.1f, 0));
 
-		foreach (var b in GameController.Instance.bases)
+		foreach (var b in GameManager.Instance.Planets)
 		{
 			b.GlowAdd();
 		}
@@ -209,16 +206,16 @@ public class Planet : MonoBehaviour, ITargetable
 	{
 		if (Owner.playerController != null)
 		{
-			if (Owner.playerController.bases.Contains(this))
+			if (Owner.playerController.Planets.Contains(this))
 			{
-				Owner.playerController.bases.Remove(this);
+				Owner.playerController.Planets.Remove(this);
 			}
 		}
 
 		Owner.playerNumber = newPlayerNumber;
 		Owner.playerController = newPlayerController;
 		
-		Owner.playerController.bases.Add(this);
+		Owner.playerController.Planets.Add(this);
 //		Debug.Log("bases count of player " + owner.playerNumber + " is " + owner.playerController.bases.Count);
 
 		if (Health.percent < 1)
@@ -247,7 +244,7 @@ public class Planet : MonoBehaviour, ITargetable
 		AssignMaterial();
 	}
 
-	void AddUIHPBar()
+	private void AddUIHPBar()
 	{
 		Transform UIBars = GameObject.Find("UIBars").transform;
 		GameObject prefab = Resources.Load<GameObject>("UI/BaseHPBar");
@@ -266,11 +263,11 @@ public class Planet : MonoBehaviour, ITargetable
 		{
 			if (Owner.playerNumber < 0)
 			{
-				mesh.material.SetColor("_TintColor", GameController.Instance.playerColors[0]);
+				mesh.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[0]);
 			}
 			else
 			{
-				mesh.material.SetColor("_TintColor", GameController.Instance.playerColors[Owner.playerNumber + 1]);
+				mesh.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.playerNumber + 1]);
 			}
 //            if (owner.playerNumber < 0)
 //                mesh.sharedMaterial = materialNeutral;
@@ -288,22 +285,22 @@ public class Planet : MonoBehaviour, ITargetable
         CancelInvoke();
 	    Spawner.StopSpawn();
         //isDead = true;
-        GameObject tmpObject = Instantiate(explosionPrefab, Trans.position, Trans.rotation, GameController.Instance.transform);
+        GameObject tmpObject = Instantiate(explosionPrefab, Trans.position, Trans.rotation, GameManager.Instance.transform);
 		//tmpObject.transform.localScale = trans.localScale;
 	    PlayerController oldPlayerController = Owner.playerController;
 	    int oldPlayerNumber = Owner.playerNumber;
-		SetOwner(-1, GameController.Instance.playerController[0]);
+		SetOwner(-1, GameManager.Instance.PlayerController[0]);
 	    Health.max = Health.maxNoBonuses;
 		Health.current = Health.maxNoBonuses;
-	    if (oldPlayerController.bases.Count <= 0 && oldPlayerController.playerUnitCount <= 0)
+	    if (oldPlayerController.Planets.Count <= 0 && oldPlayerController.PlayerUnitCount <= 0)
 	    {
 		    if (oldPlayerNumber == 0)
 		    {
-			    GameController.Instance.Lose();
+			    GameManager.Instance.Lose();
 		    }
 		    else if (oldPlayerNumber > 0)
 		    {
-			    GameController.Instance.Win();
+			    GameManager.Instance.Win();
 		    }
 	    }
     }

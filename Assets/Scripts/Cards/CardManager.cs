@@ -39,7 +39,7 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
-        GameController.Instance.OnGameRestart += ResetCooldowns;
+        GameManager.Instance.OnGameRestart += ResetCooldowns;
     }
 
     void ResetCooldowns()

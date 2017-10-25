@@ -38,7 +38,7 @@ public class InputMouse : AbstractCamera2DInputMouse
 		if (selectedBas != null)
 		{
 			DestroyObject(selectedBas.LineRendererArrow);
-			foreach (var b in GameController.Instance.bases)
+			foreach (var b in GameManager.Instance.Planets)
 				b.GlowRemove();
 			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)

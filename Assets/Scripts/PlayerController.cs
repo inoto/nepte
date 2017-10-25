@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -7,43 +6,38 @@ public class PlayerController : MonoBehaviour
 	public delegate void Player();
 	public event Player OnPlayerDefeated = delegate { };
 
-    public int playerUnitCount = 0;
-    public static int unitCount = 0;
-    public bool isInitialized = false;
-    public bool isDefeated = false;
-	
+    public int PlayerUnitCount = 0;
+    public static int UnitCount = 0;
 
 	[Header("Cache")]
-	public Transform trans;
-    public Owner owner;
-    public Planet bas;
-    public AIPlayer aiPlayer;
+	public Transform Trans;
+    public Owner Owner;
+    public Planet Planet;
+    public AIPlayer AiPlayer;
 	
-	public List<Planet> bases = new List<Planet>();
+	public List<Planet> Planets = new List<Planet>();
 
     [Header("Prefabs")]
-    [SerializeField]
-    private GameObject basePrefab;
-    [SerializeField]
-    private GameObject rallyPointPrefab;
+    [SerializeField] private GameObject planetPrefab;
 
     private void Awake()
     {
-        trans = GetComponent<Transform>();
-        owner = GetComponent<Owner>();
+        Trans = GetComponent<Transform>();
+        Owner = GetComponent<Owner>();
     }
 
     private void Start()
     {
-        owner.playerController = this;
-	    unitCount = 0;
+        Owner.playerController = this;
+	    UnitCount = 0;
     }
 
     public void DelayedStart()
     {
-        if (owner.playerNumber > 0)
-			aiPlayer = gameObject.AddComponent<AIPlayer>();
-        isInitialized = true;
+	    if (Owner.playerNumber > 0)
+	    {
+		    AiPlayer = gameObject.AddComponent<AIPlayer>();
+	    }
     }
 
 }

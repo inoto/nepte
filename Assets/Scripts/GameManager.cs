@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-	private static GameController _instance;
+	private static GameManager _instance;
 
-	public static GameController Instance { get { return _instance; } }
+	public static GameManager Instance { get { return _instance; } }
 
 	public delegate void Game();
 	public event Game OnGamePaused = delegate { };
@@ -14,12 +14,10 @@ public class GameController : MonoBehaviour
     public event Game OnGameRestart = delegate { };
 	public event Game OnGameStart = delegate { };
 
-    public int players = 2;
-	public Color[] playerColors;
+    public int Players = 2;
+	public Color[] PlayerColors;
 
-    public int winPoints = 0;
-
-	public enum States
+	public enum GameState
 	{
 		BeforeGame,
 		Game,
@@ -28,35 +26,33 @@ public class GameController : MonoBehaviour
 		Win,
 		Lose
 	}
-    public States state;
+    public GameState State;
 
-    public float gameTimer;
+    public float GameTimer;
 
     [Header("UI Panels")]
-    public GameObject beforegamePanel;
-	public GameObject ingamePanel;
-	public GameObject pausePanel;
-	public GameObject settingsPanel;
-	public GameObject losePanel;
-	public GameObject winPanel;
+    [SerializeField] private GameObject beforegamePanel;
+	[SerializeField] private GameObject ingamePanel;
+	[SerializeField] private GameObject pausePanel;
+	[SerializeField] private GameObject settingsPanel;
+	[SerializeField] private GameObject losePanel;
+	[SerializeField] private GameObject winPanel;
 
     [Header("Start scene")]
-    public GameObject startScene;
+    [SerializeField] private GameObject startScene;
 
     [Header("Children")]
-    public Battleground battlegroundChild;
-    public MixerContoller audioMixerChild;
-	public ObjectPool objectPoolChild;
+    [SerializeField] private Battleground battlegroundChild;
+	[SerializeField] private MixerContoller audioMixerChild;
+	[SerializeField] private ObjectPool objectPoolChild;
 
     [Header("Cache")]
-    public List<PlayerController> playerController;
-    public List<Vector3> playerStartPosition;
-    public List<Planet> bases;
-	public Queue<int> playersWithUnassignedBases = new Queue<int>();
+    public List<PlayerController> PlayerController;
+    public List<Planet> Planets;
+	public Queue<int> PlayersWithUnassignedPlanets = new Queue<int>();
 
     [Header("Prefabs")]
-    [SerializeField]
-    private GameObject playerControllerPrefab;
+    [SerializeField] private GameObject playerControllerPrefab;
 
 	private void Awake()
 	{
@@ -83,37 +79,29 @@ public class GameController : MonoBehaviour
         BeforeGameMenu();
     }
 
-    void Update ()
+    private void Update ()
     {
         if (IsGame)
         {
-            gameTimer += Time.deltaTime;
-
-            // TODO: rework to events or something like this
-            if (winPoints > 0)
-            {
-                Win();
-                winPoints = 0;
-            }
-            else if (winPoints < 0)
-            {
-                Lose();
-                winPoints = 0;
-            }
+            GameTimer += Time.deltaTime;
         }
     }
 
-    public void ChangeState(States newState)
+    public void ChangeState(GameState newState)
     {
-        if (newState == state)
-            return;
-        state = newState;
+	    if (newState == State)
+	    {
+		    return;
+	    }
+	    State = newState;
     }
 
-	public bool IsState(States stateTo)
+	public bool IsState(GameState stateTo)
 	{
-		if (state == stateTo)
+		if (State == stateTo)
+		{
 			return true;
+		}
 		return false;
 	}
 
@@ -121,7 +109,7 @@ public class GameController : MonoBehaviour
 	{
 		get
 		{
-			return IsState(States.Game);
+			return IsState(GameState.Game);
 		}
 	}
 
@@ -129,14 +117,16 @@ public class GameController : MonoBehaviour
 	{
 		get
 		{
-			switch (state)
+			switch (State)
 			{
-				case States.BeforeGame:
+				case GameState.BeforeGame:
 					return true;
-                case States.PauseMenu:
+                case GameState.PauseMenu:
 					return true;
-                case States.SettingsMenu:
+                case GameState.SettingsMenu:
 					return true;
+	            default:
+		            return false;
 			}
 			return false;
 		}
@@ -145,7 +135,7 @@ public class GameController : MonoBehaviour
     public void Lose()
     {
         OnGamePaused();
-        ChangeState(States.Lose);
+        ChangeState(GameState.Lose);
 		Time.timeScale = 0.1f;
         ingamePanel.SetActive(false);
         losePanel.SetActive(true);
@@ -156,7 +146,7 @@ public class GameController : MonoBehaviour
 	public void Win()
 	{
         OnGamePaused();
-        ChangeState(States.Win);
+        ChangeState(GameState.Win);
 		Time.timeScale = 0.1f;
 		ingamePanel.SetActive(false);
 		winPanel.SetActive(true);
@@ -164,7 +154,7 @@ public class GameController : MonoBehaviour
 
 	}
 
-    IEnumerator LoseWinWait()
+    private IEnumerator LoseWinWait()
     {
         
         yield return new WaitForSeconds(0.5f);
@@ -175,29 +165,29 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void BeforeGameMenu()
+    private void BeforeGameMenu()
     {
         OnGamePaused();
-        ChangeState(States.BeforeGame);
+        ChangeState(GameState.BeforeGame);
         startScene.SetActive(true);
 		beforegamePanel.SetActive(true);
 
     }
 
-    public void PauseGame()
+	private void PauseGame()
     {
         OnGamePaused();
-        state = States.PauseMenu;
+        State = GameState.PauseMenu;
         Time.timeScale = 0.0f;
         ingamePanel.SetActive(false);
         pausePanel.SetActive(true);
 
     }
 
-	public void UnPauseGame()
+	private void UnPauseGame()
 	{
         OnGameContinued();
-		state = States.Game;
+		State = GameState.Game;
 		Time.timeScale = 1.0f;
 		ingamePanel.SetActive(true);
 		pausePanel.SetActive(false);
@@ -205,22 +195,21 @@ public class GameController : MonoBehaviour
 
 	}
 
-    public void RestartGame()
+	private void RestartGame()
     {
         RemoveAllPlayerUnits();
 		pausePanel.SetActive(false);
 		losePanel.SetActive(false);
         winPanel.SetActive(false);
-        winPoints = 0;
-        gameTimer = 0;
+        GameTimer = 0;
         Time.timeScale = 1.0f;
         StartGame();
         OnGameRestart();
     }
 
-	public void StartGame()
+	private void StartGame()
 	{
-        if (IsState(States.BeforeGame))
+        if (IsState(GameState.BeforeGame))
         {
             beforegamePanel.SetActive(false);
             RemoveStartScene();
@@ -235,91 +224,100 @@ public class GameController : MonoBehaviour
 		//Camera.main.transform.position = vec;
 		
 		CreatePlayers();
-//        AssignBases();
 		ingamePanel.SetActive(true);
-		state = States.Game;
+		State = GameState.Game;
 		OnGameStart();
 		
 	}
 
-    public void RemoveStartScene()
+    private void RemoveStartScene()
     {
         Destroy(startScene);
     }
 
-    public void RemoveAllPlayerUnits()
+    private void RemoveAllPlayerUnits()
     {
         //GameObject audioMixerChild = GameObject.Find("AudioMixerControl");
 		foreach (Transform child in transform)
 		{
-            if (child.gameObject == battlegroundChild.gameObject)
-                continue;
-            if (child.gameObject == audioMixerChild.gameObject)
+			if (child.gameObject == battlegroundChild.gameObject)
+			{
 				continue;
+			}
+			if (child.gameObject == audioMixerChild.gameObject)
+			{
+				continue;
+			};
             if (child.gameObject == objectPoolChild.gameObject)
-				continue;
-            if (child.gameObject == GameObject.Find("Bases"))
-				continue;
+            {
+	            continue;
+            }
+            if (child.gameObject == GameObject.Find("Planets"))
+            {
+	            continue;
+            }
 			Destroy(child.gameObject);
 		}
-	    foreach (var b in bases)
+	    foreach (var b in Planets)
 	    {
 		    b.Trans.DestroyChildren();
 	    }
     }
 
-	public void RemoveAllHPBars()
+	private void RemoveAllHPBars()
 	{
-        Transform UIbars = GameObject.Find("UIBars").transform;
-		foreach (Transform child in UIbars)
+        Transform uiBars = GameObject.Find("UIBars").transform;
+		foreach (Transform child in uiBars)
 		{
 			Destroy(child.gameObject);
 		}
 	}
 
-	void CreatePlayers()
+	private void CreatePlayers()
 	{
-        playerController = new List<PlayerController>();
+        PlayerController = new List<PlayerController>();
 
         GameObject playerObject;
-		for (int i = -1; i < players; i++)
+		for (int i = -1; i < Players; i++)
 		{
 			playerObject = Instantiate(playerControllerPrefab);
 			playerObject.transform.SetParent(transform);
 			PlayerController tmpPlayerController = playerObject.GetComponent<PlayerController>();
-			tmpPlayerController.owner.playerNumber = i;
-			tmpPlayerController.owner.playerController = tmpPlayerController;
+			tmpPlayerController.Owner.playerNumber = i;
+			tmpPlayerController.Owner.playerController = tmpPlayerController;
 			//playerController.owner.color = playerColors[i];
 			tmpPlayerController.DelayedStart();
 
-            playerController.Add(tmpPlayerController);
+            PlayerController.Add(tmpPlayerController);
 			if (i != -1)
-				playersWithUnassignedBases.Enqueue(i);
+			{
+				PlayersWithUnassignedPlanets.Enqueue(i);
+			}
 		}
-		bases.Clear();
-		bases.AddRange(FindObjectsOfType<Planet>());
+		Planets.Clear();
+		Planets.AddRange(FindObjectsOfType<Planet>());
 	}
 
-	void AssignBases()
+	private void AssignPlanets()
 	{
-		bases.Clear();
-        bases.AddRange(FindObjectsOfType<Planet>());
+		Planets.Clear();
+        Planets.AddRange(FindObjectsOfType<Planet>());
         int counter = 0;
 		int counterFull = -1;
-        foreach (Planet b in bases)
+        foreach (Planet b in Planets)
         {
 	        if (b.UseAsStartPosition)
 	        {
 		        //playerStartPosition[counter] = b.trans.position;
 		        b.Type = Planet.PlanetType.Main;
-		        b.SetOwner(counter, playerController[counter+1]);
-		        playerController[counter+1].trans.position = b.Trans.position;
+		        b.SetOwner(counter, PlayerController[counter+1]);
+		        PlayerController[counter+1].Trans.position = b.Trans.position;
 		        //b.DelayedStart();
 		        counter++;
 	        }
 	        else
 	        {
-		        b.SetOwner(-1, playerController[0]);
+		        b.SetOwner(-1, PlayerController[0]);
 	        }
 //	        dictBasesOwners.Add(b,counterFull);
 	        counterFull++;
@@ -327,22 +325,22 @@ public class GameController : MonoBehaviour
 
 	}
 
-    public void SettingsMenu()
+	private void SettingsMenu()
     {
-        state = States.SettingsMenu;
+        State = GameState.SettingsMenu;
 		pausePanel.SetActive(false);
         beforegamePanel.SetActive(false);
         settingsPanel.SetActive(true);
     }
 
-    public void GoBackFromSettings()
+	private void GoBackFromSettings()
     {
-        state = States.PauseMenu;
+        State = GameState.PauseMenu;
 		settingsPanel.SetActive(false);
         pausePanel.SetActive(true);
     }
 
-    public void CloseGame()
+	private void CloseGame()
     {
         Application.Quit();
     }
@@ -350,6 +348,6 @@ public class GameController : MonoBehaviour
     private void OnGUI()
     {
         Rect r = new Rect(Screen.width - 50, 0, Screen.width, 20);
-        GUI.Label(r, PlayerController.unitCount.ToString());
+        GUI.Label(r, global::PlayerController.UnitCount.ToString());
     }
 }

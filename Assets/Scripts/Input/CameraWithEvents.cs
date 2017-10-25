@@ -28,8 +28,8 @@ public class CameraWithEvents2 : MonoBehaviour
 
     private void Start()
     {
-        GameController.Instance.OnGamePaused += TurnCameraOff;
-        GameController.Instance.OnGameContinued += TurnCameraOn;
+        GameManager.Instance.OnGamePaused += TurnCameraOff;
+        GameManager.Instance.OnGameContinued += TurnCameraOn;
     }
 
     public void TurnCameraOn()

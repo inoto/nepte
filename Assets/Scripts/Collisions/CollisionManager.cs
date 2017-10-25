@@ -35,7 +35,7 @@ public class CollisionManager : MonoBehaviour
 		qtree = new QuadTreeEternal(rect);
 		qtree.root = qtree;
 
-		GameController.Instance.OnGameRestart += ClearQuadTree;
+		GameManager.Instance.OnGameRestart += ClearQuadTree;
 	}
 
     public void AddCollidable(CollisionCircle obj)
@@ -67,7 +67,7 @@ public class CollisionManager : MonoBehaviour
 		if (qtree != null)
 		{
 			qtree.Clear();
-			foreach (var b in GameController.Instance.bases)
+			foreach (var b in GameManager.Instance.Planets)
 			{
 				AddCollidable(b.Collision);
 			}

@@ -15,6 +15,6 @@ public class ObjectCounter : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-        label.text = PlayerController.unitCount.ToString();
+        label.text = PlayerController.UnitCount.ToString();
 	}
 }

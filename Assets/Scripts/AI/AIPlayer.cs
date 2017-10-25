@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -8,242 +7,273 @@ using UnityEngine;
 
 public class AIPlayer : MonoBehaviour
 {
-    public bool verboseDecisionsInfo = true;
-    public int difficulty;
+    public bool LogDecisionsInfo = true;
 
-    public Owner owner;
+    public Owner Owner;
+    public float DecisionInterval = 3;
 
-    public float decisionInterval = 3;
-
-    public List<PlayerController> enemies = new List<PlayerController>();
-    public List<Planet> bases = new List<Planet>();
-    public List<Planet> basesNeutral = new List<Planet>();
-    public List<Planet> basesToBeCaptured = new List<Planet>();
-    public List<Planet> basesToAttack = new List<Planet>();
-    public List<Planet> basesInFrontLine = new List<Planet>();
-    public Vector2 frontLinePoint;
-    public Vector2 empireCenterPoint;
-    public Planet basMain;
+    public List<PlayerController> Enemies = new List<PlayerController>();
+    public List<Planet> Planets = new List<Planet>();
+    public List<Planet> PlanetsNeutral = new List<Planet>();
+    public List<Planet> PlanetsToBeCaptured = new List<Planet>();
+    public List<Planet> PlanetsEnemy = new List<Planet>();
+    public List<Planet> PlanetsInFrontLine = new List<Planet>();
+    public Vector2 FrontLinePoint;
+    public Vector2 EmpireCenterPoint;
+    public Planet PlanetMain;
     
-    public List<AIDecision> decisions = new List<AIDecision>();
-    public AIDecision decisionBest = null;
-    public List<AIDecision> almostDecisions = new List<AIDecision>();
-    public float distToFar;
-    public Dictionary<Planet,int> unitCountNearBeginBas = new Dictionary<Planet, int>();
-    public Dictionary<Planet,int> unitCountNearTargetBas = new Dictionary<Planet, int>();
+    public List<AIDecision> Decisions = new List<AIDecision>();
+    public AIDecision DecisionBest = null;
+    public List<AIDecision> PoorDecisions = new List<AIDecision>();
+    public float DistanceToFar;
+    
+    // moved to planet class
+    // public Dictionary<Planet,int> unitCountNearBeginBas = new Dictionary<Planet, int>();
+    // public Dictionary<Planet,int> unitCountNearTargetBas = new Dictionary<Planet, int>();
 
     private void Awake()
     {
-        owner = GetComponent<Owner>();
+        Owner = GetComponent<Owner>();
     }
 
-	void Start ()
+	private void Start ()
 	{
 	    FillDistances();
         StartCoroutine(TakeDecision());
 	}
 
-    IEnumerator TakeDecision()
+    private IEnumerator TakeDecision()
     {
-        yield return new WaitForSeconds(decisionInterval);
-        foreach (var b in GameController.Instance.bases)
+        yield return new WaitForSeconds(DecisionInterval);
+        foreach (var b in GameManager.Instance.Planets)
         {
-            if (b.Owner.playerNumber == owner.playerNumber)
+            if (b.Owner.playerNumber == Owner.playerNumber)
             {
-                basMain = b;
-                distToFar = basMain.Trans.position.sqrMagnitude * 0.75f;
+                PlanetMain = b;
+                DistanceToFar = PlanetMain.Trans.position.sqrMagnitude * 0.75f;
                 break;
             }
         }
         while (true)
         {
             DefineEnemies();
-            DefineBases();
+            DefinePlanets();
             DefineFrontLinePoint();
             
             FillDecisions();
             ChooseBestDecision();
 
-            yield return new WaitForSeconds(decisionInterval);
+            yield return new WaitForSeconds(DecisionInterval);
         }
     }
     
-    void ChooseBestDecision()
+    private void ChooseBestDecision()
     {
-        decisionBest = null;
-        almostDecisions.Clear();
+        DecisionBest = null;
+        PoorDecisions.Clear();
         float weightMax = 0;
-//        Debug.Log("decisions count: " + decisions.Count);
-        foreach (var decision in decisions)
+//      Debug.Log("decisions count: " + decisions.Count);
+        foreach (var decision in Decisions)
         {
-//            Debug.LogFormat(decision.weight.ToString());
-            if (decision.weight > weightMax)
+//          Debug.LogFormat(decision.weight.ToString());
+            if (decision.Weight > weightMax)
             {
-                
-                weightMax = decision.weight;
-                decisionBest = decision;
+                weightMax = decision.Weight;
+                DecisionBest = decision;
             }
-            if (decision.weight > 0 && decision.weight < weightMax)
+            if (decision.Weight > 0 && decision.Weight < weightMax)
             {
-                if (verboseDecisionsInfo)
-                    Debug.Log("player " + owner.playerNumber + " almost best decision weight: " + decision.weight);
-                almostDecisions.Add(decision);
+                if (LogDecisionsInfo)
+                {
+                    Debug.Log("player " + Owner.playerNumber + " almost best decision weight: " + decision.Weight);
+                }
+                PoorDecisions.Add(decision);
             }
         }
-        if (decisionBest != null)
+        if (DecisionBest != null)
         {
-            if (decisionBest.beginBas == decisionBest.targetBas)
-                Debug.Log("same base!");
-            if (verboseDecisionsInfo)
+            if (DecisionBest.BeginPlanet == DecisionBest.TargetPlanet)
             {
-                Debug.Log("player " + owner.playerNumber + " best decision weight: " + decisionBest.weight);
-                Debug.Log("player " + owner.playerNumber + " best decision type: " + decisionBest.type.ToString());
+                Debug.Log("same planet!");
             }
-            // проверяем можем ли мы запустить юнитов сразу из нескольких баз
-            if (decisionBest.beginBases != null && decisionBest.beginBases.Count > 1)
+            if (LogDecisionsInfo)
             {
-//                Debug.Log("releasing from multiple");
-                foreach (var b in decisionBest.beginBases)
+                Debug.Log("player " + Owner.playerNumber + " best decision weight: " + DecisionBest.Weight);
+                Debug.Log("player " + Owner.playerNumber + " best decision type: " + DecisionBest.Type.ToString());
+            }
+            // chould we release units from a couple planets?
+            if (DecisionBest.BeginPlanets != null && DecisionBest.BeginPlanets.Count > 1)
+            {
+//              Debug.Log("releasing from multiple");
+                foreach (var b in DecisionBest.BeginPlanets)
                 {
-                    b.Spawner.ReleaseUnits(decisionBest.targetBas.gameObject);
+                    b.Spawner.ReleaseUnits(DecisionBest.TargetPlanet.gameObject);
                 }
             }
             else
             {
-//                Debug.Log("releasing from one");
-                decisionBest.beginBas.Spawner.ReleaseUnits(decisionBest.targetBas.gameObject);
+//              Debug.Log("releasing from one");
+                DecisionBest.BeginPlanet.Spawner.ReleaseUnits(DecisionBest.TargetPlanet.gameObject);
             }
-            // базы, на которые мы уже отправили юнитов, помечаем, чтобы не отправить снова туда
-            if (decisionBest.targetBas.Owner.playerNumber == -1)
-                basesToBeCaptured.Add(decisionBest.targetBas);
+            // mark planets which were already targeted
+            if (DecisionBest.TargetPlanet.Owner.playerNumber == -1)
+            {
+                PlanetsToBeCaptured.Add(DecisionBest.TargetPlanet);
+            }
         }
-//        else
-//            Debug.Log("no best decision");
+//      else
+//          Debug.Log("no best decision");
     }
 
-    void FillDecisions()
+    private void FillDecisions()
     {
-        decisions.Clear();
-        foreach (var bas in GameController.Instance.bases)
+        Decisions.Clear();
+        foreach (var bas in GameManager.Instance.Planets)
         {
-            foreach (var basSelf in bases)
+            foreach (var basSelf in Planets)
             {
                 if (bas == basSelf)
+                {
                     continue;
-                decisions.Add(new AIDecision(bas, basSelf, this));
+                }
+                Decisions.Add(new AIDecision(bas, basSelf, this));
             }
-            foreach (var basNeutral in basesNeutral)
+            foreach (var basNeutral in PlanetsNeutral)
             {
-                if (basesToBeCaptured.Contains(basNeutral))
+                if (PlanetsToBeCaptured.Contains(basNeutral))
+                {
                     continue;
-                decisions.Add(new AIDecision(bas, basNeutral, this));
+                }
+                Decisions.Add(new AIDecision(bas, basNeutral, this));
             }
-            foreach (var basToAttack in basesToAttack)
+            foreach (var basToAttack in PlanetsEnemy)
             {
-                decisions.Add(new AIDecision(bas, basToAttack, this));
+                Decisions.Add(new AIDecision(bas, basToAttack, this));
             }
         }
     }
     
-    void FillDistances()
+    private void FillDistances()
     {
-        foreach (var basX in GameController.Instance.bases)
+        foreach (var basX in GameManager.Instance.Planets)
         {
-            foreach (var basY in GameController.Instance.bases)
+            foreach (var basY in GameManager.Instance.Planets)
             {
                 if (basX == basY)
+                {
                     continue;
+                }
                 if (!basX.DictDistances.ContainsKey(basY))
+                {
                     basX.DictDistances.Add(basY, basX.Trans.position - basY.Trans.position);
+                }
             }
         }
 //        Debug.Log("distances filled");
     }
 
-    void DefineEnemies()
+    private void DefineEnemies()
     {
-        enemies.Clear();
-        foreach (var player in GameController.Instance.playerController)
+        Enemies.Clear();
+        foreach (var player in GameManager.Instance.PlayerController)
         {
-            if (player.owner.playerNumber == -1)
+            if (player.Owner.playerNumber == -1)
+            {
                 continue;
-            if (player == owner.playerController)
+            }
+            if (player == Owner.playerController)
+            {
                 continue;
+            }
             if (!player.gameObject.activeSelf)
+            {
                 continue;
-            enemies.Add(player);
+            }
+            Enemies.Add(player);
         }
     }
 
-    void DefineBases()
+    private void DefinePlanets()
     {
-        bases.Clear();
-        basesNeutral.Clear();
-        basesToAttack.Clear();
+        Planets.Clear();
+        PlanetsNeutral.Clear();
+        PlanetsEnemy.Clear();
         
         Vector2 sum = Vector2.zero;
         int count = 0;
         
-        foreach (var b in GameController.Instance.bases)
+        foreach (var b in GameManager.Instance.Planets)
         {
-            if (b.Owner.playerNumber == owner.playerNumber)
+            if (b.Owner.playerNumber == Owner.playerNumber)
             {
-                bases.Add(b);
+                Planets.Add(b);
                 sum += (Vector2)b.Trans.position;
                 count++;
-                if (basesToBeCaptured.Contains(b))
-                    basesToBeCaptured.Remove(b);
+                if (PlanetsToBeCaptured.Contains(b))
+                {
+                    PlanetsToBeCaptured.Remove(b);
+                }
             }
             else if (b.Owner.playerNumber == -1)
-                basesNeutral.Add(b);
+            {
+                PlanetsNeutral.Add(b);
+            }
             else
             {
-                basesToAttack.Add(b);
-                if (basesToBeCaptured.Contains(b))
-                    basesToBeCaptured.Remove(b);
+                PlanetsEnemy.Add(b);
+                if (PlanetsToBeCaptured.Contains(b))
+                    PlanetsToBeCaptured.Remove(b);
             }
             // считаем кол-во юнитов рядом с базой
-            FillUnitCountNearBase(b);
+            FillUnitCountNearPlanet(b);
         }
-        DefineBasesInFrontLine();
+        DefinePlanetsInFrontLine();
         if (count > 0)
-            empireCenterPoint = sum / count;
+        {
+            EmpireCenterPoint = sum / count;
+        }
     }
     
-    void FillUnitCountNearBase(Planet bas)
+    // TODO: move method to planet class
+    private void FillUnitCountNearPlanet(Planet planet)
     {
-        // кол-во юнитов считается через коллизии и кешируется прямо в базе
-        // размер круга, где ищутся юниты, зависит от размера коллайдера и коэффициента 'multiplier'
-        float multiplier = 1.5f;
+        // unit count calculates through collisions and cached in planet class
+        // circle size where we are looking for units depends on collider size * multiplier
+        const float multiplier = 1.5f;
         List<CollisionCircle> unitsNearBas =
-            CollisionManager.Instance.FindBodiesInCircleArea(bas.Trans.position, bas.Collider.radius * multiplier);
-        int unitsNearBasSelf = 0;
-        int unitsNearBasEnemies = 0;
+            CollisionManager.Instance.FindBodiesInCircleArea(planet.Trans.position, planet.Collider.radius * multiplier);
+        int unitsNearPlanetSelf = 0;
+        int unitsNearPlanetEnemies = 0;
         for (int i = 0; i < unitsNearBas.Count; i++)
         {
-            if (unitsNearBas[i].owner.playerNumber == bas.Owner.playerNumber)
-                unitsNearBasSelf++;
+            if (unitsNearBas[i].owner.playerNumber == planet.Owner.playerNumber)
+            {
+                unitsNearPlanetSelf++;
+            }
             else
-                unitsNearBasEnemies++;
+            {
+                unitsNearPlanetEnemies++;
+            }
         }
-        bas.UnitCountNearBasSelf = unitsNearBasSelf;
-        bas.UnitCountNearBasEnemies = unitsNearBasEnemies;
+        planet.UnitCountNearBasSelf = unitsNearPlanetSelf;
+        planet.UnitCountNearBasEnemies = unitsNearPlanetEnemies;
     }
     
-    void DefineBasesInFrontLine()
+    private void DefinePlanetsInFrontLine()
     {
-        basesInFrontLine.Clear();
-        foreach (var basToAttack in basesToAttack)
+        PlanetsInFrontLine.Clear();
+        foreach (var basToAttack in PlanetsEnemy)
         {
-            // сначала найдём ближайшую к противнику базу
             Planet closestToEnemy = null;
             float distMin = 99999;
-            foreach (var basSelf in owner.playerController.bases)
+            foreach (var basSelf in Owner.playerController.Planets)
             {
                 float dist = (basSelf.Trans.position - basToAttack.Trans.position).sqrMagnitude;
-                // если расстояние слишком большое, то пропускаем
-                if (dist > distToFar)
+                // skip if so far
+                if (dist > DistanceToFar)
+                {
                     continue;
+                }
                 if (dist < distMin)
                 {
                     distMin = dist;
@@ -252,38 +282,40 @@ public class AIPlayer : MonoBehaviour
             }
             if (closestToEnemy != null)
             {
-                // затем проверим есть ли рядом дружественные базы, если есть, то считаем что они расположены на линии фронта
+                // then finding ally planets to be in front line
                 float distNeeded = (closestToEnemy.Trans.position - basToAttack.Trans.position).sqrMagnitude * 1.4f;
-                foreach (var basSelf in owner.playerController.bases)
+                foreach (var basSelf in Owner.playerController.Planets)
                 {
                     float dist = (basSelf.Trans.position - basToAttack.Trans.position).sqrMagnitude;
                     // 
                     if (dist < distNeeded)
                     {
-                        if (!basesInFrontLine.Contains(basSelf))
-                            basesInFrontLine.Add(basSelf);
+                        if (!PlanetsInFrontLine.Contains(basSelf))
+                        {
+                            PlanetsInFrontLine.Add(basSelf);
+                        }
                     }
                 }
             }
         }
     }
 
-    void DefineFrontLinePoint()
+    private void DefineFrontLinePoint()
     {
         Planet suitable = null;
         float distMin = 9999;
         
-        foreach (var b in basesToAttack)
+        foreach (var b in PlanetsEnemy)
         {
-            float dist = (empireCenterPoint - (Vector2)b.Trans.position).sqrMagnitude;
+            float dist = (EmpireCenterPoint - (Vector2)b.Trans.position).sqrMagnitude;
             if (dist < distMin * distMin)
             {
                 distMin = dist;
                 suitable = b;
             }
         }
-        if (basesToAttack.Count > 0)
-            frontLinePoint = (Vector2)suitable.Trans.position + empireCenterPoint;
+        if (PlanetsEnemy.Count > 0)
+            FrontLinePoint = (Vector2)suitable.Trans.position + EmpireCenterPoint;
     }
 
     private void OnDrawGizmos()
@@ -292,36 +324,36 @@ public class AIPlayer : MonoBehaviour
 //        Gizmos.DrawSphere(empireCenterPoint, 0.3f);
 //        Gizmos.color = Color.red;
 //        Gizmos.DrawSphere(frontLinePoint, 0.3f);
-        if (decisionBest != null && decisionBest.targetBas != null)
+        if (DecisionBest != null && DecisionBest.TargetPlanet != null)
         {
             Gizmos.color = Color.white;
-            if (decisionBest.beginBases != null)
+            if (DecisionBest.BeginPlanets != null)
             {
-                foreach (var basBegin in decisionBest.beginBases)
+                foreach (var basBegin in DecisionBest.BeginPlanets)
                 {
-                    Gizmos.DrawLine(basBegin.Trans.position, decisionBest.targetBas.Trans.position);
-                    Gizmos.DrawSphere(decisionBest.targetBas.Trans.position, 0.5f);
+                    Gizmos.DrawLine(basBegin.Trans.position, DecisionBest.TargetPlanet.Trans.position);
+                    Gizmos.DrawSphere(DecisionBest.TargetPlanet.Trans.position, 0.5f);
                 }
             }
-            else if (decisionBest.beginBas != null)
+            else if (DecisionBest.BeginPlanet != null)
             {
-                Gizmos.DrawLine(decisionBest.beginBas.Trans.position, decisionBest.targetBas.Trans.position);
-                Gizmos.DrawSphere(decisionBest.targetBas.Trans.position, 0.5f);
+                Gizmos.DrawLine(DecisionBest.BeginPlanet.Trans.position, DecisionBest.TargetPlanet.Trans.position);
+                Gizmos.DrawSphere(DecisionBest.TargetPlanet.Trans.position, 0.5f);
             }
 #if UNITY_EDITOR
-            Handles.Label(decisionBest.targetBas.Trans.position, decisionBest.weight.ToString());
+            Handles.Label(DecisionBest.TargetPlanet.Trans.position, DecisionBest.Weight.ToString());
 #endif
         }
-        if (almostDecisions.Count > 0)
+        if (PoorDecisions.Count > 0)
         {
             Gizmos.color = Color.gray;
-            foreach (var decision in almostDecisions)
+            foreach (var decision in PoorDecisions)
             {
-                Gizmos.DrawLine(decision.beginBas.Trans.position, decision.targetBas.Trans.position);
-                Gizmos.DrawSphere(decision.targetBas.Trans.position, 0.5f);
+                Gizmos.DrawLine(decision.BeginPlanet.Trans.position, decision.TargetPlanet.Trans.position);
+                Gizmos.DrawSphere(decision.TargetPlanet.Trans.position, 0.5f);
                 
 #if UNITY_EDITOR
-                Handles.Label(decision.targetBas.Trans.position, decision.weight.ToString());
+                Handles.Label(decision.TargetPlanet.Trans.position, decision.Weight.ToString());
 #endif
             }
         }

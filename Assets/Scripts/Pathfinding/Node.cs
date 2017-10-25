@@ -19,12 +19,12 @@ public class Node : IHeapItem<Node>
 	public Node[] neigbours = new Node[8];
 
     [System.NonSerialized]
-	public int[] distance = new int[GameController.Instance.players];
+	public int[] distance = new int[GameManager.Instance.Players];
     public bool isNeigboursFilled = false;
     [System.NonSerialized]
-    public bool[] visited = new bool[GameController.Instance.players];
+    public bool[] visited = new bool[GameManager.Instance.Players];
     [System.NonSerialized]
-    public Vector2[] flowVector = new Vector2[GameController.Instance.players];
+    public Vector2[] flowVector = new Vector2[GameManager.Instance.Players];
 
 	public int gCost;
 	public int hCost;

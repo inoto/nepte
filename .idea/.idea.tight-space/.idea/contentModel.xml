@@ -374,7 +374,7 @@
             <e p="CollisionManager.cs" t="Include" />
             <e p="QuadTreeEternal.cs" t="Include" />
           </e>
-          <e p="GameController.cs" t="Include" />
+          <e p="GameManager.cs" t="Include" />
           <e p="Input" t="Include">
             <e p="CameraController" t="Include">
               <e p="AbstractCamera2DInput.cs" t="Include" />
@@ -416,7 +416,6 @@
             <e p="PathRequestManager.cs" t="Include" />
           </e>
           <e p="PlayerController.cs" t="Include" />
-          <e p="RallyPoint.cs" t="Include" />
           <e p="SceneLoader.cs" t="Include" />
           <e p="Sounds" t="Include">
             <e p="MixerContoller.cs" t="Include" />

@@ -54,15 +54,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9581e486e22d4424b5b690e468149a42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 1
+  Mode: 1
   explosionPrefab: {fileID: 1075346032580818, guid: ee1f6ba6426c5f24da0cb93efd0284cb,
     type: 2}
-  health:
-    max: 1000
-    maxNoBonuses: 1000
-    current: 1000
-    percent: 1
-  collision:
+  Health:
+    max: 0
+    maxNoBonuses: 0
+    current: 0
+    percent: 0
+  Collision:
     showGizmos: 0
     instanceId: 0
     trans: {fileID: 0}
@@ -76,15 +76,14 @@ MonoBehaviour:
     isStatic: 0
     isWeapon: 0
     collidedCount: 0
-  trans: {fileID: 4917673646079098}
-  owner: {fileID: 114592969104451694}
-  weapon: {fileID: 114607610566381082}
-  bas: {fileID: 0}
-  basTarget: {fileID: 0}
-  assignedCircle: {fileID: 0}
-  speed: 3
-  radius: 2.4
-  velocity: {x: 0, y: 0}
+  Trans: {fileID: 0}
+  Owner: {fileID: 0}
+  Weapon: {fileID: 0}
+  Planet: {fileID: 0}
+  TargetPlanet: {fileID: 0}
+  AssignedCircle: {fileID: 0}
+  MoveSpeed: 3
+  MoveRadius: 2.5
   materials: []
 --- !u!114 &114592969104451694
 MonoBehaviour:
