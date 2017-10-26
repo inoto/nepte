@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Cache;
+﻿using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,26 +6,25 @@ using UnityEditor;
 
 public class QuadTreeEternal
 {
-	public int level = 0;
+	private int level = 0;
 
-	public Rect rect;
-	float halfWidth, halfHeight;
+	private Rect rect;
+	private readonly float halfWidth;
+	private readonly float halfHeight;
 
-	public List<CollisionCircle> objects;
-	private List<CollisionCircle> movedUnits;
+	private readonly List<CollisionCircle> objects;
+	private readonly List<CollisionCircle> movedUnits;
 
-	int maxLifespan = 8;
-	int curLife = -1;
+	private int maxLifespan = 8;
+	private int curLife = -1;
 
-	public QuadTreeEternal parent = null;
+	private QuadTreeEternal parent = null;
 
-	public QuadTreeEternal[] childs = new QuadTreeEternal[4];
-	bool hasChilds = false;
-	byte activeNodes = 0;
+	private readonly QuadTreeEternal[] childs = new QuadTreeEternal[4];
+	private bool hasChilds = false;
+	private byte activeNodes = 0;
 
-	public bool built = false;
-
-	public QuadTreeEternal root = null;
+	public QuadTreeEternal Root = null;
 
 	public QuadTreeEternal(Rect newRect)
 	{
@@ -63,9 +59,13 @@ public class QuadTreeEternal
 			if (!hasChilds)
 			{
 				if (curLife == -1)
+				{
 					curLife = maxLifespan;
+				}
 				else if (curLife > 0)
+				{
 					curLife--;
+				}
 			}
 		}
 		else
@@ -73,7 +73,9 @@ public class QuadTreeEternal
 			if (curLife != -1)
 			{
 				if (maxLifespan <= 64)
+				{
 					maxLifespan *= 2;
+				}
 				curLife = -1;
 			}
 		}
@@ -91,16 +93,16 @@ public class QuadTreeEternal
 		for (int i = 0; i < listSize; i++)
 		{
             //if (objects[i].trans == null || objects[i].isDead)
-	        if (objects[i].isDead)
+	        if (objects[i].IsDead)
             {
 	            if (movedUnits.Contains(objects[i]))
 	            {
 		            int ind = movedUnits.IndexOf(objects[i]);
-		            movedUnits[ind].isInQT = false;
+		            movedUnits[ind].IsInQt = false;
 		            movedUnits.Remove(objects[i]);
 		            
 	            }
-	            objects[i].isInQT = false;
+	            objects[i].IsInQt = false;
                 objects.RemoveAt(i--);
 	            
 	            listSize--;
@@ -108,7 +110,12 @@ public class QuadTreeEternal
 		}
 
 		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
-			if ((flags & 1) == 1) childs[index].Update();
+		{
+			if ((flags & 1) == 1)
+			{
+				childs[index].Update();
+			}
+		}
 
 		for (int i = 0; i < movedUnits.Count; i++)
 		{
@@ -116,26 +123,38 @@ public class QuadTreeEternal
 	
 			while (!RectContainsCircle(rect, movedUnits[i]))
 			{
-				if (currentNode.parent != null) currentNode = currentNode.parent;
-				else break;
+				if (currentNode.parent != null)
+				{
+					currentNode = currentNode.parent;
+				}
+				else
+				{
+					break;
+				}
 			}
 			// remove from objects and insert to root in EVERY FRAME
-			movedUnits[i].isInQT = false;
+			movedUnits[i].IsInQt = false;
 			objects.Remove(movedUnits[i]);
 			
 			currentNode.Insert(movedUnits[i]);
 		}
 
 		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
+		{
 			if ((flags & 1) == 1 && childs[index].curLife == 0 && childs[index].objects.Count == 0)
 			{
 				if (childs[index].objects.Count > 0)
+				{
 					Debug.Log(childs[index].objects.Count);
+				}
 				childs[index] = null;
 				activeNodes ^= (byte)(1 << index);
 				if (activeNodes == 0)
+				{
 					hasChilds = false;
+				}
 			}
+		}
 
 		//check collisions here
 		if (parent == null)
@@ -149,14 +168,14 @@ public class QuadTreeEternal
 		if (objects.Count < 1 && activeNodes == 0)
 		{
 			objects.Add(obj);
-			obj.isInQT = true;
+			obj.IsInQt = true;
 			return;
 		}
 
 		if (rect.size.x < Vector2.one.x && rect.size.y < Vector2.one.y)
 		{
 			objects.Add(obj);
-			obj.isInQT = true;
+			obj.IsInQt = true;
 			return;
 		}
 
@@ -183,7 +202,7 @@ public class QuadTreeEternal
 					else
 					{
 						childs[i] = new QuadTreeEternal(quadrant[i]);
-						childs[i].root = root;
+						childs[i].Root = Root;
 						childs[i].parent = this;
 						childs[i].level = level + 1;
 						childs[i].Insert(obj);
@@ -196,18 +215,16 @@ public class QuadTreeEternal
 			if (!found)
 			{
 				objects.Add(obj);
-				obj.isInQT = true;
+				obj.IsInQt = true;
 			}
 		}
 		else
 		{
             // attach object to root if it's outside of battleground boundaries
             //objects.Add(obj);
-			obj.isInQT = false;
+			obj.IsInQt = false;
 		}
 	}
-
-	
 
     private void CheckCollisions(List<CollisionCircle> parentObjs)
 	{
@@ -223,9 +240,11 @@ public class QuadTreeEternal
 			{
 //                if (parentObjs[p].collisionType == CollisionCircle.CollisionType.Body && objects[l].collisionType == CollisionCircle.CollisionType.Body)
 				CheckBodies(parentObjs[p], objects[l]);
-				if (parentObjs[p].isWeapon || objects[l].isWeapon)
+				if (parentObjs[p].IsWeapon || objects[l].IsWeapon)
+				{
 					CheckWeapon(parentObjs[p], objects[l]);
-				
+				}
+
 				//CollisionRecord cr = CheckCollision(pObj, lObj);
 				//if (cr != null)
 				    //collisionsList.Add(cr);
@@ -257,8 +276,10 @@ public class QuadTreeEternal
 					{
 //                        if (tmpList[tmpList.Count - 1].collisionType == CollisionCircle.CollisionType.Body && tmpList[l].collisionType == CollisionCircle.CollisionType.Body)
                             CheckBodies(tmpList[tmpList.Count - 1], tmpList[l]);
-						if (tmpList[tmpList.Count - 1].isWeapon || tmpList[l].isWeapon)
+						if (tmpList[tmpList.Count - 1].IsWeapon || tmpList[l].IsWeapon)
+						{
 							CheckWeapon(tmpList[tmpList.Count - 1], tmpList[l]);
+						}
 						//CollisionRecord cr = CheckCollision(tmpList[tmpList.Count - 1], lObj2);
 						//if (cr != null)
 							//collisionsList.Add(cr);
@@ -272,49 +293,64 @@ public class QuadTreeEternal
 
 		// Теперь объединяем список локальных объектов со списком родительских объектов, а затем передаём его вниз всем дочерним узлам.
 		//foreach (CollisionCircle lObj in objects) /*if (lObj.IsStatic == false)*/ parentObjs.Add(lObj);
-		for (int l = 0; l < objects.Count; l++) parentObjs.AddRange(objects);
+		for (int l = 0; l < objects.Count; l++)
+		{
+			parentObjs.AddRange(objects);
+		}
 
 		//parentObjs.AddRange(m_objects);
 		//каждый дочерний узел даст нам список записей пересечений, который мы затем объединим с собственными записями пересечений.
 		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
+		{
 			if ((flags & 1) == 1)
+			{
 				childs[index].CheckCollisions(parentObjs);
-				//return collisionsList;
+			}
+		}
+		//return collisionsList;
 	}
 
-    void CheckBodies(CollisionCircle unit1, CollisionCircle unit2)
+	private static void CheckBodies(CollisionCircle unit1, CollisionCircle unit2)
 	{
-	    if (unit1.instanceId == unit2.instanceId)
-	    	return;
-		if (unit1.isStatic && unit2.isStatic)
-			return;
-		if (unit1.isDead || unit2.isDead)
-			return;
-		if (unit1.isWeapon || unit2.isWeapon)
-			return;
-		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
-		// if no mover then it's a base
-		if (unit1.isStatic)
+	    if (unit1.InstanceId == unit2.InstanceId)
+	    {
+		    return;
+	    }
+		if (unit1.IsStatic && unit2.IsStatic)
 		{
-			if (unit1.owner.PlayerNumber == -1)
+			return;
+		}
+		if (unit1.IsDead || unit2.IsDead)
+		{
+			return;
+		}
+		if (unit1.IsWeapon || unit2.IsWeapon)
+		{
+			return;
+		}
+		float distance = (unit1.Trans.position - unit2.Trans.position).sqrMagnitude;
+		// if no mover then it's a base
+		if (unit1.IsStatic)
+		{
+			if (unit1.Owner.PlayerNumber == -1)
 			{
 				float radiuses = unit1.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (unit2.isCollidedWithBase == false)
+					if (unit2.IsCollidedWithBase == false)
 					{
-						unit2.collidedBaseCircle = unit1;
-						unit2.isCollidedWithBase = true;
-						unit1.collidedCount++;
+						unit2.CollidedBaseCircle = unit1;
+						unit2.IsCollidedWithBase = true;
+						unit1.CollidedCount++;
 					}
 				}
 				else
 				{
-					if (unit2.collidedBaseCircle == unit1)
+					if (unit2.CollidedBaseCircle == unit1)
 					{
-						unit2.collidedBaseCircle = null;
-						unit2.isCollidedWithBase = false;
-						unit1.collidedCount--;
+						unit2.CollidedBaseCircle = null;
+						unit2.IsCollidedWithBase = false;
+						unit1.CollidedCount--;
 					}
 				}
 			}
@@ -323,40 +359,44 @@ public class QuadTreeEternal
 				float radiuses = unit1.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (unit1.owner.PlayerNumber == unit2.owner.PlayerNumber)
+					if (unit1.Owner.PlayerNumber == unit2.Owner.PlayerNumber)
 					{
-						if (!unit2.isDead)
+						if (!unit2.IsDead)
 						{
-							if (unit2.mover.FollowBase.TargetPlanet.gameObject != unit1.trans.gameObject)
-								if (unit2.mover.Separation.Enabled)
-									unit2.mover.Separation.AddSeparation(unit1.trans.position, distance);
+							if (unit2.Mover.FollowBase.TargetPlanet.gameObject != unit1.Trans.gameObject)
+							{
+								if (unit2.Mover.Separation.Enabled)
+								{
+									unit2.Mover.Separation.AddSeparation(unit1.Trans.position, distance);
+								}
+							}
 						}
 					}
 				}
 			}
 		}
 		// if no mover then it's a base
-		else if (unit2.isStatic)
+		else if (unit2.IsStatic)
 		{
-			if (unit2.owner.PlayerNumber == -1)
+			if (unit2.Owner.PlayerNumber == -1)
 			{
 				float radiuses = unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (unit1.isCollidedWithBase == false)
+					if (unit1.IsCollidedWithBase == false)
 					{
-						unit1.collidedBaseCircle = unit2;
-						unit1.isCollidedWithBase = true;
-						unit2.collidedCount++;
+						unit1.CollidedBaseCircle = unit2;
+						unit1.IsCollidedWithBase = true;
+						unit2.CollidedCount++;
 					}
 				}
 				else
 				{
-					if (unit1.collidedBaseCircle == unit2)
+					if (unit1.CollidedBaseCircle == unit2)
 					{
-						unit1.collidedBaseCircle = null;
-						unit1.isCollidedWithBase = false;
-						unit2.collidedCount--;
+						unit1.CollidedBaseCircle = null;
+						unit1.IsCollidedWithBase = false;
+						unit2.CollidedCount--;
 					}
 				}
 			}
@@ -365,138 +405,175 @@ public class QuadTreeEternal
 				float radiuses = unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (unit2.owner.PlayerNumber == unit1.owner.PlayerNumber)
+					if (unit2.Owner.PlayerNumber == unit1.Owner.PlayerNumber)
 					{
-						if (!unit1.isDead)
+						if (!unit1.IsDead)
 						{
-							if (unit1.mover.FollowBase.TargetPlanet.gameObject != unit2.trans.gameObject)
-								if (unit1.mover.Separation.Enabled)
-									unit1.mover.Separation.AddSeparation(unit2.trans.position, distance);
+							if (unit1.Mover.FollowBase.TargetPlanet.gameObject != unit2.Trans.gameObject)
+							{
+								if (unit1.Mover.Separation.Enabled)
+								{
+									unit1.Mover.Separation.AddSeparation(unit2.Trans.position, distance);
+								}
+							}
 						}
 					}
 				}
 			}
 		}
-		else if (!unit1.isStatic && !unit2.isStatic)
+		else if (!unit1.IsStatic && !unit2.IsStatic)
 		{
 			if (distance > 0)
 			{
 				// check all dynamic bodies to apply separation
-				if (distance < unit1.mover.Separation.Desired * unit1.mover.Separation.Desired)
+				if (distance < unit1.Mover.Separation.Desired * unit1.Mover.Separation.Desired)
 				{
-					if (unit1.mover.Separation.Enabled)
-						unit1.mover.Separation.AddSeparation(unit2.trans.position, distance);
-					if (unit2.mover.Separation.Enabled)
-						unit2.mover.Separation.AddSeparation(unit1.trans.position, distance);
+					if (unit1.Mover.Separation.Enabled)
+					{
+						unit1.Mover.Separation.AddSeparation(unit2.Trans.position, distance);
+					}
+					if (unit2.Mover.Separation.Enabled)
+					{
+						unit2.Mover.Separation.AddSeparation(unit1.Trans.position, distance);
+					}
 				}
 				// check ally bodies only
-				if (unit1.owner.PlayerNumber == unit2.owner.PlayerNumber)
+				if (unit1.Owner.PlayerNumber == unit2.Owner.PlayerNumber)
 				{
 					// check to apply cohesion
-					if (distance < unit1.mover.Cohesion.Desired * unit1.mover.Cohesion.Desired)
+					if (distance < unit1.Mover.Cohesion.Desired * unit1.Mover.Cohesion.Desired)
 					{
-						if (unit1.mover.Cohesion.Enabled)
-							unit1.mover.Cohesion.AddCohesion(unit2.trans.position);
-						if (unit2.mover.Cohesion.Enabled)
-							unit2.mover.Cohesion.AddCohesion(unit1.trans.position);
+						if (unit1.Mover.Cohesion.Enabled)
+						{
+							unit1.Mover.Cohesion.AddCohesion(unit2.Trans.position);
+						}
+						if (unit2.Mover.Cohesion.Enabled)
+						{
+							unit2.Mover.Cohesion.AddCohesion(unit1.Trans.position);
+						}
 					}
 				}
 			}
 			else
 			{
-				unit2.trans.Translate(-0.2f, 0, 0);
-				unit1.trans.Translate(0.2f, 0, 0);
+				unit2.Trans.Translate(-0.2f, 0, 0);
+				unit1.Trans.Translate(0.2f, 0, 0);
 			}
 		}
 	}
 
 	void CheckWeapon(CollisionCircle unit1, CollisionCircle unit2)
 	{
-		if (unit1.instanceId == unit2.instanceId)
+		if (unit1.InstanceId == unit2.InstanceId)
+		{
 			return;
-		if (unit1.owner.PlayerNumber == unit2.owner.PlayerNumber)
+		}
+		if (unit1.Owner.PlayerNumber == unit2.Owner.PlayerNumber)
+		{
 			return;
-		if (unit1.owner.PlayerNumber == -1 || unit2.owner.PlayerNumber == -1)
+		}
+		if (unit1.Owner.PlayerNumber == -1 || unit2.Owner.PlayerNumber == -1)
+		{
 			return;
-		if (unit1.isDead || unit2.isDead)
+		}
+		if (unit1.IsDead || unit2.IsDead)
+		{
 			return;
-		if (unit1.isWeapon && unit2.isWeapon)
+		}
+		if (unit1.IsWeapon && unit2.IsWeapon)
+		{
 			return;
-		float distance = (unit1.trans.position - unit2.trans.position).sqrMagnitude;
+		}
+		float distance = (unit1.Trans.position - unit2.Trans.position).sqrMagnitude;
 		if (distance > 0)
 		{
-			if (unit1.isWeapon)
+			if (unit1.IsWeapon)
 			{
 				float radiuses = unit1.GetRadius() + unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (!unit1.weapon.HasTarget)
+					if (!unit1.Weapon.HasTarget)
 					{
-						unit1.weapon.Target = unit2.trans.GetComponent<ITargetable>();
-						unit1.weapon.HasTarget = true;
-						unit1.weapon.AttackTarget();
+						unit1.Weapon.Target = unit2.Trans.GetComponent<ITargetable>();
+						unit1.Weapon.HasTarget = true;
+						unit1.Weapon.AttackTarget();
 					}
 					else
 					{
-						unit1.weapon.AttackTarget();
+						unit1.Weapon.AttackTarget();
 					}
 				}
 				else
 				{
 					
-					if (unit1.weapon.Target != null)
+					if (unit1.Weapon.Target != null)
 					{
-						if (unit1.weapon.Target.GameObj == unit2.trans.gameObject)
-							unit1.weapon.Target = null;
+						if (unit1.Weapon.Target.GameObj == unit2.Trans.gameObject)
+						{
+							unit1.Weapon.Target = null;
+						}
 					}
 				}
 			}
-			else if (unit2.isWeapon)
+			else if (unit2.IsWeapon)
 			{
 				float radiuses = unit1.GetRadius() + unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (!unit2.weapon.HasTarget)
+					if (!unit2.Weapon.HasTarget)
 					{
-						unit2.weapon.Target = unit1.trans.GetComponent<ITargetable>();
-						unit2.weapon.HasTarget = true;
-						unit2.weapon.AttackTarget();
+						unit2.Weapon.Target = unit1.Trans.GetComponent<ITargetable>();
+						unit2.Weapon.HasTarget = true;
+						unit2.Weapon.AttackTarget();
 					}
 					else
 					{
-						unit2.weapon.AttackTarget();
+						unit2.Weapon.AttackTarget();
 					}
 				}
 				else
 				{
-					if (unit2.weapon.Target != null)
+					if (unit2.Weapon.Target != null)
 					{
-						if (unit2.weapon.Target.GameObj == unit1.trans.gameObject)
-							unit2.weapon.Target = null;
+						if (unit2.Weapon.Target.GameObj == unit1.Trans.gameObject)
+						{
+							unit2.Weapon.Target = null;
+						}
 					}
 				}
 			}
-			
 		}
 	}
-	
-	public bool RectContainsCircle(Rect rect, CollisionCircle obj)
+
+	private static bool RectContainsCircle(Rect rect, CollisionCircle obj)
 	{
-        if (!rect.Contains(obj.trans.position))
-			return false;
-		
+        if (!rect.Contains(obj.Trans.position))
+        {
+	        return false;
+        }
+
 		float radius = 0;
-		if (obj.isStatic)
+		if (obj.IsStatic)
+		{
 			radius = obj.GetRadius();
-		
-        if ((obj.trans.position.x - radius) <= rect.x)
+		}
+
+		if ((obj.Trans.position.x - radius) <= rect.x)
+		{
 			return false;
-        if ((obj.trans.position.x + radius) >= (rect.x + rect.width))
+		}
+		if ((obj.Trans.position.x + radius) >= (rect.x + rect.width))
+		{
 			return false;
-	    if ((obj.trans.position.y - radius) <= rect.y)
+		}
+		if ((obj.Trans.position.y - radius) <= rect.y)
+		{
 			return false;
-        if ((obj.trans.position.y + radius) >= (rect.y + rect.height))
+		}
+		if ((obj.Trans.position.y + radius) >= (rect.y + rect.height))
+		{
 			return false;
+		}
 		return true;
 	}
 
@@ -504,7 +581,12 @@ public class QuadTreeEternal
 	{
 		list.AddRange(objects);
 		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
-			if ((flags & 1) == 1) childs[index].GetWholeTreeObjects(list);
+		{
+			if ((flags & 1) == 1)
+			{
+				childs[index].GetWholeTreeObjects(list);
+			}
+		}
 		return list;
 	}
 
@@ -512,7 +594,12 @@ public class QuadTreeEternal
 	{
 		objects.Clear();
 		for (int flags = activeNodes, index = 0; flags > 0; flags >>= 1, index++)
-			if ((flags & 1) == 1) childs[index].Clear();
+		{
+			if ((flags & 1) == 1)
+			{
+				childs[index].Clear();
+			}
+		}
 	}
 
 	public void DrawDebug()
@@ -531,7 +618,9 @@ public class QuadTreeEternal
 		for (int i = 0; i < childs.Length; i++)
 		{
 			if (childs[i] != null)
+			{
 				childs[i].DrawDebug();
+			}
 		}
 	}
 }

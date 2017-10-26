@@ -25,15 +25,19 @@ public class DragDropCard : UIDragDropItem
 
 	public override void StartDragging()
 	{
-		if (card.inCooldown)
+		if (card.InCooldown)
+		{
 			return;
+		}
 		else
+		{
 			base.StartDragging();
+		}
 	}
 
 	protected override void OnDragDropStart()
 	{
-		CardManager.Instance.deniedArea.enabled = true;
+		CardManager.Instance.DeniedArea.enabled = true;
 		base.OnDragDropStart();
 		
 		sprite.depth += 10;
@@ -44,14 +48,16 @@ public class DragDropCard : UIDragDropItem
 
 	protected override void OnDragDropEnd()
 	{
-		CardManager.Instance.deniedArea.enabled = false;
+		CardManager.Instance.DeniedArea.enabled = false;
 		
 		// check the card is on card activation area
-		if (mTrans.position.y > CardManager.Instance.cardActivationBounds.min.y)
+		if (mTrans.position.y > CardManager.Instance.CardActivationBounds.min.y)
 		{
 			Vector2 pos = GetWorldCoordinate();
 			if (card.Activate(pos))
+			{
 				cardOriginal.StartCooldownTimer();
+			}
 		}
 		
 		
@@ -71,8 +77,8 @@ public class DragDropCard : UIDragDropItem
 //	{
 //		//base.OnDragDropRelease(surface);
 //	}
-	
-	public Vector2 GetWorldCoordinate()
+
+	private Vector2 GetWorldCoordinate()
 	{
 		Vector2 worldPos = UICamera.currentCamera.WorldToViewportPoint(sprite.worldCenter);
 		worldPos = Camera.main.ViewportToWorldPoint(worldPos);

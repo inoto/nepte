@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class UIBarsCameraSize2 : MonoBehaviour
 {
-    Camera theCamera;
-    Camera2DController controlCamera;
+    private Camera theCamera;
+    private Camera2DController controlCamera;
     
 
     private void Awake()
@@ -14,13 +14,12 @@ public class UIBarsCameraSize2 : MonoBehaviour
         controlCamera = Camera.main.GetComponent<Camera2DController>();
     }
 
-    // Use this for initialization
-    void Start ()
+    private void Start ()
     {
         controlCamera.onZoom += ChangeSize;
 	}
-	
-	public void ChangeSize()
+
+    private void ChangeSize()
     {
         theCamera.orthographicSize = Camera.main.orthographicSize;
     }

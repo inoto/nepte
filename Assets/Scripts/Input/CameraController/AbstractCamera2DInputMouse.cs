@@ -2,11 +2,11 @@
 
 public abstract class AbstractCamera2DInputMouse : AbstractCamera2DInput
 {
-	protected Vector2 lastClickPosition = Vector2.zero;
-	protected Vector2 initialClick = Vector2.zero;
-	protected float lastClickDeltaTime = 0;
-	
-	void Awake()
+	protected Vector2 LastClickPosition = Vector2.zero;
+	protected Vector2 InitialClick = Vector2.zero;
+	protected float LastClickDeltaTime = 0;
+
+	private void Awake()
 	{
 		Attach();
 	}
@@ -14,55 +14,55 @@ public abstract class AbstractCamera2DInputMouse : AbstractCamera2DInput
 #if UNITY_EDITOR
 	protected virtual void Update()
 	{
-		if (attached)
+		if (Attached)
 		{
 			if (Input.GetMouseButtonDown(0))
 			{
-				onMouseBtnDown();
+				OnMouseBtnDown();
 			}
 			if (Input.GetMouseButton(0))
 			{
-				onMouseBtnHold();
+				OnMouseBtnHold();
 			}
 			if (Input.GetMouseButtonUp(0))
 			{
-				onMouseBtnUp();
+				OnMouseBtnUp();
 			}
 			if (ZoomEnabled && Input.mouseScrollDelta.y != 0)
 			{
-				onMouseScroll();
+				OnMouseScroll();
 			}
 		}
 	}
 #endif
 
-	protected virtual void onMouseBtnDown()
+	protected virtual void OnMouseBtnDown()
 	{
-		initialClick = lastClickPosition = Input.mousePosition;
+		InitialClick = LastClickPosition = Input.mousePosition;
 		if (DoubleClickEnabled)
 		{
-			if ((Time.time - lastClickDeltaTime) < doubleClickCatchTime)
+			if ((Time.time - LastClickDeltaTime) < DoubleClickCatchTime)
 			{
-				RaiseDoubleClickTap(initialClick);
+				RaiseDoubleClickTap(InitialClick);
 			}
 			else
 			{
-				isInteractionStatic = true;
+				IsInteractionStatic = true;
 			}
-			lastClickDeltaTime = Time.time;
+			LastClickDeltaTime = Time.time;
 		}
 		else
 		{
-			isInteractionStatic = true;
+			IsInteractionStatic = true;
 		}
 	}
 
-	protected virtual void onMouseBtnUp()
+	protected virtual void OnMouseBtnUp()
 	{
-		lastClickPosition = Vector2.zero;
-		dragStarted = false;
+		LastClickPosition = Vector2.zero;
+		DragStarted = false;
 		
-		if (isInteractionStatic && ClickEnabled)
+		if (IsInteractionStatic && ClickEnabled)
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaiseClickTap(ray.origin + (ray.direction));
@@ -75,24 +75,26 @@ public abstract class AbstractCamera2DInputMouse : AbstractCamera2DInput
 		}
 	}
 
-	protected virtual void onMouseBtnHold()
+	protected virtual void OnMouseBtnHold()
 	{
-		lastClickPosition = Input.mousePosition;
+		LastClickPosition = Input.mousePosition;
 		
 		Vector2 clickPosition = Input.mousePosition;
 
 		// Длинный жест пальцем - перетаскивание
-		if ((clickPosition - initialClick).magnitude > dragTreshold)
+		if ((clickPosition - InitialClick).magnitude > DragTreshold)
 		{
 			if (DragScreenEnabled)
-				theCamera.TranslateScreen(lastClickPosition, clickPosition);
-			isInteractionStatic = false;
+			{
+				TheCamera.TranslateScreen(LastClickPosition, clickPosition);
+			}
+			IsInteractionStatic = false;
 		}
 	}
 	
-	protected virtual void onMouseScroll()
+	protected virtual void OnMouseScroll()
 	{
-		theCamera.ZoomScreen(Input.mousePosition, ZoomSpeed * Input.mouseScrollDelta.y);
+		TheCamera.ZoomScreen(Input.mousePosition, ZoomSpeed * Input.mouseScrollDelta.y);
 	}
 
 }

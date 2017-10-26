@@ -1,25 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameTimer : MonoBehaviour
 {
 
-    public UILabel label;
+    public UILabel Label;
 
 	// Use this for initialization
-	void Awake ()
+	private void Awake ()
     {
-        label = GetComponent<UILabel>();
+        Label = GetComponent<UILabel>();
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	private void Update ()
     {
         int minutes = Mathf.FloorToInt(GameManager.Instance.GameTimer / 60F);
         int seconds = Mathf.FloorToInt(GameManager.Instance.GameTimer - minutes * 60);
         string formattedTime = string.Format("{0:0}:{1:00}", minutes, seconds);
 
-        label.text = formattedTime;
+        Label.text = formattedTime;
 	}
 }

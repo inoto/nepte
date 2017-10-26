@@ -4,16 +4,14 @@ using UnityEngine.Audio;
 
 public class MixerContoller : MonoBehaviour
 {
+    public AudioMixer MasterMixer;
 
+    public AudioSource AudioSource;
 
-    public AudioMixer masterMixer;
+    public float VarVolume = 0.0f;
 
-    public AudioSource audioSource;
-
-    public float varVolume = 0.0f;
-
-    public AudioClip mainThemeClip;
-    public AudioClip[] audioClips;
+    public AudioClip MainThemeClip;
+    public AudioClip[] AudioClips;
     private int lastPlayedClip = 0;
 
     private bool clipAttached;
@@ -22,55 +20,55 @@ public class MixerContoller : MonoBehaviour
     private void Start()
     {
         PlayMainTheme();
-
     }
 
     private void Update()
     {
 		if (clipAttached)
 		{
-			if (varVolume < 1.0f)
+			if (VarVolume < 1.0f)
 			{
-				varVolume += 0.3f * Time.deltaTime;
-				audioSource.volume = varVolume;
+				VarVolume += 0.3f * Time.deltaTime;
+				AudioSource.volume = VarVolume;
 			}
 			else
+			{
 				clipAttached = false;
+			}
 		}
         else if (clipDetached)
         {
-            if (varVolume > 0.0f)
+            if (VarVolume > 0.0f)
 
             {
-                varVolume -= 0.3f * Time.deltaTime;
-                audioSource.volume = varVolume;
+                VarVolume -= 0.3f * Time.deltaTime;
+                AudioSource.volume = VarVolume;
             }
             else
             {
                 clipDetached = false;
-                audioSource.Stop();
-                audioSource.clip = null;
+                AudioSource.Stop();
+                AudioSource.clip = null;
             }
         }
     }
 
-    IEnumerator CheckMusic()
+	private IEnumerator CheckMusic()
     {
         while (true)
         {
             yield return new WaitForSeconds(10.0f);
-            if (audioSource.clip == null)
+            if (AudioSource.clip == null)
             {
                 PlayNextClip();
             }
-                
         }
     }
 
-    public void PlayNextClip()
+	private void PlayNextClip()
 	{
         // to begin of clip array
-        if (lastPlayedClip == audioClips.Length - 1)
+        if (lastPlayedClip == AudioClips.Length - 1)
         {
             lastPlayedClip = 0;
         }
@@ -78,19 +76,19 @@ public class MixerContoller : MonoBehaviour
         {
             lastPlayedClip += 1;
         }
-        audioSource.clip = audioClips[lastPlayedClip];
-		audioSource.volume = 0.0f;
+        AudioSource.clip = AudioClips[lastPlayedClip];
+		AudioSource.volume = 0.0f;
 		clipAttached = true;
-		audioSource.Play();
+		AudioSource.Play();
 	}
 
-	public void PlayMainTheme()
+	private void PlayMainTheme()
 	{
-        audioSource.volume = 0.0f;
+        AudioSource.volume = 0.0f;
         clipDetached = false;
         clipAttached = true;
-        audioSource.clip = mainThemeClip;
-        audioSource.Play();
+        AudioSource.clip = MainThemeClip;
+        AudioSource.Play();
 	}
 
 	public void StopMainTheme()
@@ -98,32 +96,36 @@ public class MixerContoller : MonoBehaviour
         clipAttached = false;
         clipDetached = true;
         // start track same time
-		audioSource.clip = audioClips[lastPlayedClip];
-		audioSource.volume = 0.0f;
+		AudioSource.clip = AudioClips[lastPlayedClip];
+		AudioSource.volume = 0.0f;
 		clipAttached = true;
-		audioSource.Play();
+		AudioSource.Play();
 
         StartCoroutine(CheckMusic());
 	}
 
     public void SetMusicVolume(float newValue)
     {
-        masterMixer.SetFloat("musicVolume", LinearToDecibel(newValue));
+        MasterMixer.SetFloat("musicVolume", LinearToDecibel(newValue));
     }
 
 	public void SetSoundsVolume(float newValue)
 	{
-        masterMixer.SetFloat("soundsVolume", LinearToDecibel(newValue));
+        MasterMixer.SetFloat("soundsVolume", LinearToDecibel(newValue));
 	}
 
-    private float LinearToDecibel(float newValue)
+    private static float LinearToDecibel(float newValue)
     {
 		float dB;
 		if (newValue != 0.0f)
+		{
 			dB = 20.0f * Mathf.Log10(newValue);
+		}
 		else
+		{
 			dB = -80.0f;
-        return dB;
+		}
+	    return dB;
     }
 
 

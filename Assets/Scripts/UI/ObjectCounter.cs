@@ -1,20 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ObjectCounter : MonoBehaviour
 {
-	public UILabel label;
+	public UILabel Label;
 
 	// Use this for initialization
-	void Awake()
+	private void Awake()
 	{
-		label = GetComponent<UILabel>();
+		Label = GetComponent<UILabel>();
 	}
 
 	// Update is called once per frame
-	void Update()
+	private void Update()
 	{
-        label.text = PlayerController.UnitCount.ToString();
+        Label.text = PlayerController.UnitCount.ToString();
 	}
 }

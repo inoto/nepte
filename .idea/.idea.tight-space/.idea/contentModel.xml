@@ -423,7 +423,6 @@
           </e>
           <e p="StarsMover.cs" t="Include" />
           <e p="UI" t="Include">
-            <e p="BaseUIBar.cs" t="Include" />
             <e p="CardContainer.cs" t="Include" />
             <e p="DragDropCard.cs" t="Include" />
             <e p="FPSCounter.cs" t="Include" />

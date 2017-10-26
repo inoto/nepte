@@ -52,8 +52,8 @@ public class Drone : MonoBehaviour, ITargetable
 		Mode = Drone.DroneMode.Idle;
 		Collision = new CollisionCircle(Trans, Mover, Owner, null);
 		CollisionManager.Instance.AddCollidable(Collision);
-		Collision.isDead = false;
-		Collision.collidedBaseCircle = null;
+		Collision.IsDead = false;
+		Collision.CollidedBaseCircle = null;
 		
 		LoadFromConfig();
 	}
@@ -103,8 +103,8 @@ public class Drone : MonoBehaviour, ITargetable
 	public void Die()
 	{
 		Mode = DroneMode.Dead;
-		Collision.isDead = true;
-		Weapon.Collision.isDead = true;
+		Collision.IsDead = true;
+		Weapon.Collision.IsDead = true;
 
 		if (Health.Current <= 0)
 		{
@@ -118,7 +118,7 @@ public class Drone : MonoBehaviour, ITargetable
 	private void MakeExplosion()
 	{
 		GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation, GameManager.Instance.transform);
-		float size = GetComponent<QuadMesh>().size * 1.5f;
+		float size = GetComponent<QuadMesh>().Size * 1.5f;
 		explosion.transform.localScale = new Vector3(size, size, 1);
 		explosion.transform.localScale = Trans.localScale * 2;
 	}

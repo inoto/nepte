@@ -120,7 +120,7 @@ public class Capture : MonoBehaviour
 					Clean();
 				}
 				
-				if (bas.Collision.collidedCount <= 0)
+				if (bas.Collision.CollidedCount <= 0)
 				{
 					assignedCircleTimer.fillAmount -= counterStep * 4;
 					//counter[leadIndex] -= counterStep * 4;

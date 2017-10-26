@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using System.Collections;
 using System.Collections.Generic;
 
 public class Grid : MonoBehaviour {
@@ -23,44 +23,44 @@ public class Grid : MonoBehaviour {
 		}
 	}
 
-	public bool showGrid = true;
-    public bool showDistances = true;
-    public bool showFlowDirection = true;
+	public bool ShowGrid = true;
+    public bool ShowDistances = true;
+    public bool ShowFlowDirection = true;
 
     private Battleground battlegroundParent;
     private Renderer battlegroundRenderer;
-    Rect rect;
+	private Rect rect;
 
-    public Node[,] nodes;
-    public float nodeRadius;
-    public float nodeDiameter;
+    public Node[,] Nodes;
+    public float NodeRadius;
+    public float NodeDiameter;
 
-    public NodeGroup[,] groups;
-    public float groupRadius;
-    public float groupDiameter;
+    public NodeGroup[,] Groups;
+    public float GroupRadius;
+    public float GroupDiameter;
 
-    public int gridCountX, gridCountY;
-    public int gridSize;
+    public int GridCountX, GridCountY;
+    public int GridSize;
 
-    public int groupCountX, groupCountY;
-    public int groupSize;
+    public int GroupCountX, GroupCountY;
+    public int GroupSize;
 
-    int penaltyMin = int.MaxValue;
-	int penaltyMax = int.MinValue;
+	private const int penaltyMin = int.MaxValue;
+	private const int penaltyMax = int.MinValue;
 
-	void Start()
+	private void Start()
     {
 		battlegroundParent = transform.parent.gameObject.GetComponent<Battleground>();
 		battlegroundRenderer = battlegroundParent.gameObject.GetComponent<MeshRenderer>();
 
-        nodeDiameter = nodeRadius * 2;
+        NodeDiameter = NodeRadius * 2;
 
         rect.min = battlegroundRenderer.bounds.min;
 		rect.max = battlegroundRenderer.bounds.max;
 
-        gridCountX = Mathf.RoundToInt(rect.size.x / nodeDiameter);
-		gridCountY = Mathf.RoundToInt(rect.size.y / nodeDiameter);
-        gridSize = gridCountX * gridCountY;
+        GridCountX = Mathf.RoundToInt(rect.size.x / NodeDiameter);
+		GridCountY = Mathf.RoundToInt(rect.size.y / NodeDiameter);
+        GridSize = GridCountX * GridCountY;
         CreateNodes();
 
         //groupCountX = Mathf.RoundToInt(rect.width / Vector2.one.x*10);
@@ -69,56 +69,58 @@ public class Grid : MonoBehaviour {
         //CreateGroups();
     }
 
+	[Obsolete("Not used anymore",true)]
     public List<NodeGroup> GetGroupsAsList()
 	{
 		List<NodeGroup> list = new List<NodeGroup>();
-		for (int x = 0; x < gridCountX; x++)
+		for (int x = 0; x < GridCountX; x++)
 		{
-			for (int y = 0; y < gridCountY; y++)
+			for (int y = 0; y < GridCountY; y++)
 			{
-				list.Add(groups[x, y]);
+				list.Add(Groups[x, y]);
 			}
 		}
 		return list;
 	}
 
-    void CreateNodes()
+	private void CreateNodes()
     {
-        nodes = new Node[gridCountX, gridCountY];
+        Nodes = new Node[GridCountX, GridCountY];
 
-        Vector2 diameter = new Vector2(nodeDiameter, nodeDiameter);
+        Vector2 diameter = new Vector2(NodeDiameter, NodeDiameter);
 
         Rect projRect = new Rect(rect.min, diameter);
-        for (int x = 0; x < gridCountX; x++)
+        for (int x = 0; x < GridCountX; x++)
         {
-            for (int y = 0; y < gridCountY; y++)
+            for (int y = 0; y < GridCountY; y++)
             {
-                nodes[x, y] = new Node(projRect, projRect.center, x, y);
+                Nodes[x, y] = new Node(projRect, projRect.center, x, y);
                 projRect.yMin += diameter.x;
                 projRect.yMax += diameter.x;
             }
-            projRect.yMin -= diameter.y * gridCountY;
-            projRect.yMax -= diameter.y * gridCountY;
+            projRect.yMin -= diameter.y * GridCountY;
+            projRect.yMax -= diameter.y * GridCountY;
             projRect.xMin += diameter.x;
             projRect.xMax += diameter.x;
         }
     }
 
-    void CreateGroups()
+	[Obsolete("Not used anymore",true)]
+    private void CreateGroups()
     {
-        groups = new NodeGroup[groupCountX, groupCountY];
+        Groups = new NodeGroup[GroupCountX, GroupCountY];
 
 		Rect projRect = new Rect(rect.min, Vector2.one*10);
-		for (int x = 0; x < groupCountX; x++)
+		for (int x = 0; x < GroupCountX; x++)
 		{
-			for (int y = 0; y < groupCountY; y++)
+			for (int y = 0; y < GroupCountY; y++)
 			{
-				groups[x, y] = new NodeGroup(projRect);
+				Groups[x, y] = new NodeGroup(projRect);
 				projRect.yMax += Vector2.one.y*10;
 				projRect.yMin += Vector2.one.y*10;
 			}
-			projRect.yMax -= Vector2.one.y*10 * groupCountY;
-			projRect.yMin -= Vector2.one.y*10 * groupCountY;
+			projRect.yMax -= Vector2.one.y*10 * GroupCountY;
+			projRect.yMin -= Vector2.one.y*10 * GroupCountY;
 			projRect.xMax += Vector2.one.x*10;
 			projRect.xMax += Vector2.one.x*10;
 		}
@@ -128,10 +130,10 @@ public class Grid : MonoBehaviour {
 
 	public Node ClosestWalkableNode(Node node)
 	{
-		int maxRadius = Mathf.Max(gridCountX, gridCountY) / 2;
+		int maxRadius = Mathf.Max(GridCountX, GridCountY) / 2;
 		for (int i = 1; i < maxRadius; i++)
 		{
-			Node n = FindWalkableInRadius(node.gridX, node.gridY, i);
+			Node n = FindWalkableInRadius(node.GridX, node.GridY, i);
 			if (n != null)
 			{
 				return n;
@@ -140,7 +142,7 @@ public class Grid : MonoBehaviour {
 		return null;
 	}
 
-	Node FindWalkableInRadius(int centreX, int centreY, int radius)
+	private Node FindWalkableInRadius(int centreX, int centreY, int radius)
 	{
 
 		for (int i = -radius; i <= radius; i++)
@@ -151,35 +153,35 @@ public class Grid : MonoBehaviour {
 			// top
 			if (InBounds(verticalSearchX, centreY + radius))
 			{
-				if (nodes[verticalSearchX, centreY + radius].walkable)
+				if (Nodes[verticalSearchX, centreY + radius].IsWalkable)
 				{
-					return nodes[verticalSearchX, centreY + radius];
+					return Nodes[verticalSearchX, centreY + radius];
 				}
 			}
 
 			// bottom
 			if (InBounds(verticalSearchX, centreY - radius))
 			{
-				if (nodes[verticalSearchX, centreY - radius].walkable)
+				if (Nodes[verticalSearchX, centreY - radius].IsWalkable)
 				{
-					return nodes[verticalSearchX, centreY - radius];
+					return Nodes[verticalSearchX, centreY - radius];
 				}
 			}
 			// right
 			if (InBounds(centreY + radius, horizontalSearchY))
 			{
-				if (nodes[centreX + radius, horizontalSearchY].walkable)
+				if (Nodes[centreX + radius, horizontalSearchY].IsWalkable)
 				{
-					return nodes[centreX + radius, horizontalSearchY];
+					return Nodes[centreX + radius, horizontalSearchY];
 				}
 			}
 
 			// left
 			if (InBounds(centreY - radius, horizontalSearchY))
 			{
-				if (nodes[centreX - radius, horizontalSearchY].walkable)
+				if (Nodes[centreX - radius, horizontalSearchY].IsWalkable)
 				{
-					return nodes[centreX - radius, horizontalSearchY];
+					return Nodes[centreX - radius, horizontalSearchY];
 				}
 			}
 
@@ -196,9 +198,13 @@ public class Grid : MonoBehaviour {
 
 		int nodeCountInRadiusLine;
 		if (radius % 1 != 0)
+		{
 			nodeCountInRadiusLine = Mathf.FloorToInt(radius);
+		}
 		else
+		{
 			nodeCountInRadiusLine = Mathf.RoundToInt(radius)-1;
+		}
 
 		for (int x = -nodeCountInRadiusLine; x <= nodeCountInRadiusLine; x++)
 		{
@@ -208,22 +214,24 @@ public class Grid : MonoBehaviour {
 					|| (x == -nodeCountInRadiusLine && y == nodeCountInRadiusLine)
 					|| (x == nodeCountInRadiusLine && y == -nodeCountInRadiusLine)
 					|| (x == nodeCountInRadiusLine && y == nodeCountInRadiusLine))
-					continue;
-				int checkX = node.gridX + x;
-				int checkY = node.gridY + y;
-
-				if (checkX >= 0 && checkX < gridCountX && checkY >= 0 && checkY < gridCountY)
 				{
-					list.Add(nodes[checkX, checkY]);
+					continue;
+				}
+				int checkX = node.GridX + x;
+				int checkY = node.GridY + y;
+
+				if (checkX >= 0 && checkX < GridCountX && checkY >= 0 && checkY < GridCountY)
+				{
+					list.Add(Nodes[checkX, checkY]);
 				}
 			}
 		}
 		return list;
 	}
 
-	bool InBounds(int x, int y)
+	private bool InBounds(int x, int y)
 	{
-		return x >= 0 && x < gridCountX && y >= 0 && y < gridCountY;
+		return x >= 0 && x < GridCountX && y >= 0 && y < GridCountY;
 	}
 
     public Node[] GetNeighbours(Node node)
@@ -233,14 +241,16 @@ public class Grid : MonoBehaviour {
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {
 				if (x == 0 && y == 0)
+				{
 					continue;
+				}
 
-				int checkX = node.gridX + x;
-				int checkY = node.gridY + y;
+				int checkX = node.GridX + x;
+				int checkY = node.GridY + y;
 
-				if (checkX >= 0 && checkX < gridCountX && checkY >= 0 && checkY < gridCountY)
+				if (checkX >= 0 && checkX < GridCountX && checkY >= 0 && checkY < GridCountY)
                 {
-					neighbours.Add(nodes[checkX,checkY]);
+					neighbours.Add(Nodes[checkX,checkY]);
 				}
 			}
 		}
@@ -261,22 +271,22 @@ public class Grid : MonoBehaviour {
 		int x, y;
 
 		//if (worldPosition.x < 0)
-		x = Mathf.RoundToInt((gridCountX - 1) * percentX);
-		y = Mathf.RoundToInt((gridCountY - 1) * percentY);
+		x = Mathf.RoundToInt((GridCountX - 1) * percentX);
+		y = Mathf.RoundToInt((GridCountY - 1) * percentY);
         //Debug.Log("nwp: " + nodes[x,y].worldPosition);
-		return nodes[x,y];
+		return Nodes[x,y];
 	}
 
-	public Node DefineNextNode(Node _node, int _playerNumber)
+	public static Node DefineNextNode(Node node, int playerNumber)
 	{
         bool found = false;
 		int closestNodeIndex = 0;
-		for (int i = 0; i < _node.neigbours.Length; i++)
+		for (int i = 0; i < node.Neigbours.Length; i++)
 		{
-			if (_node.neigbours[i] != null)
+			if (node.Neigbours[i] != null)
 			{
-                if (_node.neigbours[i].distance[_playerNumber] < _node.neigbours[closestNodeIndex].distance[_playerNumber]
-                    && _node.neigbours[i].walkable)
+                if (node.Neigbours[i].Distance[playerNumber] < node.Neigbours[closestNodeIndex].Distance[playerNumber]
+                    && node.Neigbours[i].IsWalkable)
 				{
 					closestNodeIndex = i;
                     found = true;
@@ -284,22 +294,26 @@ public class Grid : MonoBehaviour {
 			}
 		}
         if (found || closestNodeIndex == 0)
-            return _node.neigbours[closestNodeIndex];
+        {
+	        return node.Neigbours[closestNodeIndex];
+        }
         else
-            return null;
+        {
+	        return null;
+        }
 	}
 
-	public Node DefineNextNode(Node _node, List<Node> _currentPathNodes, int _playerNumber)
+	public Node DefineNextNode(Node node, List<Node> currentPathNodes, int playerNumber)
 	{
 		bool found = false;
 		int closestNodeIndex = 0;
-		for (int i = 0; i < _node.neigbours.Length; i++)
+		for (int i = 0; i < node.Neigbours.Length; i++)
 		{
-			if (_node.neigbours[i] != null)
+			if (node.Neigbours[i] != null)
 			{
-				if (_node.neigbours[i].distance[_playerNumber] < _node.neigbours[closestNodeIndex].distance[_playerNumber]
-                    && _node.neigbours[i].walkable
-                    && !_currentPathNodes.Contains(_node.neigbours[i]))
+				if (node.Neigbours[i].Distance[playerNumber] < node.Neigbours[closestNodeIndex].Distance[playerNumber]
+                    && node.Neigbours[i].IsWalkable
+                    && !currentPathNodes.Contains(node.Neigbours[i]))
 				{
 					closestNodeIndex = i;
 					found = true;
@@ -307,38 +321,41 @@ public class Grid : MonoBehaviour {
 			}
 		}
 		if (found || closestNodeIndex == 0)
-			return _node.neigbours[closestNodeIndex];
+		{
+			return node.Neigbours[closestNodeIndex];
+		}
 		else
+		{
 			return null;
+		}
 	}
 
-	void OnDrawGizmos()
+	private void OnDrawGizmos()
     {
-		if (nodes != null)
+		if (Nodes != null)
 		{
             Color newColor;
-			if (showGrid)
+			if (ShowGrid)
 			{
-                foreach (Node n in nodes)
+                foreach (Node n in Nodes)
                 {
-                    Gizmos.color = Color.Lerp(Color.white, Color.black, Mathf.InverseLerp(penaltyMin, penaltyMax, n.movementPenalty));
-                    Gizmos.color = (n.walkable) ? Gizmos.color : Color.red;
+                    Gizmos.color = (n.IsWalkable) ? Gizmos.color : Color.red;
                     newColor = Gizmos.color;
                     newColor.a = 0.5f;
                     Gizmos.color = newColor;
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (1 - 0.02f));
-                    if (showDistances)
+                    Gizmos.DrawCube(n.WorldPosition, Vector3.one * (1 - 0.02f));
+                    if (ShowDistances)
                     {
 #if UNITY_EDITOR
-                        Handles.Label(n.worldPosition, n.distance[0].ToString());
+                        Handles.Label(n.WorldPosition, n.Distance[0].ToString());
 #endif
                     }
-                    if (showFlowDirection)
+                    if (ShowFlowDirection)
                     {
                         newColor = Color.white;
 						newColor.a = 0.7f;
 						Gizmos.color = newColor;
-                        Gizmos.DrawLine(n.worldPosition, n.flowVector[0]);
+                        Gizmos.DrawLine(n.WorldPosition, n.FlowVector[0]);
                     }
                 }
             }
@@ -347,7 +364,7 @@ public class Grid : MonoBehaviour {
 
 	[System.Serializable]
 	public class TerrainType {
-		public LayerMask terrainMask;
-		public int terrainPenalty;
+		public LayerMask TerrainMask;
+		public int TerrainPenalty;
 	}
 }

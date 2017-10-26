@@ -2,11 +2,11 @@
 
 public class QuadMesh : MonoBehaviour {
 
-    public float size = 1.0f;
+    public float Size = 1.0f;
 
-    MeshFilter mFilter;
+	private MeshFilter mFilter;
 
-	void Awake()
+	private void Awake()
 	{
 
 		mFilter = GetComponent<MeshFilter>();
@@ -17,15 +17,15 @@ public class QuadMesh : MonoBehaviour {
         CreateMesh();
 	}
 
-    void CreateMesh()
+	private void CreateMesh()
     {
 		Mesh mesh = new Mesh();
 		mesh.vertices = new Vector3[]
 		{
-			new Vector3( size, size, 0),
-			new Vector3( size, -size, 0),
-			new Vector3(-size, size, 0),
-			new Vector3(-size, -size, 0),
+			new Vector3( Size, Size, 0),
+			new Vector3( Size, -Size, 0),
+			new Vector3(-Size, Size, 0),
+			new Vector3(-Size, -Size, 0),
 		};
 		mesh.uv = new Vector2[]
 		{

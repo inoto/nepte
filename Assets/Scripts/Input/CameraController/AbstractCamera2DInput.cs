@@ -3,36 +3,40 @@
 public abstract class AbstractCamera2DInput : MonoBehaviour
 {
 
-	public Camera2DController theCamera;
+	public Camera2DController TheCamera;
 
 	public bool ClickEnabled = true;
 	public bool DoubleClickEnabled = false;
-	public float doubleClickCatchTime = 0.3f;
+	public float DoubleClickCatchTime = 0.3f;
 //	public bool LongClickEnabled = false; // not implemented
 	public bool ZoomEnabled = false;
 	public float ZoomSpeed = 1f;
 	public bool DragScreenEnabled = false;
-	public float dragTreshold = 10f;
+	public float DragTreshold = 10f;
 
-	protected bool dragStarted = false;
-	protected bool zoomStarted = false;
+	protected bool DragStarted = false;
+	protected bool ZoomStarted = false;
 
-	protected bool isInteractionStatic = true;
+	protected bool IsInteractionStatic = true;
 
-	protected Vector2 lastZoomCenter = Vector2.zero;
+	protected Vector2 LastZoomCenter = Vector2.zero;
 
 	// Подписка на события ввода и старт/остановка контроллера
-	protected bool attached = false;
-	public virtual void Attach()
+	protected bool Attached = false;
+
+	protected virtual void Attach()
 	{
 		Detach ();
-		if (theCamera == null)
-			theCamera = GetComponent<Camera2DController>();
-		attached = true;
+		if (TheCamera == null)
+		{
+			TheCamera = GetComponent<Camera2DController>();
+		}
+		Attached = true;
 	}
-	public virtual void Detach()
+
+	protected virtual void Detach()
 	{
-		attached = false;
+		Attached = false;
 	}
 
 	// Подписка для внешних слушателей

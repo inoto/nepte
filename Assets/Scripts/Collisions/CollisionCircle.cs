@@ -1,117 +1,119 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
 public class CollisionCircle
 {
-	public bool showGizmos;
+	[SerializeField] private bool showGizmos;
 
-	public int instanceId;
+	public readonly int InstanceId;
 
-    public Transform trans;
-    public Mover mover;
-    public Owner owner;
-	public Weapon weapon;
-	public Planet bas;
+    public readonly Transform Trans;
+    public readonly Mover Mover;
+    public readonly Owner Owner;
+	public readonly Weapon Weapon;
+	private readonly Planet Planet;
 
 	
-	public bool isInQT = false;
-	public bool isDead = false;
-    public bool isCollidedWithBase = false;
-	public bool isStatic;
-	public bool isWeapon;
-	public CollisionCircle collidedBaseCircle = null;
-	public int collidedCount = 0;
+	public bool IsInQt = false;
+	public bool IsDead = false;
+    public bool IsCollidedWithBase = false;
+	public readonly bool IsStatic;
+	public readonly bool IsWeapon;
+	public CollisionCircle CollidedBaseCircle = null;
+	public int CollidedCount = 0;
 	
 
-    public CollisionCircle(Transform _trans, Mover _mover, Owner _owner, Weapon _weapon)
+    public CollisionCircle(Transform newTrans, Mover newMover, Owner newOwner, Weapon newWeapon)
     {
 	    showGizmos = true;
-        trans = _trans;
-	    mover = _mover;
-	    if (mover == null)
+        Trans = newTrans;
+	    Mover = newMover;
+	    if (Mover == null)
 	    {
-		    isStatic = true;
-		    bas = trans.GetComponent<Planet>();
+		    IsStatic = true;
+		    Planet = Trans.GetComponent<Planet>();
 	    }
-	    owner = _owner;
-	    weapon = _weapon;
-	    if (weapon != null)
+	    Owner = newOwner;
+	    Weapon = newWeapon;
+	    if (Weapon != null)
 	    {
-		    isWeapon = true;
+		    IsWeapon = true;
 	    }
-	    isCollidedWithBase = false;
-	    collidedBaseCircle = null;
-	    collidedCount = 0;
-	    instanceId = trans.gameObject.GetInstanceID();
+	    IsCollidedWithBase = false;
+	    CollidedBaseCircle = null;
+	    CollidedCount = 0;
+	    InstanceId = Trans.gameObject.GetInstanceID();
     }
-	public CollisionCircle(Transform _trans, Mover _mover, Owner _owner)
-	{
-		trans = _trans;
-		mover = _mover;
-		owner = _owner;
-		isCollidedWithBase = false;
-		collidedBaseCircle = null;
-		collidedCount = 0;
-		instanceId = trans.gameObject.GetInstanceID();
-	}
-	public CollisionCircle(Weapon _weapon, Transform _trans, Mover _mover, Owner _owner)
-	{
-		trans = _trans;
-		mover = _mover;
-		owner = _owner;
-		isCollidedWithBase = false;
-		collidedBaseCircle = null;
-		collidedCount = 0;
-		instanceId = trans.gameObject.GetInstanceID();
-	}
 
 	public float GetRadius()
 	{
-		if (isWeapon)
-			return weapon.Radius;
-		else if (isStatic)
-			return bas != null ? bas.Collider.radius : 0;
+		if (IsWeapon)
+		{
+			return Weapon.Radius;
+		}
+		else if (IsStatic)
+		{
+			return Planet != null ? Planet.Collider.radius : 0;
+		}
 		else
+		{
 			return 0;
+		}
 	}
 
 	public void Collided(CollisionCircle other)
 	{
-		if (instanceId == other.instanceId)
-			return;
-		if (owner.PlayerNumber == other.owner.PlayerNumber)
-			return;
-		if (isDead)
-			return;
-		if (!isWeapon)
-			return;
-		if (isWeapon && !mover.Weapon.HasTarget)
+		if (InstanceId == other.InstanceId)
 		{
-			mover.Weapon.Target = other.trans.GetComponent<ITargetable>();
-			mover.Weapon.HasTarget = true;
+			return;
+		}
+		if (Owner.PlayerNumber == other.Owner.PlayerNumber)
+		{
+			return;
+		}
+		if (IsDead)
+		{
+			return;
+		}
+		if (!IsWeapon)
+		{
+			return;
+		}
+		if (IsWeapon && !Mover.Weapon.HasTarget)
+		{
+			Mover.Weapon.Target = other.Trans.GetComponent<ITargetable>();
+			Mover.Weapon.HasTarget = true;
 		}
 		else
 		{
-			mover.Weapon.AttackTarget();
+			Mover.Weapon.AttackTarget();
 		}
 	}
 
 	public void CollidedEnded(CollisionCircle other)
 	{
-		if (instanceId == other.instanceId)
-			return;
-		if (owner.PlayerNumber == other.owner.PlayerNumber)
-			return;
-		if (isDead)
-			return;
-		if (!isWeapon)
-			return;
-		if (mover.Weapon.Target != null)
+		if (InstanceId == other.InstanceId)
 		{
-			if (mover.Weapon.Target.GameObj == other.trans.gameObject)
-				mover.Weapon.Target = null;
+			return;
+		}
+		if (Owner.PlayerNumber == other.Owner.PlayerNumber)
+		{
+			return;
+		}
+		if (IsDead)
+		{
+			return;
+		}
+		if (!IsWeapon)
+		{
+			return;
+		}
+		if (Mover.Weapon.Target != null)
+		{
+			if (Mover.Weapon.Target.GameObj == other.Trans.gameObject)
+			{
+				Mover.Weapon.Target = null;
+			}
 		}
 	}
 
@@ -119,11 +121,15 @@ public class CollisionCircle
 	{
 		if (showGizmos)
 		{
-			if (isInQT)
+			if (IsInQt)
+			{
 				Gizmos.color = Color.green;
+			}
 			else
+			{
 				Gizmos.color = Color.red;
-			Gizmos.DrawSphere(trans.position, 0.1f);
+			}
+			Gizmos.DrawSphere(Trans.position, 0.1f);
 		}
 	}
 }

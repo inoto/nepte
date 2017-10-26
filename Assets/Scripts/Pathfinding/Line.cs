@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
+[Obsolete("Not used anymore",true)]
 public struct Line {
 
 	const float verticalLineGradient = 1e5f;

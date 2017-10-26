@@ -5,27 +5,27 @@ public class CardSlowEnemies : CardAction
 {
 	[Header("CardSlowEnemies")]
 	//public Sprite areaSprite;
-	public float slowFactor = 0.5f;
-	public float areaRadius = 3f;
-	public float duration = 6f;
+	public float SlowFactor = 0.5f;
+	public float AreaRadius = 3f;
+	public float Duration = 6f;
 	
 	public override void Drag()
 	{
 		base.Drag();
-		if (actionType == ActionType.Area)
+		if (Type == ActionType.Area)
 		{
 			Destroy(transform.GetChild(0).gameObject);
 
-			if (sprite != null)
+			if (Sprite != null)
 			{
-				sprite.width = (int) ((areaRadius) * ((Screen.height / 2.0f) / Camera.main.orthographicSize));
+				Sprite.width = (int) ((AreaRadius) * ((Screen.height / 2.0f) / Camera.main.orthographicSize));
 				
-				Color col = sprite.color;
+				Color col = Sprite.color;
 				col.a = 0.5f;
 				var button = GetComponent<UIButton>();
 				button.defaultColor = col;
 
-				sprite.spriteName = "circle";
+				Sprite.spriteName = "circle";
 			}
 		}
 //		else if (actionType == ActionType.NoTarget)
@@ -39,17 +39,19 @@ public class CardSlowEnemies : CardAction
 		base.Activate(position);
 
 		//var sprite = GetComponent<UISprite>();
-		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(position, areaRadius);
+		List<CollisionCircle> list = CollisionManager.Instance.FindBodiesInCircleArea(position, AreaRadius);
 		Debug.Log("catched units: " + list.Count);
 		foreach (var unit in list)
 		{
-			Mover mover = unit.trans.GetComponent<Mover>();
+			Mover mover = unit.Trans.GetComponent<Mover>();
 			if (mover == null)
+			{
 				continue;
-			var effect = unit.trans.gameObject.AddComponent<EffectSlow>();
-			effect.SlowFactor = slowFactor;
+			}
+			var effect = unit.Trans.gameObject.AddComponent<EffectSlow>();
+			effect.SlowFactor = SlowFactor;
 			effect.Mover = mover;
-			effect.Activate(duration);
+			effect.Activate(Duration);
 		}
 		return true;
 	}

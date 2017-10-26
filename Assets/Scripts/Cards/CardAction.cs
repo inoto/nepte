@@ -8,7 +8,7 @@ public class CardAction : Card
 		Area
 	}
 
-	[Header("CardAction")] public ActionType actionType;
+	[Header("CardAction")] public ActionType Type;
 
 	public override void Drag()
 	{

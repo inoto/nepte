@@ -1,20 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FPSCounter : MonoBehaviour
 {
-	public UILabel label;
+	public UILabel Label;
 
-    float frameCount = 0;
-    float nextUpdate = 0.0f;
-    float fps = 0.0f;
-    float updateRate = 4.0f;  // 4 updates per sec.
+	private float frameCount = 0;
+	private float nextUpdate = 0.0f;
+	private float fps = 0.0f;
+	private const float updateRate = 4.0f; // 4 updates per sec.
 
 	// Use this for initialization
-	void Awake()
+	private void Awake()
 	{
-		label = GetComponent<UILabel>();
+		Label = GetComponent<UILabel>();
 	}
 
     private void Start()
@@ -23,14 +21,14 @@ public class FPSCounter : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+	private void Update()
 	{
 		frameCount++;
 		if (Time.time > nextUpdate)
 		{
 			nextUpdate += 1.0f / updateRate;
 			fps = frameCount * updateRate;
-            label.text = fps.ToString();
+            Label.text = fps.ToString();
 			frameCount = 0;
 		}
 	}

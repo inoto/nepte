@@ -4,15 +4,15 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
 	[Header("Card")]
-	public float cooldownSeconds = 1f;
-	public bool inCooldown = false;
-	protected UISprite cooldownTimer;
+	public float CooldownSeconds = 1f;
+	public bool InCooldown = false;
+	protected UISprite CooldownTimer;
 	
-	protected UISprite sprite;
+	protected UISprite Sprite;
 
 	public virtual void Drag()
 	{
-		sprite = GetComponent<UISprite>();
+		Sprite = GetComponent<UISprite>();
 //		if (sprite != null)
 //		{
 //			sprite.depth += 10;
@@ -26,30 +26,32 @@ public class Card : MonoBehaviour
 
 	public void StartCooldownTimer()
 	{
-		if (!inCooldown)
+		if (!InCooldown)
 		{
 			GameObject cooldownTimerObject = (GameObject) Instantiate(Resources.Load("CooldownTimer"), transform.position,
 				transform.rotation, transform);
-			cooldownTimer = cooldownTimerObject.GetComponent<UISprite>();
-			cooldownTimer.SetAnchor(transform);
+			CooldownTimer = cooldownTimerObject.GetComponent<UISprite>();
+			CooldownTimer.SetAnchor(transform);
 			GetComponent<UIButton>().enabled = false;
 		}
 		if (GameManager.Instance.IsGame)
-			this.StartCoroutine(CooldownTimer());
+		{
+			this.StartCoroutine(CooldownTimerCoroutine());
+		}
 	}
 
-	IEnumerator CooldownTimer()
+	private IEnumerator CooldownTimerCoroutine()
 	{
-		inCooldown = true;
-		float waitTime = 1 / cooldownSeconds;
-		while (inCooldown)
+		InCooldown = true;
+		float waitTime = 1 / CooldownSeconds;
+		while (InCooldown)
 		{
-			cooldownTimer.fillAmount -= waitTime/60;
-			if (cooldownTimer.fillAmount <= 0)
+			CooldownTimer.fillAmount -= waitTime/60;
+			if (CooldownTimer.fillAmount <= 0)
 			{
-				inCooldown = false;
+				InCooldown = false;
 				GetComponent<UIButton>().enabled = true;
-				Destroy(cooldownTimer.gameObject);
+				Destroy(CooldownTimer.gameObject);
 			}
 			yield return new WaitForSeconds(waitTime/60);
 		}
@@ -57,13 +59,17 @@ public class Card : MonoBehaviour
 
 	private void OnDisable()
 	{
-		if (inCooldown)
+		if (InCooldown)
+		{
 			StopAllCoroutines();
+		}
 	}
 
 	private void OnEnable()
 	{
-		if (inCooldown)
+		if (InCooldown)
+		{
 			StartCooldownTimer();
+		}
 	}
 }

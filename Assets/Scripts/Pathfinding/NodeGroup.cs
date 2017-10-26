@@ -1,38 +1,40 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Obsolete("Not used anymore",false)]
 public class NodeGroup
 {
-	public Rect rect;
+	private Rect rect;
 
-    public List<Node> nodes = new List<Node>();
-    public List<GameObject> units = new List<GameObject>();
-    public List<GameObject> movedUnits = new List<GameObject>();
+	private readonly List<Node> nodes = new List<Node>();
+	private readonly List<GameObject> units = new List<GameObject>();
+    public List<GameObject> MovedUnits = new List<GameObject>();
 
-    public int groupSizeX, groupSizeY;
-    public int groupSize;
+	private readonly int groupSizeX;
+	private readonly int groupSizeY;
+	private int groupSize;
 
-    public float nodeRadius;
-    public float nodeDiameter;
+	public readonly float NodeRadius;
+	public float NodeDiameter;
    
 
     public NodeGroup(Rect newRect)
 	{
 		rect = newRect;
-        nodeRadius = Grid.Instance.nodeRadius;
+        NodeRadius = Grid.Instance.NodeRadius;
         groupSizeX = 10;
         groupSizeY = 10;
         groupSize = groupSizeX * groupSizeY;
-        nodeDiameter = nodeRadius * 2;
+        NodeDiameter = NodeRadius * 2;
         FillWithNodes();
         //CollisionManager.Instance.AddGroup(this);
     }
 
-    public void FillWithNodes()
+	private void FillWithNodes()
     {
-		float nodeRadius = Grid.Instance.nodeRadius;
-		float nodeDiameter = Grid.Instance.nodeDiameter;
+		float nodeRadius = Grid.Instance.NodeRadius;
+		float nodeDiameter = Grid.Instance.NodeDiameter;
 
         Vector2 point = rect.min;
         point.x += nodeRadius;
@@ -50,12 +52,7 @@ public class NodeGroup
         }
     }
 
-	void AddAllNodes(List<Node> list)
-	{
-		//nodes = new List<Node>(list);
-	}
-
-	void AddUnit(GameObject unit)
+	private void AddUnit(GameObject unit)
 	{
 		units.Add(unit);
 	}

@@ -1,48 +1,43 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 [System.Serializable]
 public class Node : IHeapItem<Node>
 {
-	public bool walkable;
-	public Vector2 worldPosition;
-	public int gridX;
-	public int gridY;
+	public bool IsWalkable;
+	public Vector2 WorldPosition;
+	public readonly int GridX;
+	public readonly int GridY;
+    [System.NonSerialized] private readonly Rect Rect;
+    [System.NonSerialized] private float size;
+	private GameObject prisoner;
     [System.NonSerialized]
-    public Rect rect;
-    [System.NonSerialized]
-    public float size;
-    public GameObject prisoner;
-	public int movementPenalty;
-    [System.NonSerialized]
-	public Node[] neigbours = new Node[8];
+	public Node[] Neigbours = new Node[8];
 
     [System.NonSerialized]
-	public int[] distance = new int[GameManager.Instance.Players];
-    public bool isNeigboursFilled = false;
+	public readonly int[] Distance = new int[GameManager.Instance.Players];
+    public bool IsNeigboursFilled = false;
     [System.NonSerialized]
-    public bool[] visited = new bool[GameManager.Instance.Players];
+    public readonly bool[] Visited = new bool[GameManager.Instance.Players];
     [System.NonSerialized]
-    public Vector2[] flowVector = new Vector2[GameManager.Instance.Players];
+    public readonly Vector2[] FlowVector = new Vector2[GameManager.Instance.Players];
 
-	public int gCost;
-	public int hCost;
-	public Node parent;
-	int heapIndex;
+	public int GCost;
+	public int HCost;
+	public Node Parent;
+	private int heapIndex;
 	
-    public Node(Rect newRect, Vector2 pos, int _gridX, int _gridY)
+    public Node(Rect newRect, Vector2 pos, int gridX, int gridY)
     {
-        walkable = true;
-        rect = newRect;
-        worldPosition = pos;
-		gridX = _gridX;
-		gridY = _gridY;
-        size = rect.size.x;
-		for (int i = 0; i < distance.Length; i++)
+        IsWalkable = true;
+        Rect = newRect;
+        WorldPosition = pos;
+		GridX = gridX;
+		GridY = gridY;
+	    size = Rect.size.x;
+		for (int i = 0; i < Distance.Length; i++)
 		{
-			distance[i] = 0;
-            visited[i] = false;
+			Distance[i] = 0;
+            Visited[i] = false;
 		}
 		//neigbours = Grid.Instance.GetNeighbours(this);
         //rect = new Rect(worldPosition.x-size/2, worldPosition.y-size/2, size, size);
@@ -50,21 +45,21 @@ public class Node : IHeapItem<Node>
 
     public void ImprisonObject(GameObject obj)
     {
-        walkable = false;
+        IsWalkable = false;
         prisoner = obj;
         //obj.GetComponent<Drone>().move.node.Add(this);
     }
 
     public void ReleaseObject()
     {
-        walkable = true;
+        IsWalkable = true;
         //prisoner.GetComponent<Drone>().node.Remove(this);
         prisoner = null;
     }
 
-	public int fCost {
+	private int FCost {
 		get {
-			return gCost + hCost;
+			return GCost + HCost;
 		}
 	}
 
@@ -78,9 +73,9 @@ public class Node : IHeapItem<Node>
 	}
 
 	public int CompareTo(Node nodeToCompare) {
-		int compare = fCost.CompareTo(nodeToCompare.fCost);
+		int compare = FCost.CompareTo(nodeToCompare.FCost);
 		if (compare == 0) {
-			compare = hCost.CompareTo(nodeToCompare.hCost);
+			compare = HCost.CompareTo(nodeToCompare.HCost);
 		}
 		return -compare;
 	}

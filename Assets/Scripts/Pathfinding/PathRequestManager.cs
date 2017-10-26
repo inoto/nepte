@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading;
 
+[Obsolete("Not used anymore",true)]
 public class PathRequestManager : MonoBehaviour
 {
 

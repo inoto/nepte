@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CollisionManager : MonoBehaviour
@@ -20,11 +19,11 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
-	public bool showGizmos;
+	[SerializeField] private bool showGizmos;
 
-	public QuadTreeEternal qtree;
+	public QuadTreeEternal Qtree;
 
-	public Queue<CollisionCircle> objectsToInsert = new Queue<CollisionCircle>();
+	public Queue<CollisionCircle> ObjectsToInsert = new Queue<CollisionCircle>();
 
 	private void Start()
 	{
@@ -32,8 +31,8 @@ public class CollisionManager : MonoBehaviour
 		rect.min = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.min;
 		rect.max = GameObject.Find("Battleground").GetComponent<MeshRenderer>().bounds.max;
 
-		qtree = new QuadTreeEternal(rect);
-		qtree.root = qtree;
+		Qtree = new QuadTreeEternal(rect);
+		Qtree.Root = Qtree;
 
 		GameManager.Instance.OnGameRestart += ClearQuadTree;
 	}
@@ -41,32 +40,35 @@ public class CollisionManager : MonoBehaviour
     public void AddCollidable(CollisionCircle obj)
 	{
 //        qtree.Insert(obj);
-		objectsToInsert.Enqueue(obj);
+		ObjectsToInsert.Enqueue(obj);
 	}
 
     // update for QuadTreeEternal
     private void Update()
     {
-	    if (qtree != null && objectsToInsert.Count > 0)
+	    if (Qtree != null)
 	    {
-		    MoveFromQueue();
+		    if (ObjectsToInsert.Count > 0)
+		    {
+			    MoveFromQueue();
+		    }
+		    Qtree.Update();
 	    }
-        qtree.Update();
     }
 
 	private void MoveFromQueue()
 	{
-		while (objectsToInsert.Count > 0)
+		while (ObjectsToInsert.Count > 0)
 		{
-			qtree.Insert(objectsToInsert.Dequeue());
+			Qtree.Insert(ObjectsToInsert.Dequeue());
 		}
 	}
 
-	public void ClearQuadTree()
+	private void ClearQuadTree()
 	{
-		if (qtree != null)
+		if (Qtree != null)
 		{
-			qtree.Clear();
+			Qtree.Clear();
 			foreach (var b in GameManager.Instance.Planets)
 			{
 				AddCollidable(b.Collision);
@@ -76,19 +78,25 @@ public class CollisionManager : MonoBehaviour
     
 	public List<CollisionCircle> FindBodiesInCircleArea(Vector2 center, float radius)
 	{
-		List<CollisionCircle> units = qtree.GetWholeTreeObjects(new List<CollisionCircle>());
+		List<CollisionCircle> units = Qtree.GetWholeTreeObjects(new List<CollisionCircle>());
 		//Debug.Log("units: " + units.Count);
 		List<CollisionCircle> catched = new List<CollisionCircle>();
 		foreach (var unit in units)
 		{
-			if (unit.isWeapon)
+			if (unit.IsWeapon)
+			{
 				continue;
-			if (unit.isStatic)
+			}
+			if (unit.IsStatic)
+			{
 				continue;
-			float dx = unit.trans.position.x - center.x;
-			float dy = unit.trans.position.y - center.y;
+			}
+			float dx = unit.Trans.position.x - center.x;
+			float dy = unit.Trans.position.y - center.y;
 			if (dx * dx + dy * dy < radius * radius)
+			{
 				catched.Add(unit);
+			}
 		}
 		//Debug.Log("catched units: " + catched.Count);
 		return catched;
@@ -99,8 +107,10 @@ public class CollisionManager : MonoBehaviour
 	{
         if (showGizmos)
         {
-            if (qtree != null)
-                qtree.DrawDebug();
+            if (Qtree != null)
+            {
+	            Qtree.DrawDebug();
+            }
         }
 	}
 }

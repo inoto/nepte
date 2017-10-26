@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraWithEvents2 : MonoBehaviour
 {
-	Camera2DController theCamera;
+	private Camera2DController theCamera;
 #if UNITY_EDITOR
-	Camera2DController cameraMouse;
+	private Camera2DController cameraMouse;
 #endif
-	Camera2DController cameraTouch;
+	private Camera2DController cameraTouch;
 
-    GameObject HPCamObject;
+	public GameObject HpCamObject;
 
 	// Use this for initialization
-	void Awake ()
+	private void Awake ()
     {
         theCamera = GetComponent<Camera2DController>();
 #if UNITY_EDITOR
@@ -21,7 +19,7 @@ public class CameraWithEvents2 : MonoBehaviour
 #endif
 		cameraTouch = GetComponent<Camera2DController>();
 
-        HPCamObject = GameObject.Find("CameraUIBars");
+        HpCamObject = GameObject.Find("CameraUIBars");
 
 	    TurnCameraOff();
     }
@@ -32,7 +30,7 @@ public class CameraWithEvents2 : MonoBehaviour
         GameManager.Instance.OnGameContinued += TurnCameraOn;
     }
 
-    public void TurnCameraOn()
+	private void TurnCameraOn()
     {
         theCamera.enabled = true;
 #if UNITY_EDITOR
@@ -40,10 +38,13 @@ public class CameraWithEvents2 : MonoBehaviour
 #endif
         cameraTouch.enabled = true;
 
-        if (HPCamObject != null) HPCamObject.SetActive(!HPCamObject.activeSelf);
+        if (HpCamObject != null)
+        {
+	        HpCamObject.SetActive(!HpCamObject.activeSelf);
+        }
     }
-	
-	public void TurnCameraOff()
+
+	private void TurnCameraOff()
 	{
 		theCamera.enabled = false;
 #if UNITY_EDITOR
@@ -51,7 +52,10 @@ public class CameraWithEvents2 : MonoBehaviour
 #endif
 		cameraTouch.enabled = false;
 
-		if (HPCamObject != null) HPCamObject.SetActive(!HPCamObject.activeSelf);
+		if (HpCamObject != null)
+		{
+			HpCamObject.SetActive(!HpCamObject.activeSelf);
+		}
 	}
 
 }

@@ -7,13 +7,13 @@ public class CardManager : MonoBehaviour
 
     public static CardManager Instance { get { return _instance; } }
 
-    [HideInInspector] public Bounds cardActivationBounds;
-    [HideInInspector] public UISprite deniedArea;
+    [HideInInspector] public Bounds CardActivationBounds;
+    [HideInInspector] public UISprite DeniedArea;
     private GameObject cardContainer;
     
     private List<Card> hand;
-    public int handSize;
-    public List<GameObject> cards;
+    public int HandSize;
+    public List<GameObject> Cards;
 
     private void Awake()
     {
@@ -26,14 +26,18 @@ public class CardManager : MonoBehaviour
             _instance = this;
         }
         
-        cardActivationBounds = GameObject.Find("CardActivationArea").GetComponent<BoxCollider>().bounds;
-        if (cardActivationBounds == null)
+        CardActivationBounds = GameObject.Find("CardActivationArea").GetComponent<BoxCollider>().bounds;
+        if (CardActivationBounds == null)
+        {
             Debug.LogError("card activation area not found");
-        
-        deniedArea = GameObject.Find("DeniedArea").GetComponent<UISprite>();
-        if (deniedArea == null)
+        }
+
+        DeniedArea = GameObject.Find("DeniedArea").GetComponent<UISprite>();
+        if (DeniedArea == null)
+        {
             Debug.LogError("denied area not found");
-        
+        }
+
         cardContainer = GameObject.Find("ContainerCards");
     }
 
@@ -42,13 +46,15 @@ public class CardManager : MonoBehaviour
         GameManager.Instance.OnGameRestart += ResetCooldowns;
     }
 
-    void ResetCooldowns()
+    private void ResetCooldowns()
     {
         for (int i = 0; i < cardContainer.transform.childCount; i++)
         {
             Card tmpCard = cardContainer.transform.GetChild(i).GetComponent<Card>();
             if (tmpCard != null)
-                tmpCard.inCooldown = false;
+            {
+                tmpCard.InCooldown = false;
+            }
         }
     }
 }

@@ -8,13 +8,13 @@ public class LoseWinBlinking : MonoBehaviour
     private UILabel label;
 
 	// Use this for initialization
-	void Start ()
+	private void Start ()
     {
         label = GetComponent<UILabel>();
         StartCoroutine(Blink());
 	}
-	
-	IEnumerator Blink()
+
+	private IEnumerator Blink()
 	{
 		while (true)
 		{

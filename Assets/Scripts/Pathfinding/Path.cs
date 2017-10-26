@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Obsolete("Not used anymore",true)]
 [System.Serializable]
 public class Path
 {
@@ -29,7 +30,7 @@ public class Path
 
         List<Node> deniedNodes = new List<Node>();
 
-        waypoints[0] = Grid.Instance.DefineNextNode(_nodeFrom, _playerNumber);
+        waypoints[0] = Grid.DefineNextNode(_nodeFrom, _playerNumber);
         if (waypoints[0] == null)
         {
             //Debug.Log("waipoint0 is null");
@@ -96,9 +97,9 @@ public class Path
 		{
             if (waypoints[i] != null)
             {
-                Gizmos.DrawCube(waypoints[i].worldPosition, Vector3.one * (1.0f - 0.01f));
+                Gizmos.DrawCube(waypoints[i].WorldPosition, Vector3.one * (1.0f - 0.01f));
                 if (i < realNodeCount - 1)
-                    Gizmos.DrawLine(waypoints[i].worldPosition, waypoints[i + 1].worldPosition);
+                    Gizmos.DrawLine(waypoints[i].WorldPosition, waypoints[i + 1].WorldPosition);
             }
 		}
 

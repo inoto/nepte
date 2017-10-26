@@ -4,22 +4,22 @@ using UnityEngine;
 
 public abstract class AbstractCamera2DInputTouch : AbstractCamera2DInput {
 
-	protected Vector2[] lastTouchPosition;
-	protected Vector2 initialTouch = Vector2.zero;
-	
-	void Awake ()
+	protected Vector2[] LastTouchPosition;
+	protected Vector2 InitialTouch = Vector2.zero;
+
+	public void Awake ()
 	{
 		Attach ();
 	}
 
 	void Update()
 	{
-		if (attached)
+		if (Attached)
 		{
 			// Обновление точек касания при первом касании
 			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
 			{
-				onTouchStart ();
+				OnTouchStart ();
 			}
 
 			// Одно касание - перетаскивание камеры или поиск столкновений
@@ -27,67 +27,67 @@ public abstract class AbstractCamera2DInputTouch : AbstractCamera2DInput {
 			{
 				if (Input.GetTouch(0).phase == TouchPhase.Ended)
 				{
-					onTouchEnded();
+					OnTouchEnded();
 				}
-				onOneTouch ();
+				OnOneTouch ();
 			}
 
 			// Два касания - зум
 			if (ZoomEnabled && Input.touchCount == 2)
 			{
-				onTwinTouch ();
+				OnTwinTouch ();
 			}
 			else
 			{
-				zoomStarted = false;
+				ZoomStarted = false;
 			}
 		}
 	}
 
-	protected virtual void onTouchStart()
+	protected virtual void OnTouchStart()
 	{
-		updateTouchPositions();
-		initialTouch = lastTouchPosition[0];
-		isInteractionStatic = true;
+		UpdateTouchPositions();
+		InitialTouch = LastTouchPosition[0];
+		IsInteractionStatic = true;
 	}
 
-	protected virtual void onTouchEnded()
+	protected virtual void OnTouchEnded()
 	{
 		Touch touch = Input.GetTouch(0);
 		Vector2 touchPosition = touch.position;
 	}
 	
-	protected virtual void onOneTouch()
+	protected virtual void OnOneTouch()
 	{
 		Touch touch = Input.GetTouch (0);
 		Vector2 touchPosition = touch.position;
 	}
 	
-	protected virtual void onTwinTouch ()
+	protected virtual void OnTwinTouch ()
 	{
-		if (!zoomStarted)
+		if (!ZoomStarted)
 		{
-			zoomStarted = true;
-			lastZoomCenter = theCamera.Camera.ScreenToWorldPoint ((Input.GetTouch (0).position + Input.GetTouch (1).position) / 2f);
+			ZoomStarted = true;
+			LastZoomCenter = TheCamera.Camera.ScreenToWorldPoint ((Input.GetTouch (0).position + Input.GetTouch (1).position) / 2f);
 		}
-		if (lastTouchPosition.Length > 1)
+		if (LastTouchPosition.Length > 1)
 		{
-			float deltaScale = (lastTouchPosition [0] - lastTouchPosition [1]).magnitude - (Input.GetTouch (0).position - Input.GetTouch (1).position).magnitude;
-			theCamera.Zoom (
-				lastZoomCenter, 
-				ZoomSpeed * deltaScale / theCamera.Camera.ScreenToWorldPoint (Vector3.one).magnitude
+			float deltaScale = (LastTouchPosition [0] - LastTouchPosition [1]).magnitude - (Input.GetTouch (0).position - Input.GetTouch (1).position).magnitude;
+			TheCamera.Zoom (
+				LastZoomCenter, 
+				ZoomSpeed * deltaScale / TheCamera.Camera.ScreenToWorldPoint (Vector3.one).magnitude
 			);
-			isInteractionStatic = false;
+			IsInteractionStatic = false;
 		}
-		updateTouchPositions ();
+		UpdateTouchPositions ();
 	}
 
-	void updateTouchPositions ()
+	private void UpdateTouchPositions ()
 	{
-		lastTouchPosition = (new List<Touch> (Input.touches)).FindAll (touchInProgress).Select(t => t.position).ToArray ();
+		LastTouchPosition = (new List<Touch> (Input.touches)).FindAll (TouchInProgress).Select(t => t.position).ToArray ();
 	}
 
-	private static bool touchInProgress (Touch touch)
+	private static bool TouchInProgress (Touch touch)
 	{
 		return touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled;
 	}

@@ -23,16 +23,16 @@ public class ConfigManager : MonoBehaviour
 		}
 
 //		savesPath = Application.persistentDataPath + System.IO.Path.DirectorySeparatorChar + "Saves" + System.IO.Path.DirectorySeparatorChar;
-		configPath = Application.persistentDataPath + System.IO.Path.DirectorySeparatorChar + "Configs" + System.IO.Path.DirectorySeparatorChar;
+		ConfigPath = Application.persistentDataPath + System.IO.Path.DirectorySeparatorChar + "Configs" + System.IO.Path.DirectorySeparatorChar;
 		
 		LoadConfigs();
 	}
 
-	public string configFileName = "tightspace-config.json";
-	public string configURL = "https://raw.githubusercontent.com/inoto/inoto.github.io/master/";
-	public string configPath;
+	public string ConfigFileName = "tightspace-config.json";
+	public string ConfigUrl = "https://raw.githubusercontent.com/inoto/inoto.github.io/master/";
+	public string ConfigPath;
 
-	public string jsonData;
+	public string JsonData;
 	
 	public ConfigBase Base;
 	public ConfigBase BaseTransit;
@@ -56,23 +56,25 @@ public class ConfigManager : MonoBehaviour
 	
 	private void Start()
 	{
-		StartCoroutine(DownloadConfigFromWWW());
+		StartCoroutine(DownloadConfigFromWww());
 	}
-	
-	public bool LoadConfigs()
+
+	private bool LoadConfigs()
 	{
-		return LoadConfigsFromCacheFile(configFileName);
+		return LoadConfigsFromCacheFile(ConfigFileName);
 	}
-	
-	public bool LoadConfigsFromCacheFile(string fileName)
+
+	private bool LoadConfigsFromCacheFile(string fileName)
 	{
-		if (!File.Exists(configPath + configFileName))
+		if (!File.Exists(ConfigPath + ConfigFileName))
+		{
 			return false;
-		string jsonFile = File.ReadAllText(configPath + configFileName);
+		}
+		string jsonFile = File.ReadAllText(ConfigPath + ConfigFileName);
 		if (jsonFile != null)
 		{
 			JsonUtility.FromJsonOverwrite(jsonFile, this);
-			jsonData = jsonFile;
+			JsonData = jsonFile;
 //			Base = JsonUtility.FromJson<ConfigBase>(jsonFile);
 //			BaseTransit = JsonUtility.FromJsonOverwrite(jsonFile);
 //			Drone = JsonUtility.FromJson<ConfigDrone>(jsonFile);
@@ -84,14 +86,14 @@ public class ConfigManager : MonoBehaviour
 			return false;
 		}
 	}
-	
-	public bool LoadConfigsFromString(string text)
+
+	private bool LoadConfigsFromString(string text)
 	{
 		if (text != null)
 		{
 //			Debug.Log(text);
 			JsonUtility.FromJsonOverwrite(text, this);
-			jsonData = text;
+			JsonData = text;
 //			Base = JsonUtility.FromJson<ConfigBase>(text);
 //			BaseTransit = JsonUtility.FromJson<ConfigBase>(text);
 //			Drone = JsonUtility.FromJson<ConfigDrone>(text);
@@ -104,9 +106,9 @@ public class ConfigManager : MonoBehaviour
 		}
 	}
 
-	private IEnumerator DownloadConfigFromWWW()
+	private IEnumerator DownloadConfigFromWww()
 	{
-		WWW www = new WWW(configURL + configFileName);
+		WWW www = new WWW(ConfigUrl + ConfigFileName);
 		yield return www;
 		if (string.IsNullOrEmpty(www.error))
 		{
@@ -114,15 +116,17 @@ public class ConfigManager : MonoBehaviour
 			Debug.Log("Config has overwritten from WWW");
 			LoadConfigsFromString(www.text);
 			// save downloaded file as cache
-			if (!Directory.Exists(configPath))
-				Directory.CreateDirectory(configPath);
-			File.WriteAllText(configPath + configFileName, www.text);
+			if (!Directory.Exists(ConfigPath))
+			{
+				Directory.CreateDirectory(ConfigPath);
+			}
+			File.WriteAllText(ConfigPath + ConfigFileName, www.text);
 		}
 		else
 		{
 			Debug.LogError(www.error);
 		}
 		OnConfigsLoaded();
-		Debug.Log(jsonData);
+		Debug.Log(JsonData);
 	}
 }

@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RectangleMesh : MonoBehaviour
 {
+    public Vector2 Size = Vector2.one;
 
-    public Vector2 size = Vector2.one;
+	private MeshFilter mFilter;
 
-	MeshFilter mFilter;
-
-	void Awake()
+	private void Awake()
 	{
 
 		mFilter = GetComponent<MeshFilter>();
@@ -20,15 +17,15 @@ public class RectangleMesh : MonoBehaviour
 		CreateMesh();
 	}
 
-	void CreateMesh()
+	private void CreateMesh()
 	{
 		Mesh mesh = new Mesh();
 		mesh.vertices = new Vector3[]
 		{
-			new Vector3( size.x, size.y, 0),
-			new Vector3( size.x, -size.y, 0),
-			new Vector3(-size.x, size.y, 0),
-			new Vector3(-size.x, -size.y, 0),
+			new Vector3( Size.x, Size.y, 0),
+			new Vector3( Size.x, -Size.y, 0),
+			new Vector3(-Size.x, Size.y, 0),
+			new Vector3(-Size.x, -Size.y, 0),
 		};
 		mesh.uv = new Vector2[]
 		{

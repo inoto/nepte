@@ -3,15 +3,17 @@
 public class CardSuperDrone : CardProperty
 {
 	[Header("CardSuperDrone")]
-	public GameObject superDronePrefab;
+	public GameObject SuperDronePrefab;
 
 	public override bool Activate(Vector2 position)
 	{
 		if (!base.Activate(position))
-			return false;
-		if (bas != null)
 		{
-			bas.Spawner.Prefab = superDronePrefab;
+			return false;
+		}
+		if (Planet != null)
+		{
+			Planet.Spawner.Prefab = SuperDronePrefab;
 			return true;
 		}
 		return false;

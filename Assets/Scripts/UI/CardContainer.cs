@@ -2,19 +2,15 @@
 
 public class CardContainer: MonoBehaviour
 {
-	public int maxSlots = 4;
-	public int activeSlots = 4;
-	public GameObject[] slots;
-	public GameObject[] cards;
+	public int MaxSlots = 4;
+	public int ActiveSlots = 4;
+	public GameObject[] Slots;
+	public GameObject[] Cards;
 	
 	private void Awake()
 	{
-		slots = new GameObject[maxSlots];
-		cards = new GameObject[maxSlots];
+		Slots = new GameObject[MaxSlots];
+		Cards = new GameObject[MaxSlots];
 	}
 
-	private void Start()
-	{
-		
-	}
 }

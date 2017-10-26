@@ -8,10 +8,12 @@ public class CardPropertyBaseDestroyer : CardProperty
 	public override bool Activate(Vector2 position)
 	{
 		if (!base.Activate(position))
-			return false;
-		if (bas != null)
 		{
-			bas.Damage(90000);
+			return false;
+		}
+		if (Planet != null)
+		{
+			Planet.Damage(90000);
 			return true;
 		}
 		return false;

@@ -246,7 +246,7 @@ public class AIPlayer : MonoBehaviour
         int unitsNearPlanetEnemies = 0;
         for (int i = 0; i < unitsNearBas.Count; i++)
         {
-            if (unitsNearBas[i].owner.PlayerNumber == planet.Owner.PlayerNumber)
+            if (unitsNearBas[i].Owner.PlayerNumber == planet.Owner.PlayerNumber)
             {
                 unitsNearPlanetSelf++;
             }

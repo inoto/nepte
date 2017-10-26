@@ -38,8 +38,8 @@ public class Weapon : MonoBehaviour
 		Collision = new CollisionCircle(Trans, Mover, Owner, this);
 		CollisionManager.Instance.AddCollidable(Collision);
 		IsAttacking = false;
-		Collision.isDead = false;
-		Collision.collidedBaseCircle = null;
+		Collision.IsDead = false;
+		Collision.CollidedBaseCircle = null;
 		Target = null;
 		HasTarget = false;
 		isStarted = true;
@@ -51,8 +51,8 @@ public class Weapon : MonoBehaviour
 		{
 			CollisionManager.Instance.AddCollidable(Collision);
 			IsAttacking = false;
-			Collision.isDead = false;
-			Collision.collidedBaseCircle = null;
+			Collision.IsDead = false;
+			Collision.CollidedBaseCircle = null;
 			Target = null;
 			HasTarget = false;
 		}
@@ -92,10 +92,10 @@ public class Weapon : MonoBehaviour
 		GameObject laserMissileObject = Instantiate(MissilePrefab, Trans.position, Trans.rotation);
 		laserMissileObject.transform.parent = GameManager.Instance.transform;
 		LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
-		laserMissile.destinationVector = newDestinationVector;
+		laserMissile.DestinationVector = newDestinationVector;
 		//laserMissile.owner = owner;
-		laserMissile.weapon = this;
-		laserMissile.target = Target;
+		laserMissile.Weapon = this;
+		laserMissile.Target = Target;
 	}
 
 	public void AddDamage(int additionalDamage)

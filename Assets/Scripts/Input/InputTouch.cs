@@ -6,11 +6,11 @@ public class InputTouch : AbstractCamera2DInputTouch
 	public Planet SelectedBas;
 	public MothershipOrbit SelectedMothershipOrbit;
 
-	protected override void onTouchStart ()
+	protected override void OnTouchStart ()
 	{
-		base.onTouchStart();
+		base.OnTouchStart();
 		
-		RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
+		RaycastHit2D hit = TheCamera.Raycast2DScreen(Input.mousePosition);
 		if (hit && SelectedBas == null)
 		{
 			Planet bas = hit.transform.gameObject.GetComponent<Planet>();
@@ -28,9 +28,9 @@ public class InputTouch : AbstractCamera2DInputTouch
 		}
 	}
 
-	protected override void onTouchEnded()
+	protected override void OnTouchEnded()
 	{
-		base.onTouchEnded();
+		base.OnTouchEnded();
 		
 		if (SelectedBas != null)
 		{
@@ -39,7 +39,7 @@ public class InputTouch : AbstractCamera2DInputTouch
 			{
 				b.GlowRemove();
 			}
-			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
+			RaycastHit2D hit = TheCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Planet bas = hit.transform.gameObject.GetComponent<Planet>();
@@ -54,7 +54,7 @@ public class InputTouch : AbstractCamera2DInputTouch
 		if (SelectedMothershipOrbit != null)
 		{
 			DestroyObject(SelectedMothershipOrbit.LineRendererArrow);
-			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
+			RaycastHit2D hit = TheCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Planet bas = hit.transform.GetComponent<Planet>();

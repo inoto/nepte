@@ -57,8 +57,8 @@ public class Mothership : MonoBehaviour, ITargetable
 		//mode = Mode.Idle;
 		Collision = new CollisionCircle(Trans, null, Owner, null);
 		CollisionManager.Instance.AddCollidable(Collision);
-		Collision.isDead = false;
-		Collision.collidedBaseCircle = null;
+		Collision.IsDead = false;
+		Collision.CollidedBaseCircle = null;
 		
 		LoadFromConfig();
 	}
@@ -124,8 +124,8 @@ public class Mothership : MonoBehaviour, ITargetable
 	private void Die()
 	{
 		Mode = MothershipMode.Dead;
-		Collision.isDead = true;
-		Weapon.Collision.isDead = true;
+		Collision.IsDead = true;
+		Weapon.Collision.IsDead = true;
 		
 		if (Health.Current <= 0)
 		{
@@ -142,7 +142,7 @@ public class Mothership : MonoBehaviour, ITargetable
 		QuadMesh qm = GetComponent<QuadMesh>();
 		if (qm != null)
 		{
-			float size = qm.size * 1.5f;
+			float size = qm.Size * 1.5f;
 			explosion.transform.localScale = new Vector3(size, size, 1);
 		}
 		explosion.transform.localScale = Trans.localScale * 3.5f;

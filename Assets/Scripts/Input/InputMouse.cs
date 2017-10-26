@@ -6,11 +6,11 @@ public class InputMouse : AbstractCamera2DInputMouse
 	public Planet SelectedBas;
 	public MothershipOrbit SelectedMothershipOrbit;
 
-	protected override void onMouseBtnDown()
+	protected override void OnMouseBtnDown()
 	{
-		base.onMouseBtnDown();
+		base.OnMouseBtnDown();
 		
-		RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
+		RaycastHit2D hit = TheCamera.Raycast2DScreen(Input.mousePosition);
 		if (hit && SelectedBas == null)
 		{
 			Planet bas = hit.transform.gameObject.GetComponent<Planet>();
@@ -29,9 +29,9 @@ public class InputMouse : AbstractCamera2DInputMouse
 		}
 	}
 
-	protected override void onMouseBtnUp()
+	protected override void OnMouseBtnUp()
 	{
-		base.onMouseBtnUp();
+		base.OnMouseBtnUp();
 		
 		if (SelectedBas != null)
 		{
@@ -40,7 +40,7 @@ public class InputMouse : AbstractCamera2DInputMouse
 			{
 				b.GlowRemove();
 			}
-			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
+			RaycastHit2D hit = TheCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Planet bas = hit.transform.gameObject.GetComponent<Planet>();
@@ -55,7 +55,7 @@ public class InputMouse : AbstractCamera2DInputMouse
 		if (SelectedMothershipOrbit != null)
 		{
 			DestroyObject(SelectedMothershipOrbit.LineRendererArrow);
-			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
+			RaycastHit2D hit = TheCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Planet bas = hit.transform.GetComponent<Planet>();

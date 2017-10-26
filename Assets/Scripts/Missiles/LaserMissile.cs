@@ -2,68 +2,68 @@
 
 public class LaserMissile : MonoBehaviour
 {
-    public int owner;
+    public int Owner;
 
-    public bool wasExecuted = false;
+    public bool WasExecuted = false;
 
     [Header("Destination")]
-    public Vector3 destinationVector;
-    public Vector3 directionVector;
+    public Vector3 DestinationVector;
+    public Vector3 DirectionVector;
 
     [Header("Move")]
-    public float speed = 5f;
+    public float Speed = 5f;
     private float step;
     private float angle;
 
     [Header("Attack")]
-    public int damage;
-    public ITargetable target;
-	public Weapon weapon;
+    public int Damage;
+    public ITargetable Target;
+	public Weapon Weapon;
 
-    void Start ()
+	private void Start ()
     {
-        directionVector = destinationVector - transform.position;
+        DirectionVector = DestinationVector - transform.position;
 
         Rotate();
     }
 
 	private void OnEnable()
 	{
-		wasExecuted = false;
-		directionVector = destinationVector - transform.position;
+		WasExecuted = false;
+		DirectionVector = DestinationVector - transform.position;
 		Rotate();
 	}
 
-    void Update ()
+	private void Update ()
     {
-        directionVector = destinationVector - transform.position;
+        DirectionVector = DestinationVector - transform.position;
 
-        if ((Vector2)transform.position == (Vector2)destinationVector)
+        if ((Vector2)transform.position == (Vector2)DestinationVector)
 		{
-			if (!target.IsDied)
+			if (!Target.IsDied)
 			{
-				target.Damage(weapon);
+				Target.Damage(Weapon);
 			}
 			else
 			{
-				weapon.Target = null;
-				weapon.HasTarget = false;
+				Weapon.Target = null;
+				Weapon.HasTarget = false;
 			}
 			Destroy(gameObject);
 		}
         Move();
     }
 
-    void Rotate()
+	private void Rotate()
     {
-        angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg - 90;
+        angle = Mathf.Atan2(DirectionVector.y, DirectionVector.x) * Mathf.Rad2Deg - 90;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
-    void Move()
+	private void Move()
     {
-		step = speed * Time.deltaTime;
-		transform.position = Vector2.MoveTowards(transform.position, destinationVector, step);
+		step = Speed * Time.deltaTime;
+		transform.position = Vector2.MoveTowards(transform.position, DestinationVector, step);
     }
 
 	//public void OnDrawGizmos()
