@@ -296,7 +296,7 @@ public class QuadTreeEternal
 		// if no mover then it's a base
 		if (unit1.isStatic)
 		{
-			if (unit1.owner.playerNumber == -1)
+			if (unit1.owner.PlayerNumber == -1)
 			{
 				float radiuses = unit1.GetRadius();
 				if (distance < radiuses * radiuses)
@@ -323,13 +323,13 @@ public class QuadTreeEternal
 				float radiuses = unit1.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (unit1.owner.playerNumber == unit2.owner.playerNumber)
+					if (unit1.owner.PlayerNumber == unit2.owner.PlayerNumber)
 					{
 						if (!unit2.isDead)
 						{
-							if (unit2.mover.followBase.TargetPlanet.gameObject != unit1.trans.gameObject)
-								if (unit2.mover.separation.enabled)
-									unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
+							if (unit2.mover.FollowBase.TargetPlanet.gameObject != unit1.trans.gameObject)
+								if (unit2.mover.Separation.Enabled)
+									unit2.mover.Separation.AddSeparation(unit1.trans.position, distance);
 						}
 					}
 				}
@@ -338,7 +338,7 @@ public class QuadTreeEternal
 		// if no mover then it's a base
 		else if (unit2.isStatic)
 		{
-			if (unit2.owner.playerNumber == -1)
+			if (unit2.owner.PlayerNumber == -1)
 			{
 				float radiuses = unit2.GetRadius();
 				if (distance < radiuses * radiuses)
@@ -365,13 +365,13 @@ public class QuadTreeEternal
 				float radiuses = unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (unit2.owner.playerNumber == unit1.owner.playerNumber)
+					if (unit2.owner.PlayerNumber == unit1.owner.PlayerNumber)
 					{
 						if (!unit1.isDead)
 						{
-							if (unit1.mover.followBase.TargetPlanet.gameObject != unit2.trans.gameObject)
-								if (unit1.mover.separation.enabled)
-									unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
+							if (unit1.mover.FollowBase.TargetPlanet.gameObject != unit2.trans.gameObject)
+								if (unit1.mover.Separation.Enabled)
+									unit1.mover.Separation.AddSeparation(unit2.trans.position, distance);
 						}
 					}
 				}
@@ -382,23 +382,23 @@ public class QuadTreeEternal
 			if (distance > 0)
 			{
 				// check all dynamic bodies to apply separation
-				if (distance < unit1.mover.separation.desired * unit1.mover.separation.desired)
+				if (distance < unit1.mover.Separation.Desired * unit1.mover.Separation.Desired)
 				{
-					if (unit1.mover.separation.enabled)
-						unit1.mover.separation.AddSeparation(unit2.trans.position, distance);
-					if (unit2.mover.separation.enabled)
-						unit2.mover.separation.AddSeparation(unit1.trans.position, distance);
+					if (unit1.mover.Separation.Enabled)
+						unit1.mover.Separation.AddSeparation(unit2.trans.position, distance);
+					if (unit2.mover.Separation.Enabled)
+						unit2.mover.Separation.AddSeparation(unit1.trans.position, distance);
 				}
 				// check ally bodies only
-				if (unit1.owner.playerNumber == unit2.owner.playerNumber)
+				if (unit1.owner.PlayerNumber == unit2.owner.PlayerNumber)
 				{
 					// check to apply cohesion
-					if (distance < unit1.mover.cohesion.desired * unit1.mover.cohesion.desired)
+					if (distance < unit1.mover.Cohesion.Desired * unit1.mover.Cohesion.Desired)
 					{
-						if (unit1.mover.cohesion.enabled)
-							unit1.mover.cohesion.AddCohesion(unit2.trans.position);
-						if (unit2.mover.cohesion.enabled)
-							unit2.mover.cohesion.AddCohesion(unit1.trans.position);
+						if (unit1.mover.Cohesion.Enabled)
+							unit1.mover.Cohesion.AddCohesion(unit2.trans.position);
+						if (unit2.mover.Cohesion.Enabled)
+							unit2.mover.Cohesion.AddCohesion(unit1.trans.position);
 					}
 				}
 			}
@@ -414,9 +414,9 @@ public class QuadTreeEternal
 	{
 		if (unit1.instanceId == unit2.instanceId)
 			return;
-		if (unit1.owner.playerNumber == unit2.owner.playerNumber)
+		if (unit1.owner.PlayerNumber == unit2.owner.PlayerNumber)
 			return;
-		if (unit1.owner.playerNumber == -1 || unit2.owner.playerNumber == -1)
+		if (unit1.owner.PlayerNumber == -1 || unit2.owner.PlayerNumber == -1)
 			return;
 		if (unit1.isDead || unit2.isDead)
 			return;
@@ -430,10 +430,10 @@ public class QuadTreeEternal
 				float radiuses = unit1.GetRadius() + unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (!unit1.weapon.hasTarget)
+					if (!unit1.weapon.HasTarget)
 					{
-						unit1.weapon.target = unit2.trans.GetComponent<ITargetable>();
-						unit1.weapon.hasTarget = true;
+						unit1.weapon.Target = unit2.trans.GetComponent<ITargetable>();
+						unit1.weapon.HasTarget = true;
 						unit1.weapon.AttackTarget();
 					}
 					else
@@ -444,10 +444,10 @@ public class QuadTreeEternal
 				else
 				{
 					
-					if (unit1.weapon.target != null)
+					if (unit1.weapon.Target != null)
 					{
-						if (unit1.weapon.target.GameObj == unit2.trans.gameObject)
-							unit1.weapon.target = null;
+						if (unit1.weapon.Target.GameObj == unit2.trans.gameObject)
+							unit1.weapon.Target = null;
 					}
 				}
 			}
@@ -456,10 +456,10 @@ public class QuadTreeEternal
 				float radiuses = unit1.GetRadius() + unit2.GetRadius();
 				if (distance < radiuses * radiuses)
 				{
-					if (!unit2.weapon.hasTarget)
+					if (!unit2.weapon.HasTarget)
 					{
-						unit2.weapon.target = unit1.trans.GetComponent<ITargetable>();
-						unit2.weapon.hasTarget = true;
+						unit2.weapon.Target = unit1.trans.GetComponent<ITargetable>();
+						unit2.weapon.HasTarget = true;
 						unit2.weapon.AttackTarget();
 					}
 					else
@@ -469,10 +469,10 @@ public class QuadTreeEternal
 				}
 				else
 				{
-					if (unit2.weapon.target != null)
+					if (unit2.weapon.Target != null)
 					{
-						if (unit2.weapon.target.GameObj == unit1.trans.gameObject)
-							unit2.weapon.target = null;
+						if (unit2.weapon.Target.GameObj == unit1.trans.gameObject)
+							unit2.weapon.Target = null;
 					}
 				}
 			}

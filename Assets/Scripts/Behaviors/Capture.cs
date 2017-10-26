@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
 using UnityEngine;
 
+[Obsolete("Not used anymore",true)]
 public class Capture : MonoBehaviour
 {
 	public bool isCapturing = false;
@@ -38,7 +36,7 @@ public class Capture : MonoBehaviour
 	public void Tick(int side)
 	{
 		//Debug.Log("tick side: " + side);
-		if (owner.playerNumber != -1)
+		if (owner.PlayerNumber != -1)
 			return;
 		if (!isCapturing)
 		{
@@ -49,7 +47,7 @@ public class Capture : MonoBehaviour
 	
 	public void UnTick(int side)
 	{
-		if (owner.playerNumber != -1)
+		if (owner.PlayerNumber != -1)
 			return;
 		capturerCount[side]--;
 	}

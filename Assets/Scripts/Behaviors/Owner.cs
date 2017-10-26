@@ -1,20 +1,18 @@
 using UnityEngine;
-using System.Collections;
 
-[System.Serializable]
 public class Owner : MonoBehaviour
 {
-    public int playerNumber = -1;
-    public PlayerController playerController = null;
+    public int PlayerNumber = -1;
+    public PlayerController PlayerController = null;
 
     public Owner()
     {
-        playerNumber = -1;
-        playerController = null;
+        PlayerNumber = -1;
+        PlayerController = null;
     }
 
-    public Owner(PlayerController _playerController)
+    public Owner(PlayerController newPlayerController)
     {
-        playerController = _playerController;
+        PlayerController = newPlayerController;
     }
 }

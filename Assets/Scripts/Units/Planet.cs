@@ -29,7 +29,6 @@ public class Planet : MonoBehaviour, ITargetable
 	public CircleCollider2D Collider;
 
     [Header("Components")]
-    [SerializeField]
 	public Transform Trans;
 	public Owner Owner;
 	public Spawner Spawner;
@@ -37,15 +36,10 @@ public class Planet : MonoBehaviour, ITargetable
 	private MeshRenderer mesh;
 
     [Header("Prefabs")]
-    [SerializeField]
-    private GameObject explosionPrefab;
+	private GameObject explosionPrefab;
 	private GameObject hpBarPrefab;
 	private GameObject mothershipOrbitPrefab;
 	
-    [Header("Colors")]
-    [SerializeField] private Material materialNeutral;
-	[SerializeField] private Material[] materials;
-
 	[Header("AIPlayer")]
 	public int UnitCountNearBasSelf = 0;
 	public int UnitCountNearBasEnemies = 0;
@@ -84,7 +78,7 @@ public class Planet : MonoBehaviour, ITargetable
 		}
 		if (Health != null)
 		{
-			Health.max = _config.HealthMax;
+			Health.Max = _config.HealthMax;
 			Health.Reset();
 		}
 		if (Collider != null)
@@ -95,25 +89,25 @@ public class Planet : MonoBehaviour, ITargetable
 		{
 			Spawner.StopSpawn();
 			
-			Spawner.intervalMax = _config.ProduceUnitInterval;
-			Spawner.prefabName = _config.SpawnUnitPrefabName;
-			Spawner.prefab = Resources.Load<GameObject>("Units/" + Spawner.prefabName);
-			Spawner.maxCapturePoints = _config.CaptureUnitCount;
+			Spawner.Interval = _config.ProduceUnitInterval;
+			Spawner.PrefabName = _config.SpawnUnitPrefabName;
+			Spawner.Prefab = Resources.Load<GameObject>("Units/" + Spawner.PrefabName);
+			Spawner.MaxCaptureUnits = _config.CaptureUnitCount;
 		}
 		if (Weapon != null)
 		{
-			Weapon.attackSpeed = _config.AttackSpeed;
-			Weapon.damage = _config.AttackDamage;
-			Weapon.damageNoBonuses = Weapon.damage;
-			Weapon.radius = _config.AttackRadius;
-			Weapon.missilePrefabName = _config.AttackMissilePrefabName;
-			Weapon.missilePrefab = Resources.Load<GameObject>(Weapon.missilePrefabName);
+			Weapon.AttackSpeed = _config.AttackSpeed;
+			Weapon.Damage = _config.AttackDamage;
+			Weapon.DamageNoBonuses = Weapon.Damage;
+			Weapon.Radius = _config.AttackRadius;
+			Weapon.MissilePrefabName = _config.AttackMissilePrefabName;
+			Weapon.MissilePrefab = Resources.Load<GameObject>(Weapon.MissilePrefabName);
 		}
 	}
 
 	private void Update()
     {
-        if (Health.current <= 0)
+        if (Health.Current <= 0)
 		{
 			Die(new Owner());
 		}
@@ -129,7 +123,7 @@ public class Planet : MonoBehaviour, ITargetable
 	{
 		if (Spawner != null)
 		{
-			Spawner.unitCount = Spawner.unitCountInitial;
+			Spawner.UnitCount = Spawner.UnitCountInitial;
 			Spawner.UpdateLabel();
 		}
 		if (GameManager.Instance.PlayersWithUnassignedPlanets.Count > 0 && UseAsStartPosition)
@@ -145,8 +139,8 @@ public class Planet : MonoBehaviour, ITargetable
 			MothershipOrbit newMothershipOrbit =
 				Instantiate(mothershipOrbitPrefab, Trans.position, Trans.rotation, Trans).GetComponent<MothershipOrbit>();
 			newMothershipOrbit.transform.position = pos;
-			newMothershipOrbit.Owner.playerController = Owner.playerController;
-			newMothershipOrbit.Owner.playerNumber = Owner.playerNumber;
+			newMothershipOrbit.Owner.PlayerController = Owner.PlayerController;
+			newMothershipOrbit.Owner.PlayerNumber = Owner.PlayerNumber;
 			newMothershipOrbit.DelayedStart();
 			newMothershipOrbit.Planet = this;
 		}
@@ -156,7 +150,7 @@ public class Planet : MonoBehaviour, ITargetable
 			PlayerController playerController = GameManager.Instance.PlayerController[player + 1];
 			SetOwner(player, playerController);
 		}
-		
+		explosionPrefab = Resources.Load<GameObject>("Explosion");
 	}
 
 	public void GlowAdd()
@@ -166,9 +160,9 @@ public class Planet : MonoBehaviour, ITargetable
 		List<Material> listMat = new List<Material>(mesh.materials);
 		listMat.Add(newMat);
 		mesh.materials = listMat.ToArray();
-		if (Owner.playerNumber != -1)
+		if (Owner.PlayerNumber != -1)
 		{
-			mesh.materials[1].SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.playerNumber + 1]);
+			mesh.materials[1].SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.PlayerNumber + 1]);
 		}
 	}
 
@@ -185,13 +179,13 @@ public class Planet : MonoBehaviour, ITargetable
 		LineRendererArrow.SetPosition(0, Trans.position);
 		LineRendererArrow.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 		LineRendererArrow.material = (Material)Resources.Load("Arrow");
-		if (Owner.playerNumber < 0)
+		if (Owner.PlayerNumber < 0)
 		{
 			LineRendererArrow.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[0]);
 		}
 		else
 		{
-			LineRendererArrow.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.playerNumber+1]);
+			LineRendererArrow.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.PlayerNumber+1]);
 		}
 		LineRendererArrow.widthMultiplier = 3f;
 		LineRendererArrow.material.SetTextureOffset("_MainTex", new Vector2(0.1f, 0));
@@ -204,21 +198,21 @@ public class Planet : MonoBehaviour, ITargetable
 
 	public void SetOwner(int newPlayerNumber, PlayerController newPlayerController)
 	{
-		if (Owner.playerController != null)
+		if (Owner.PlayerController != null)
 		{
-			if (Owner.playerController.Planets.Contains(this))
+			if (Owner.PlayerController.Planets.Contains(this))
 			{
-				Owner.playerController.Planets.Remove(this);
+				Owner.PlayerController.Planets.Remove(this);
 			}
 		}
 
-		Owner.playerNumber = newPlayerNumber;
-		Owner.playerController = newPlayerController;
+		Owner.PlayerNumber = newPlayerNumber;
+		Owner.PlayerController = newPlayerController;
 		
-		Owner.playerController.Planets.Add(this);
+		Owner.PlayerController.Planets.Add(this);
 //		Debug.Log("bases count of player " + owner.playerNumber + " is " + owner.playerController.bases.Count);
 
-		if (Health.percent < 1)
+		if (Health.Percent < 1)
 		{
 			Reset();
 		}
@@ -228,7 +222,7 @@ public class Planet : MonoBehaviour, ITargetable
 			Destroy(AssignedHpBarSlider.gameObject);
 		}
 		// if player is new owner
-		if (Owner.playerNumber != -1)
+		if (Owner.PlayerNumber != -1)
 		{
 			//AddUIHPBar();
 			Spawner.StartSpawn(Trans.position);
@@ -261,18 +255,14 @@ public class Planet : MonoBehaviour, ITargetable
 	{
 		if (mesh != null)
 		{
-			if (Owner.playerNumber < 0)
+			if (Owner.PlayerNumber < 0)
 			{
 				mesh.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[0]);
 			}
 			else
 			{
-				mesh.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.playerNumber + 1]);
+				mesh.material.SetColor("_TintColor", GameManager.Instance.PlayerColors[Owner.PlayerNumber + 1]);
 			}
-//            if (owner.playerNumber < 0)
-//                mesh.sharedMaterial = materialNeutral;
-//            else
-//                mesh.sharedMaterial = materials[owner.playerNumber];
 		}
 		else
 		{
@@ -285,13 +275,14 @@ public class Planet : MonoBehaviour, ITargetable
         CancelInvoke();
 	    Spawner.StopSpawn();
         //isDead = true;
-        GameObject tmpObject = Instantiate(explosionPrefab, Trans.position, Trans.rotation, GameManager.Instance.transform);
-		//tmpObject.transform.localScale = trans.localScale;
-	    PlayerController oldPlayerController = Owner.playerController;
-	    int oldPlayerNumber = Owner.playerNumber;
+        GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation, GameManager.Instance.transform);
+	    explosion.transform.localScale = Trans.localScale * 6;
+	    explosion.GetComponent<AudioSource>().enabled = true;
+	    PlayerController oldPlayerController = Owner.PlayerController;
+	    int oldPlayerNumber = Owner.PlayerNumber;
 		SetOwner(-1, GameManager.Instance.PlayerController[0]);
-	    Health.max = Health.maxNoBonuses;
-		Health.current = Health.maxNoBonuses;
+	    Health.Max = Health.MaxNoBonuses;
+		Health.Current = Health.MaxNoBonuses;
 	    if (oldPlayerController.Planets.Count <= 0 && oldPlayerController.PlayerUnitCount <= 0)
 	    {
 		    if (oldPlayerNumber == 0)
@@ -307,21 +298,21 @@ public class Planet : MonoBehaviour, ITargetable
 	
 	public void AddBonusHp(int addition)
 	{
-		Health.max += addition;
-		Health.current += addition;
+		Health.Max += addition;
+		Health.Current += addition;
 		UpdateHpValue();
 	}
 
 	public void RemoveBonusHp(int addition)
 	{
-		Health.max -= addition;
+		Health.Max -= addition;
 //		health.current -= addition;
 		UpdateHpValue();
 	}
 	
 	public void RemoveBonusHpCurrent(int addition)
 	{
-		Health.current -= addition;
+		Health.Current -= addition;
 		UpdateHpValue();
 	}
 
@@ -329,24 +320,24 @@ public class Planet : MonoBehaviour, ITargetable
 	{
 		if (AssignedHpBarSlider != null)
 		{
-			AssignedHpBarSlider.Set((float) Health.current / Health.max);
-			Health.percent = AssignedHpBarSlider.value;
+			AssignedHpBarSlider.Set((float) Health.Current / Health.Max);
+			Health.Percent = AssignedHpBarSlider.value;
 		}
 	}
 
 	private void CalculateUnitCountFromDamage(int damage)
 	{
-		if (Spawner.unitCount <= 0)
+		if (Spawner.UnitCount <= 0)
 		{
 			return;
 		}
-		float oneUnitHealth = Health.current / Spawner.unitCount;
-		Spawner.unitCountF -= (float) damage / oneUnitHealth;
+		float oneUnitHealth = Health.Current / Spawner.UnitCount;
+		Spawner.UnitCountF -= (float) damage / oneUnitHealth;
 		
-		if (Spawner.unitCountF <= 0 && Spawner.unitCount > 0)
+		if (Spawner.UnitCountF <= 0 && Spawner.UnitCount > 0)
 		{
-			Spawner.unitCount -= 1;
-			Spawner.unitCountF = 1;
+			Spawner.UnitCount -= 1;
+			Spawner.UnitCountF = 1;
 			RemoveBonusHp(ConfigManager.Instance.Drone.HealthMax);
 			if (this.Weapon != null)
 			{
@@ -369,31 +360,31 @@ public class Planet : MonoBehaviour, ITargetable
 	
 	public void Damage(Weapon fromWeapon)
 	{
-		Health.current -= fromWeapon.damage;
+		Health.Current -= fromWeapon.Damage;
 		UpdateHpValue();
-		CalculateUnitCountFromDamage(fromWeapon.damage);
-		if (Health.current <= 0)
+		CalculateUnitCountFromDamage(fromWeapon.Damage);
+		if (Health.Current <= 0)
 		{
-			Die(fromWeapon.owner);
+			Die(fromWeapon.Owner);
 			fromWeapon.EndCombat();
-			if (Health.current < 0)
+			if (Health.Current < 0)
 			{
-				Health.current = 0;
+				Health.Current = 0;
 			}
 		}
 	}
 	
 	public void Damage(int damage)
 	{
-		Health.current -= damage;
+		Health.Current -= damage;
 		UpdateHpValue();
 		CalculateUnitCountFromDamage(damage);
-		if (Health.current <= 0)
+		if (Health.Current <= 0)
 		{
 			Die(new Owner());
-			if (Health.current < 0)
+			if (Health.Current < 0)
 			{
-				Health.current = 0;
+				Health.Current = 0;
 			}
 		}
 	}

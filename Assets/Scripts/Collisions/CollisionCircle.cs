@@ -46,7 +46,7 @@ public class CollisionCircle
 	    collidedCount = 0;
 	    instanceId = trans.gameObject.GetInstanceID();
     }
-	public CollisionCircle(Radar _radar, Transform _trans, Mover _mover, Owner _owner)
+	public CollisionCircle(Transform _trans, Mover _mover, Owner _owner)
 	{
 		trans = _trans;
 		mover = _mover;
@@ -70,7 +70,7 @@ public class CollisionCircle
 	public float GetRadius()
 	{
 		if (isWeapon)
-			return weapon.radius;
+			return weapon.Radius;
 		else if (isStatic)
 			return bas != null ? bas.Collider.radius : 0;
 		else
@@ -81,20 +81,20 @@ public class CollisionCircle
 	{
 		if (instanceId == other.instanceId)
 			return;
-		if (owner.playerNumber == other.owner.playerNumber)
+		if (owner.PlayerNumber == other.owner.PlayerNumber)
 			return;
 		if (isDead)
 			return;
 		if (!isWeapon)
 			return;
-		if (isWeapon && !mover.weapon.hasTarget)
+		if (isWeapon && !mover.Weapon.HasTarget)
 		{
-			mover.weapon.target = other.trans.GetComponent<ITargetable>();
-			mover.weapon.hasTarget = true;
+			mover.Weapon.Target = other.trans.GetComponent<ITargetable>();
+			mover.Weapon.HasTarget = true;
 		}
 		else
 		{
-			mover.weapon.AttackTarget();
+			mover.Weapon.AttackTarget();
 		}
 	}
 
@@ -102,16 +102,16 @@ public class CollisionCircle
 	{
 		if (instanceId == other.instanceId)
 			return;
-		if (owner.playerNumber == other.owner.playerNumber)
+		if (owner.PlayerNumber == other.owner.PlayerNumber)
 			return;
 		if (isDead)
 			return;
 		if (!isWeapon)
 			return;
-		if (mover.weapon.target != null)
+		if (mover.Weapon.Target != null)
 		{
-			if (mover.weapon.target.GameObj == other.trans.gameObject)
-				mover.weapon.target = null;
+			if (mover.Weapon.Target.GameObj == other.trans.gameObject)
+				mover.Weapon.Target = null;
 		}
 	}
 

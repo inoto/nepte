@@ -1,38 +1,33 @@
 using UnityEngine;
-using System.Collections;
-using System.Runtime.Serialization.Formatters;
 
 [System.Serializable]
 public class FollowBase
 {
-	public bool enabled = true;
-	public bool following = false;
+	public bool Enabled = true;
+	public bool IsFollowing = false;
 	
-    public bool arrived = false;
+    public bool Arrived = false;
 
-//	public GameObject targetBase;
 	public Planet TargetPlanet;
 
-    //public float maxSpeed = 1;
-    //public float maxAcceleration = 1;
-	public float enterRadius = 1;
-    public float attackRadius = 2;
-    public float slowDownRadius = 3;
+	public float EnterRadius = 1;
+    public float AttackRadius = 2;
+    private float slowDownRadius = 3;
 
-    float forceMultiplier = 1;
-    float forceMultiplierOriginal = 0;
+    private float forceMultiplier = 1;
+	private float forceMultiplierOriginal = 0;
 
     [System.NonSerialized] private Mover mover;
 
-	public void Activate(Mover _mover)
+	public void Activate(Mover newMover)
     {
-        mover = _mover;
-	    arrived = false;
+        mover = newMover;
+	    Arrived = false;
     }
 
     public void UpdateTarget(Planet obj)
     {
-        arrived = false;
+        Arrived = false;
 //		if (forceMultiplierOriginal > 0)
 //			forceMultiplier = forceMultiplierOriginal;
 	    TargetPlanet = obj;
@@ -40,50 +35,53 @@ public class FollowBase
 
 	public void Seek()
 	{
-		Vector2 desired = (Vector2)TargetPlanet.transform.position - (Vector2)mover.trans.position;
+		Vector2 desired = (Vector2)TargetPlanet.transform.position - (Vector2)mover.Trans.position;
 
 		desired.Normalize();
 
-		desired *= mover.maxSpeed;
+		desired *= mover.MaxSpeed;
 
-		Vector2 force = desired - mover.velocity;
-		force = Mover.LimitVector(force, mover.maxForce);
+		Vector2 force = desired - mover.Velocity;
+		force = Mover.LimitVector(force, mover.MaxForce);
 
 		mover.AddForce(force);
 	}
 
 	public void MoveAround()
 	{
-		if (TargetPlanet.Owner.playerNumber == -1)
+		if (TargetPlanet.Owner.PlayerNumber == -1)
 		{
-			arrived = false;
+			Arrived = false;
 			return;
 		}
-		Vector2 desire = ((Vector2)mover.trans.position - (Vector2)TargetPlanet.transform.position).normalized;
+		Vector2 desire = ((Vector2)mover.Trans.position - (Vector2)TargetPlanet.transform.position).normalized;
 		desire.Normalize();
-		desire *= attackRadius;
-		if (desire.magnitude > attackRadius)
-			arrived = false;
+		desire *= AttackRadius;
+		if (desire.magnitude > AttackRadius)
+		{
+			Arrived = false;
+		}
 		desire *= -1;
 		float angle = 1.4f;
-		Vector2 force = new Vector2(attackRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)),
-			attackRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
-		force = Mover.LimitVector(force, mover.maxForce);
-		mover.velocity /= 1.2f;
+		Vector2 force = new Vector2(AttackRadius * (desire.x * Mathf.Cos(angle) - desire.y * Mathf.Sin(angle)),
+			AttackRadius * (desire.x * Mathf.Sin(angle) + desire.y * Mathf.Cos(angle)));
+		force = Mover.LimitVector(force, mover.MaxForce);
+		mover.Velocity /= 1.2f;
 		mover.AddForce(force);
 	}
 
 	public void EndArrive(bool successfully)
 	{
-		arrived = true;
-//		forceMultiplierOriginal = forceMultiplier;
-//		forceMultiplier = 0.5f;
+		Arrived = true;
+		IsFollowing = false;
+		//		forceMultiplierOriginal = forceMultiplier;
+		//		forceMultiplier = 0.5f;
 	}
 
     public void Arrive()
 	{
 		/* Get the right direction for the linear acceleration */
-		Vector2 desired = TargetPlanet.transform.position - mover.trans.position;
+		Vector2 desired = TargetPlanet.transform.position - mover.Trans.position;
 
 		/* Get the distance to the target */
 		float dist = desired.magnitude;
@@ -95,60 +93,60 @@ public class FollowBase
         //float currentSpeed = 0;
         if (dist < slowDownRadius)
 		{
-			mover.separation.desired = 0.3f;
-			mover.cohesion.desired = 0.3f;
-			if (TargetPlanet.Owner.playerNumber == mover.owner.playerNumber || TargetPlanet.Owner.playerNumber == -1)
+			mover.Separation.Desired = 0.3f;
+			mover.Cohesion.Desired = 0.3f;
+			if (TargetPlanet.Owner.PlayerNumber == mover.Owner.PlayerNumber || TargetPlanet.Owner.PlayerNumber == -1)
 			{
-				if (dist > enterRadius)
+				if (dist > EnterRadius)
 				{
-					float dividedStopRadius = enterRadius / 2;
+					float dividedStopRadius = EnterRadius / 2;
 					//mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
-					desired *= mover.maxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
+					desired *= mover.MaxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
 //					if (mover.trans.localScale.x > 0.6f)
 //						mover.trans.localScale *= 0.9975f;
 				}
 				else
 				{
 					TargetPlanet.Spawner.PutDroneInside(mover.GetComponent<Drone>());
-					arrived = true;
+					EndArrive(true);
 					//mover.velocity *= 0;
 					return;
 				}
 			}
 			else
 			{
-				if (dist > attackRadius)
+				if (dist > AttackRadius)
 				{
-					float dividedStopRadius = attackRadius / 2;
+					float dividedStopRadius = AttackRadius / 2;
 					//mover.currentSpeed = mover.maxSpeed * ((dist-stopRadius) / (slowDownRadius-stopRadius));
-					desired *= mover.maxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
+					desired *= mover.MaxSpeed * ((dist - dividedStopRadius) / (slowDownRadius - dividedStopRadius));
 				}
 				else
 				{
-					arrived = true;
-					mover.velocity *= 0;
+					EndArrive(true);
+					mover.Velocity *= 0;
 					return;
 				}
 			}
 		}
 		else
 		{
-			desired *= mover.maxSpeed;
+			desired *= mover.MaxSpeed;
 		}
 
 		/* Give targetVelocity the correct speed */
 
 		/* Calculate the linear acceleration we want */
-		Vector2 force = desired - mover.velocity;
+		Vector2 force = desired - mover.Velocity;
 		/*
          Rather than accelerate the character to the correct speed in 1 second, 
          accelerate so we reach the desired speed in timeToTarget seconds 
          (if we were to actually accelerate for the full timeToTarget seconds).
         */
         // accelerate mover each frame by accelerationStep
-  //      force *= 1 / mover.accelerationStep;
+  		//      force *= 1 / mover.accelerationStep;
 
-		///* Make sure we are accelerating at max acceleration */
+		/* Make sure we are accelerating at max acceleration */
 		//if (force.magnitude > mover.maxAcceleration)
 		//{
 		//	force.Normalize();
@@ -156,7 +154,7 @@ public class FollowBase
 		//}
         force *= 2f;
         force *= forceMultiplier;
-		force = Mover.LimitVector(force, mover.maxForce);
+		force = Mover.LimitVector(force, mover.MaxForce);
         mover.AddForce(force);
 	}
 

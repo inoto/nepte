@@ -32,10 +32,10 @@ public class MothershipOrbit : MonoBehaviour
     public void DelayedStart()
     {
         Mothership =
-            Instantiate(mothershipPrefab, transform.position, transform.rotation, Owner.playerController.transform)
+            Instantiate(mothershipPrefab, transform.position, transform.rotation, Owner.PlayerController.transform)
                 .GetComponent<Mothership>();
-        Mothership.Owner.playerController = Owner.playerController;
-        Mothership.Owner.playerNumber = Owner.playerNumber;
+        Mothership.Owner.PlayerController = Owner.PlayerController;
+        Mothership.Owner.PlayerNumber = Owner.PlayerNumber;
         Mothership.Planet = Planet;
     }
 

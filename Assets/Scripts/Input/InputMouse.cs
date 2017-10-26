@@ -1,31 +1,29 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InputMouse : AbstractCamera2DInputMouse
 {
 	[Header("InputMouse")]
-	public Planet selectedBas;
-	public MothershipOrbit selectedMothershipOrbit;
+	public Planet SelectedBas;
+	public MothershipOrbit SelectedMothershipOrbit;
 
 	protected override void onMouseBtnDown()
 	{
 		base.onMouseBtnDown();
+		
 		RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
-		if (hit && selectedBas == null)
+		if (hit && SelectedBas == null)
 		{
 			Planet bas = hit.transform.gameObject.GetComponent<Planet>();
 			MothershipOrbit mothershipOrbit = hit.transform.GetComponent<MothershipOrbit>();
-			if (bas != null && bas.Owner.playerNumber == 0)
+			if (bas != null && bas.Owner.PlayerNumber == 0)
 			{
-				selectedBas = bas;
+				SelectedBas = bas;
 				bas.MakeArrow();
 				
 			}
-			else if (mothershipOrbit != null && mothershipOrbit.Mothership.Owner.playerNumber == 0)
+			else if (mothershipOrbit != null && mothershipOrbit.Mothership.Owner.PlayerNumber == 0)
 			{
-				selectedMothershipOrbit = mothershipOrbit;
+				SelectedMothershipOrbit = mothershipOrbit;
 				mothershipOrbit.MakeArrow();
 			}
 		}
@@ -35,36 +33,38 @@ public class InputMouse : AbstractCamera2DInputMouse
 	{
 		base.onMouseBtnUp();
 		
-		if (selectedBas != null)
+		if (SelectedBas != null)
 		{
-			DestroyObject(selectedBas.LineRendererArrow);
+			DestroyObject(SelectedBas.LineRendererArrow);
 			foreach (var b in GameManager.Instance.Planets)
+			{
 				b.GlowRemove();
+			}
 			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Planet bas = hit.transform.gameObject.GetComponent<Planet>();
-				if (bas != null && bas != selectedBas)
+				if (bas != null && bas != SelectedBas)
 				{
-					selectedBas.Spawner.ReleaseUnits(bas.gameObject);
+					SelectedBas.Spawner.ReleaseUnits(bas.gameObject);
 				}
 			}
-			selectedBas = null;
+			SelectedBas = null;
 			
 		}
-		if (selectedMothershipOrbit != null)
+		if (SelectedMothershipOrbit != null)
 		{
-			DestroyObject(selectedMothershipOrbit.LineRendererArrow);
+			DestroyObject(SelectedMothershipOrbit.LineRendererArrow);
 			RaycastHit2D hit = theCamera.Raycast2DScreen(Input.mousePosition);
 			if (hit)
 			{
 				Planet bas = hit.transform.GetComponent<Planet>();
-				if (bas != null && bas != selectedMothershipOrbit.Planet)// && bas.owner.playerNumber == 0)
+				if (bas != null && bas != SelectedMothershipOrbit.Planet)// && bas.owner.playerNumber == 0)
 				{
-					selectedMothershipOrbit.AssignToBase(bas);
+					SelectedMothershipOrbit.AssignToBase(bas);
 				}
 			}	
-			selectedMothershipOrbit = null;
+			SelectedMothershipOrbit = null;
 		}
 		
 	}

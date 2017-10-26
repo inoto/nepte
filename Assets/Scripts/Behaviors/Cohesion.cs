@@ -1,33 +1,24 @@
 using UnityEngine;
-using System.Collections;
 
 [System.Serializable]
 public class Cohesion
 {
-	public bool enabled;
+	public bool Enabled;
 	
-	public int count;
-	public Vector2 sum;
-	public float desired;
+	private int count;
+	private Vector2 sum;
+	public float Desired;
 
-	public float maxSpeed = 2;
-	public float maxAcceleration = 2;
+	[System.NonSerialized] private Mover mover;
 
-	/* This should be the maximum separation distance possible between a separation
-     * target and the character.
-     * So it should be: separation sensor radius + max target radius */
-	public float distanceAddition = 1f;
-
-	[System.NonSerialized] public Mover mover;
-
-	public void Activate(Mover _mover)
+	public void Activate(Mover newMover)
 	{
-		mover = _mover;
+		mover = newMover;
 		Clear();
 		//desired = 1;
 	}
 
-	public void Clear()
+	private void Clear()
 	{
 		sum = Vector2.zero;
 		//desired = mover.body.radius * 3;

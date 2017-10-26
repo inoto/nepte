@@ -1,85 +1,35 @@
 using System.Collections;
 using UnityEngine;
-using System.Collections.Generic;
 
-[System.Serializable]
 public class Body : MonoBehaviour
 {
-    public bool showRadius = false;
+    public bool ShowRadius = false;
 	
-	public float radius = 1;
-	public float radiusHard = 0.5f;
-	public int strength = 0;
+	public float Radius = 1;
+	public float RadiusHard = 0.5f;
 
 	[Header("Components")]
-    public Transform trans;
-    public Owner owner;
-    public Mover mover;
-    public CollisionCircle collision;
+    public Transform Trans;
+    public Owner Owner;
+    public Mover Mover;
+    public CollisionCircle Collision;
 
-	// Use this for initialization
-	void Awake()
+	private void Awake()
 	{
-		trans = GetComponent<Transform>();
-        owner = GetComponent<Owner>();
-        mover = GetComponent<Mover>();
-	}
-
-    private void Start()
-    {
-	    if (CollisionManager.Instance.qtree != null)
-	    {
-//		    collision = new CollisionCircle(this, trans, mover, owner);
-//		    if (collision != null)
-//			    CollisionManager.Instance.AddCollidable(collision);
-	    }
-	    else
-		    StartCoroutine(StartAbitLater());
-    }
-
-	IEnumerator StartAbitLater()
-	{
-		yield return new WaitForSeconds(1f);
-		Start();
+		Trans = GetComponent<Transform>();
+        Owner = GetComponent<Owner>();
+        Mover = GetComponent<Mover>();
 	}
 
     public void OnDrawGizmos()
 	{
-		if (showRadius)
+		if (ShowRadius)
 		{
 			Color newColorAgain = Color.green;
 			newColorAgain.a = 0.8f;
 			Gizmos.color = newColorAgain;
-			Gizmos.DrawWireSphere(trans.position, radius);
+			Gizmos.DrawWireSphere(Trans.position, Radius);
 		}
 	}
-    public Vector2 Point
-    {
-        get { return trans.position; }
-    }
-	public float Radius
-    {
-        get { return radius; }
-    }
-	public float RadiusHard
-    {
-        get { return radiusHard; }
-    }
-    public GameObject GameObject
-    {
-        get { return gameObject; }
-    }
-    public bool Active
-    {
-        get { return this.enabled; }
-    }
-    public Owner Owner
-    {
-        get { if (owner != null) return owner; return null; }
-    }
-    public Mover Mover
-    {
-        get { if (mover != null) return mover; return null; }
-    }
 
 }

@@ -1,48 +1,47 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
 	private bool isStarted = false;
-	public bool showRadius = false;
-	public bool isEnabled = true;
-	public bool isAttacking = false;
+	public bool ShowRadius = false;
+	public bool IsEnabled = true;
+	public bool IsAttacking = false;
 	
-    public float radius = 3.5f;
-	public float attackSpeed = 1;
-	public int damage = 40;
-	public int damageNoBonuses = 0;
-	public ITargetable target;
-	public bool hasTarget;
+    public float Radius = 3.5f;
+	public float AttackSpeed = 1;
+	public int Damage = 40;
+	public int DamageNoBonuses = 0;
+	public ITargetable Target;
+	public bool HasTarget;
 
-	public GameObject missilePrefab;
-	public string missilePrefabName;
+	public GameObject MissilePrefab;
+	public string MissilePrefabName;
 	
 	[Header("Components")]
-    public Transform trans;
-    public Owner owner;
-    public Mover mover;
-    public CollisionCircle collision;
+    public Transform Trans;
+    public Owner Owner;
+    public Mover Mover;
+    public CollisionCircle Collision;
 
-	void Awake()
+	private void Awake()
 	{
-		trans = GetComponent<Transform>();
-        owner = GetComponent<Owner>();
-        mover = GetComponent<Mover>();
+		Trans = GetComponent<Transform>();
+        Owner = GetComponent<Owner>();
+        Mover = GetComponent<Mover>();
 		
-		missilePrefab = Resources.Load<GameObject>(missilePrefabName);
+		MissilePrefab = Resources.Load<GameObject>(MissilePrefabName);
 	}
 
 	private void Start()
 	{
-		collision = new CollisionCircle(trans, mover, owner, this);
-		CollisionManager.Instance.AddCollidable(collision);
-		isAttacking = false;
-		collision.isDead = false;
-		collision.collidedBaseCircle = null;
-		target = null;
-		hasTarget = false;
+		Collision = new CollisionCircle(Trans, Mover, Owner, this);
+		CollisionManager.Instance.AddCollidable(Collision);
+		IsAttacking = false;
+		Collision.isDead = false;
+		Collision.collidedBaseCircle = null;
+		Target = null;
+		HasTarget = false;
 		isStarted = true;
 	}
 	
@@ -50,79 +49,85 @@ public class Weapon : MonoBehaviour
 	{
 		if (isStarted)
 		{
-			CollisionManager.Instance.AddCollidable(collision);
-			isAttacking = false;
-			collision.isDead = false;
-			collision.collidedBaseCircle = null;
-			target = null;
-			hasTarget = false;
+			CollisionManager.Instance.AddCollidable(Collision);
+			IsAttacking = false;
+			Collision.isDead = false;
+			Collision.collidedBaseCircle = null;
+			Target = null;
+			HasTarget = false;
 		}
 	}
 
 	public void StopAttacking()
 	{
-		isAttacking = false;
+		IsAttacking = false;
 	}
 
 	public void AttackTarget()
 	{
-		if (target != null && !isAttacking)
+		if (Target != null && !IsAttacking)
+		{
 			StartCoroutine(ReleaseMissileToTarget());
+		}
 	}
 
-	IEnumerator ReleaseMissileToTarget()
+	private IEnumerator ReleaseMissileToTarget()
 	{
-		isAttacking = true;
-		if (target != null)
-			ReleaseLaserMissile(target.GameObj.transform.position);
-		yield return new WaitForSeconds(attackSpeed);
-		isAttacking = false;
+		IsAttacking = true;
+		if (Target != null)
+		{
+			ReleaseLaserMissile(Target.GameObj.transform.position);
+		}
+		yield return new WaitForSeconds(AttackSpeed);
+		IsAttacking = false;
 	}
-	
-	public void ReleaseLaserMissile(Vector3 newDestinationVector)
+
+	private void ReleaseLaserMissile(Vector3 newDestinationVector)
 	{
-		if (missilePrefab == null)
+		if (MissilePrefab == null)
+		{
 			return;
+		}
 //		GameObject laserMissileObject = ObjectPool.Spawn(laserMissilePrefab, GameController.Instance.transform, trans.position, trans.rotation);
-		GameObject laserMissileObject = Instantiate(missilePrefab, trans.position, trans.rotation);
+		GameObject laserMissileObject = Instantiate(MissilePrefab, Trans.position, Trans.rotation);
 		laserMissileObject.transform.parent = GameManager.Instance.transform;
 		LaserMissile laserMissile = laserMissileObject.GetComponent<LaserMissile>();
 		laserMissile.destinationVector = newDestinationVector;
 		//laserMissile.owner = owner;
 		laserMissile.weapon = this;
-		laserMissile.target = target;
+		laserMissile.target = Target;
 	}
 
 	public void AddDamage(int additionalDamage)
 	{
-		damage += additionalDamage;
+		Damage += additionalDamage;
 	}
 	
 	public void RemoveDamage(int additionalDamage)
 	{
-		damage -= additionalDamage;
+		Damage -= additionalDamage;
 	}
 
 	public void NewTarget(ITargetable newTarget)
 	{
-		target = newTarget;
-		hasTarget = true;
+		Target = newTarget;
+		HasTarget = true;
 	}
 
 	public void EndCombat()
 	{
-		target = null;
-		hasTarget = false;
+		Target = null;
+		HasTarget = false;
 	}
 
 	public void OnDrawGizmos()
 	{
-		if (showRadius)
+		if (ShowRadius)
 		{
 			Color newColorAgain = Color.red;
 			newColorAgain.a = 0.8f;
 			Gizmos.color = newColorAgain;
-			Gizmos.DrawWireSphere(trans.position, radius);
+			Gizmos.DrawWireSphere(Trans.position, Radius);
 		}
 	}
 }

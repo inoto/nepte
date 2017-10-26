@@ -4,8 +4,8 @@ using UnityEngine;
 public class EffectPeriodic: Effect
 {
 	[Header("EffectPeriodic")]
-	public float tickStep = 1f;
-	public int tickCount = 5;
+	public float TickStep = 1f;
+	public int TickCount = 5;
 	
 	private bool applied = false;
 
@@ -27,12 +27,12 @@ public class EffectPeriodic: Effect
 		StartCoroutine(StartPeriodic());
 	}
 
-	IEnumerator StartPeriodic()
+	private IEnumerator StartPeriodic()
 	{
 		applied = true;
 		while (applied)
 		{
-			yield return new WaitForSeconds(tickStep);
+			yield return new WaitForSeconds(TickStep);
 			Tick();
 		}
 	}

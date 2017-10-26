@@ -11,7 +11,7 @@ public class CardSuperDrone : CardProperty
 			return false;
 		if (bas != null)
 		{
-			bas.Spawner.prefab = superDronePrefab;
+			bas.Spawner.Prefab = superDronePrefab;
 			return true;
 		}
 		return false;

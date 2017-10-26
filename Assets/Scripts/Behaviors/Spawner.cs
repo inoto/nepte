@@ -1,59 +1,62 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using System.Xml;
 
-[System.Serializable]
 public class Spawner : MonoBehaviour
 {
-    public bool canProduce;
-    public bool isActive;
+    public bool CanProduce;
+    public bool IsActive;
     [Header("Unit count")]
-    public float unitCountInitial;
-    public float unitCountF;
-    public float unitCount;
-    public int unitCountMax;
+    public float UnitCountInitial;
+    public float UnitCountF;
+    public float UnitCount;
+    public int UnitCountMax;
     private UILabel unitCountLabel;
     [Header("Capture")]
-    public bool isCapturing;
-    public int maxCapturePoints;
-    public int captureLead;
+    public bool IsCapturing;
+    public int MaxCaptureUnits;
+    public int CaptureLeadPlayer;
     [Header("Spawn")]
-    public float delay;
-    public float intervalMin;
-    public float intervalMax;
-    public Vector2 point;
-    public GameObject prefab;
-    public string prefabName;
+    public float Delay;
+    public float Interval;
+    public Vector2 Point;
+    public GameObject Prefab;
+    public string PrefabName;
 
-    Transform trans;
-    Owner owner;
-    Planet bas;
-    Coroutine releaseCoroutine;
-    Coroutine spawnCoroutine;
+    [Header("Cache")]
+    public Transform Trans;
+    public Owner Owner;
+    public Planet Planet;
+    private Coroutine releaseCoroutine;
+    private Coroutine spawnCoroutine;
 
     private void Awake()
     {
-        trans = GetComponent<Transform>();
-        owner = GetComponent<Owner>();
-        bas = GetComponent<Planet>();
-        prefab = Resources.Load<GameObject>("Units/" + prefabName);
+        Trans = GetComponent<Transform>();
+        Owner = GetComponent<Owner>();
+        Planet = GetComponent<Planet>();
+        Prefab = Resources.Load<GameObject>("Units/" + PrefabName);
     }
 
 	public void Start()
 	{
-	    AddUIUnitCount();
-	    if (canProduce && releaseCoroutine != null)
+	    AddUiUnitCount();
+	    if (CanProduce && releaseCoroutine != null)
+	    {
 	        StopCoroutine(releaseCoroutine);
+	    }
 	}
 
-    public void StartSpawn(Vector2 _point)
+    public void StartSpawn(Vector2 newPoint)
     {
-        if (bas.Type == Planet.PlanetType.Transit)
+        if (Planet.Type == Planet.PlanetType.Transit)
+        {
             return;
-        if (!canProduce)
-            canProduce = true;
-        point = _point;
+        }
+        if (!CanProduce)
+        {
+            CanProduce = true;
+        }
+        Point = newPoint;
         UpdateLabel();
 
         spawnCoroutine = StartCoroutine(Spawn());
@@ -61,43 +64,51 @@ public class Spawner : MonoBehaviour
 
     public void StopSpawn()
     {
-        canProduce = false;
-        isActive = false;
+        CanProduce = false;
+        IsActive = false;
     }
 
     public void ReleaseUnits(GameObject obj)
     {
         if (obj.GetInstanceID() == gameObject.GetInstanceID())
+        {
             return;
+        }
         if (releaseCoroutine != null)
+        {
             StopCoroutine(releaseCoroutine);
-        if (unitCount > 0)
+        }
+        if (UnitCount > 0)
+        {
             releaseCoroutine = StartCoroutine(ReleaseAllUnits(obj));
+        }
     }
     
-    IEnumerator ReleaseAllUnits(GameObject obj)
+    private IEnumerator ReleaseAllUnits(GameObject obj)
     {
-        Planet targetBas = obj.GetComponent<Planet>();
+        Planet targetPlanet = obj.GetComponent<Planet>();
         
-        int count = Mathf.FloorToInt(unitCount);
+        int count = Mathf.FloorToInt(UnitCount);
         while (count > 0)
         {
-            GameObject droneObject = ObjectPool.Spawn(prefab, owner.playerController.Trans, point, trans.rotation);
+            GameObject droneObject = ObjectPool.Spawn(Prefab, Owner.PlayerController.Trans, Point, Trans.rotation);
             Drone droneSpawned = droneObject.GetComponent<Drone>();
-            droneSpawned.Owner.playerNumber = owner.playerNumber;
-            droneSpawned.Owner.playerController = owner.playerController;
+            droneSpawned.Owner.PlayerNumber = Owner.PlayerNumber;
+            droneSpawned.Owner.PlayerController = Owner.PlayerController;
             droneSpawned.DelayedStart();
-            droneSpawned.Mover.followBase.UpdateTarget(targetBas);
+            droneSpawned.Mover.FollowBase.UpdateTarget(targetPlanet);
 
             count--;
-            unitCount--;
+            UnitCount--;
             RemoveBonusFromDrone();
-            if (bas.Health.current > bas.Health.max)
-                bas.RemoveBonusHpCurrent(ConfigManager.Instance.Drone.HealthMax);
-            
+            if (Planet.Health.Current > Planet.Health.Max)
+            {
+                Planet.RemoveBonusHpCurrent(ConfigManager.Instance.Drone.HealthMax);
+            }
+
             UpdateLabel();
 
-            if (canProduce && unitCount < unitCountMax && !isActive)
+            if (CanProduce && UnitCount < UnitCountMax && !IsActive)
             {
                 StartCoroutine(Spawn());
             }
@@ -106,118 +117,128 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    public void EnableCapturing(int side)
+    private void EnableCapturing(int side)
     {
-        isCapturing = true;
+        IsCapturing = true;
         var sprite = unitCountLabel.transform.parent.GetComponent<UISprite>();
         if (side >= 0)
+        {
             sprite.color = GameManager.Instance.PlayerColors[side+1];
-        captureLead = side;
+        }
+        CaptureLeadPlayer = side;
     }
-    
-    public void DisableCapturing()
+
+    private void DisableCapturing()
     {
-        isCapturing = false;
+        IsCapturing = false;
         var sprite = unitCountLabel.transform.parent.GetComponent<UISprite>();
         sprite.color = Color.white;
-        captureLead = -1;
+        CaptureLeadPlayer = -1;
     }
 
     public void UpdateLabel()
     {
         if (unitCountLabel != null)
         {
-            if (!isCapturing)
-                unitCountLabel.text = unitCount.ToString();
+            if (!IsCapturing)
+            {
+                unitCountLabel.text = UnitCount.ToString();
+            }
             else
-                unitCountLabel.text = unitCount + "/" + maxCapturePoints;
+            {
+                unitCountLabel.text = UnitCount + "/" + MaxCaptureUnits;
+            }
         }
     }
 
     public void AddBonusInitial()
     {
-        AddBonusFromDrone((int)unitCount);
+        AddBonusFromDrone((int)UnitCount);
     }
-    
-    public void AddBonusFromDrone()
+
+    private void AddBonusFromDrone()
     {
         AddBonusFromDrone(1);
     }
 
-    void AddBonusFromDrone(int multiplier)
+    private void AddBonusFromDrone(int multiplier)
     {
-        bas.AddBonusHp(ConfigManager.Instance.Drone.HealthMax * multiplier);
-        if (bas.Weapon != null)
-            bas.Weapon.AddDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
+        Planet.AddBonusHp(ConfigManager.Instance.Drone.HealthMax * multiplier);
+        if (Planet.Weapon != null)
+        {
+            Planet.Weapon.AddDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
+        }
     }
-    
-    public void RemoveBonusFromDrone()
+
+    private void RemoveBonusFromDrone()
     {
         RemoveBonusFromDrone(1);
     }
 
-    void RemoveBonusFromDrone(int multiplier)
+    private void RemoveBonusFromDrone(int multiplier)
     {
-        bas.RemoveBonusHp(ConfigManager.Instance.Drone.HealthMax * multiplier);
-        if (bas.Weapon != null)
-            bas.Weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
+        Planet.RemoveBonusHp(ConfigManager.Instance.Drone.HealthMax * multiplier);
+        if (Planet.Weapon != null)
+        {
+            Planet.Weapon.RemoveDamage(ConfigManager.Instance.Drone.AttackDamage * multiplier);
+        }
     }
     
     public void PutDroneInside(Drone drone)
     {
-        if (drone.Owner.playerNumber == owner.playerNumber)
+        if (drone.Owner.PlayerNumber == Owner.PlayerNumber)
         {
-            unitCount += 1;
+            UnitCount += 1;
             AddBonusFromDrone();
         }
         // if owners are different
         else
         {
-            if (!isCapturing)
+            if (!IsCapturing)
             {
-                if (unitCount > 0)
+                if (UnitCount > 0)
                 {
-                    unitCount -= 1;
+                    UnitCount -= 1;
                     RemoveBonusFromDrone();
-                    bas.RemoveBonusHpCurrent(ConfigManager.Instance.Drone.HealthMax);
+                    Planet.RemoveBonusHpCurrent(ConfigManager.Instance.Drone.HealthMax);
                 }
-                else if (unitCount == 0)
+                else if (UnitCount == 0)
                 {
-                    EnableCapturing(drone.Owner.playerNumber);
-                    unitCount += 1;
+                    EnableCapturing(drone.Owner.PlayerNumber);
+                    UnitCount += 1;
                 }
                 else
                 {
-                    EnableCapturing(drone.Owner.playerNumber);
-                    unitCount = 1;
+                    EnableCapturing(drone.Owner.PlayerNumber);
+                    UnitCount = 1;
                 }
             }
             else
             {
-                if (captureLead == drone.Owner.playerNumber)
+                if (CaptureLeadPlayer == drone.Owner.PlayerNumber)
                 {
-                    if (unitCount < maxCapturePoints)
+                    if (UnitCount < MaxCaptureUnits)
                     {
-                        unitCount += 1;
+                        UnitCount += 1;
                     }
-                    if (unitCount >= maxCapturePoints)
+                    if (UnitCount >= MaxCaptureUnits)
                     {
                         DisableCapturing();
-                        bas.SetOwner(drone.Owner.playerNumber, drone.Owner.playerController);
-                        unitCount = maxCapturePoints;
+                        Planet.SetOwner(drone.Owner.PlayerNumber, drone.Owner.PlayerController);
+                        UnitCount = MaxCaptureUnits;
 //                        AddBonusFromDrone((int)unitCount);
                     }
                 }
                 else
                 {
-                    if (unitCount > 0)
+                    if (UnitCount > 0)
                     {
-                        unitCount -= 1;
+                        UnitCount -= 1;
                     }
                     else
                     {
-                        EnableCapturing(drone.Owner.playerNumber);
-                        unitCount = 1;
+                        EnableCapturing(drone.Owner.PlayerNumber);
+                        UnitCount = 1;
                     }
                 }
             }
@@ -226,14 +247,14 @@ public class Spawner : MonoBehaviour
         drone.Die();
     }
     
-    void AddUIUnitCount()
+    private void AddUiUnitCount()
     {
-        Transform HPBars = GameObject.Find("UIBars").transform;
-        GameObject prefab = Resources.Load<GameObject>("UI/BaseUnitCount");
+        Transform hpBars = GameObject.Find("UIBars").transform;
+        GameObject labelPrefab = Resources.Load<GameObject>("UI/BaseUnitCount");
 	    
-        Vector2 newPosition = trans.position;
+        Vector2 newPosition = Trans.position;
         newPosition.y += GetComponent<MeshRenderer>().bounds.extents.y;
-        GameObject assignedUnitCountObject = Instantiate(prefab, newPosition, trans.rotation, HPBars);
+        GameObject assignedUnitCountObject = Instantiate(labelPrefab, newPosition, Trans.rotation, hpBars);
         assignedUnitCountObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
         unitCountLabel = assignedUnitCountObject.transform.GetChild(0).GetComponent<UILabel>();
@@ -241,30 +262,27 @@ public class Spawner : MonoBehaviour
 //		assignedHPbarSprite.SetAnchor(gameObject);
     }
 
-    IEnumerator Spawn()
+    private IEnumerator Spawn()
     {
         if (spawnCoroutine != null)
-            StopCoroutine(spawnCoroutine);
-        isActive = true;
-        yield return new WaitForSeconds(delay);
-        
-        while (isActive)
         {
-            if (unitCount >= unitCountMax)
+            StopCoroutine(spawnCoroutine);
+        }
+        IsActive = true;
+        yield return new WaitForSeconds(Delay);
+        
+        while (IsActive)
+        {
+            if (UnitCount >= UnitCountMax)
             {
-                isActive = false;
+                IsActive = false;
                 yield break;
             }
-            unitCount += 1;
+            UnitCount += 1;
             UpdateLabel();
             AddBonusFromDrone();
             
-			float interval;
-            if (intervalMin != intervalMax)
-                interval = Random.Range(intervalMin, intervalMax);
-            else
-                interval = intervalMax;
-            yield return new WaitForSeconds(interval);
+            yield return new WaitForSeconds(Interval);
         }
     }
 }

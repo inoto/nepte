@@ -47,7 +47,7 @@ public class AIPlayer : MonoBehaviour
         yield return new WaitForSeconds(DecisionInterval);
         foreach (var b in GameManager.Instance.Planets)
         {
-            if (b.Owner.playerNumber == Owner.playerNumber)
+            if (b.Owner.PlayerNumber == Owner.PlayerNumber)
             {
                 PlanetMain = b;
                 DistanceToFar = PlanetMain.Trans.position.sqrMagnitude * 0.75f;
@@ -85,7 +85,7 @@ public class AIPlayer : MonoBehaviour
             {
                 if (LogDecisionsInfo)
                 {
-                    Debug.Log("player " + Owner.playerNumber + " almost best decision weight: " + decision.Weight);
+                    Debug.Log("player " + Owner.PlayerNumber + " almost best decision weight: " + decision.Weight);
                 }
                 PoorDecisions.Add(decision);
             }
@@ -98,8 +98,8 @@ public class AIPlayer : MonoBehaviour
             }
             if (LogDecisionsInfo)
             {
-                Debug.Log("player " + Owner.playerNumber + " best decision weight: " + DecisionBest.Weight);
-                Debug.Log("player " + Owner.playerNumber + " best decision type: " + DecisionBest.Type.ToString());
+                Debug.Log("player " + Owner.PlayerNumber + " best decision weight: " + DecisionBest.Weight);
+                Debug.Log("player " + Owner.PlayerNumber + " best decision type: " + DecisionBest.Type.ToString());
             }
             // chould we release units from a couple planets?
             if (DecisionBest.BeginPlanets != null && DecisionBest.BeginPlanets.Count > 1)
@@ -116,7 +116,7 @@ public class AIPlayer : MonoBehaviour
                 DecisionBest.BeginPlanet.Spawner.ReleaseUnits(DecisionBest.TargetPlanet.gameObject);
             }
             // mark planets which were already targeted
-            if (DecisionBest.TargetPlanet.Owner.playerNumber == -1)
+            if (DecisionBest.TargetPlanet.Owner.PlayerNumber == -1)
             {
                 PlanetsToBeCaptured.Add(DecisionBest.TargetPlanet);
             }
@@ -177,11 +177,11 @@ public class AIPlayer : MonoBehaviour
         Enemies.Clear();
         foreach (var player in GameManager.Instance.PlayerController)
         {
-            if (player.Owner.playerNumber == -1)
+            if (player.Owner.PlayerNumber == -1)
             {
                 continue;
             }
-            if (player == Owner.playerController)
+            if (player == Owner.PlayerController)
             {
                 continue;
             }
@@ -204,7 +204,7 @@ public class AIPlayer : MonoBehaviour
         
         foreach (var b in GameManager.Instance.Planets)
         {
-            if (b.Owner.playerNumber == Owner.playerNumber)
+            if (b.Owner.PlayerNumber == Owner.PlayerNumber)
             {
                 Planets.Add(b);
                 sum += (Vector2)b.Trans.position;
@@ -214,7 +214,7 @@ public class AIPlayer : MonoBehaviour
                     PlanetsToBeCaptured.Remove(b);
                 }
             }
-            else if (b.Owner.playerNumber == -1)
+            else if (b.Owner.PlayerNumber == -1)
             {
                 PlanetsNeutral.Add(b);
             }
@@ -246,7 +246,7 @@ public class AIPlayer : MonoBehaviour
         int unitsNearPlanetEnemies = 0;
         for (int i = 0; i < unitsNearBas.Count; i++)
         {
-            if (unitsNearBas[i].owner.playerNumber == planet.Owner.playerNumber)
+            if (unitsNearBas[i].owner.PlayerNumber == planet.Owner.PlayerNumber)
             {
                 unitsNearPlanetSelf++;
             }
@@ -266,7 +266,7 @@ public class AIPlayer : MonoBehaviour
         {
             Planet closestToEnemy = null;
             float distMin = 99999;
-            foreach (var basSelf in Owner.playerController.Planets)
+            foreach (var basSelf in Owner.PlayerController.Planets)
             {
                 float dist = (basSelf.Trans.position - basToAttack.Trans.position).sqrMagnitude;
                 // skip if so far
@@ -284,7 +284,7 @@ public class AIPlayer : MonoBehaviour
             {
                 // then finding ally planets to be in front line
                 float distNeeded = (closestToEnemy.Trans.position - basToAttack.Trans.position).sqrMagnitude * 1.4f;
-                foreach (var basSelf in Owner.playerController.Planets)
+                foreach (var basSelf in Owner.PlayerController.Planets)
                 {
                     float dist = (basSelf.Trans.position - basToAttack.Trans.position).sqrMagnitude;
                     // 

@@ -15,7 +15,6 @@ public class Mothership : MonoBehaviour, ITargetable
 	public MothershipMode Mode;
 
 	private bool isStarted = false;
-	[SerializeField] private GameObject explosionPrefab;
 
     [Header("Modules")]
     public Health Health;
@@ -33,10 +32,8 @@ public class Mothership : MonoBehaviour, ITargetable
 	public GameObject AssignedCircle;
 	public float MoveSpeed = 3f;
 	public float MoveRadius = 2.5f;
-
-	[Header("Colors")]
-	[SerializeField]
-	private Material[] materials;
+	
+	private GameObject explosionPrefab;
 
     private void Awake()
     {
@@ -51,7 +48,7 @@ public class Mothership : MonoBehaviour, ITargetable
 	public void DelayedStart()
     {
         AssignMaterial();
-        Owner.playerController.PlayerUnitCount += 1;
+        Owner.PlayerController.PlayerUnitCount += 1;
         PlayerController.UnitCount += 1;
     }
 
@@ -107,65 +104,73 @@ public class Mothership : MonoBehaviour, ITargetable
 		}
 		if (Health != null)
 		{
-			Health.max = _config.HealthMax;
-			Health.current = Health.max;
+			Health.Max = _config.HealthMax;
+			Health.Current = Health.Max;
 		}
 		MoveSpeed = _config.SpeedMax;
 		MoveRadius = _config.MovingAroundRadius;
 		if (Weapon != null)
 		{
-			Weapon.attackSpeed = _config.AttackSpeed;
-			Weapon.damage = _config.AttackDamage;
-			Weapon.damageNoBonuses = Weapon.damage;
-			Weapon.radius = _config.AttackRadius;
-			Weapon.missilePrefabName = _config.AttackMissilePrefabName;
-			Weapon.missilePrefab = Resources.Load<GameObject>(Weapon.missilePrefabName);
+			Weapon.AttackSpeed = _config.AttackSpeed;
+			Weapon.Damage = _config.AttackDamage;
+			Weapon.DamageNoBonuses = Weapon.Damage;
+			Weapon.Radius = _config.AttackRadius;
+			Weapon.MissilePrefabName = _config.AttackMissilePrefabName;
+			Weapon.MissilePrefab = Resources.Load<GameObject>(Weapon.MissilePrefabName);
 		}
+		explosionPrefab = Resources.Load<GameObject>("Explosion");
 	}
 
 	private void Die()
 	{
 		Mode = MothershipMode.Dead;
 		Collision.isDead = true;
-		Weapon.collision.isDead = true;
-
-		if (Health.current <= 0)
+		Weapon.Collision.isDead = true;
+		
+		if (Health.Current <= 0)
 		{
 			MakeExplosion();
 		}
-		Owner.playerController.PlayerUnitCount -= 1;
+		Owner.PlayerController.PlayerUnitCount -= 1;
 		PlayerController.UnitCount -= 1;
 		ObjectPool.Recycle(gameObject);
 	}
 
 	private void MakeExplosion()
 	{
-		GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation);
-		explosion.transform.parent = GameManager.Instance.transform;
+		GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation, GameManager.Instance.transform);
 		QuadMesh qm = GetComponent<QuadMesh>();
 		if (qm != null)
 		{
 			float size = qm.size * 1.5f;
 			explosion.transform.localScale = new Vector3(size, size, 1);
 		}
+		explosion.transform.localScale = Trans.localScale * 3.5f;
 	}
 
 	private void AssignMaterial()
 	{
-		if (mesh != null && Owner != null)
+		if (mesh != null)
 		{
-			mesh.sharedMaterial = materials[Owner.playerNumber];
+			if (Owner.PlayerNumber < 0)
+			{
+				mesh.material.SetColor("_Color", GameManager.Instance.PlayerColors[0]);
+			}
+			else
+			{
+				mesh.material.SetColor("_Color", GameManager.Instance.PlayerColors[Owner.PlayerNumber + 1]);
+			}
 		}
 		else
 		{
-			Debug.LogError("Cannot assign material");
+			Debug.LogError("Cannot assign material.");
 		}
 	}
 
 	public void Damage(Weapon fromWeapon)
 	{
-		Health.current -= fromWeapon.damage;
-		if (Health.current <= 0)
+		Health.Current -= fromWeapon.Damage;
+		if (Health.Current <= 0)
 		{
 			Die();
 			fromWeapon.EndCombat();
@@ -174,8 +179,8 @@ public class Mothership : MonoBehaviour, ITargetable
 	
 	public void Damage(int damage)
 	{
-		Health.current -= damage;
-		if (Health.current <= 0)
+		Health.Current -= damage;
+		if (Health.Current <= 0)
 		{
 			Die();
 		}

@@ -48,21 +48,21 @@ public class AIDecision
 	private void CountWeight()
 	{
 		BeginPlanets.Clear();
-		if (BeginPlanet.Owner.playerNumber == AiPlayer.Owner.playerNumber && TargetPlanet.Owner.playerNumber == -1)
+		if (BeginPlanet.Owner.PlayerNumber == AiPlayer.Owner.PlayerNumber && TargetPlanet.Owner.PlayerNumber == -1)
 		{
 			CheckUnitCount();
 			CheckDistances();
 			Type = DecisionType.OccupyNeutral;
 		}
-		else if (TargetPlanet.Owner.playerNumber == BeginPlanet.Owner.playerNumber && BeginPlanet.Owner.playerNumber == AiPlayer.Owner.playerNumber)
+		else if (TargetPlanet.Owner.PlayerNumber == BeginPlanet.Owner.PlayerNumber && BeginPlanet.Owner.PlayerNumber == AiPlayer.Owner.PlayerNumber)
 		{
 			CheckToMove();
 			CheckToDefend();
 		}
-		else if (BeginPlanet.Owner.playerNumber == AiPlayer.Owner.playerNumber && TargetPlanet.Owner.playerNumber != AiPlayer.Owner.playerNumber)
+		else if (BeginPlanet.Owner.PlayerNumber == AiPlayer.Owner.PlayerNumber && TargetPlanet.Owner.PlayerNumber != AiPlayer.Owner.PlayerNumber)
 		{
-			float sumUnitsPerSecond = 1 / TargetPlanet.Spawner.intervalMax;
-			float sumUnitCount = TargetPlanet.Spawner.unitCount + TargetPlanet.Owner.playerController.PlayerUnitCount;
+			float sumUnitsPerSecond = 1 / TargetPlanet.Spawner.Interval;
+			float sumUnitCount = TargetPlanet.Spawner.UnitCount + TargetPlanet.Owner.PlayerController.PlayerUnitCount;
 			CheckToAttackFromFrontLine();
 //			CheckToAttack();
 		}
@@ -117,11 +117,11 @@ public class AIDecision
 		{
 			if ((basInFrontLine.Trans.position - TargetPlanet.Trans.position).sqrMagnitude < AiPlayer.DistanceToFar)
 			{
-				sumUnitCountSelf += basInFrontLine.Spawner.unitCount;
+				sumUnitCountSelf += basInFrontLine.Spawner.UnitCount;
 				BeginPlanets.Add(basInFrontLine);
 			}
 		}
-		if (sumUnitCountSelf * 0.9f < TargetPlanet.Spawner.unitCount)
+		if (sumUnitCountSelf * 0.9f < TargetPlanet.Spawner.UnitCount)
 		{
 			Weight -= 3;
 			BeginPlanets.Clear();
@@ -161,7 +161,7 @@ public class AIDecision
 			{
 				if ((basSelf.Trans.position - TargetPlanet.Trans.position).sqrMagnitude < AiPlayer.DistanceToFar)
 				{
-					unitCount += basSelf.Spawner.unitCount;
+					unitCount += basSelf.Spawner.UnitCount;
 					BeginPlanets.Add(basSelf);
 				}
 			}
@@ -183,14 +183,14 @@ public class AIDecision
 			Weight += 3;
 		}
 		// small unit count is not good
-		if (BeginPlanet.Spawner.unitCount < 10)
+		if (BeginPlanet.Spawner.UnitCount < 10)
 		{
 			Weight -= 1;
 		}
 		// split units between planets in front line
 		foreach (var basInFrontLine in AiPlayer.PlanetsInFrontLine)
 		{
-			if (TargetPlanet.Spawner.unitCount > basInFrontLine.Spawner.unitCount)
+			if (TargetPlanet.Spawner.UnitCount > basInFrontLine.Spawner.UnitCount)
 			{
 				Weight -= 1;
 			}
@@ -240,20 +240,20 @@ public class AIDecision
 	private void CheckUnitCount()
 	{
 		// unit count which is enough to fully capture neutral planet
-		float targetUnitsNeeded = TargetPlanet.Spawner.unitCount + TargetPlanet.Spawner.maxCapturePoints;
+		float targetUnitsNeeded = TargetPlanet.Spawner.UnitCount + TargetPlanet.Spawner.MaxCaptureUnits;
 		// querying ally planets around for coperation
 		float planetsSelfUnitCount = 0;
-		if (BeginPlanet.Owner.playerController.Planets.Count > 1)
+		if (BeginPlanet.Owner.PlayerController.Planets.Count > 1)
 		{
 			// count units in all planets
-			foreach (var basSelf in BeginPlanet.Owner.playerController.Planets)
+			foreach (var basSelf in BeginPlanet.Owner.PlayerController.Planets)
 			{
 				// skip planet in action
-				if (basSelf.UnitCountNearBasEnemies > basSelf.Spawner.unitCount)
+				if (basSelf.UnitCountNearBasEnemies > basSelf.Spawner.UnitCount)
 				{
 					continue;
 				}
-				planetsSelfUnitCount += basSelf.Spawner.unitCount;
+				planetsSelfUnitCount += basSelf.Spawner.UnitCount;
 				BeginPlanets.Add(basSelf);
 				// stop counting if got necessery amount
 //				if (basesSelfUnitCount >= targetUnitsNeeded + targetBas.unitCountNearBasEnemies)
@@ -270,21 +270,21 @@ public class AIDecision
 		else
 		{
 //			beginPlanet = null;
-			if (BeginPlanet.Spawner.unitCount >= targetUnitsNeeded)
+			if (BeginPlanet.Spawner.UnitCount >= targetUnitsNeeded)
 			{
 				Weight += 3;
 			}
 		}
 
 		// checking for current capturers 
-		if (TargetPlanet.UnitCountNearBasEnemies > TargetPlanet.Spawner.maxCapturePoints)
+		if (TargetPlanet.UnitCountNearBasEnemies > TargetPlanet.Spawner.MaxCaptureUnits)
 		{
 			Weight -= 1;
 		}
 		// here we have a chance to intercept neutral planet when enemy has spent units on this
-		if (TargetPlanet.Spawner.isCapturing && TargetPlanet.Spawner.captureLead != AiPlayer.Owner.playerNumber)
+		if (TargetPlanet.Spawner.IsCapturing && TargetPlanet.Spawner.CaptureLeadPlayer != AiPlayer.Owner.PlayerNumber)
 		{
-			if (TargetPlanet.UnitCountNearBasEnemies + TargetPlanet.Spawner.unitCount < planetsSelfUnitCount &&
+			if (TargetPlanet.UnitCountNearBasEnemies + TargetPlanet.Spawner.UnitCount < planetsSelfUnitCount &&
 			    BeginPlanets.Count > 1)
 			{
 				Weight += 1;

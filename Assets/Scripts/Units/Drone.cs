@@ -14,7 +14,6 @@ public class Drone : MonoBehaviour, ITargetable
 	public DroneMode Mode;
 
 	private bool isStarted = false;
-	[SerializeField] private GameObject explosionPrefab;
 
     [Header("Modules")]
     public Health Health;
@@ -27,9 +26,7 @@ public class Drone : MonoBehaviour, ITargetable
     public Mover Mover;
 	public Weapon Weapon;
 
-	[Header("Colors")]
-	[SerializeField]
-	private Material[] materials;
+	private GameObject explosionPrefab;
 
     private void Awake()
     {
@@ -46,7 +43,7 @@ public class Drone : MonoBehaviour, ITargetable
     {
         AssignMaterial();
         Mover.DelayedStart();
-        Owner.playerController.PlayerUnitCount += 1;
+        Owner.PlayerController.PlayerUnitCount += 1;
         PlayerController.UnitCount += 1;
     }
 
@@ -69,35 +66,36 @@ public class Drone : MonoBehaviour, ITargetable
 		}
 		if (Health != null)
 		{
-			Health.max = _config.HealthMax;
-			Health.current = Health.max;
+			Health.Max = _config.HealthMax;
+			Health.Current = Health.Max;
 		}
 		if (Mover != null)
 		{
-			Mover.maxSpeed = _config.SpeedMax;
-			Mover.maxForce = _config.ForceMax;
-			Mover.turnSpeed = _config.TurnSpeed;
-			Mover.followBase.attackRadius = ConfigManager.Instance.Base.ColliderRadius;
-			Mover.followBase.enterRadius = _config.EnterBaseRadius;
-			Mover.separation.enabled = _config.SeparationEnabled;
-			Mover.separation.desired = _config.SeparationRadius;
-			Mover.cohesion.enabled = _config.CohesionEnabled;
-			Mover.cohesion.desired = _config.CohesionRadius;
+			Mover.MaxSpeed = _config.SpeedMax;
+			Mover.MaxForce = _config.ForceMax;
+			Mover.TurnSpeed = _config.TurnSpeed;
+			Mover.FollowBase.AttackRadius = ConfigManager.Instance.Base.ColliderRadius;
+			Mover.FollowBase.EnterRadius = _config.EnterBaseRadius;
+			Mover.Separation.Enabled = _config.SeparationEnabled;
+			Mover.Separation.Desired = _config.SeparationRadius;
+			Mover.Cohesion.Enabled = _config.CohesionEnabled;
+			Mover.Cohesion.Desired = _config.CohesionRadius;
 		}
 		if (Weapon != null)
 		{
-			Weapon.attackSpeed = _config.AttackSpeed;
-			Weapon.damage = _config.AttackDamage;
-			Weapon.damageNoBonuses = Weapon.damage;
-			Weapon.radius = _config.AttackRadius;
-			Weapon.missilePrefabName = _config.AttackMissilePrefabName;
-			Weapon.missilePrefab = Resources.Load<GameObject>(Weapon.missilePrefabName);
+			Weapon.AttackSpeed = _config.AttackSpeed;
+			Weapon.Damage = _config.AttackDamage;
+			Weapon.DamageNoBonuses = Weapon.Damage;
+			Weapon.Radius = _config.AttackRadius;
+			Weapon.MissilePrefabName = _config.AttackMissilePrefabName;
+			Weapon.MissilePrefab = Resources.Load<GameObject>(Weapon.MissilePrefabName);
 		}
+		explosionPrefab = Resources.Load<GameObject>("Explosion");
 	}
 
 	public void PutIntoBase(Planet newPlanet)
 	{
-		newPlanet.Spawner.unitCount += 1;
+		newPlanet.Spawner.UnitCount += 1;
 		newPlanet.Spawner.UpdateLabel();
 		Die();
 	}
@@ -106,40 +104,48 @@ public class Drone : MonoBehaviour, ITargetable
 	{
 		Mode = DroneMode.Dead;
 		Collision.isDead = true;
-		Weapon.collision.isDead = true;
+		Weapon.Collision.isDead = true;
 
-		if (Health.current <= 0)
+		if (Health.Current <= 0)
 		{
 			MakeExplosion();
 		}
-		Owner.playerController.PlayerUnitCount -= 1;
+		Owner.PlayerController.PlayerUnitCount -= 1;
 		PlayerController.UnitCount -= 1;
 		ObjectPool.Recycle(gameObject);
 	}
 
 	private void MakeExplosion()
 	{
-		GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation);
-		explosion.transform.parent = GameManager.Instance.transform;
+		GameObject explosion = Instantiate(explosionPrefab, Trans.position, Trans.rotation, GameManager.Instance.transform);
 		float size = GetComponent<QuadMesh>().size * 1.5f;
 		explosion.transform.localScale = new Vector3(size, size, 1);
+		explosion.transform.localScale = Trans.localScale * 2;
 	}
 
 	private void AssignMaterial()
 	{
 		if (mesh != null)
 		{
-			if (Owner.playerNumber < 0)
+			if (Owner.PlayerNumber < 0)
+			{
 				mesh.material.SetColor("_Color", GameManager.Instance.PlayerColors[0]);
+			}
 			else
-				mesh.material.SetColor("_Color", GameManager.Instance.PlayerColors[Owner.playerNumber + 1]);
+			{
+				mesh.material.SetColor("_Color", GameManager.Instance.PlayerColors[Owner.PlayerNumber + 1]);
+			}
+		}
+		else
+		{
+			Debug.LogError("Cannot assign material.");
 		}
 	}
 
 	public void Damage(Weapon fromWeapon)
 	{
-		Health.current -= fromWeapon.damage;
-		if (Health.current <= 0)
+		Health.Current -= fromWeapon.Damage;
+		if (Health.Current <= 0)
 		{
 			Die();
 			fromWeapon.EndCombat();
@@ -148,8 +154,8 @@ public class Drone : MonoBehaviour, ITargetable
 	
 	public void Damage(int damage)
 	{
-		Health.current -= damage;
-		if (Health.current <= 0)
+		Health.Current -= damage;
+		if (Health.Current <= 0)
 		{
 			Die();
 		}

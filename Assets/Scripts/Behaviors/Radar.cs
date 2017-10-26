@@ -1,6 +1,7 @@
-﻿﻿using UnityEngine;
-using System.Collections.Generic;
+﻿﻿using System;
+using UnityEngine;
 
+[Obsolete("Not used anymore",true)]
 public class Radar : MonoBehaviour
 {
     public bool showRadius = false;

@@ -47,8 +47,8 @@ public class CardSlowEnemies : CardAction
 			if (mover == null)
 				continue;
 			var effect = unit.trans.gameObject.AddComponent<EffectSlow>();
-			effect.factor = slowFactor;
-			effect.mover = mover;
+			effect.SlowFactor = slowFactor;
+			effect.Mover = mover;
 			effect.Activate(duration);
 		}
 		return true;

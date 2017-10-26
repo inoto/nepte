@@ -15,9 +15,9 @@ public class CardPropertyPeriodicDamage : CardProperty
 		if (bas != null)
 		{
 			var effect = bas.gameObject.AddComponent<EffectPeriodicDamage>();
-			effect.unit = bas.GetComponent<ITargetable>();
-			effect.tickStep = tickStep;
-			effect.damage = damage;
+			effect.TargetUnit = bas.GetComponent<ITargetable>();
+			effect.TickStep = tickStep;
+			effect.Damage = damage;
 			effect.Activate(duration);
 			return true;
 		}

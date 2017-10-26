@@ -28,13 +28,13 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Owner.playerController = this;
+        Owner.PlayerController = this;
 	    UnitCount = 0;
     }
 
     public void DelayedStart()
     {
-	    if (Owner.playerNumber > 0)
+	    if (Owner.PlayerNumber > 0)
 	    {
 		    AiPlayer = gameObject.AddComponent<AIPlayer>();
 	    }

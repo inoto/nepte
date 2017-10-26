@@ -1,19 +1,18 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EffectSlow: Effect
 {
 	[Header("EffectSlow")]
-	public float factor;
-	[HideInInspector] public Mover mover;
+	public float SlowFactor;
+	[HideInInspector] public Mover Mover;
 
 	protected override void Apply()
 	{
-		mover.maxSpeed -= factor/10;
+		Mover.MaxSpeed -= SlowFactor/10;
 	}
 
 	protected override void Reset()
 	{
-		mover.maxSpeed += factor/10;
+		Mover.MaxSpeed += SlowFactor/10;
 	}
 }

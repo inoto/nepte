@@ -1,30 +1,31 @@
 using UnityEngine;
-using System.Collections;
 
 [System.Serializable]
 public class Health
 {
-    public int max;
-    public int maxNoBonuses;
-    public int current;
+    public int Max;
+    public readonly int MaxNoBonuses;
+    public int Current;
     [Range(0.0f, 1.0f)]
-    public float percent;
+    public float Percent;
 
-    public Health(int _max)
+    public Health(int newMax)
     {
-        max = _max;
-        maxNoBonuses = max;
-        current = max;
-        percent = 1;
+        Max = newMax;
+        MaxNoBonuses = Max;
+        Current = Max;
+        Percent = 1;
     }
 
     public void Reset()
     {
-        if (max == current)
+        if (Max == Current)
+        {
             return;
-        max = maxNoBonuses;
-        current = max;
-        percent = 1;
+        }
+        Max = MaxNoBonuses;
+        Current = Max;
+        Percent = 1;
     }
     
 }

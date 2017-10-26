@@ -283,8 +283,8 @@ public class GameManager : MonoBehaviour
 			playerObject = Instantiate(playerControllerPrefab);
 			playerObject.transform.SetParent(transform);
 			PlayerController tmpPlayerController = playerObject.GetComponent<PlayerController>();
-			tmpPlayerController.Owner.playerNumber = i;
-			tmpPlayerController.Owner.playerController = tmpPlayerController;
+			tmpPlayerController.Owner.PlayerNumber = i;
+			tmpPlayerController.Owner.PlayerController = tmpPlayerController;
 			//playerController.owner.color = playerColors[i];
 			tmpPlayerController.DelayedStart();
 

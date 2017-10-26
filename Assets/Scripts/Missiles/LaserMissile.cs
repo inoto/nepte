@@ -46,8 +46,8 @@ public class LaserMissile : MonoBehaviour
 			}
 			else
 			{
-				weapon.target = null;
-				weapon.hasTarget = false;
+				weapon.Target = null;
+				weapon.HasTarget = false;
 			}
 			Destroy(gameObject);
 		}
