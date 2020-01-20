@@ -5,7 +5,7 @@ Points I've done here:
 - Flexible 2d camera controller (mouse and touch)
 - My own collision system with QuadTree
 - Steering behaviours (arrive, separation, cohesion)
-- AI with weights
+- Simple AI with weights
 - Pathfinding with BFS
 - Config system to work with Type Object pattern
 - ObjectPool
